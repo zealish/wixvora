@@ -1,3 +1,14 @@
+import { Inter } from "next/font/google";
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+});
+
 export default function StaffLayoutWrapper({ children }: LayoutProps<'/'>) {
-  return children;
+  return (
+    <div className={`${inter.variable} font-sans`}>
+      {children}
+    </div>
+  );
 }
