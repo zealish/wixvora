@@ -1,0 +1,24 @@
+import type { PermissionKey } from '@/types/rbac';
+
+export const PERMISSIONS = {
+  USERS_VIEW: 'users.view.any' as PermissionKey,
+  USERS_CREATE: 'users.create.any' as PermissionKey,
+  USERS_UPDATE: 'users.update.any' as PermissionKey,
+  USERS_DELETE: 'users.delete.any' as PermissionKey,
+  ROLES_VIEW: 'roles.view' as PermissionKey,
+  ROLES_MANAGE: 'roles.manage' as PermissionKey,
+  CLIENTS_VIEW: 'clients.view.any' as PermissionKey,
+  CLIENTS_CREATE: 'clients.create.any' as PermissionKey,
+  CLIENTS_UPDATE: 'clients.update.any' as PermissionKey,
+  CLIENTS_DELETE: 'clients.delete.any' as PermissionKey,
+  BILLING_VIEW: 'billing.view' as PermissionKey,
+  BILLING_REFUND: 'billing.refund' as PermissionKey,
+  DASHBOARD_VIEW: 'dashboard.view' as PermissionKey,
+  SETTINGS_UPDATE: 'settings.update' as PermissionKey,
+  ANALYTICS_VIEW: 'analytics.view' as PermissionKey,
+  AUDIT_VIEW: 'audit.view' as PermissionKey,
+  TEMPLATES_VIEW: 'templates.view' as PermissionKey,
+  TEMPLATES_CREATE: 'templates.create' as PermissionKey,
+  TEMPLATES_PUBLISH: 'templates.publish' as PermissionKey,
+  SITES_MANAGE: 'sites.manage' as PermissionKey,
+} as const;
