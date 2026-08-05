@@ -24,12 +24,19 @@ export function LoginForm() {
     const password = formData.get('password') as string;
 
     try {
-      await signIn.email({
+      const result = await signIn.email({
         email,
         password,
       });
 
+      if (result.error) {
+        setError(result.error.message ?? 'Invalid email or password');
+        setLoading(false);
+        return;
+      }
+
       router.push('/');
+      router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Invalid email or password');
       setLoading(false);
