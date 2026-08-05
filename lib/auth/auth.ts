@@ -21,7 +21,7 @@ export const auth = betterAuth({
       accountType: {
         type: 'string',
         required: true,
-        input: false,
+        input: true,
         returned: true,
       },
     },
