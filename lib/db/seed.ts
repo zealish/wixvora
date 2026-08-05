@@ -1,3 +1,4 @@
+import 'dotenv/config'
 import { db } from '@/lib/db';
 import { permissions, roles, rolePermissions } from '@/lib/db/schema';
 
