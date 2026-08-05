@@ -29,7 +29,7 @@ export function LoginForm() {
         password,
       });
 
-      router.push('/staff');
+      router.push('/');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Invalid email or password');
       setLoading(false);
