@@ -7,7 +7,7 @@ const inter = Inter({
 
 export default function StaffLayoutWrapper({ children }: LayoutProps<'/'>) {
   return (
-    <div className={`${inter.variable} font-sans`}>
+    <div className={inter.className}>
       {children}
     </div>
   );
