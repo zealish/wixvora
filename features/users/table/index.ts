@@ -1,3 +1,3 @@
-export { userColumns } from "./columns";
-export { userFilters } from "./filters";
-export { userBulkActions } from "./bulk-actions";
+export { staffColumns } from "./staff-columns";
+export { userFilters as staffFilters } from "./filters";
+export { staffBulkActions } from "./staff-bulk-actions";

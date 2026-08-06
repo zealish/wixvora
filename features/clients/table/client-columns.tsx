@@ -16,7 +16,7 @@ import { DataTableColumnHeader } from "@/components/shared/data-table/column-hea
 import { MoreHorizontal, Eye, Pencil, Trash2 } from "lucide-react";
 import Link from "next/link";
 
-export const userColumns: ColumnDef<UserWithProfile, unknown>[] = [
+export const clientColumns: ColumnDef<UserWithProfile, unknown>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -84,49 +84,51 @@ export const userColumns: ColumnDef<UserWithProfile, unknown>[] = [
     },
   },
   {
-    id: "department",
-    accessorFn: (row) => row.staff?.department ?? "-",
+    id: "companyName",
+    accessorFn: (row) => row.client?.companyName ?? "-",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Department" />
+      <DataTableColumnHeader column={column} title="Company" />
     ),
     enableSorting: true,
     enableColumnFilter: true,
     meta: {
-      label: "Department",
+      label: "Company",
       filterVariant: "select",
       exportable: true,
-      minWidth: 120,
+      minWidth: 140,
       truncate: true,
     },
   },
   {
-    id: "position",
-    accessorFn: (row) => row.staff?.position ?? "-",
+    id: "phone",
+    accessorFn: (row) => row.client?.phone ?? "-",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Position" />
+      <DataTableColumnHeader column={column} title="Phone" />
     ),
     enableSorting: true,
     meta: {
-      label: "Position",
+      label: "Phone",
       exportable: true,
       minWidth: 120,
       truncate: true,
     },
   },
   {
-    id: "status",
-    accessorFn: (row) => row.staff?.employmentStatus,
+    id: "clientStatus",
+    accessorFn: (row) => row.client?.status,
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Status" />
     ),
     cell: ({ getValue }) => {
       const value = getValue() as string | undefined;
       if (!value) return <span className="text-muted-foreground">-</span>;
-      return (
-        <Badge variant={value === "ACTIVE" ? "default" : "secondary"}>
-          {value}
-        </Badge>
-      );
+      const variant =
+        value === "ACTIVE"
+          ? "default"
+          : value === "SUSPENDED"
+            ? "destructive"
+            : "secondary";
+      return <Badge variant={variant}>{value}</Badge>;
     },
     enableSorting: true,
     enableColumnFilter: true,
@@ -145,7 +147,7 @@ export const userColumns: ColumnDef<UserWithProfile, unknown>[] = [
     enableSorting: false,
     enableHiding: false,
     cell: ({ row }) => {
-      const user = row.original;
+      const u = row.original;
       return (
         <DropdownMenu>
           <DropdownMenuTrigger
@@ -158,13 +160,13 @@ export const userColumns: ColumnDef<UserWithProfile, unknown>[] = [
           />
           <DropdownMenuContent align="end">
             <DropdownMenuItem
-              render={<Link href={`/staff/users/${user.id}`} />}
+              render={<Link href={`/staff/clients/${u.id}`} />}
             >
               <Eye className="mr-2 size-4" />
               View
             </DropdownMenuItem>
             <DropdownMenuItem
-              render={<Link href={`/staff/users/${user.id}/edit`} />}
+              render={<Link href={`/staff/clients/${u.id}/edit`} />}
             >
               <Pencil className="mr-2 size-4" />
               Edit
@@ -173,8 +175,7 @@ export const userColumns: ColumnDef<UserWithProfile, unknown>[] = [
             <DropdownMenuItem
               variant="destructive"
               onSelect={() => {
-                // TODO: integrate with server action
-                console.log("Delete user:", user.id);
+                console.log("Delete client:", u.id);
               }}
             >
               <Trash2 className="mr-2 size-4" />
