@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import type { Column } from '@tanstack/react-table';
-import { Check, PlusCircle } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import type { Column } from "@tanstack/react-table";
+import { Check, PlusCircle } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Command,
   CommandEmpty,
@@ -13,14 +13,14 @@ import {
   CommandItem,
   CommandList,
   CommandSeparator,
-} from '@/components/ui/command';
+} from "@/components/ui/command";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/ui/popover';
-import { Separator } from '@/components/ui/separator';
-import type { FilterOption } from './types';
+} from "@/components/ui/popover";
+import { Separator } from "@/components/ui/separator";
+import type { FilterOption } from "./types";
 
 interface DataTableFacetedFilterProps<TData, TValue> {
   column: Column<TData, TValue>;
@@ -34,7 +34,9 @@ export function DataTableFacetedFilter<TData, TValue>({
   options,
 }: DataTableFacetedFilterProps<TData, TValue>) {
   const facets = column.getFacetedUniqueValues();
-  const selectedValues = new Set(column.getFilterValue() as string[] | undefined);
+  const selectedValues = new Set(
+    column.getFilterValue() as string[] | undefined
+  );
 
   return (
     <Popover>
@@ -104,16 +106,16 @@ export function DataTableFacetedFilter<TData, TValue>({
                   >
                     <div
                       className={cn(
-                        'mr-2 flex size-4 items-center justify-center rounded-sm border border-primary',
+                        "border-primary mr-2 flex size-4 items-center justify-center rounded-sm border",
                         isSelected
-                          ? 'bg-primary text-primary-foreground'
-                          : 'opacity-50 [&_svg]:invisible'
+                          ? "bg-primary text-primary-foreground"
+                          : "opacity-50 [&_svg]:invisible"
                       )}
                     >
                       <Check className="size-4" />
                     </div>
                     {option.icon && (
-                      <option.icon className="mr-2 size-4 text-muted-foreground" />
+                      <option.icon className="text-muted-foreground mr-2 size-4" />
                     )}
                     <span>{option.label}</span>
                     {facets?.get(option.value) && (

@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { flexRender } from '@tanstack/react-table';
+import { flexRender } from "@tanstack/react-table";
 import {
   Table,
   TableBody,
@@ -8,14 +8,14 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import { cn } from '@/lib/utils';
-import type { DataTableProps } from './types';
-import { useDataTable } from './hooks/use-data-table';
-import { DataTableToolbar } from './toolbar';
-import { DataTablePagination } from './pagination';
-import { DataTableLoading } from './loading';
-import { DataTableEmptyState } from './empty-state';
+} from "@/components/ui/table";
+import { cn } from "@/lib/utils";
+import type { DataTableProps } from "./types";
+import { useDataTable } from "./hooks/use-data-table";
+import { DataTableToolbar } from "./toolbar";
+import { DataTablePagination } from "./pagination";
+import { DataTableLoading } from "./loading";
+import { DataTableEmptyState } from "./empty-state";
 
 export function DataTable<TData>(props: DataTableProps<TData>) {
   const {
@@ -41,7 +41,7 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
     return slots?.error ? (
       <slots.error error={error} />
     ) : (
-      <div className="flex flex-col items-center justify-center py-12 text-destructive">
+      <div className="text-destructive flex flex-col items-center justify-center py-12">
         <p className="text-sm">{locale?.error ?? error.message}</p>
       </div>
     );
@@ -51,7 +51,9 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
     return slots?.emptyState ? (
       <slots.emptyState />
     ) : (
-      <DataTableEmptyState {...(locale?.noResults && { message: locale.noResults })} />
+      <DataTableEmptyState
+        {...(locale?.noResults && { message: locale.noResults })}
+      />
     );
   }
 
@@ -69,7 +71,9 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
           {...(bulkActions && { bulkActions })}
           onExportCSV={exportCSV}
           onExportExcel={exportExcel}
-          {...(enabledFeatures?.columnVisibility && { showColumnToggle: enabledFeatures.columnVisibility })}
+          {...(enabledFeatures?.columnVisibility && {
+            showColumnToggle: enabledFeatures.columnVisibility,
+          })}
           {...(locale && { locale })}
         />
       )}
@@ -83,7 +87,9 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
                   <TableHead
                     key={header.id}
                     colSpan={header.colSpan}
-                    className={cn(header.column.columnDef.meta?.headerClassName)}
+                    className={cn(
+                      header.column.columnDef.meta?.headerClassName
+                    )}
                     style={
                       header.column.columnDef.meta?.width
                         ? { width: header.column.columnDef.meta.width }
@@ -105,20 +111,19 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
             {table.getRowModel().rows.map((row) => (
               <TableRow
                 key={row.id}
-                data-state={row.getIsSelected() && 'selected'}
+                data-state={row.getIsSelected() && "selected"}
               >
                 {row.getVisibleCells().map((cell) => (
                   <TableCell
                     key={cell.id}
                     className={cn(cell.column.columnDef.meta?.className, {
-                      'text-center': cell.column.columnDef.meta?.align === 'center',
-                      'text-right': cell.column.columnDef.meta?.align === 'right',
+                      "text-center":
+                        cell.column.columnDef.meta?.align === "center",
+                      "text-right":
+                        cell.column.columnDef.meta?.align === "right",
                     })}
                   >
-                    {flexRender(
-                      cell.column.columnDef.cell,
-                      cell.getContext()
-                    )}
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}
               </TableRow>

@@ -1,17 +1,20 @@
-'use client';
+"use client";
 
-import { DataTable } from '@/components/shared/data-table';
-import type { UserWithProfile } from '@/features/users/types';
-import { userColumns } from '@/features/users/table/columns';
-import { userFilters } from '@/features/users/table/filters';
-import { userBulkActions } from '@/features/users/table/bulk-actions';
+import { DataTable } from "@/components/shared/data-table";
+import type { UserWithProfile } from "@/features/users/types";
+import { userColumns } from "@/features/users/table/columns";
+import { userFilters } from "@/features/users/table/filters";
+import { userBulkActions } from "@/features/users/table/bulk-actions";
 
 interface UsersDataTableProps {
   users: UserWithProfile[];
   isLoading?: boolean;
 }
 
-export function UsersDataTable({ users, isLoading = false }: UsersDataTableProps) {
+export function UsersDataTable({
+  users,
+  isLoading = false,
+}: UsersDataTableProps) {
   return (
     <DataTable
       tableId="staff-users"
@@ -19,13 +22,13 @@ export function UsersDataTable({ users, isLoading = false }: UsersDataTableProps
       columns={userColumns}
       rowId={(row) => row.id}
       loading={isLoading}
-      search={{ keys: ['name', 'email'] }}
+      search={{ keys: ["name", "email"] }}
       filters={userFilters}
       bulkActions={userBulkActions}
       exportOptions={{
         csv: true,
         excel: true,
-        filename: 'users',
+        filename: "users",
       }}
       enabledFeatures={{
         sorting: true,
@@ -36,8 +39,8 @@ export function UsersDataTable({ users, isLoading = false }: UsersDataTableProps
         columnVisibility: true,
       }}
       locale={{
-        searchPlaceholder: 'Search users...',
-        noResults: 'No users found.',
+        searchPlaceholder: "Search users...",
+        noResults: "No users found.",
         rowsSelected: (count) => `${count} selected`,
       }}
     />

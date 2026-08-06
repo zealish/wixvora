@@ -1,19 +1,19 @@
-'use client';
+"use client";
 
-import type { Table as TanStackTable } from '@tanstack/react-table';
-import { Search } from 'lucide-react';
-import { Input } from '@/components/ui/input';
+import type { Table as TanStackTable } from "@tanstack/react-table";
+import { Search } from "lucide-react";
+import { Input } from "@/components/ui/input";
 import type {
   DataTableSearch,
   DataTableFilter,
   DataTableExportOptions,
   DataTableBulkAction,
   DataTableInstance,
-} from './types';
-import { DataTableFacetedFilter } from './faceted-filter';
-import { DataTableExportMenu } from './export-menu';
-import { DataTableViewOptions } from './view-options';
-import { DataTableBulkActions } from './bulk-actions';
+} from "./types";
+import { DataTableFacetedFilter } from "./faceted-filter";
+import { DataTableExportMenu } from "./export-menu";
+import { DataTableViewOptions } from "./view-options";
+import { DataTableBulkActions } from "./bulk-actions";
 
 interface DataTableToolbarProps<TData> {
   table: TanStackTable<TData>;
@@ -53,7 +53,9 @@ export function DataTableToolbar<TData>({
           table={table}
           instance={instance}
           actions={bulkActions}
-          {...(locale?.rowsSelected && { rowsSelectedLabel: locale.rowsSelected })}
+          {...(locale?.rowsSelected && {
+            rowsSelectedLabel: locale.rowsSelected,
+          })}
         />
       )}
 
@@ -61,15 +63,13 @@ export function DataTableToolbar<TData>({
         <div className="flex flex-1 items-center gap-2">
           {search && (
             <div className="relative">
-              <Search className="absolute left-2.5 top-2.5 size-4 text-muted-foreground" />
+              <Search className="text-muted-foreground absolute top-2.5 left-2.5 size-4" />
               <Input
                 placeholder={
-                  locale?.searchPlaceholder ?? search.placeholder ?? 'Search...'
+                  locale?.searchPlaceholder ?? search.placeholder ?? "Search..."
                 }
-                value={globalFilter ?? ''}
-                onChange={(e) =>
-                  table.setGlobalFilter(e.target.value)
-                }
+                value={globalFilter ?? ""}
+                onChange={(e) => table.setGlobalFilter(e.target.value)}
                 className="h-8 w-[150px] pl-8 lg:w-[250px]"
               />
             </div>
@@ -79,7 +79,7 @@ export function DataTableToolbar<TData>({
             const column = table.getColumn(filter.column);
             if (!column) return null;
 
-            if (filter.type === 'faceted' && filter.options) {
+            if (filter.type === "faceted" && filter.options) {
               return (
                 <DataTableFacetedFilter
                   key={filter.id}
@@ -97,8 +97,12 @@ export function DataTableToolbar<TData>({
         <div className="flex items-center gap-2">
           {exportOptions?.csv || exportOptions?.excel ? (
             <DataTableExportMenu
-              {...(exportOptions.csv !== undefined && { csv: exportOptions.csv })}
-              {...(exportOptions.excel !== undefined && { excel: exportOptions.excel })}
+              {...(exportOptions.csv !== undefined && {
+                csv: exportOptions.csv,
+              })}
+              {...(exportOptions.excel !== undefined && {
+                excel: exportOptions.excel,
+              })}
               onExportCSV={onExportCSV}
               onExportExcel={onExportExcel}
               {...(locale?.export && { labels: locale.export })}

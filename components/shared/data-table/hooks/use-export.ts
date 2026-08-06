@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useCallback } from 'react';
-import type { ColumnDef } from '@tanstack/react-table';
-import type { DataTableExportOptions, DataTableInstance } from '../types';
-import { getValue, formatExportValue } from '../utils';
+import { useCallback } from "react";
+import type { ColumnDef } from "@tanstack/react-table";
+import type { DataTableExportOptions, DataTableInstance } from "../types";
+import { getValue, formatExportValue } from "../utils";
 
 interface UseExportOptions<TData> {
   exportOptions: DataTableExportOptions<TData>;
@@ -32,7 +32,7 @@ export function useExport<TData>({
 
     // 3. Filter columns to exportable ones
     const exportableColumns = columns.filter((col) => {
-      const accessorKey = 'accessorKey' in col ? col.accessorKey : undefined;
+      const accessorKey = "accessorKey" in col ? col.accessorKey : undefined;
       const id = col.id ?? (accessorKey as string);
       if (exportOptions.excludeColumns?.includes(id)) return false;
       if (col.meta?.exportable === false) return false;
@@ -44,8 +44,8 @@ export function useExport<TData>({
       const formatted: Record<string, string | number | boolean | null> = {};
 
       exportableColumns.forEach((col) => {
-        const accessorKey = 'accessorKey' in col ? col.accessorKey : undefined;
-        const accessorFn = 'accessorFn' in col ? col.accessorFn : undefined;
+        const accessorKey = "accessorKey" in col ? col.accessorKey : undefined;
+        const accessorFn = "accessorFn" in col ? col.accessorFn : undefined;
         const id = col.id ?? (accessorKey as string);
         const label = col.meta?.label ?? id;
 
@@ -74,11 +74,11 @@ export function useExport<TData>({
   }, [exportOptions, columns, getInstance, getAllRows]);
 
   const exportCSV = useCallback(async () => {
-    const { mkConfig, generateCsv, download } = await import('export-to-csv');
+    const { mkConfig, generateCsv, download } = await import("export-to-csv");
     const data = prepareExportData();
     const csvConfig = mkConfig({
-      filename: exportOptions.filename ?? 'export',
-      fieldSeparator: ',',
+      filename: exportOptions.filename ?? "export",
+      fieldSeparator: ",",
       quoteStrings: true,
     });
     const csv = generateCsv(csvConfig)(data);
@@ -86,12 +86,12 @@ export function useExport<TData>({
   }, [prepareExportData, exportOptions.filename]);
 
   const exportExcel = useCallback(async () => {
-    const XLSX = await import('xlsx');
+    const XLSX = await import("xlsx");
     const data = prepareExportData();
     const ws = XLSX.utils.json_to_sheet(data);
     const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
-    XLSX.writeFile(wb, `${exportOptions.filename ?? 'export'}.xlsx`);
+    XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+    XLSX.writeFile(wb, `${exportOptions.filename ?? "export"}.xlsx`);
   }, [prepareExportData, exportOptions.filename]);
 
   return { exportCSV, exportExcel, prepareExportData };

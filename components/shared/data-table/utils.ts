@@ -3,7 +3,7 @@ export function getValue<T = unknown>(
   path: string
 ): T | undefined {
   if (!path) return obj as T;
-  const keys = path.split('.');
+  const keys = path.split(".");
   let result: unknown = obj;
   for (const key of keys) {
     if (result === null || result === undefined) return undefined;
@@ -14,15 +14,15 @@ export function getValue<T = unknown>(
 
 export function formatExportValue(value: unknown): string | number | boolean {
   if (value instanceof Date) {
-    return value.toISOString().split('T')[0] || '';
+    return value.toISOString().split("T")[0] || "";
   }
-  if (typeof value === 'boolean') {
-    return value ? 'Yes' : 'No';
+  if (typeof value === "boolean") {
+    return value ? "Yes" : "No";
   }
   if (value === null || value === undefined) {
-    return '';
+    return "";
   }
-  if (typeof value === 'string' || typeof value === 'number') {
+  if (typeof value === "string" || typeof value === "number") {
     return value;
   }
   return String(value);

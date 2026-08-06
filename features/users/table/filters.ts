@@ -1,22 +1,22 @@
-import type { DataTableFilter } from '@/components/shared/data-table';
+import type { DataTableFilter } from "@/components/shared/data-table";
 
 export const userFilters: DataTableFilter[] = [
   {
-    id: 'status',
-    label: 'Status',
-    type: 'faceted',
-    column: 'status',
+    id: "status",
+    label: "Status",
+    type: "faceted",
+    column: "status",
     options: [
-      { label: 'Active', value: 'ACTIVE' },
-      { label: 'Inactive', value: 'INACTIVE' },
-      { label: 'Terminated', value: 'TERMINATED' },
+      { label: "Active", value: "ACTIVE" },
+      { label: "Inactive", value: "INACTIVE" },
+      { label: "Terminated", value: "TERMINATED" },
     ],
   },
   {
-    id: 'department',
-    label: 'Department',
-    type: 'faceted',
-    column: 'department',
+    id: "department",
+    label: "Department",
+    type: "faceted",
+    column: "department",
     options: [],
   },
 ];

@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState, useEffect } from "react";
 import {
   useReactTable,
   getCoreRowModel,
@@ -10,11 +10,11 @@ import {
   getFacetedRowModel,
   getFacetedUniqueValues,
   type PaginationState,
-} from '@tanstack/react-table';
-import type { DataTableProps, DataTableInstance } from '../types';
-import { useSearch } from './use-search';
-import { useTablePersistence } from './use-table-persistence';
-import { useExport } from './use-export';
+} from "@tanstack/react-table";
+import type { DataTableProps, DataTableInstance } from "../types";
+import { useSearch } from "./use-search";
+import { useTablePersistence } from "./use-table-persistence";
+import { useExport } from "./use-export";
 
 const DEFAULT_PAGE_SIZE = 10;
 
@@ -49,21 +49,26 @@ export function useDataTable<TData>(props: DataTableProps<TData>) {
   const globalFilterFn = useSearch<TData>(search);
 
   // Internal pagination state for client-side mode
-  const [internalPagination, setInternalPagination] =
-    useState<PaginationState>({
+  const [internalPagination, setInternalPagination] = useState<PaginationState>(
+    {
       pageIndex: 0,
       pageSize: savedState.pageSize ?? DEFAULT_PAGE_SIZE,
-    });
+    }
+  );
 
   const pagination = isControlledPagination
     ? controlledPagination
     : internalPagination;
 
   const handlePaginationChange = isControlledPagination
-    ? (updaterOrValue: PaginationState | ((old: PaginationState) => PaginationState)) => {
-        const newValue = typeof updaterOrValue === 'function'
-          ? updaterOrValue(controlledPagination!)
-          : updaterOrValue;
+    ? (
+        updaterOrValue:
+          PaginationState | ((old: PaginationState) => PaginationState)
+      ) => {
+        const newValue =
+          typeof updaterOrValue === "function"
+            ? updaterOrValue(controlledPagination!)
+            : updaterOrValue;
         onPaginationChange!(newValue);
       }
     : setInternalPagination;
@@ -72,9 +77,10 @@ export function useDataTable<TData>(props: DataTableProps<TData>) {
   const handleSortingChange = isControlledSorting
     ? (updaterOrValue: unknown) => {
         const currentSorting = table?.getState().sorting ?? [];
-        const newValue = typeof updaterOrValue === 'function'
-          ? (updaterOrValue as (old: unknown) => unknown)(currentSorting)
-          : updaterOrValue;
+        const newValue =
+          typeof updaterOrValue === "function"
+            ? (updaterOrValue as (old: unknown) => unknown)(currentSorting)
+            : updaterOrValue;
         onSortingChange!(newValue as typeof currentSorting);
       }
     : undefined;
@@ -83,9 +89,10 @@ export function useDataTable<TData>(props: DataTableProps<TData>) {
   const handleColumnFiltersChange = isControlledFiltering
     ? (updaterOrValue: unknown) => {
         const currentFilters = table?.getState().columnFilters ?? [];
-        const newValue = typeof updaterOrValue === 'function'
-          ? (updaterOrValue as (old: unknown) => unknown)(currentFilters)
-          : updaterOrValue;
+        const newValue =
+          typeof updaterOrValue === "function"
+            ? (updaterOrValue as (old: unknown) => unknown)(currentFilters)
+            : updaterOrValue;
         onColumnFiltersChange!(newValue as typeof currentFilters);
       }
     : undefined;
@@ -111,7 +118,9 @@ export function useDataTable<TData>(props: DataTableProps<TData>) {
     columns,
     state: {
       pagination,
-      ...(mergedInitialState.sorting && { sorting: mergedInitialState.sorting }),
+      ...(mergedInitialState.sorting && {
+        sorting: mergedInitialState.sorting,
+      }),
       ...(mergedInitialState.columnVisibility && {
         columnVisibility: mergedInitialState.columnVisibility,
       }),
@@ -122,7 +131,9 @@ export function useDataTable<TData>(props: DataTableProps<TData>) {
     initialState: mergedInitialState,
     onPaginationChange: handlePaginationChange,
     ...(handleSortingChange && { onSortingChange: handleSortingChange }),
-    ...(handleColumnFiltersChange && { onColumnFiltersChange: handleColumnFiltersChange }),
+    ...(handleColumnFiltersChange && {
+      onColumnFiltersChange: handleColumnFiltersChange,
+    }),
     ...(onGlobalFilterChange && { onGlobalFilterChange }),
     ...(globalFilterFn && { globalFilterFn }),
     ...(getRowId && { getRowId }),

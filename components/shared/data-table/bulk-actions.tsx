@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { X } from 'lucide-react';
-import type { Table as TanStackTable } from '@tanstack/react-table';
-import { Button } from '@/components/ui/button';
-import type { DataTableBulkAction, DataTableInstance } from './types';
+import { X } from "lucide-react";
+import type { Table as TanStackTable } from "@tanstack/react-table";
+import { Button } from "@/components/ui/button";
+import type { DataTableBulkAction, DataTableInstance } from "./types";
 
 interface DataTableBulkActionsProps<TData> {
   table: TanStackTable<TData>;
@@ -23,8 +23,8 @@ export function DataTableBulkActions<TData>({
   if (selectedCount === 0) return null;
 
   return (
-    <div className="flex items-center gap-2 rounded-lg border bg-muted/50 px-3 py-2">
-      <span className="text-sm text-muted-foreground">
+    <div className="bg-muted/50 flex items-center gap-2 rounded-lg border px-3 py-2">
+      <span className="text-muted-foreground text-sm">
         {rowsSelectedLabel
           ? rowsSelectedLabel(selectedCount)
           : `${selectedCount} selected`}
@@ -33,7 +33,7 @@ export function DataTableBulkActions<TData>({
       {actions.map((action) => (
         <Button
           key={action.id}
-          variant={action.variant === 'destructive' ? 'destructive' : 'outline'}
+          variant={action.variant === "destructive" ? "destructive" : "outline"}
           size="sm"
           className="h-7"
           onClick={() => {

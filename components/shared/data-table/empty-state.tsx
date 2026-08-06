@@ -1,16 +1,16 @@
-'use client';
+"use client";
 
-import { Inbox } from 'lucide-react';
+import { Inbox } from "lucide-react";
 
 interface DataTableEmptyStateProps {
   message?: string;
 }
 
 export function DataTableEmptyState({
-  message = 'No results found.',
+  message = "No results found.",
 }: DataTableEmptyStateProps) {
   return (
-    <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+    <div className="text-muted-foreground flex flex-col items-center justify-center py-12">
       <Inbox className="mb-4 size-12" />
       <p className="text-sm">{message}</p>
     </div>

@@ -5,7 +5,7 @@ import type {
   SortingState,
   ColumnFiltersState,
   RowData,
-} from '@tanstack/react-table';
+} from "@tanstack/react-table";
 
 // String path to support nested access (e.g. 'staff.department')
 export type DataTableField = string;
@@ -51,7 +51,7 @@ export interface DataTableSearch {
 export interface DataTableFilter {
   id: string;
   label: string;
-  type: 'faceted' | 'advanced';
+  type: "faceted" | "advanced";
   column: DataTableField;
   options?: FilterOption[];
 }
@@ -66,7 +66,7 @@ export interface DataTableBulkAction<TData> {
   id: string;
   label: string;
   icon?: React.ComponentType<{ className?: string }>;
-  variant?: 'default' | 'destructive';
+  variant?: "default" | "destructive";
   onAction: (context: BulkActionContext<TData>) => void | Promise<void>;
 }
 
@@ -109,15 +109,15 @@ export interface DataTableInstance<TData> {
 }
 
 // Column meta augmentation for DataTable-specific features
-declare module '@tanstack/react-table' {
+declare module "@tanstack/react-table" {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface ColumnMeta<TData extends RowData, TValue> {
     label?: string;
-    filterVariant?: 'text' | 'select' | 'date' | 'number';
+    filterVariant?: "text" | "select" | "date" | "number";
     exportable?: boolean;
     searchable?: boolean;
     copyable?: boolean;
-    align?: 'left' | 'center' | 'right';
+    align?: "left" | "center" | "right";
     width?: number;
     className?: string;
     headerClassName?: string;

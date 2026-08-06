@@ -1,4 +1,4 @@
-export { DataTable } from './data-table';
+export { DataTable } from "./data-table";
 export type {
   DataTableProps,
   DataTableFeatures,
@@ -12,4 +12,4 @@ export type {
   DataTableSlots,
   DataTableInstance,
   DataTableField,
-} from './types';
+} from "./types";

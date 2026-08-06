@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import { Download, FileSpreadsheet, FileText } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Download, FileSpreadsheet, FileText } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from "@/components/ui/dropdown-menu";
 
 interface DataTableExportMenuProps {
   csv?: boolean;
@@ -41,13 +41,13 @@ export function DataTableExportMenu({
         {csv && (
           <DropdownMenuItem onClick={onExportCSV}>
             <FileText className="mr-2 size-4" />
-            {labels?.csv ?? 'Export CSV'}
+            {labels?.csv ?? "Export CSV"}
           </DropdownMenuItem>
         )}
         {excel && (
           <DropdownMenuItem onClick={onExportExcel}>
             <FileSpreadsheet className="mr-2 size-4" />
-            {labels?.excel ?? 'Export Excel'}
+            {labels?.excel ?? "Export Excel"}
           </DropdownMenuItem>
         )}
       </DropdownMenuContent>

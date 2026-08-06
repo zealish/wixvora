@@ -1,19 +1,21 @@
-'use client';
+"use client";
 
-import type { Column } from '@tanstack/react-table';
-import { ArrowUp, ArrowDown, ArrowUpDown, EyeOff } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
+import type { Column } from "@tanstack/react-table";
+import { ArrowUp, ArrowDown, ArrowUpDown, EyeOff } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from "@/components/ui/dropdown-menu";
 
-interface DataTableColumnHeaderProps<TData, TValue>
-  extends React.HTMLAttributes<HTMLDivElement> {
+interface DataTableColumnHeaderProps<
+  TData,
+  TValue,
+> extends React.HTMLAttributes<HTMLDivElement> {
   column: Column<TData, TValue>;
   title: string;
 }
@@ -28,19 +30,19 @@ export function DataTableColumnHeader<TData, TValue>({
   }
 
   return (
-    <div className={cn('flex items-center space-x-2', className)}>
+    <div className={cn("flex items-center space-x-2", className)}>
       <DropdownMenu>
         <DropdownMenuTrigger
           render={
             <Button
               variant="ghost"
               size="sm"
-              className="-ml-3 h-8 data-[state=open]:bg-accent"
+              className="data-[state=open]:bg-accent -ml-3 h-8"
             >
               <span>{column.columnDef.meta?.sortableLabel ?? title}</span>
-              {column.getIsSorted() === 'desc' ? (
+              {column.getIsSorted() === "desc" ? (
                 <ArrowDown className="ml-2 size-4" />
-              ) : column.getIsSorted() === 'asc' ? (
+              ) : column.getIsSorted() === "asc" ? (
                 <ArrowUp className="ml-2 size-4" />
               ) : (
                 <ArrowUpDown className="ml-2 size-4" />
@@ -50,18 +52,18 @@ export function DataTableColumnHeader<TData, TValue>({
         />
         <DropdownMenuContent align="start">
           <DropdownMenuItem onClick={() => column.toggleSorting(false)}>
-            <ArrowUp className="mr-2 size-3.5 text-muted-foreground" />
+            <ArrowUp className="text-muted-foreground mr-2 size-3.5" />
             Asc
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => column.toggleSorting(true)}>
-            <ArrowDown className="mr-2 size-3.5 text-muted-foreground" />
+            <ArrowDown className="text-muted-foreground mr-2 size-3.5" />
             Desc
           </DropdownMenuItem>
           {column.getCanHide() && (
             <>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => column.toggleVisibility(false)}>
-                <EyeOff className="mr-2 size-3.5 text-muted-foreground" />
+                <EyeOff className="text-muted-foreground mr-2 size-3.5" />
                 Hide
               </DropdownMenuItem>
             </>
