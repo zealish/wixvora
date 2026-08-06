@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import {
   LayoutDashboardIcon,
   GlobeIcon,
-  UserIcon,
+  UserCheck,
   UsersIcon,
   ShieldIcon,
   FileTextIcon,
@@ -28,7 +28,7 @@ import type { NavGroup } from "@/config/navigation";
 const iconMap = {
   LayoutDashboard: LayoutDashboardIcon,
   Globe: GlobeIcon,
-  User: UserIcon,
+  UserCheck: UserCheck,
   Users: UsersIcon,
   Shield: ShieldIcon,
   FileText: FileTextIcon,
