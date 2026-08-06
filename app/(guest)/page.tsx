@@ -1,5 +1,7 @@
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth/session";
+import { Navbar } from "@/components/landing/navbar";
+import { HeroSection } from "@/components/landing/hero-section";
 
 export default async function HomePage() {
   const session = await getSession();
@@ -13,13 +15,9 @@ export default async function HomePage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center">
-      <div className="space-y-4 text-center">
-        <h1 className="text-4xl font-bold">Welcome to Wixvora</h1>
-        <p className="text-muted-foreground">
-          Your business management platform
-        </p>
-      </div>
-    </div>
+    <>
+      <Navbar />
+      <HeroSection />
+    </>
   );
 }
