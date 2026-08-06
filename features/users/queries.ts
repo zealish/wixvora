@@ -74,6 +74,49 @@ export async function getAllClientUsers(): Promise<UserWithProfile[]> {
   }));
 }
 
+export async function getStaffUserById(
+  id: string
+): Promise<UserWithProfile | null> {
+  const result = await db
+    .select({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      accountType: user.accountType,
+      createdAt: user.createdAt,
+      staffId: staffs.id,
+      department: staffs.department,
+      position: staffs.position,
+      employmentStatus: staffs.employmentStatus,
+    })
+    .from(user)
+    .leftJoin(staffs, eq(user.id, staffs.userId))
+    .where(eq(user.id, id))
+    .limit(1);
+
+  if (result.length === 0) return null;
+
+  const row = result[0]!;
+  return {
+    id: row.id,
+    name: row.name,
+    email: row.email,
+    accountType: row.accountType as "CLIENT" | "STAFF",
+    createdAt: row.createdAt,
+    staff: row.staffId
+      ? {
+          id: row.staffId,
+          department: row.department,
+          position: row.position,
+          employmentStatus: row.employmentStatus as
+            | "ACTIVE"
+            | "INACTIVE"
+            | "TERMINATED",
+        }
+      : null,
+  };
+}
+
 export async function getAllRoles() {
   return await db
     .select({

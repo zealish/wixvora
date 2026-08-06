@@ -66,3 +66,47 @@ export async function createStaffWithRoles(
 
   return { userId: result.user.id, staffId: staff.id };
 }
+
+export async function updateStaffProfile(data: {
+  id: string;
+  name: string;
+  email: string;
+  department?: string;
+  position?: string;
+  employmentStatus: "ACTIVE" | "INACTIVE" | "TERMINATED";
+}): Promise<void> {
+  const [existingUser] = await db
+    .select()
+    .from(user)
+    .where(eq(user.id, data.id))
+    .limit(1);
+
+  if (!existingUser) {
+    throw new Error("User not found");
+  }
+
+  await db
+    .update(user)
+    .set({
+      name: data.name,
+      email: data.email,
+    })
+    .where(eq(user.id, data.id));
+
+  const [existingStaff] = await db
+    .select()
+    .from(staffs)
+    .where(eq(staffs.userId, data.id))
+    .limit(1);
+
+  if (existingStaff) {
+    await db
+      .update(staffs)
+      .set({
+        department: data.department,
+        position: data.position,
+        employmentStatus: data.employmentStatus,
+      })
+      .where(eq(staffs.userId, data.id));
+  }
+}

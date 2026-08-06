@@ -16,7 +16,9 @@ import { DataTableColumnHeader } from "@/components/shared/data-table/column-hea
 import { MoreHorizontal, Eye, Pencil, Trash2 } from "lucide-react";
 import Link from "next/link";
 
-export const staffColumns: ColumnDef<UserWithProfile, unknown>[] = [
+export const createStaffColumns = (
+  onViewStaff: (staff: UserWithProfile) => void
+): ColumnDef<UserWithProfile, unknown>[] => [
   {
     id: "select",
     header: ({ table }) => (
@@ -146,6 +148,7 @@ export const staffColumns: ColumnDef<UserWithProfile, unknown>[] = [
     enableHiding: false,
     cell: ({ row }) => {
       const u = row.original;
+
       return (
         <DropdownMenu>
           <DropdownMenuTrigger
@@ -157,9 +160,7 @@ export const staffColumns: ColumnDef<UserWithProfile, unknown>[] = [
             }
           />
           <DropdownMenuContent align="end">
-            <DropdownMenuItem
-              render={<Link href={`/staff/staffs/${u.id}`} />}
-            >
+            <DropdownMenuItem onClick={() => onViewStaff(u)}>
               <Eye className="mr-2 size-4" />
               View
             </DropdownMenuItem>
@@ -172,7 +173,7 @@ export const staffColumns: ColumnDef<UserWithProfile, unknown>[] = [
             <DropdownMenuSeparator />
             <DropdownMenuItem
               variant="destructive"
-              onSelect={() => {
+              onClick={() => {
                 console.log("Delete user:", u.id);
               }}
             >
