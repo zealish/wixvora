@@ -128,3 +128,112 @@
     @apply font-sans;
   }
 }
+
+/* Landing Page Custom Utilities */
+@layer utilities {
+  /* Animation delays for staggered entrances */
+  .animation-delay-100 {
+    animation-delay: 100ms;
+  }
+  
+  .animation-delay-200 {
+    animation-delay: 200ms;
+  }
+  
+  .animation-delay-300 {
+    animation-delay: 300ms;
+  }
+}
+
+/* Landing page animations */
+@layer components {
+  /* Floating animation for decorative elements */
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-20px);
+    }
+  }
+
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  /* Pulse glow for CTA buttons */
+  @keyframes pulse-glow {
+    0%, 100% {
+      box-shadow: 0 0 20px rgba(147, 51, 234, 0.3);
+    }
+    50% {
+      box-shadow: 0 0 40px rgba(147, 51, 234, 0.5);
+    }
+  }
+
+  .animate-pulse-glow {
+    animation: pulse-glow 3s ease-in-out infinite;
+  }
+
+  /* Floating background shapes animations */
+  @keyframes floatSlow {
+    0%, 100% { 
+      transform: translateY(0px) rotate(0deg); 
+    }
+    50% { 
+      transform: translateY(-12px) rotate(3deg); 
+    }
+  }
+
+  @keyframes pulseSoft {
+    0%, 100% { 
+      opacity: 0.6; 
+      transform: scale(1); 
+    }
+    50% { 
+      opacity: 0.85; 
+      transform: scale(1.05); 
+    }
+  }
+
+  .animate-pulse-soft {
+    animation: pulseSoft 8s ease-in-out infinite;
+  }
+
+  /* Landing page gradient text */
+  .text-gradient {
+    background: linear-gradient(135deg, #4F46E5 0%, #3B82F6 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Builder selection box */
+  .builder-selection-box {
+    position: relative;
+    outline: 2px solid #6366f1;
+    outline-offset: 4px;
+  }
+
+  .builder-handle {
+    width: 7px;
+    height: 7px;
+    background-color: #ffffff;
+    border: 2px solid #6366f1;
+    border-radius: 2px;
+    position: absolute;
+  }
+
+  /* Range slider custom styling */
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #4F46E5;
+    cursor: pointer;
+    border: 2px solid #ffffff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  }
+}
