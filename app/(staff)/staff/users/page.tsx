@@ -1,10 +1,12 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import { UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { authorize, AuthorizationError } from "@/lib/auth/authorize";
 import { PERMISSIONS } from "@/lib/auth/permissions";
 import { getAllStaffUsers } from "@/features/users/queries";
 import { UserTable } from "./components/user-table";
+import { PageHeader } from "@/components/shared/page-header";
 
 export default async function UsersPage() {
   try {
@@ -20,12 +22,18 @@ export default async function UsersPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Staff Users</h1>
-        <Link href="/staff/users/create">
-          <Button>Create Staff</Button>
-        </Link>
-      </div>
+      <PageHeader
+        title="Staff Users"
+        description="Manage staff accounts, roles, and permissions"
+        actions={
+          <Link href="/staff/users/create">
+            <Button>
+              <UserPlus />
+              Create Staff
+            </Button>
+          </Link>
+        }
+      />
 
       <UserTable users={users} />
     </div>
