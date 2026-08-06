@@ -20,7 +20,7 @@ export function useExport<TData>({
 }: UseExportOptions<TData>) {
   const prepareExportData = useCallback(() => {
     // 1. Get rows (selected or all)
-    let rows: TData[] = exportOptions.onlySelected
+    const rows: TData[] = exportOptions.onlySelected
       ? getInstance().getSelectedRows()
       : getAllRows();
 

@@ -8,10 +8,9 @@ import { getValue } from '../utils';
 export function useSearch<TData>(
   search?: DataTableSearch
 ): FilterFn<TData> | undefined {
-  if (!search) return undefined;
-
   const globalFilterFn: FilterFn<TData> = useCallback(
     (row, _columnId, filterValue) => {
+      if (!search) return true;
       if (!filterValue || typeof filterValue !== 'string') return true;
       const searchLower = filterValue.toLowerCase();
       return search.keys.some((key) => {
@@ -24,8 +23,10 @@ export function useSearch<TData>(
           .includes(searchLower);
       });
     },
-    [search.keys]
+    [search]
   );
+
+  if (!search) return undefined;
 
   return globalFilterFn;
 }
