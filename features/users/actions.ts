@@ -44,7 +44,7 @@ export async function createStaffAction(
       },
     });
 
-    revalidatePath("/staff/users");
+    revalidatePath("/staff/staffs");
 
     return { success: true };
   } catch (error) {

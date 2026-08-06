@@ -1,8 +1,21 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
   allowedDevOrigins: ["192.168.1.7"],
+  async redirects() {
+    return [
+      {
+        source: "/staff/users",
+        destination: "/staff/staffs",
+        permanent: true,
+      },
+      {
+        source: "/staff/users/create",
+        destination: "/staff/staffs/create",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

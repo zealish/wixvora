@@ -41,10 +41,16 @@ export const staffNavGroups: NavGroup[] = [
     icon: "Settings",
     items: [
       {
-        title: "Users",
-        href: "/staff/users",
+        title: "Staffs",
+        href: "/staff/staffs",
         icon: "Users",
         permission: PERMISSIONS.USERS_VIEW,
+      },
+      {
+        title: "Clients",
+        href: "/staff/clients",
+        icon: "UserCheck",
+        permission: PERMISSIONS.CLIENTS_VIEW,
       },
       {
         title: "Roles",
