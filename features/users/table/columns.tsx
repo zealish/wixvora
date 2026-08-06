@@ -3,7 +3,17 @@
 import type { ColumnDef } from "@tanstack/react-table";
 import type { UserWithProfile } from "@/features/users/types";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { DataTableColumnHeader } from "@/components/shared/data-table/column-header";
+import { MoreHorizontal, Eye, Pencil, Trash2 } from "lucide-react";
+import Link from "next/link";
 
 export const userColumns: ColumnDef<UserWithProfile, unknown>[] = [
   {
@@ -85,6 +95,56 @@ export const userColumns: ColumnDef<UserWithProfile, unknown>[] = [
       filterVariant: "select",
       exportable: true,
       align: "center",
+    },
+  },
+  {
+    id: "actions",
+    header: "Actions",
+    enableSorting: false,
+    enableHiding: false,
+    cell: ({ row }) => {
+      const user = row.original;
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger
+            render={
+              <Button variant="ghost" size="icon-sm">
+                <span className="sr-only">Open menu</span>
+                <MoreHorizontal className="size-4" />
+              </Button>
+            }
+          />
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem
+              render={<Link href={`/staff/users/${user.id}`} />}
+            >
+              <Eye className="mr-2 size-4" />
+              View
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              render={<Link href={`/staff/users/${user.id}/edit`} />}
+            >
+              <Pencil className="mr-2 size-4" />
+              Edit
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              variant="destructive"
+              onSelect={() => {
+                // TODO: integrate with server action
+                console.log("Delete user:", user.id);
+              }}
+            >
+              <Trash2 className="mr-2 size-4" />
+              Delete
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      );
+    },
+    meta: {
+      exportable: false,
+      className: "w-[50px]",
     },
   },
 ];
