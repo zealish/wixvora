@@ -55,7 +55,7 @@ export function AppSidebar({
           <Link href={brandHref} className="truncate text-lg font-bold">
             {brandName}
           </Link>
-          <SidebarTrigger />
+          <SidebarTrigger className="hidden md:flex" />
         </div>
       </SidebarHeader>
       <SidebarContent>
