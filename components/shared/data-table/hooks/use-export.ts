@@ -80,6 +80,7 @@ export function useExport<TData>({
       filename: exportOptions.filename ?? "export",
       fieldSeparator: ",",
       quoteStrings: true,
+      useKeysAsHeaders: true,
     });
     const csv = generateCsv(csvConfig)(data);
     download(csvConfig)(csv);
