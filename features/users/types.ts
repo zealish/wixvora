@@ -10,6 +10,13 @@ export interface UserWithProfile {
     position: string | null;
     employmentStatus: "ACTIVE" | "INACTIVE" | "TERMINATED";
   } | null;
+  client?: {
+    id: string;
+    displayName: string | null;
+    companyName: string | null;
+    phone: string | null;
+    status: "ACTIVE" | "SUSPENDED" | "INACTIVE";
+  } | null;
 }
 
 export type UserActionResult =
