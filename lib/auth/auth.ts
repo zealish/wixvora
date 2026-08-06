@@ -6,7 +6,7 @@ import {
   sendEmail,
   getVerificationEmailTemplate,
   getPasswordResetEmailTemplate,
-} from "@/lib/email";
+} from "@/lib/mail";
 import { eq } from "drizzle-orm";
 
 export const auth = betterAuth({
@@ -28,7 +28,7 @@ export const auth = betterAuth({
         to: user.email,
         subject: template.subject,
         html: template.html,
-        text: template.text,
+        ...(template.text && { text: template.text }),
       });
     },
   },
@@ -40,7 +40,7 @@ export const auth = betterAuth({
         to: user.email,
         subject: template.subject,
         html: template.html,
-        text: template.text,
+        ...(template.text && { text: template.text }),
       });
     },
     autoSignInAfterVerification: true,
