@@ -6,11 +6,10 @@ export interface ClientProfile {
   phone: string | null;
   timezone: string | null;
   locale: string | null;
-  status: 'ACTIVE' | 'SUSPENDED' | 'INACTIVE';
+  status: "ACTIVE" | "SUSPENDED" | "INACTIVE";
   createdAt: Date;
   updatedAt: Date;
 }
 
 export type ClientActionResult =
-  | { success: true }
-  | { success: false; error: string };
+  { success: true } | { success: false; error: string };

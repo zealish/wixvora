@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { useState, useTransition } from 'react';
-import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { createStaffAction } from '@/features/users/actions';
+import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { createStaffAction } from "@/features/users/actions";
 
 interface Role {
   id: string;
@@ -38,11 +38,11 @@ export function UserForm({ roles }: UserFormProps) {
 
     const formData = new FormData(e.currentTarget);
     const data = {
-      email: formData.get('email') as string,
-      password: formData.get('password') as string,
-      name: formData.get('name') as string,
-      department: formData.get('department') as string,
-      position: formData.get('position') as string,
+      email: formData.get("email") as string,
+      password: formData.get("password") as string,
+      name: formData.get("name") as string,
+      department: formData.get("department") as string,
+      position: formData.get("position") as string,
       roleIds: selectedRoles,
     };
 
@@ -54,7 +54,7 @@ export function UserForm({ roles }: UserFormProps) {
         return;
       }
 
-      router.push('/staff/users');
+      router.push("/staff/users");
       router.refresh();
     });
   };
@@ -62,7 +62,7 @@ export function UserForm({ roles }: UserFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {error && (
-        <div className="rounded-md bg-destructive/15 p-3 text-sm text-destructive">
+        <div className="bg-destructive/15 text-destructive rounded-md p-3 text-sm">
           {error}
         </div>
       )}
@@ -107,7 +107,10 @@ export function UserForm({ roles }: UserFormProps) {
               <label htmlFor={`role-${role.id}`} className="text-sm">
                 {role.name}
                 {role.description && (
-                  <span className="text-muted-foreground"> - {role.description}</span>
+                  <span className="text-muted-foreground">
+                    {" "}
+                    - {role.description}
+                  </span>
                 )}
               </label>
             </div>
@@ -116,13 +119,16 @@ export function UserForm({ roles }: UserFormProps) {
       </div>
 
       <div className="flex gap-4">
-        <Button type="submit" disabled={isPending || selectedRoles.length === 0}>
-          {isPending ? 'Creating...' : 'Create Staff'}
+        <Button
+          type="submit"
+          disabled={isPending || selectedRoles.length === 0}
+        >
+          {isPending ? "Creating..." : "Create Staff"}
         </Button>
         <Button
           type="button"
           variant="outline"
-          onClick={() => router.push('/staff/users')}
+          onClick={() => router.push("/staff/users")}
           disabled={isPending}
         >
           Cancel

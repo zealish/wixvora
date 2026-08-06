@@ -95,73 +95,73 @@ features/users/table/
 
 ```tsx
 <DataTable
-    tableId="users"
-    data={users}
-    columns={userColumns}
-    rowId={(row) => row.id}
-    loading={isLoading}
-    error={error}
-    initialState={{
-        sorting: [{ id: "createdAt", desc: true }],
-        columnVisibility: { email: true, phone: false },
-    }}
-    enabledFeatures={{
-        sorting: true,
-        filtering: true,
-        pagination: true,
-        export: true,
-        rowSelection: true,
-        columnVisibility: true,
-    }}
-    search={{
-        keys: ["name", "email"],
-    }}
-    filters={userFilters}
-    bulkActions={[archiveAction, deleteAction, assignRoleAction]}
-    exportOptions={{
-        csv: true,
-        excel: true,
-        filename: "users",
-    }}
-    pagination={pagination}
-    pageCount={pageCount}
-    onPaginationChange={setPagination}
-    locale={{
-        searchPlaceholder: "Search users...",
-        noResults: "No users found.",
-        rowsSelected: (count) => `${count} selected`,
-    }}
-    slots={{
-        emptyState: UsersEmptyState,
-        loading: UsersLoading,
-    }}
+  tableId="users"
+  data={users}
+  columns={userColumns}
+  rowId={(row) => row.id}
+  loading={isLoading}
+  error={error}
+  initialState={{
+    sorting: [{ id: "createdAt", desc: true }],
+    columnVisibility: { email: true, phone: false },
+  }}
+  enabledFeatures={{
+    sorting: true,
+    filtering: true,
+    pagination: true,
+    export: true,
+    rowSelection: true,
+    columnVisibility: true,
+  }}
+  search={{
+    keys: ["name", "email"],
+  }}
+  filters={userFilters}
+  bulkActions={[archiveAction, deleteAction, assignRoleAction]}
+  exportOptions={{
+    csv: true,
+    excel: true,
+    filename: "users",
+  }}
+  pagination={pagination}
+  pageCount={pageCount}
+  onPaginationChange={setPagination}
+  locale={{
+    searchPlaceholder: "Search users...",
+    noResults: "No users found.",
+    rowsSelected: (count) => `${count} selected`,
+  }}
+  slots={{
+    emptyState: UsersEmptyState,
+    loading: UsersLoading,
+  }}
 />
 ```
 
 ### Props Reference
 
-| Prop | Type | Required | Description |
-|------|------|----------|-------------|
-| `tableId` | `string` | Yes | Unique identifier for state persistence |
-| `data` | `TData[]` | Yes | Array of data objects |
-| `columns` | `ColumnDef<TData>[]` | Yes | TanStack column definitions |
-| `rowId` | `(row: TData) => string` | No | Custom row identifier function |
-| `loading` | `boolean` | No | Shows loading state |
-| `error` | `Error \| null` | No | Shows error state |
-| `initialState` | `Partial<InitialTableState>` | No | Default sort, visibility, etc. |
-| `enabledFeatures` | `Partial<DataTableFeatures>` | No | Feature toggles |
-| `search` | `DataTableSearch` | No | Multi-column global search config |
-| `filters` | `DataTableFilter[]` | No | Faceted and advanced filters |
-| `bulkActions` | `DataTableBulkAction<TData>[]` | No | Multi-select actions |
-| `exportOptions` | `DataTableExportOptions<TData>` | No | CSV/Excel export config |
-| `pagination` | `PaginationState` | No | Controlled pagination (server-side) |
-| `pageCount` | `number` | No | Total pages (server-side) |
-| `onPaginationChange` | `(p: PaginationState) => void` | No | Pagination change handler |
-| `onSortingChange` | `(s: SortingState) => void` | No | Server-side sorting handler |
-| `onColumnFiltersChange` | `(f: ColumnFiltersState) => void` | No | Server-side filter handler |
-| `onGlobalFilterChange` | `(f: string) => void` | No | Server-side global filter handler |
-| `locale` | `DataTableLocale` | No | i18n strings |
-| `slots` | `DataTableSlots<TData>` | No | Custom render overrides |
+| Prop                    | Type                              | Required | Description                             |
+| ----------------------- | --------------------------------- | -------- | --------------------------------------- |
+| `tableId`               | `string`                          | Yes      | Unique identifier for state persistence |
+| `data`                  | `TData[]`                         | Yes      | Array of data objects                   |
+| `columns`               | `ColumnDef<TData>[]`              | Yes      | TanStack column definitions             |
+| `rowId`                 | `(row: TData) => string`          | No       | Custom row identifier function          |
+| `loading`               | `boolean`                         | No       | Shows loading state                     |
+| `error`                 | `Error \| null`                   | No       | Shows error state                       |
+| `initialState`          | `Partial<InitialTableState>`      | No       | Default sort, visibility, etc.          |
+| `enabledFeatures`       | `Partial<DataTableFeatures>`      | No       | Feature toggles                         |
+| `search`                | `DataTableSearch`                 | No       | Multi-column global search config       |
+| `filters`               | `DataTableFilter[]`               | No       | Faceted and advanced filters            |
+| `bulkActions`           | `DataTableBulkAction<TData>[]`    | No       | Multi-select actions                    |
+| `exportOptions`         | `DataTableExportOptions<TData>`   | No       | CSV/Excel export config                 |
+| `pagination`            | `PaginationState`                 | No       | Controlled pagination (server-side)     |
+| `pageCount`             | `number`                          | No       | Total pages (server-side)               |
+| `onPaginationChange`    | `(p: PaginationState) => void`    | No       | Pagination change handler               |
+| `onSortingChange`       | `(s: SortingState) => void`       | No       | Server-side sorting handler             |
+| `onColumnFiltersChange` | `(f: ColumnFiltersState) => void` | No       | Server-side filter handler              |
+| `onGlobalFilterChange`  | `(f: string) => void`             | No       | Server-side global filter handler       |
+| `locale`                | `DataTableLocale`                 | No       | i18n strings                            |
+| `slots`                 | `DataTableSlots<TData>`           | No       | Custom render overrides                 |
 
 ---
 
@@ -171,136 +171,136 @@ features/users/table/
 
 ```typescript
 import type {
-    ColumnDef,
-    InitialTableState,
-    PaginationState,
-    SortingState,
-    ColumnFiltersState,
-    FilterFn,
-} from '@tanstack/react-table';
+  ColumnDef,
+  InitialTableState,
+  PaginationState,
+  SortingState,
+  ColumnFiltersState,
+  FilterFn,
+} from "@tanstack/react-table";
 
 // String path to support nested access (e.g. 'staff.department').
 // Could be replaced with DeepKeyOf<T> for stricter typing later.
 export type DataTableField = string;
 
 export interface DataTableProps<TData> {
-    tableId: string;
-    data: TData[];
-    columns: ColumnDef<TData>[];
-    rowId?: (row: TData) => string;
-    loading?: boolean;
-    error?: Error | null;
-    initialState?: Partial<InitialTableState>;
-    enabledFeatures?: Partial<DataTableFeatures>;
-    search?: DataTableSearch;
-    filters?: DataTableFilter[];
-    bulkActions?: DataTableBulkAction<TData>[];
-    exportOptions?: DataTableExportOptions<TData>;
-    pagination?: PaginationState;
-    pageCount?: number;
-    onPaginationChange?: (pagination: PaginationState) => void;
-    onSortingChange?: (sorting: SortingState) => void;
-    onColumnFiltersChange?: (filters: ColumnFiltersState) => void;
-    onGlobalFilterChange?: (filter: string) => void;
-    locale?: DataTableLocale;
-    slots?: DataTableSlots<TData>;
+  tableId: string;
+  data: TData[];
+  columns: ColumnDef<TData>[];
+  rowId?: (row: TData) => string;
+  loading?: boolean;
+  error?: Error | null;
+  initialState?: Partial<InitialTableState>;
+  enabledFeatures?: Partial<DataTableFeatures>;
+  search?: DataTableSearch;
+  filters?: DataTableFilter[];
+  bulkActions?: DataTableBulkAction<TData>[];
+  exportOptions?: DataTableExportOptions<TData>;
+  pagination?: PaginationState;
+  pageCount?: number;
+  onPaginationChange?: (pagination: PaginationState) => void;
+  onSortingChange?: (sorting: SortingState) => void;
+  onColumnFiltersChange?: (filters: ColumnFiltersState) => void;
+  onGlobalFilterChange?: (filter: string) => void;
+  locale?: DataTableLocale;
+  slots?: DataTableSlots<TData>;
 }
 
 export interface DataTableFeatures {
-    sorting: boolean;
-    filtering: boolean;
-    pagination: boolean;
-    export: boolean;
-    rowSelection: boolean;
-    columnVisibility: boolean;
+  sorting: boolean;
+  filtering: boolean;
+  pagination: boolean;
+  export: boolean;
+  rowSelection: boolean;
+  columnVisibility: boolean;
 }
 
 export interface DataTableSearch {
-    keys: DataTableField[];
-    placeholder?: string;
-    debounce?: number;
+  keys: DataTableField[];
+  placeholder?: string;
+  debounce?: number;
 }
 
 export interface DataTableFilter {
-    id: string;
-    label: string;
-    type: 'faceted' | 'advanced';
-    column: DataTableField;
-    options?: FilterOption[];
+  id: string;
+  label: string;
+  type: "faceted" | "advanced";
+  column: DataTableField;
+  options?: FilterOption[];
 }
 
 export interface FilterOption {
-    label: string;
-    value: string;
-    icon?: React.ComponentType<{ className?: string }>;
+  label: string;
+  value: string;
+  icon?: React.ComponentType<{ className?: string }>;
 }
 
 export interface DataTableBulkAction<TData> {
-    id: string;
-    label: string;
-    icon?: React.ComponentType<{ className?: string }>;
-    variant?: 'default' | 'destructive';
-    onAction: (context: BulkActionContext<TData>) => void | Promise<void>;
+  id: string;
+  label: string;
+  icon?: React.ComponentType<{ className?: string }>;
+  variant?: "default" | "destructive";
+  onAction: (context: BulkActionContext<TData>) => void | Promise<void>;
 }
 
 export interface BulkActionContext<TData> {
-    rows: TData[];
-    table: DataTableInstance<TData>;
+  rows: TData[];
+  table: DataTableInstance<TData>;
 }
 
 export interface DataTableExportOptions<TData> {
-    csv?: boolean;
-    excel?: boolean;
-    filename?: string;
-    excludeColumns?: string[];
-    onlySelected?: boolean;
-    transform?: (row: TData) => unknown;
+  csv?: boolean;
+  excel?: boolean;
+  filename?: string;
+  excludeColumns?: string[];
+  onlySelected?: boolean;
+  transform?: (row: TData) => unknown;
 }
 
 export interface DataTableLocale {
-    searchPlaceholder?: string;
-    noResults?: string;
-    rowsSelected?: (count: number) => string;
-    loading?: string;
-    error?: string;
-    export?: {
-        csv?: string;
-        excel?: string;
-    };
+  searchPlaceholder?: string;
+  noResults?: string;
+  rowsSelected?: (count: number) => string;
+  loading?: string;
+  error?: string;
+  export?: {
+    csv?: string;
+    excel?: string;
+  };
 }
 
 export interface DataTableSlots<TData> {
-    emptyState?: React.ComponentType;
-    loading?: React.ComponentType;
-    error?: React.ComponentType<{ error: Error }>;
-    toolbar?: React.ComponentType<{ table: DataTableInstance<TData> }>;
+  emptyState?: React.ComponentType;
+  loading?: React.ComponentType;
+  error?: React.ComponentType<{ error: Error }>;
+  toolbar?: React.ComponentType<{ table: DataTableInstance<TData> }>;
 }
 
 export interface DataTableInstance<TData> {
-    getSelectedRows: () => TData[];
-    resetRowSelection: () => void;
+  getSelectedRows: () => TData[];
+  resetRowSelection: () => void;
 }
 ```
 
 ### Column Meta Extension
 
 ```typescript
-declare module '@tanstack/react-table' {
-    interface ColumnMeta<TData, TValue> {
-        label?: string;
-        filterVariant?: 'text' | 'select' | 'date' | 'number';
-        exportable?: boolean;
-        searchable?: boolean;
-        copyable?: boolean;
-        align?: 'left' | 'center' | 'right';
-        width?: number;
-        className?: string;
-        headerClassName?: string;
-        sortableLabel?: string;
-        tooltip?: string;
-        truncate?: boolean;
-        exportFormatter?: (value: unknown) => string | number | boolean | null;
-    }
+declare module "@tanstack/react-table" {
+  interface ColumnMeta<TData, TValue> {
+    label?: string;
+    filterVariant?: "text" | "select" | "date" | "number";
+    exportable?: boolean;
+    searchable?: boolean;
+    copyable?: boolean;
+    align?: "left" | "center" | "right";
+    width?: number;
+    className?: string;
+    headerClassName?: string;
+    sortableLabel?: string;
+    tooltip?: string;
+    truncate?: boolean;
+    exportFormatter?: (value: unknown) => string | number | boolean | null;
+  }
 }
 ```
 
@@ -385,16 +385,17 @@ The DataTable renders one state at a time, in fixed priority:
 The only hook that instantiates TanStack Table.
 
 **Responsibilities:**
+
 - Initialize TanStack Table with proper config
 - Detect client-side vs server-side via paired props (`pagination + onPaginationChange`)
 - Expose minimal `DataTableInstance` interface
 - Delegate persistence, search, export to sub-hooks
 
 **Server-side detection:**
+
 ```typescript
 const isControlledPagination =
-    pagination !== undefined &&
-    onPaginationChange !== undefined;
+  pagination !== undefined && onPaginationChange !== undefined;
 ```
 
 **Global search** uses TanStack's `globalFilterFn` — no manual filtering pipeline.
@@ -402,17 +403,20 @@ const isControlledPagination =
 ### `useTablePersistence` Hook
 
 **Responsibilities:**
+
 - Load persisted state from `localStorage` on mount
 - Save state changes (debounced at 500ms)
 - Handle SSR safety (`typeof window === 'undefined'` guard)
 - Support versioned storage keys for safe migration
 
 **Storage key format:**
+
 ```
 datatable:v1:{tableId}
 ```
 
 **Persisted state:**
+
 - Column visibility
 - Sorting
 - Column sizing
@@ -424,6 +428,7 @@ datatable:v1:{tableId}
 ### `useSearch` Hook
 
 **Responsibilities:**
+
 - Return a `globalFilterFn` compatible with TanStack Table
 - Support multi-column search via `search.keys[]`
 - Use `getValue()` utility for nested field access (dot notation)
@@ -433,6 +438,7 @@ datatable:v1:{tableId}
 ### `useExport` Hook
 
 **Export pipeline:**
+
 ```
 rows
     ↓
@@ -450,11 +456,13 @@ CSV / Excel
 ```
 
 **Exposed methods:**
+
 - `exportCSV()`
 - `exportExcel()`
 - `prepareExportData()` — for testing
 
 **Dependencies:**
+
 - `export-to-csv` for CSV
 - `xlsx` for Excel
 
@@ -462,14 +470,14 @@ CSV / Excel
 
 ```typescript
 export function getValue<T = unknown>(obj: any, path: string): T | undefined {
-    if (!path) return obj;
-    const keys = path.split('.');
-    let result = obj;
-    for (const key of keys) {
-        if (result === null || result === undefined) return undefined;
-        result = result[key];
-    }
-    return result as T;
+  if (!path) return obj;
+  const keys = path.split(".");
+  let result = obj;
+  for (const key of keys) {
+    if (result === null || result === undefined) return undefined;
+    result = result[key];
+  }
+  return result as T;
 }
 ```
 
@@ -496,6 +504,7 @@ All sorting, filtering, pagination, and search happen in memory via TanStack Tab
 ### Server-side Mode (controlled)
 
 Activated when both `pagination` and `onPaginationChange` are provided. The DataTable defers to the parent for:
+
 - Pagination (`manualPagination: true`)
 - Sorting (`manualSorting: true`, via `onSortingChange`)
 - Filtering (`manualFiltering: true`, via `onColumnFiltersChange`)
@@ -513,13 +522,13 @@ State is persisted to `localStorage` keyed by `datatable:v1:{tableId}`. SSR-safe
 
 Each feature (users, clients, etc.) creates a `table/` directory with:
 
-| File | Purpose |
-|------|---------|
-| `columns.tsx` | `ColumnDef<TData>[]` definitions |
-| `filters.ts` | `DataTableFilter[]` definitions |
+| File               | Purpose                                    |
+| ------------------ | ------------------------------------------ |
+| `columns.tsx`      | `ColumnDef<TData>[]` definitions           |
+| `filters.ts`       | `DataTableFilter[]` definitions            |
 | `bulk-actions.tsx` | `DataTableBulkAction<TData>[]` definitions |
-| `toolbar.tsx` | Custom toolbar (optional) |
-| `index.ts` | Re-exports |
+| `toolbar.tsx`      | Custom toolbar (optional)                  |
+| `index.ts`         | Re-exports                                 |
 
 The feature then creates a wrapper component:
 
@@ -573,11 +582,11 @@ export function UsersDataTable({ users, isLoading }: UsersDataTableProps) {
 
 ### New npm packages
 
-| Package | Purpose | Size |
-|---------|---------|------|
-| `@tanstack/react-table` | Table engine (headless) | ~40KB |
-| `export-to-csv` | CSV export | ~5KB |
-| `xlsx` | Excel export | ~350KB |
+| Package                 | Purpose                 | Size   |
+| ----------------------- | ----------------------- | ------ |
+| `@tanstack/react-table` | Table engine (headless) | ~40KB  |
+| `export-to-csv`         | CSV export              | ~5KB   |
+| `xlsx`                  | Excel export            | ~350KB |
 
 ### Existing dependencies (reused)
 
@@ -646,35 +655,35 @@ Apply the same pattern to roles, clients, and any future tables.
 
 ### Shared DataTable (`components/shared/data-table/`)
 
-| File | Lines (est.) |
-|------|-------------|
-| `index.ts` | 5 |
-| `types.ts` | 120 |
-| `utils.ts` | 20 |
-| `data-table.tsx` | 80 |
-| `toolbar.tsx` | 60 |
-| `pagination.tsx` | 80 |
-| `column-header.tsx` | 50 |
-| `view-options.tsx` | 60 |
-| `faceted-filter.tsx` | 90 |
-| `advanced-filter.tsx` | 100 |
-| `bulk-actions.tsx` | 60 |
-| `export-menu.tsx` | 50 |
-| `loading.tsx` | 30 |
-| `empty-state.tsx` | 25 |
-| `hooks/use-data-table.ts` | 70 |
-| `hooks/use-table-persistence.ts` | 50 |
-| `hooks/use-export.ts` | 80 |
-| `hooks/use-search.ts` | 25 |
+| File                             | Lines (est.) |
+| -------------------------------- | ------------ |
+| `index.ts`                       | 5            |
+| `types.ts`                       | 120          |
+| `utils.ts`                       | 20           |
+| `data-table.tsx`                 | 80           |
+| `toolbar.tsx`                    | 60           |
+| `pagination.tsx`                 | 80           |
+| `column-header.tsx`              | 50           |
+| `view-options.tsx`               | 60           |
+| `faceted-filter.tsx`             | 90           |
+| `advanced-filter.tsx`            | 100          |
+| `bulk-actions.tsx`               | 60           |
+| `export-menu.tsx`                | 50           |
+| `loading.tsx`                    | 30           |
+| `empty-state.tsx`                | 25           |
+| `hooks/use-data-table.ts`        | 70           |
+| `hooks/use-table-persistence.ts` | 50           |
+| `hooks/use-export.ts`            | 80           |
+| `hooks/use-search.ts`            | 25           |
 
 ### Feature: Users (`features/users/table/`)
 
-| File | Lines (est.) |
-|------|-------------|
-| `index.ts` | 3 |
-| `columns.tsx` | 60 |
-| `filters.ts` | 30 |
-| `bulk-actions.tsx` | 40 |
-| `toolbar.tsx` | 20 |
+| File               | Lines (est.) |
+| ------------------ | ------------ |
+| `index.ts`         | 3            |
+| `columns.tsx`      | 60           |
+| `filters.ts`       | 30           |
+| `bulk-actions.tsx` | 40           |
+| `toolbar.tsx`      | 20           |
 
 **Total estimated:** ~1,100 lines

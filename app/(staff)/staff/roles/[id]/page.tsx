@@ -1,8 +1,8 @@
-import { authorize } from '@/lib/auth/authorize';
-import { PERMISSIONS } from '@/lib/auth/permissions';
-import { redirect, notFound } from 'next/navigation';
-import { getRoleById, getAllPermissions } from '@/features/roles/service';
-import { RolePermissionForm } from './components/role-permission-form';
+import { authorize } from "@/lib/auth/authorize";
+import { PERMISSIONS } from "@/lib/auth/permissions";
+import { redirect, notFound } from "next/navigation";
+import { getRoleById, getAllPermissions } from "@/features/roles/service";
+import { RolePermissionForm } from "./components/role-permission-form";
 
 export default async function RoleDetailPage({
   params,
@@ -12,7 +12,7 @@ export default async function RoleDetailPage({
   try {
     await authorize(PERMISSIONS.ROLES_MANAGE);
   } catch {
-    redirect('/staff/access-denied');
+    redirect("/staff/access-denied");
   }
 
   const { id } = await params;
@@ -27,11 +27,11 @@ export default async function RoleDetailPage({
 
   return (
     <div className="container mx-auto py-8">
-      <h1 className="text-3xl font-bold mb-2">{role.name}</h1>
+      <h1 className="mb-2 text-3xl font-bold">{role.name}</h1>
       <p className="text-muted-foreground mb-6">
         {role.description || role.code}
       </p>
-      
+
       <RolePermissionForm
         roleId={role.id}
         rolePermissions={role.permissions}

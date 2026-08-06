@@ -1,12 +1,12 @@
-'use server';
+"use server";
 
-import { authorize } from '@/lib/auth/authorize';
-import { PERMISSIONS } from '@/lib/auth/permissions';
-import { requireSession } from '@/lib/auth/session';
-import { createAuditLog } from '@/features/audit/service';
-import { updateRolePermissionsSchema } from './validation';
-import { updateRolePermissions } from './service';
-import type { RoleActionResult } from './types';
+import { authorize } from "@/lib/auth/authorize";
+import { PERMISSIONS } from "@/lib/auth/permissions";
+import { requireSession } from "@/lib/auth/session";
+import { createAuditLog } from "@/features/audit/service";
+import { updateRolePermissionsSchema } from "./validation";
+import { updateRolePermissions } from "./service";
+import type { RoleActionResult } from "./types";
 
 export async function updateRolePermissionsAction(
   input: unknown
@@ -24,8 +24,8 @@ export async function updateRolePermissionsAction(
 
     await createAuditLog({
       userId: session.user.id,
-      action: 'role.permissions.update',
-      entity: 'role',
+      action: "role.permissions.update",
+      entity: "role",
       entityId: validatedInput.roleId,
       metadata: {
         permissionIds: validatedInput.permissionIds,
@@ -36,7 +36,8 @@ export async function updateRolePermissionsAction(
   } catch (error) {
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Failed to update permissions',
+      error:
+        error instanceof Error ? error.message : "Failed to update permissions",
     };
   }
 }

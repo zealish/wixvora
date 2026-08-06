@@ -1,9 +1,11 @@
-import { db } from '@/lib/db';
-import { roles, rolePermissions } from '@/lib/db/schema';
-import { eq, isNull } from 'drizzle-orm';
-import type { RoleWithPermissions } from './types';
+import { db } from "@/lib/db";
+import { roles, rolePermissions } from "@/lib/db/schema";
+import { eq, isNull } from "drizzle-orm";
+import type { RoleWithPermissions } from "./types";
 
-export async function getRolesWithPermissions(): Promise<RoleWithPermissions[]> {
+export async function getRolesWithPermissions(): Promise<
+  RoleWithPermissions[]
+> {
   const rolesList = await db.query.roles.findMany({
     where: isNull(roles.deletedAt),
     with: {
@@ -34,7 +36,9 @@ export async function getRolesWithPermissions(): Promise<RoleWithPermissions[]> 
   }));
 }
 
-export async function getRoleById(roleId: string): Promise<RoleWithPermissions | null> {
+export async function getRoleById(
+  roleId: string
+): Promise<RoleWithPermissions | null> {
   const role = await db.query.roles.findFirst({
     where: eq(roles.id, roleId),
     with: {

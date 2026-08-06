@@ -1,11 +1,11 @@
-import { betterAuth } from 'better-auth';
-import { drizzleAdapter } from 'better-auth/adapters/drizzle';
-import { db } from '@/lib/db';
-import { user, session, account, verification } from '@/lib/db/schema/auth';
+import { betterAuth } from "better-auth";
+import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { db } from "@/lib/db";
+import { user, session, account, verification } from "@/lib/db/schema/auth";
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
-    provider: 'pg',
+    provider: "pg",
     schema: {
       user,
       session,
@@ -19,7 +19,7 @@ export const auth = betterAuth({
   user: {
     additionalFields: {
       accountType: {
-        type: 'string',
+        type: "string",
         required: true,
         input: true,
         returned: true,
@@ -33,5 +33,5 @@ export const auth = betterAuth({
   },
   trustedOrigins: process.env.BETTER_AUTH_URL
     ? [process.env.BETTER_AUTH_URL]
-    : ['http://localhost:3000'],
+    : ["http://localhost:3000"],
 });

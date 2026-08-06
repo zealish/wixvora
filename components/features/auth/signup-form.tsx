@@ -1,13 +1,20 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { registerClient } from '@/features/auth/actions';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import Link from 'next/link';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { registerClient } from "@/features/auth/actions";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import Link from "next/link";
 
 export function SignupForm() {
   const router = useRouter();
@@ -21,16 +28,16 @@ export function SignupForm() {
 
     const formData = new FormData(e.currentTarget);
     const data = {
-      name: formData.get('name') as string,
-      email: formData.get('email') as string,
-      password: formData.get('password') as string,
-      companyName: formData.get('companyName') as string || undefined,
+      name: formData.get("name") as string,
+      email: formData.get("email") as string,
+      password: formData.get("password") as string,
+      companyName: (formData.get("companyName") as string) || undefined,
     };
 
     const result = await registerClient(data);
 
     if (result.success) {
-      router.push('/verify-email');
+      router.push("/verify-email");
     } else {
       setError(result.error);
       setLoading(false);
@@ -46,7 +53,7 @@ export function SignupForm() {
       <form onSubmit={handleSubmit}>
         <CardContent className="space-y-4">
           {error && (
-            <div className="p-3 text-sm text-red-600 bg-red-50 rounded-md">
+            <div className="rounded-md bg-red-50 p-3 text-sm text-red-600">
               {error}
             </div>
           )}
@@ -96,10 +103,10 @@ export function SignupForm() {
         </CardContent>
         <CardFooter className="flex flex-col space-y-4">
           <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? 'Creating account...' : 'Sign up'}
+            {loading ? "Creating account..." : "Sign up"}
           </Button>
-          <p className="text-sm text-center text-muted-foreground">
-            Already have an account?{' '}
+          <p className="text-muted-foreground text-center text-sm">
+            Already have an account?{" "}
             <Link href="/login" className="text-primary hover:underline">
               Log in
             </Link>

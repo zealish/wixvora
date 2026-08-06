@@ -1,4 +1,4 @@
-export type AccountType = 'CLIENT' | 'STAFF';
+export type AccountType = "CLIENT" | "STAFF";
 
 export interface AppUser {
   id: string;

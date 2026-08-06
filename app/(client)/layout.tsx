@@ -5,10 +5,6 @@ const inter = Inter({
   variable: "--font-inter",
 });
 
-export default function ClientLayoutWrapper({ children }: LayoutProps<'/'>) {
-  return (
-    <div className={inter.className}>
-      {children}
-    </div>
-  );
+export default function ClientLayoutWrapper({ children }: LayoutProps<"/">) {
+  return <div className={inter.className}>{children}</div>;
 }

@@ -1,7 +1,7 @@
-import { db } from '@/lib/db';
-import { user, staffs, roles } from '@/lib/db/schema';
-import { eq, isNull } from 'drizzle-orm';
-import type { UserWithProfile } from './types';
+import { db } from "@/lib/db";
+import { user, staffs, roles } from "@/lib/db/schema";
+import { eq, isNull } from "drizzle-orm";
+import type { UserWithProfile } from "./types";
 
 export async function getAllStaffUsers(): Promise<UserWithProfile[]> {
   const staffUsers = await db
@@ -18,20 +18,21 @@ export async function getAllStaffUsers(): Promise<UserWithProfile[]> {
     })
     .from(user)
     .leftJoin(staffs, eq(user.id, staffs.userId))
-    .where(eq(user.accountType, 'STAFF'));
+    .where(eq(user.accountType, "STAFF"));
 
   return staffUsers.map((row) => ({
     id: row.id,
     name: row.name,
     email: row.email,
-    accountType: row.accountType as 'CLIENT' | 'STAFF',
+    accountType: row.accountType as "CLIENT" | "STAFF",
     createdAt: row.createdAt,
     staff: row.staffId
       ? {
           id: row.staffId,
           department: row.department,
           position: row.position,
-          employmentStatus: row.employmentStatus as 'ACTIVE' | 'INACTIVE' | 'TERMINATED',
+          employmentStatus: row.employmentStatus as
+            "ACTIVE" | "INACTIVE" | "TERMINATED",
         }
       : null,
   }));

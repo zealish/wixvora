@@ -12,6 +12,7 @@ Add Inter font to staff and client layout sections while preserving Geist fonts 
 The application currently uses Geist and Geist Mono fonts globally via the root layout. Staff and client sections need distinct typography using the Inter font, while guest and auth sections continue using Geist.
 
 Current layout hierarchy:
+
 - `app/layout.tsx` (root) - defines Geist and Geist Mono
 - `app/(staff)/layout.tsx` - wrapper for staff routes
 - `app/(client)/layout.tsx` - wrapper for client routes
@@ -35,6 +36,7 @@ Import Inter from `next/font/google` in both `(staff)/layout.tsx` and `(client)/
 ### Implementation Details
 
 **File: `app/(staff)/layout.tsx`**
+
 - Import `Inter` from `next/font/google`
 - Configure with latin subset
 - Create CSS variable `--font-inter`
@@ -42,11 +44,13 @@ Import Inter from `next/font/google` in both `(staff)/layout.tsx` and `(client)/
 - Add `font-sans` Tailwind class to use Inter as the sans-serif font
 
 **File: `app/(client)/layout.tsx`**
+
 - Same implementation as staff layout
 - Import and configure Inter independently
 - Apply to children via wrapper div
 
 **TypeScript:**
+
 - Both files already have correct `LayoutProps` typing
 - No type changes needed
 
@@ -57,12 +61,14 @@ The wrapper div will apply the Inter CSS variable, which cascades to all child c
 ### Font Loading
 
 Inter will be loaded twice (once per layout), but Next.js optimizes font loading with:
+
 - Automatic subsetting
 - Self-hosting via `next/font`
 - Preloading
 - Zero layout shift
 
 The duplicate load is acceptable because:
+
 1. Different route groups may have different font requirements
 2. Next.js deduplicates identical font requests
 3. Performance impact is negligible with modern font optimization

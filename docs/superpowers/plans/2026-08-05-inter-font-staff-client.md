@@ -21,10 +21,12 @@
 ## File Structure
 
 **Files to Modify:**
+
 - `app/(staff)/layout.tsx` - Add Inter font import and wrapper div
 - `app/(client)/layout.tsx` - Add Inter font import and wrapper div
 
 **Files Not Modified:**
+
 - `app/layout.tsx` - Root layout unchanged
 - `app/globals.css` - No CSS changes needed
 
@@ -33,15 +35,18 @@
 ### Task 1: Add Inter Font to Staff Layout
 
 **Files:**
+
 - Modify: `app/(staff)/layout.tsx`
 
 **Interfaces:**
+
 - Consumes: `LayoutProps` type (already defined)
 - Produces: Staff layout with Inter font applied to all child routes
 
 - [ ] **Step 1: Read current staff layout**
 
 Run: Read the file to understand current structure
+
 ```bash
 cat app/\(staff\)/layout.tsx
 ```
@@ -99,15 +104,18 @@ git commit -m "feat: add Inter font to staff layout"
 ### Task 2: Add Inter Font to Client Layout
 
 **Files:**
+
 - Modify: `app/(client)/layout.tsx`
 
 **Interfaces:**
+
 - Consumes: `LayoutProps` type (already defined)
 - Produces: Client layout with Inter font applied to all child routes
 
 - [ ] **Step 1: Read current client layout**
 
 Run: Read the file to understand current structure
+
 ```bash
 cat app/\(client\)/layout.tsx
 ```
@@ -164,9 +172,11 @@ git commit -m "feat: add Inter font to client layout"
 ### Task 3: Visual Verification
 
 **Files:**
+
 - None (verification only)
 
 **Interfaces:**
+
 - Consumes: Completed staff and client layouts with Inter font
 - Produces: Verified font rendering across all route groups
 
@@ -206,6 +216,7 @@ Expected: No errors or warnings, successful build
 - [ ] **Step 6: Final commit (if any fixes were needed)**
 
 If any issues were found and fixed:
+
 ```bash
 git add .
 git commit -m "fix: address font rendering issues"
@@ -218,6 +229,7 @@ Otherwise, verification complete - no commit needed.
 ## Self-Review Checklist
 
 **Spec coverage:**
+
 - ✅ Staff routes use Inter font (Task 1)
 - ✅ Client routes use Inter font (Task 2)
 - ✅ Guest/auth routes preserve Geist (Task 3)
@@ -225,12 +237,14 @@ Otherwise, verification complete - no commit needed.
 - ✅ Next.js font optimization (automatic via next/font/google)
 
 **Placeholder scan:**
+
 - ✅ No TBD/TODO items
 - ✅ All code blocks complete
 - ✅ All commands have expected output
 - ✅ Exact file paths provided
 
 **Type consistency:**
+
 - ✅ `LayoutProps<'/'>` used consistently
 - ✅ `inter` variable name consistent
 - ✅ `--font-inter` CSS variable consistent

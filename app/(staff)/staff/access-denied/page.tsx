@@ -1,10 +1,16 @@
-import Link from 'next/link';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import Link from "next/link";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 export default function AccessDeniedPage() {
   return (
-    <div className="flex items-center justify-center min-h-[60vh]">
+    <div className="flex min-h-[60vh] items-center justify-center">
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle>Access Denied</CardTitle>
@@ -13,8 +19,9 @@ export default function AccessDeniedPage() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <p className="text-sm text-muted-foreground">
-            If you believe you should have access to this page, please contact your administrator.
+          <p className="text-muted-foreground text-sm">
+            If you believe you should have access to this page, please contact
+            your administrator.
           </p>
           <Link href="/staff">
             <Button>Return to Dashboard</Button>

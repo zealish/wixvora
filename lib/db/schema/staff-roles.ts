@@ -1,24 +1,27 @@
-import { pgTable, timestamp, uuid, unique } from 'drizzle-orm/pg-core';
-import { relations } from 'drizzle-orm';
-import { staffs } from './staffs';
-import { roles } from './roles';
-import { user } from './auth';
+import { pgTable, timestamp, uuid, unique } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm";
+import { staffs } from "./staffs";
+import { roles } from "./roles";
+import { user } from "./auth";
 
 export const staffRoles = pgTable(
-  'staff_roles',
+  "staff_roles",
   {
-    id: uuid('id').primaryKey().defaultRandom(),
-    staffId: uuid('staff_id')
+    id: uuid("id").primaryKey().defaultRandom(),
+    staffId: uuid("staff_id")
       .notNull()
-      .references(() => staffs.id, { onDelete: 'cascade' }),
-    roleId: uuid('role_id')
+      .references(() => staffs.id, { onDelete: "cascade" }),
+    roleId: uuid("role_id")
       .notNull()
-      .references(() => roles.id, { onDelete: 'cascade' }),
-    assignedAt: timestamp('assigned_at').notNull().defaultNow(),
-    assignedBy: uuid('assigned_by').references(() => user.id),
+      .references(() => roles.id, { onDelete: "cascade" }),
+    assignedAt: timestamp("assigned_at").notNull().defaultNow(),
+    assignedBy: uuid("assigned_by").references(() => user.id),
   },
   (table) => ({
-    staffRoleUnique: unique('staff_role_unique').on(table.staffId, table.roleId),
+    staffRoleUnique: unique("staff_role_unique").on(
+      table.staffId,
+      table.roleId
+    ),
   })
 );
 

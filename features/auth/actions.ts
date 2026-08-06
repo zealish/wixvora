@@ -1,13 +1,13 @@
-'use server';
+"use server";
 
-import { db } from '@/lib/db';
-import { user } from '@/lib/db/schema/auth';
-import { clients } from '@/lib/db/schema/clients';
-import { auth } from '@/lib/auth/auth';
-import { createAuditLog } from '@/features/audit/service';
-import { signupSchema } from './validation';
-import type { AuthResult } from './types';
-import { eq } from 'drizzle-orm';
+import { db } from "@/lib/db";
+import { user } from "@/lib/db/schema/auth";
+import { clients } from "@/lib/db/schema/clients";
+import { auth } from "@/lib/auth/auth";
+import { createAuditLog } from "@/features/audit/service";
+import { signupSchema } from "./validation";
+import type { AuthResult } from "./types";
+import { eq } from "drizzle-orm";
 
 export async function registerClient(data: unknown): Promise<AuthResult> {
   try {
@@ -20,7 +20,7 @@ export async function registerClient(data: unknown): Promise<AuthResult> {
       .limit(1);
 
     if (existingUser.length > 0) {
-      return { success: false, error: 'Email already registered' };
+      return { success: false, error: "Email already registered" };
     }
 
     const result = await auth.api.signUpEmail({
@@ -32,12 +32,12 @@ export async function registerClient(data: unknown): Promise<AuthResult> {
     });
 
     if (!result || !result.user) {
-      return { success: false, error: 'Failed to create account' };
+      return { success: false, error: "Failed to create account" };
     }
 
     await db
       .update(user)
-      .set({ accountType: 'CLIENT' })
+      .set({ accountType: "CLIENT" })
       .where(eq(user.id, result.user.id));
 
     await db.insert(clients).values({
@@ -48,8 +48,8 @@ export async function registerClient(data: unknown): Promise<AuthResult> {
 
     await createAuditLog({
       userId: result.user.id,
-      action: 'CLIENT_REGISTERED',
-      entity: 'user',
+      action: "CLIENT_REGISTERED",
+      entity: "user",
       entityId: result.user.id,
       metadata: { email: validated.email },
     });
@@ -59,6 +59,6 @@ export async function registerClient(data: unknown): Promise<AuthResult> {
     if (error instanceof Error) {
       return { success: false, error: error.message };
     }
-    return { success: false, error: 'An unexpected error occurred' };
+    return { success: false, error: "An unexpected error occurred" };
   }
 }

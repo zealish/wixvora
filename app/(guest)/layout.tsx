@@ -1,6 +1,6 @@
-import Link from 'next/link';
+import Link from "next/link";
 
-export default function GuestLayout({ children }: LayoutProps<'/'>) {
+export default function GuestLayout({ children }: LayoutProps<"/">) {
   return (
     <div className="flex min-h-screen flex-col">
       <header className="border-b">
@@ -12,7 +12,10 @@ export default function GuestLayout({ children }: LayoutProps<'/'>) {
             <Link href="/login" className="text-sm font-medium hover:underline">
               Login
             </Link>
-            <Link href="/signup" className="text-sm font-medium hover:underline">
+            <Link
+              href="/signup"
+              className="text-sm font-medium hover:underline"
+            >
               Sign Up
             </Link>
           </nav>
@@ -20,7 +23,7 @@ export default function GuestLayout({ children }: LayoutProps<'/'>) {
       </header>
       <main className="flex-1">{children}</main>
       <footer className="border-t py-6">
-        <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
+        <div className="text-muted-foreground container mx-auto px-4 text-center text-sm">
           © {new Date().getFullYear()} Wixvora. All rights reserved.
         </div>
       </footer>

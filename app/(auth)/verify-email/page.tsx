@@ -1,5 +1,11 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import Link from 'next/link';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import Link from "next/link";
 
 export default function VerifyEmailPage() {
   return (
@@ -12,16 +18,17 @@ export default function VerifyEmailPage() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <p className="text-sm text-muted-foreground">
-            Please check your email and click the verification link to activate your account.
+          <p className="text-muted-foreground text-sm">
+            Please check your email and click the verification link to activate
+            your account.
           </p>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             If you don&apos;t see the email, check your spam folder.
           </p>
           <div className="pt-4">
             <Link
               href="/login"
-              className="text-sm text-primary hover:underline"
+              className="text-primary text-sm hover:underline"
             >
               Return to login
             </Link>

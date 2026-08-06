@@ -1,15 +1,15 @@
-import { redirect } from 'next/navigation';
-import { authorize, AuthorizationError } from '@/lib/auth/authorize';
-import { PERMISSIONS } from '@/lib/auth/permissions';
-import { getAllRoles } from '@/features/users/queries';
-import { UserForm } from '../components/user-form';
+import { redirect } from "next/navigation";
+import { authorize, AuthorizationError } from "@/lib/auth/authorize";
+import { PERMISSIONS } from "@/lib/auth/permissions";
+import { getAllRoles } from "@/features/users/queries";
+import { UserForm } from "../components/user-form";
 
 export default async function CreateUserPage() {
   try {
     await authorize(PERMISSIONS.USERS_CREATE);
   } catch (error) {
     if (error instanceof AuthorizationError) {
-      redirect('/staff/access-denied');
+      redirect("/staff/access-denied");
     }
     throw error;
   }

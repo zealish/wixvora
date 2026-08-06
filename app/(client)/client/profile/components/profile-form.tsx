@@ -1,12 +1,18 @@
-'use client';
+"use client";
 
-import { useState, useTransition } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { updateClientProfile } from '@/features/clients/actions';
-import type { ClientProfile } from '@/features/clients/types';
+import { useState, useTransition } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { updateClientProfile } from "@/features/clients/actions";
+import type { ClientProfile } from "@/features/clients/types";
 
 interface ProfileFormProps {
   profile: ClientProfile;
@@ -24,11 +30,11 @@ export function ProfileForm({ profile }: ProfileFormProps) {
 
     const formData = new FormData(e.currentTarget);
     const data = {
-      displayName: formData.get('displayName') as string,
-      companyName: formData.get('companyName') as string,
-      phone: formData.get('phone') as string,
-      timezone: formData.get('timezone') as string,
-      locale: formData.get('locale') as string,
+      displayName: formData.get("displayName") as string,
+      companyName: formData.get("companyName") as string,
+      phone: formData.get("phone") as string,
+      timezone: formData.get("timezone") as string,
+      locale: formData.get("locale") as string,
     };
 
     startTransition(async () => {
@@ -39,7 +45,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
         return;
       }
 
-      setSuccess('Profile updated successfully');
+      setSuccess("Profile updated successfully");
     });
   };
 
@@ -54,7 +60,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
           {error && (
-            <div className="rounded-md bg-destructive/15 p-3 text-sm text-destructive">
+            <div className="bg-destructive/15 text-destructive rounded-md p-3 text-sm">
               {error}
             </div>
           )}
@@ -70,7 +76,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
             <Input
               id="displayName"
               name="displayName"
-              defaultValue={profile.displayName || ''}
+              defaultValue={profile.displayName || ""}
             />
           </div>
 
@@ -79,7 +85,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
             <Input
               id="companyName"
               name="companyName"
-              defaultValue={profile.companyName || ''}
+              defaultValue={profile.companyName || ""}
             />
           </div>
 
@@ -89,7 +95,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
               id="phone"
               name="phone"
               type="tel"
-              defaultValue={profile.phone || ''}
+              defaultValue={profile.phone || ""}
             />
           </div>
 
@@ -98,7 +104,7 @@ export function ProfileForm({ profile }: ProfileFormProps) {
             <Input
               id="timezone"
               name="timezone"
-              defaultValue={profile.timezone || ''}
+              defaultValue={profile.timezone || ""}
               placeholder="e.g., America/New_York"
             />
           </div>
@@ -108,13 +114,13 @@ export function ProfileForm({ profile }: ProfileFormProps) {
             <Input
               id="locale"
               name="locale"
-              defaultValue={profile.locale || ''}
+              defaultValue={profile.locale || ""}
               placeholder="e.g., en-US"
             />
           </div>
 
           <Button type="submit" disabled={isPending}>
-            {isPending ? 'Saving...' : 'Save Changes'}
+            {isPending ? "Saving..." : "Save Changes"}
           </Button>
         </form>
       </CardContent>

@@ -28,47 +28,48 @@
 
 ### Shared DataTable (`components/shared/data-table/`)
 
-| File | Purpose |
-|------|---------|
-| `types.ts` | Public type definitions, column meta augmentation |
-| `utils.ts` | `getValue()` utility for nested field access |
-| `hooks/use-search.ts` | Returns `globalFilterFn` for TanStack |
-| `hooks/use-table-persistence.ts` | localStorage read/write with debouncing |
-| `hooks/use-export.ts` | CSV and Excel export pipeline |
-| `hooks/use-data-table.ts` | Orchestrator — initializes TanStack Table |
-| `column-header.tsx` | Sortable column header component |
-| `view-options.tsx` | Column visibility toggle dropdown |
-| `faceted-filter.tsx` | Checkbox-based filter component |
-| `export-menu.tsx` | CSV/Excel export dropdown |
-| `bulk-actions.tsx` | Multi-select action bar |
-| `toolbar.tsx` | Search input + filters + export + view options |
-| `pagination.tsx` | Page controls + rows-per-page selector |
-| `loading.tsx` | Skeleton loading state |
-| `empty-state.tsx` | No data state |
-| `data-table.tsx` | Public `<DataTable>` component |
-| `index.ts` | Public exports |
+| File                             | Purpose                                           |
+| -------------------------------- | ------------------------------------------------- |
+| `types.ts`                       | Public type definitions, column meta augmentation |
+| `utils.ts`                       | `getValue()` utility for nested field access      |
+| `hooks/use-search.ts`            | Returns `globalFilterFn` for TanStack             |
+| `hooks/use-table-persistence.ts` | localStorage read/write with debouncing           |
+| `hooks/use-export.ts`            | CSV and Excel export pipeline                     |
+| `hooks/use-data-table.ts`        | Orchestrator — initializes TanStack Table         |
+| `column-header.tsx`              | Sortable column header component                  |
+| `view-options.tsx`               | Column visibility toggle dropdown                 |
+| `faceted-filter.tsx`             | Checkbox-based filter component                   |
+| `export-menu.tsx`                | CSV/Excel export dropdown                         |
+| `bulk-actions.tsx`               | Multi-select action bar                           |
+| `toolbar.tsx`                    | Search input + filters + export + view options    |
+| `pagination.tsx`                 | Page controls + rows-per-page selector            |
+| `loading.tsx`                    | Skeleton loading state                            |
+| `empty-state.tsx`                | No data state                                     |
+| `data-table.tsx`                 | Public `<DataTable>` component                    |
+| `index.ts`                       | Public exports                                    |
 
 ### Feature: Users (`features/users/table/`)
 
-| File | Purpose |
-|------|---------|
-| `columns.tsx` | `ColumnDef<UserWithProfile>[]` definitions |
-| `filters.ts` | `DataTableFilter[]` definitions |
+| File               | Purpose                                              |
+| ------------------ | ---------------------------------------------------- |
+| `columns.tsx`      | `ColumnDef<UserWithProfile>[]` definitions           |
+| `filters.ts`       | `DataTableFilter[]` definitions                      |
 | `bulk-actions.tsx` | `DataTableBulkAction<UserWithProfile>[]` definitions |
-| `index.ts` | Re-exports |
+| `index.ts`         | Re-exports                                           |
 
 ### Feature: Users Page Integration
 
-| File | Action |
-|------|--------|
-| `app/(staff)/staff/users/components/user-table.tsx` | Replace with `<UsersDataTable>` |
-| `app/(staff)/staff/users/components/users-data-table.tsx` | New wrapper component |
+| File                                                      | Action                          |
+| --------------------------------------------------------- | ------------------------------- |
+| `app/(staff)/staff/users/components/user-table.tsx`       | Replace with `<UsersDataTable>` |
+| `app/(staff)/staff/users/components/users-data-table.tsx` | New wrapper component           |
 
 ---
 
 ### Task 1: Install Dependencies and Add Missing Shadcn Components
 
 **Files:**
+
 - Modify: `package.json`
 
 - [ ] **Step 1: Install npm dependencies**
@@ -108,10 +109,12 @@ git commit -m "chore: add tanstack/react-table, export-to-csv, xlsx, and shadcn 
 ### Task 2: Create Types and Utilities
 
 **Files:**
+
 - Create: `components/shared/data-table/types.ts`
 - Create: `components/shared/data-table/utils.ts`
 
 **Produces:**
+
 - All public type interfaces used by every subsequent task
 - `getValue()` utility used by `use-search.ts` and `use-export.ts`
 
@@ -129,7 +132,7 @@ import type {
   ColumnFiltersState,
   FilterFn,
   Table as TanStackTable,
-} from '@tanstack/react-table';
+} from "@tanstack/react-table";
 
 // String path to support nested access (e.g. 'staff.department')
 export type DataTableField = string;
@@ -175,7 +178,7 @@ export interface DataTableSearch {
 export interface DataTableFilter {
   id: string;
   label: string;
-  type: 'faceted' | 'advanced';
+  type: "faceted" | "advanced";
   column: DataTableField;
   options?: FilterOption[];
 }
@@ -190,7 +193,7 @@ export interface DataTableBulkAction<TData> {
   id: string;
   label: string;
   icon?: React.ComponentType<{ className?: string }>;
-  variant?: 'default' | 'destructive';
+  variant?: "default" | "destructive";
   onAction: (context: BulkActionContext<TData>) => void | Promise<void>;
 }
 
@@ -233,15 +236,15 @@ export interface DataTableInstance<TData> {
 }
 
 // Column meta augmentation for DataTable-specific features
-declare module '@tanstack/react-table' {
+declare module "@tanstack/react-table" {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface ColumnMeta<TData, TValue> {
     label?: string;
-    filterVariant?: 'text' | 'select' | 'date' | 'number';
+    filterVariant?: "text" | "select" | "date" | "number";
     exportable?: boolean;
     searchable?: boolean;
     copyable?: boolean;
-    align?: 'left' | 'center' | 'right';
+    align?: "left" | "center" | "right";
     width?: number;
     className?: string;
     headerClassName?: string;
@@ -263,7 +266,7 @@ export function getValue<T = unknown>(
   path: string
 ): T | undefined {
   if (!path) return obj as T;
-  const keys = path.split('.');
+  const keys = path.split(".");
   let result: unknown = obj;
   for (const key of keys) {
     if (result === null || result === undefined) return undefined;
@@ -276,13 +279,13 @@ export function formatExportValue(
   value: unknown
 ): string | number | boolean | null {
   if (value instanceof Date) {
-    return value.toISOString().split('T')[0];
+    return value.toISOString().split("T")[0];
   }
-  if (typeof value === 'boolean') {
-    return value ? 'Yes' : 'No';
+  if (typeof value === "boolean") {
+    return value ? "Yes" : "No";
   }
   if (value === null || value === undefined) {
-    return '';
+    return "";
   }
   return value as string | number | boolean;
 }
@@ -308,6 +311,7 @@ git commit -m "feat: add DataTable types and utilities"
 ### Task 3: Create Hooks — use-search and use-table-persistence
 
 **Files:**
+
 - Create: `components/shared/data-table/hooks/use-search.ts`
 - Create: `components/shared/data-table/hooks/use-table-persistence.ts`
 
@@ -319,10 +323,10 @@ git commit -m "feat: add DataTable types and utilities"
 Create `components/shared/data-table/hooks/use-search.ts`:
 
 ```typescript
-import { useCallback } from 'react';
-import type { FilterFn } from '@tanstack/react-table';
-import type { DataTableSearch } from '../types';
-import { getValue } from '../utils';
+import { useCallback } from "react";
+import type { FilterFn } from "@tanstack/react-table";
+import type { DataTableSearch } from "../types";
+import { getValue } from "../utils";
 
 export function useSearch<TData>(
   search?: DataTableSearch
@@ -331,14 +335,11 @@ export function useSearch<TData>(
 
   const globalFilterFn: FilterFn<TData> = useCallback(
     (row, _columnId, filterValue) => {
-      if (!filterValue || typeof filterValue !== 'string') return true;
+      if (!filterValue || typeof filterValue !== "string") return true;
       const searchLower = filterValue.toLowerCase();
       return search.keys.some((key) => {
-        const value = getValue(
-          row.original as Record<string, unknown>,
-          key
-        );
-        return String(value ?? '')
+        const value = getValue(row.original as Record<string, unknown>, key);
+        return String(value ?? "")
           .toLowerCase()
           .includes(searchLower);
       });
@@ -355,10 +356,15 @@ export function useSearch<TData>(
 Create `components/shared/data-table/hooks/use-table-persistence.ts`:
 
 ```typescript
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import type { SortingState, ColumnFiltersState, VisibilityState, ColumnSizingState } from '@tanstack/react-table';
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import type {
+  SortingState,
+  ColumnFiltersState,
+  VisibilityState,
+  ColumnSizingState,
+} from "@tanstack/react-table";
 
-const STORAGE_VERSION = 'v1';
+const STORAGE_VERSION = "v1";
 
 interface PersistedTableState {
   sorting?: SortingState;
@@ -389,7 +395,7 @@ export function useTablePersistence(tableId: string) {
   const storageKey = `datatable:${STORAGE_VERSION}:${tableId}`;
 
   const savedState = useMemo((): PersistedTableState => {
-    if (typeof window === 'undefined') return {};
+    if (typeof window === "undefined") return {};
     try {
       const stored = localStorage.getItem(storageKey);
       return stored ? (JSON.parse(stored) as PersistedTableState) : {};
@@ -400,11 +406,11 @@ export function useTablePersistence(tableId: string) {
 
   const debouncedSave = useRef(
     debounce((state: PersistedTableState) => {
-      if (typeof window === 'undefined') return;
+      if (typeof window === "undefined") return;
       try {
         localStorage.setItem(storageKey, JSON.stringify(state));
       } catch (error) {
-        console.warn('Failed to persist table state:', error);
+        console.warn("Failed to persist table state:", error);
       }
     }, 500)
   );
@@ -415,12 +421,9 @@ export function useTablePersistence(tableId: string) {
     };
   }, []);
 
-  const saveState = useCallback(
-    (state: PersistedTableState) => {
-      debouncedSave.current(state);
-    },
-    []
-  );
+  const saveState = useCallback((state: PersistedTableState) => {
+    debouncedSave.current(state);
+  }, []);
 
   return { savedState, saveState };
 }
@@ -446,6 +449,7 @@ git commit -m "feat: add useSearch and useTablePersistence hooks"
 ### Task 4: Create Hook — use-export
 
 **Files:**
+
 - Create: `components/shared/data-table/hooks/use-export.ts`
 
 **Consumes:** `DataTableExportOptions`, `DataTableInstance` from `types.ts`, `getValue`, `formatExportValue` from `utils.ts`
@@ -456,10 +460,10 @@ git commit -m "feat: add useSearch and useTablePersistence hooks"
 Create `components/shared/data-table/hooks/use-export.ts`:
 
 ```typescript
-import { useCallback } from 'react';
-import type { ColumnDef } from '@tanstack/react-table';
-import type { DataTableExportOptions, DataTableInstance } from '../types';
-import { getValue, formatExportValue } from '../utils';
+import { useCallback } from "react";
+import type { ColumnDef } from "@tanstack/react-table";
+import type { DataTableExportOptions, DataTableInstance } from "../types";
+import { getValue, formatExportValue } from "../utils";
 
 interface UseExportOptions<TData> {
   exportOptions: DataTableExportOptions<TData>;
@@ -526,11 +530,11 @@ export function useExport<TData>({
   }, [exportOptions, columns, getInstance, getAllRows]);
 
   const exportCSV = useCallback(async () => {
-    const { mkConfig, generateCsv, download } = await import('export-to-csv');
+    const { mkConfig, generateCsv, download } = await import("export-to-csv");
     const data = prepareExportData();
     const csvConfig = mkConfig({
-      filename: exportOptions.filename ?? 'export',
-      fieldSeparator: ',',
+      filename: exportOptions.filename ?? "export",
+      fieldSeparator: ",",
       quoteStrings: true,
     });
     const csv = generateCsv(csvConfig)(data);
@@ -538,12 +542,12 @@ export function useExport<TData>({
   }, [prepareExportData, exportOptions.filename]);
 
   const exportExcel = useCallback(async () => {
-    const XLSX = await import('xlsx');
+    const XLSX = await import("xlsx");
     const data = prepareExportData();
     const ws = XLSX.utils.json_to_sheet(data);
     const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
-    XLSX.writeFile(wb, `${exportOptions.filename ?? 'export'}.xlsx`);
+    XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+    XLSX.writeFile(wb, `${exportOptions.filename ?? "export"}.xlsx`);
   }, [prepareExportData, exportOptions.filename]);
 
   return { exportCSV, exportExcel, prepareExportData };
@@ -570,6 +574,7 @@ git commit -m "feat: add useExport hook with CSV and Excel export"
 ### Task 5: Create Hook — use-data-table (Orchestrator)
 
 **Files:**
+
 - Create: `components/shared/data-table/hooks/use-data-table.ts`
 
 **Consumes:** All hooks from Tasks 3-4, `DataTableProps` from `types.ts`
@@ -580,9 +585,9 @@ git commit -m "feat: add useExport hook with CSV and Excel export"
 Create `components/shared/data-table/hooks/use-data-table.ts`:
 
 ```typescript
-'use client';
+"use client";
 
-import { useMemo } from 'react';
+import { useMemo } from "react";
 import {
   useReactTable,
   getCoreRowModel,
@@ -592,11 +597,11 @@ import {
   getFacetedRowModel,
   getFacetedUniqueValues,
   type PaginationState,
-} from '@tanstack/react-table';
-import type { DataTableProps, DataTableInstance } from '../types';
-import { useSearch } from './use-search';
-import { useTablePersistence } from './use-table-persistence';
-import { useExport } from './use-export';
+} from "@tanstack/react-table";
+import type { DataTableProps, DataTableInstance } from "../types";
+import { useSearch } from "./use-search";
+import { useTablePersistence } from "./use-table-persistence";
+import { useExport } from "./use-export";
 
 const DEFAULT_PAGE_SIZE = 10;
 
@@ -666,7 +671,9 @@ export function useDataTable<TData>(props: DataTableProps<TData>) {
     columns,
     state: {
       pagination,
-      ...(mergedInitialState.sorting && { sorting: mergedInitialState.sorting }),
+      ...(mergedInitialState.sorting && {
+        sorting: mergedInitialState.sorting,
+      }),
       ...(mergedInitialState.columnVisibility && {
         columnVisibility: mergedInitialState.columnVisibility,
       }),
@@ -760,6 +767,7 @@ git commit -m "feat: add useDataTable orchestrator hook"
 ### Task 6: Create UI Components — Column Header and View Options
 
 **Files:**
+
 - Create: `components/shared/data-table/column-header.tsx`
 - Create: `components/shared/data-table/view-options.tsx`
 
@@ -927,6 +935,7 @@ git commit -m "feat: add DataTableColumnHeader and DataTableViewOptions componen
 ### Task 7: Create UI Components — Faceted Filter and Export Menu
 
 **Files:**
+
 - Create: `components/shared/data-table/faceted-filter.tsx`
 - Create: `components/shared/data-table/export-menu.tsx`
 
@@ -1170,6 +1179,7 @@ git commit -m "feat: add DataTableFacetedFilter and DataTableExportMenu componen
 ### Task 8: Create UI Components — Bulk Actions, Toolbar, and Pagination
 
 **Files:**
+
 - Create: `components/shared/data-table/bulk-actions.tsx`
 - Create: `components/shared/data-table/toolbar.tsx`
 - Create: `components/shared/data-table/pagination.tsx`
@@ -1504,6 +1514,7 @@ git commit -m "feat: add DataTableBulkActions, Toolbar, and Pagination component
 ### Task 9: Create UI Components — Loading, Empty State, and Main DataTable
 
 **Files:**
+
 - Create: `components/shared/data-table/loading.tsx`
 - Create: `components/shared/data-table/empty-state.tsx`
 - Create: `components/shared/data-table/data-table.tsx`
@@ -1733,7 +1744,7 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
 Create `components/shared/data-table/index.ts`:
 
 ```typescript
-export { DataTable } from './data-table';
+export { DataTable } from "./data-table";
 export type {
   DataTableProps,
   DataTableFeatures,
@@ -1747,7 +1758,7 @@ export type {
   DataTableSlots,
   DataTableInstance,
   DataTableField,
-} from './types';
+} from "./types";
 ```
 
 - [ ] **Step 5: Verify types compile**
@@ -1770,6 +1781,7 @@ git commit -m "feat: add DataTable component with loading, empty state, and publ
 ### Task 10: Create Users Table Configuration and Integrate into Page
 
 **Files:**
+
 - Create: `features/users/table/columns.tsx`
 - Create: `features/users/table/filters.ts`
 - Create: `features/users/table/bulk-actions.tsx`
@@ -1882,25 +1894,25 @@ export const userColumns: ColumnDef<UserWithProfile, unknown>[] = [
 Create `features/users/table/filters.ts`:
 
 ```typescript
-import type { DataTableFilter } from '@/components/shared/data-table';
+import type { DataTableFilter } from "@/components/shared/data-table";
 
 export const userFilters: DataTableFilter[] = [
   {
-    id: 'status',
-    label: 'Status',
-    type: 'faceted',
-    column: 'status',
+    id: "status",
+    label: "Status",
+    type: "faceted",
+    column: "status",
     options: [
-      { label: 'Active', value: 'ACTIVE' },
-      { label: 'Inactive', value: 'INACTIVE' },
-      { label: 'Terminated', value: 'TERMINATED' },
+      { label: "Active", value: "ACTIVE" },
+      { label: "Inactive", value: "INACTIVE" },
+      { label: "Terminated", value: "TERMINATED" },
     ],
   },
   {
-    id: 'department',
-    label: 'Department',
-    type: 'faceted',
-    column: 'department',
+    id: "department",
+    label: "Department",
+    type: "faceted",
+    column: "department",
     options: [], // Dynamic: populated from data via getFacetedUniqueValues
   },
 ];
@@ -1911,21 +1923,24 @@ export const userFilters: DataTableFilter[] = [
 Create `features/users/table/bulk-actions.tsx`:
 
 ```typescript
-'use client';
+"use client";
 
-import { Trash2 } from 'lucide-react';
-import type { DataTableBulkAction } from '@/components/shared/data-table';
-import type { UserWithProfile } from '@/features/users/types';
+import { Trash2 } from "lucide-react";
+import type { DataTableBulkAction } from "@/components/shared/data-table";
+import type { UserWithProfile } from "@/features/users/types";
 
 export const userBulkActions: DataTableBulkAction<UserWithProfile>[] = [
   {
-    id: 'delete',
-    label: 'Delete',
+    id: "delete",
+    label: "Delete",
     icon: Trash2,
-    variant: 'destructive',
+    variant: "destructive",
     onAction: async ({ rows }) => {
       // Placeholder: integrate with server action later
-      console.log('Delete users:', rows.map((r) => r.id));
+      console.log(
+        "Delete users:",
+        rows.map((r) => r.id)
+      );
     },
   },
 ];
@@ -1936,9 +1951,9 @@ export const userBulkActions: DataTableBulkAction<UserWithProfile>[] = [
 Create `features/users/table/index.ts`:
 
 ```typescript
-export { userColumns } from './columns';
-export { userFilters } from './filters';
-export { userBulkActions } from './bulk-actions';
+export { userColumns } from "./columns";
+export { userFilters } from "./filters";
+export { userBulkActions } from "./bulk-actions";
 ```
 
 - [ ] **Step 5: Create `app/(staff)/staff/users/components/users-data-table.tsx`**
@@ -2001,7 +2016,7 @@ Update `app/(staff)/staff/users/components/user-table.tsx` to re-export from the
 
 ```typescript
 // Backward-compatible re-export
-export { UsersDataTable as UserTable } from './users-data-table';
+export { UsersDataTable as UserTable } from "./users-data-table";
 ```
 
 - [ ] **Step 7: Verify types compile**
@@ -2076,18 +2091,18 @@ git commit -m "fix: address type/lint/format issues from DataTable implementatio
 
 ## Summary
 
-| Task | Deliverable | Estimated Lines |
-|------|-------------|-----------------|
-| 1 | Dependencies + Shadcn components | 0 |
-| 2 | Types + Utilities | ~140 |
-| 3 | useSearch + useTablePersistence | ~80 |
-| 4 | useExport | ~90 |
-| 5 | useDataTable | ~110 |
-| 6 | ColumnHeader + ViewOptions | ~100 |
-| 7 | FacetedFilter + ExportMenu | ~130 |
-| 8 | BulkActions + Toolbar + Pagination | ~200 |
-| 9 | Loading + Empty + DataTable + index | ~150 |
-| 10 | Users feature config + integration | ~140 |
-| 11 | Final verification | 0 |
+| Task | Deliverable                         | Estimated Lines |
+| ---- | ----------------------------------- | --------------- |
+| 1    | Dependencies + Shadcn components    | 0               |
+| 2    | Types + Utilities                   | ~140            |
+| 3    | useSearch + useTablePersistence     | ~80             |
+| 4    | useExport                           | ~90             |
+| 5    | useDataTable                        | ~110            |
+| 6    | ColumnHeader + ViewOptions          | ~100            |
+| 7    | FacetedFilter + ExportMenu          | ~130            |
+| 8    | BulkActions + Toolbar + Pagination  | ~200            |
+| 9    | Loading + Empty + DataTable + index | ~150            |
+| 10   | Users feature config + integration  | ~140            |
+| 11   | Final verification                  | 0               |
 
 **Total: ~1,140 lines across 20 files**

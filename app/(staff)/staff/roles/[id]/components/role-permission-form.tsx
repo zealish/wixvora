@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useState, useTransition } from 'react';
-import { updateRolePermissionsAction } from '@/features/roles/actions';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useRouter } from 'next/navigation';
+import { useState, useTransition } from "react";
+import { updateRolePermissionsAction } from "@/features/roles/actions";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useRouter } from "next/navigation";
 
 interface Permission {
   id: string;
@@ -56,12 +56,14 @@ export function RolePermissionForm({
       if (result.success) {
         router.refresh();
       } else {
-        setError(result.error || 'Failed to update permissions');
+        setError(result.error || "Failed to update permissions");
       }
     });
   };
 
-  const groupedPermissions = allPermissions.reduce<Record<string, Permission[]>>((acc, permission) => {
+  const groupedPermissions = allPermissions.reduce<
+    Record<string, Permission[]>
+  >((acc, permission) => {
     if (!acc[permission.resource]) {
       acc[permission.resource] = [];
     }
@@ -82,18 +84,18 @@ export function RolePermissionForm({
                 {perms.map((permission) => (
                   <label
                     key={permission.id}
-                    className="flex items-center space-x-2 cursor-pointer"
+                    className="flex cursor-pointer items-center space-x-2"
                   >
                     <input
                       type="checkbox"
                       checked={selectedPermissions.has(permission.id)}
                       onChange={() => handleToggle(permission.id)}
-                      className="w-4 h-4"
+                      className="h-4 w-4"
                     />
                     <div className="flex-1">
                       <p className="font-medium">{permission.key}</p>
                       {permission.description && (
-                        <p className="text-sm text-muted-foreground">
+                        <p className="text-muted-foreground text-sm">
                           {permission.description}
                         </p>
                       )}
@@ -105,12 +107,10 @@ export function RolePermissionForm({
           </Card>
         ))}
 
-        {error && (
-          <div className="text-red-600 text-sm">{error}</div>
-        )}
+        {error && <div className="text-sm text-red-600">{error}</div>}
 
         <Button type="submit" disabled={isPending}>
-          {isPending ? 'Saving...' : 'Save Permissions'}
+          {isPending ? "Saving..." : "Save Permissions"}
         </Button>
       </div>
     </form>

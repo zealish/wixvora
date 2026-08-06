@@ -1,13 +1,20 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { signIn } from '@/lib/auth/auth-client';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import Link from 'next/link';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { signIn } from "@/lib/auth/auth-client";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import Link from "next/link";
 
 export function LoginForm() {
   const router = useRouter();
@@ -20,8 +27,8 @@ export function LoginForm() {
     setError(null);
 
     const formData = new FormData(e.currentTarget);
-    const email = formData.get('email') as string;
-    const password = formData.get('password') as string;
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
 
     try {
       const result = await signIn.email({
@@ -30,15 +37,17 @@ export function LoginForm() {
       });
 
       if (result.error) {
-        setError(result.error.message ?? 'Invalid email or password');
+        setError(result.error.message ?? "Invalid email or password");
         setLoading(false);
         return;
       }
 
-      router.push('/');
+      router.push("/");
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Invalid email or password');
+      setError(
+        err instanceof Error ? err.message : "Invalid email or password"
+      );
       setLoading(false);
     }
   }
@@ -52,7 +61,7 @@ export function LoginForm() {
       <form onSubmit={handleSubmit}>
         <CardContent className="space-y-4">
           {error && (
-            <div className="p-3 text-sm text-red-600 bg-red-50 rounded-md">
+            <div className="rounded-md bg-red-50 p-3 text-sm text-red-600">
               {error}
             </div>
           )}
@@ -81,10 +90,10 @@ export function LoginForm() {
         </CardContent>
         <CardFooter className="flex flex-col space-y-4">
           <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? 'Logging in...' : 'Log in'}
+            {loading ? "Logging in..." : "Log in"}
           </Button>
-          <p className="text-sm text-center text-muted-foreground">
-            Don&apos;t have an account?{' '}
+          <p className="text-muted-foreground text-center text-sm">
+            Don&apos;t have an account?{" "}
             <Link href="/signup" className="text-primary hover:underline">
               Sign up
             </Link>
