@@ -25,12 +25,14 @@ interface TopbarProps {
 
 export function Topbar({ userImage, userInitials, profileHref }: TopbarProps) {
   const [searchOpen, setSearchOpen] = useState(false);
-  const [isMac, setIsMac] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
-    setIsMac(navigator.platform.toUpperCase().indexOf("MAC") >= 0);
+    setIsMounted(true);
   }, []);
+
+  const isMac = isMounted && navigator.platform.toUpperCase().indexOf("MAC") >= 0;
 
   const handleSignOut = async () => {
     await signOut();

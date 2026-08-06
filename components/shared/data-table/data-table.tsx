@@ -9,13 +9,18 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { cn } from "@/lib/utils";
 import type { DataTableProps } from "./types";
 import { useDataTable } from "./hooks/use-data-table";
 import { DataTableToolbar } from "./toolbar";
 import { DataTablePagination } from "./pagination";
 import { DataTableLoading } from "./loading";
 import { DataTableEmptyState } from "./empty-state";
+import {
+  getHeaderClasses,
+  getHeaderStyles,
+  getCellClasses,
+  getCellStyles,
+} from "./utils";
 
 export function DataTable<TData>(props: DataTableProps<TData>) {
   const {
@@ -78,32 +83,35 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
         />
       )}
 
-      <div className="rounded-md border">
-        <Table>
+      <div className="w-full rounded-md border">
+        <div className="w-full overflow-x-auto">
+          <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <TableHead
-                    key={header.id}
-                    colSpan={header.colSpan}
-                    className={cn(
-                      header.column.columnDef.meta?.headerClassName
-                    )}
-                    style={
-                      header.column.columnDef.meta?.width
-                        ? { width: header.column.columnDef.meta.width }
-                        : undefined
-                    }
-                  >
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                  </TableHead>
-                ))}
+                {headerGroup.headers.map((header) => {
+                  const meta = header.column.columnDef.meta;
+                  const isVisible = header.column.getIsVisible();
+                  
+                  return (
+                    <TableHead
+                      key={header.id}
+                      colSpan={header.colSpan}
+                      className={getHeaderClasses(meta)}
+                      style={{
+                        ...getHeaderStyles(meta),
+                        ...(isVisible ? {} : { display: 'none' }),
+                      }}
+                    >
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                    </TableHead>
+                  );
+                })}
               </TableRow>
             ))}
           </TableHeader>
@@ -113,23 +121,34 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
                 key={row.id}
                 data-state={row.getIsSelected() && "selected"}
               >
-                {row.getVisibleCells().map((cell) => (
-                  <TableCell
-                    key={cell.id}
-                    className={cn(cell.column.columnDef.meta?.className, {
-                      "text-center":
-                        cell.column.columnDef.meta?.align === "center",
-                      "text-right":
-                        cell.column.columnDef.meta?.align === "right",
-                    })}
-                  >
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </TableCell>
-                ))}
+                {row.getAllCells().map((cell) => {
+                  const meta = cell.column.columnDef.meta;
+                  const cellValue = cell.getValue();
+                  const isVisible = cell.column.getIsVisible();
+                  
+                  return (
+                    <TableCell
+                      key={cell.id}
+                      className={getCellClasses(meta)}
+                      style={{
+                        ...getCellStyles(meta),
+                        ...(isVisible ? {} : { display: 'none' }),
+                      }}
+                      title={
+                        meta?.truncate !== false && typeof cellValue === "string"
+                          ? cellValue
+                          : undefined
+                      }
+                    >
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </TableCell>
+                  );
+                })}
               </TableRow>
             ))}
           </TableBody>
         </Table>
+        </div>
       </div>
 
       {enabledFeatures?.pagination && <DataTablePagination table={table} />}

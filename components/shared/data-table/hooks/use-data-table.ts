@@ -121,12 +121,6 @@ export function useDataTable<TData>(props: DataTableProps<TData>) {
       ...(mergedInitialState.sorting && {
         sorting: mergedInitialState.sorting,
       }),
-      ...(mergedInitialState.columnVisibility && {
-        columnVisibility: mergedInitialState.columnVisibility,
-      }),
-      ...(mergedInitialState.columnSizing && {
-        columnSizing: mergedInitialState.columnSizing,
-      }),
     },
     initialState: mergedInitialState,
     onPaginationChange: handlePaginationChange,
@@ -150,17 +144,15 @@ export function useDataTable<TData>(props: DataTableProps<TData>) {
     enableRowSelection: enabledFeatures?.rowSelection ?? false,
   });
 
-  // Watch specific state slices for persistence
-  const { sorting, columnVisibility, columnSizing } = table.getState();
+  // Watch specific state slices for persistence (exclude columnVisibility to avoid hydration issues)
+  const { sorting } = table.getState();
 
   useEffect(() => {
     saveState({
       sorting,
-      columnVisibility,
-      columnSizing,
       pageSize: pagination.pageSize,
     });
-  }, [sorting, columnVisibility, columnSizing, pagination.pageSize, saveState]);
+  }, [sorting, pagination.pageSize, saveState]);
 
   // Expose minimal instance
   const instance: DataTableInstance<TData> = useMemo(

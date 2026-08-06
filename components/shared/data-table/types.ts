@@ -10,6 +10,9 @@ import type {
 // String path to support nested access (e.g. 'staff.department')
 export type DataTableField = string;
 
+// Responsive breakpoint for column visibility
+export type ResponsiveBreakpoint = "always" | "md" | "lg" | "xl";
+
 export interface DataTableProps<TData> {
   tableId: string;
   data: TData[];
@@ -115,15 +118,34 @@ declare module "@tanstack/react-table" {
     label?: string;
     filterVariant?: "text" | "select" | "date" | "number";
     exportable?: boolean;
+    hideOnExport?: boolean;
     searchable?: boolean;
     copyable?: boolean;
     align?: "left" | "center" | "right";
-    width?: number;
-    className?: string;
-    headerClassName?: string;
     sortableLabel?: string;
     tooltip?: string;
-    truncate?: boolean;
     exportFormatter?: (value: unknown) => string | number | boolean | null;
+    
+    // Width constraints
+    width?: number;
+    minWidth?: number;
+    maxWidth?: number;
+    
+    // Text behavior
+    wrap?: boolean;
+    truncate?: boolean;
+    
+    // Responsive visibility
+    visibleFrom?: ResponsiveBreakpoint;
+    
+    // Custom styling
+    className?: string;
+    headerClassName?: string;
+    cellClassName?: string;
+    cellStyle?: React.CSSProperties;
+    headerStyle?: React.CSSProperties;
+    
+    // Future-proofing
+    sticky?: "left" | "right";
   }
 }

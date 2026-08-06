@@ -40,7 +40,9 @@ export const userColumns: ColumnDef<UserWithProfile, unknown>[] = [
     enableHiding: false,
     meta: {
       exportable: false,
-      className: "w-[40px]",
+      visibleFrom: "always",
+      minWidth: 40,
+      cellClassName: "w-[40px]",
     },
   },
   {
@@ -56,6 +58,10 @@ export const userColumns: ColumnDef<UserWithProfile, unknown>[] = [
       filterVariant: "text",
       searchable: true,
       exportable: true,
+      visibleFrom: "always",
+      minWidth: 140,
+      maxWidth: 260,
+      truncate: true,
     },
   },
   {
@@ -72,6 +78,9 @@ export const userColumns: ColumnDef<UserWithProfile, unknown>[] = [
       searchable: true,
       copyable: true,
       exportable: true,
+      minWidth: 180,
+      maxWidth: 300,
+      truncate: true,
     },
   },
   {
@@ -86,6 +95,8 @@ export const userColumns: ColumnDef<UserWithProfile, unknown>[] = [
       label: "Department",
       filterVariant: "select",
       exportable: true,
+      minWidth: 120,
+      truncate: true,
     },
   },
   {
@@ -98,6 +109,8 @@ export const userColumns: ColumnDef<UserWithProfile, unknown>[] = [
     meta: {
       label: "Position",
       exportable: true,
+      minWidth: 120,
+      truncate: true,
     },
   },
   {
@@ -122,6 +135,8 @@ export const userColumns: ColumnDef<UserWithProfile, unknown>[] = [
       filterVariant: "select",
       exportable: true,
       align: "center",
+      visibleFrom: "always",
+      minWidth: 100,
     },
   },
   {
@@ -171,7 +186,9 @@ export const userColumns: ColumnDef<UserWithProfile, unknown>[] = [
     },
     meta: {
       exportable: false,
-      className: "w-[50px]",
+      visibleFrom: "always",
+      minWidth: 50,
+      cellClassName: "w-[50px]",
     },
   },
 ];
