@@ -1,0 +1,84 @@
+import Link from "next/link";
+import { ChevronDown } from "lucide-react";
+
+export function Navbar() {
+  return (
+    <header className="z-30 mx-auto flex w-full max-w-[1400px] items-center justify-between px-6 py-6 md:px-12">
+      <Link href="/" className="group flex items-center gap-3">
+        <div className="relative flex h-8 w-8 items-center justify-center">
+          <svg
+            width="32"
+            height="32"
+            viewBox="0 0 32 32"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M4 8L10 24L16 12L22 24L28 8"
+              stroke="url(#logo_grad)"
+              strokeWidth="4.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <defs>
+              <linearGradient
+                id="logo_grad"
+                x1="4"
+                y1="8"
+                x2="28"
+                y2="24"
+                gradientUnits="userSpaceOnUse"
+              >
+                <stop stopColor="#3B82F6" />
+                <stop offset="1" stopColor="#4F46E5" />
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <span className="text-2xl font-black tracking-tight text-slate-900">
+          WIXVORA
+        </span>
+      </Link>
+
+      <nav className="hidden items-center space-x-10 text-[15px] font-medium text-slate-700 md:flex">
+        <a
+          href="#features"
+          className="transition-colors hover:text-indigo-600"
+        >
+          Features
+        </a>
+        <a
+          href="#templates"
+          className="transition-colors hover:text-indigo-600"
+        >
+          Templates
+        </a>
+        <a
+          href="#pricing"
+          className="transition-colors hover:text-indigo-600"
+        >
+          Pricing
+        </a>
+        <div className="group flex cursor-pointer items-center gap-1.5 transition-colors hover:text-indigo-600">
+          <span>Resources</span>
+          <ChevronDown className="h-3 w-3 text-slate-400 transition-transform group-hover:rotate-180 group-hover:text-indigo-600" />
+        </div>
+      </nav>
+
+      <div className="flex items-center space-x-6">
+        <a
+          href="#login"
+          className="text-[15px] font-semibold text-slate-800 transition-colors hover:text-indigo-600"
+        >
+          Log in
+        </a>
+        <a
+          href="#get-started"
+          className="rounded-full bg-gradient-to-r from-blue-600 via-indigo-600 to-indigo-700 px-6 py-3 text-sm font-semibold text-white shadow-md shadow-indigo-500/20 transition-all hover:scale-[1.02] hover:shadow-lg hover:shadow-indigo-500/35 active:scale-[0.98]"
+        >
+          Get Started Free
+        </a>
+      </div>
+    </header>
+  );
+}
