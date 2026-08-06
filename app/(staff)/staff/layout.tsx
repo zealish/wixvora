@@ -1,14 +1,12 @@
 import { redirect } from 'next/navigation';
-import Link from 'next/link';
 import { eq, and, isNull } from 'drizzle-orm';
 import { getSession } from '@/lib/auth/session';
-import { staffNavItems } from '@/config/navigation';
+import { staffNavGroups } from '@/config/navigation';
 import { db } from '@/lib/db';
 import { staffs, staffRoles, roles, rolePermissions, permissions } from '@/lib/db/schema';
-import { SidebarProvider, Sidebar, SidebarContent, SidebarHeader, SidebarMenu, SidebarMenuItem, SidebarMenuButton } from '@/components/ui/sidebar';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Button } from '@/components/ui/button';
+import { SidebarProvider } from '@/components/ui/sidebar';
+import { AppSidebar } from '@/components/shared/app-sidebar';
+import { Topbar } from '@/components/shared/topbar';
 import type { PermissionKey } from '@/types/rbac';
 
 async function getUserPermissions(userId: string): Promise<Set<PermissionKey>> {
@@ -27,7 +25,8 @@ async function getUserPermissions(userId: string): Promise<Set<PermissionKey>> {
   const isSuperAdmin = result.some((row) => row.roleCode === 'SUPER_ADMIN');
   
   if (isSuperAdmin) {
-    return new Set(staffNavItems.filter((item) => item.permission).map((item) => item.permission!));
+    const allItems = staffNavGroups.flatMap(g => g.items);
+    return new Set(allItems.filter((item) => item.permission).map((item) => item.permission!));
   }
 
   return new Set(result.map((row) => row.permissionKey).filter(Boolean) as PermissionKey[]);
@@ -41,9 +40,14 @@ export default async function StaffLayout({ children }: LayoutProps<'/'>) {
   }
 
   const userPermissions = await getUserPermissions(session.user.id);
-  const filteredNavItems = staffNavItems.filter(
-    (item) => !item.permission || userPermissions.has(item.permission)
-  );
+  
+  // Filter groups and their items based on permissions
+  const filteredNavGroups = staffNavGroups.map(group => ({
+    ...group,
+    items: group.items.filter(
+      (item) => !item.permission || userPermissions.has(item.permission)
+    )
+  })).filter(group => group.items.length > 0);
 
   const userInitials = session.user.name
     .split(' ')
@@ -54,51 +58,16 @@ export default async function StaffLayout({ children }: LayoutProps<'/'>) {
   return (
     <SidebarProvider>
       <div className="flex min-h-screen w-full">
-        <Sidebar>
-          <SidebarHeader className="border-b px-6 py-4">
-            <Link href="/staff" className="text-lg font-bold">
-              Wixvora
-            </Link>
-          </SidebarHeader>
-          <SidebarContent>
-            <SidebarMenu>
-              {filteredNavItems.map((item) => (
-                <SidebarMenuItem key={item.href}>
-                  <SidebarMenuButton render={<Link href={item.href} />}>
-                    {item.title}
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarContent>
-        </Sidebar>
+        <AppSidebar 
+          navGroups={filteredNavGroups}
+          brandHref="/staff"
+        />
         <div className="flex flex-1 flex-col">
-          <header className="border-b">
-            <div className="flex h-16 items-center justify-end px-6">
-              <DropdownMenu>
-                <DropdownMenuTrigger render={<Button variant="ghost" size="icon" />}>
-                  <Avatar>
-                    <AvatarImage src={session.user.image || undefined} />
-                    <AvatarFallback>{userInitials}</AvatarFallback>
-                  </Avatar>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem render={<Link href="/staff/profile" />}>
-                    Profile
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    render={
-                      <form action="/api/auth/sign-out" method="POST">
-                        <button type="submit" className="w-full text-left">
-                          Sign Out
-                        </button>
-                      </form>
-                    }
-                  />
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-          </header>
+          <Topbar 
+            userImage={session.user.image}
+            userInitials={userInitials}
+            profileHref="/staff/profile"
+          />
           <main className="flex-1 p-6">{children}</main>
         </div>
       </div>
