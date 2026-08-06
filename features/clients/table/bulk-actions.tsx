@@ -4,7 +4,7 @@ import { Trash2 } from "lucide-react";
 import type { DataTableBulkAction } from "@/components/shared/data-table";
 import type { UserWithProfile } from "@/features/users/types";
 
-export const userBulkActions: DataTableBulkAction<UserWithProfile>[] = [
+export const clientBulkActions: DataTableBulkAction<UserWithProfile>[] = [
   {
     id: "delete",
     label: "Delete",
@@ -12,7 +12,7 @@ export const userBulkActions: DataTableBulkAction<UserWithProfile>[] = [
     variant: "destructive",
     onAction: async ({ rows }) => {
       console.log(
-        "Delete users:",
+        "Delete clients:",
         rows.map((r) => r.id)
       );
     },

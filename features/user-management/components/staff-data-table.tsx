@@ -2,17 +2,19 @@
 
 import { DataTable } from "@/components/shared/data-table";
 import type { UserWithProfile } from "@/features/users/types";
-import { staffColumns, staffFilters, staffBulkActions } from "@/features/users/table";
+import { staffColumns } from "@/features/users/table/staff-columns";
+import { staffFilters } from "@/features/users/table/staff-filters";
+import { staffBulkActions } from "@/features/users/table/staff-bulk-actions";
 
-interface UsersDataTableProps {
+interface StaffDataTableProps {
   users: UserWithProfile[];
   isLoading?: boolean;
 }
 
-export function UsersDataTable({
+export function StaffDataTable({
   users,
   isLoading = false,
-}: UsersDataTableProps) {
+}: StaffDataTableProps) {
   return (
     <DataTable
       tableId="staff-users"
@@ -26,7 +28,7 @@ export function UsersDataTable({
       exportOptions={{
         csv: true,
         excel: true,
-        filename: "users",
+        filename: "staff-users",
       }}
       enabledFeatures={{
         sorting: true,
@@ -37,8 +39,8 @@ export function UsersDataTable({
         columnVisibility: true,
       }}
       locale={{
-        searchPlaceholder: "Search users...",
-        noResults: "No users found.",
+        searchPlaceholder: "Search staff...",
+        noResults: "No staff users found.",
         rowsSelected: (count) => `${count} selected`,
       }}
     />

@@ -1,6 +1,6 @@
 import type { DataTableFilter } from "@/components/shared/data-table";
 
-export const userFilters: DataTableFilter[] = [
+export const staffFilters: DataTableFilter[] = [
   {
     id: "status",
     label: "Status",
