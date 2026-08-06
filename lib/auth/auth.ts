@@ -31,9 +31,7 @@ export const auth = betterAuth({
       generateId: () => crypto.randomUUID(),
     },
   },
-  trustedOrigins: [
-    "http://localhost:3000",
-    "http://192.168.1.7:3000",
-    ...(process.env.BETTER_AUTH_URL ? [process.env.BETTER_AUTH_URL] : []),
-  ],
+  trustedOrigins: process.env.BETTER_AUTH_TRUSTED_ORIGINS
+    ? process.env.BETTER_AUTH_TRUSTED_ORIGINS.split(",")
+    : ["http://localhost:3000"],
 });
