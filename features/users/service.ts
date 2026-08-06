@@ -34,17 +34,13 @@ export async function createStaffWithRoles(
       email: input.email,
       password: input.password,
       name: input.name,
+      accountType: "STAFF",
     },
   });
 
   if (!result || !result.user) {
     throw new Error("Failed to create user account");
   }
-
-  await db
-    .update(user)
-    .set({ accountType: "STAFF" })
-    .where(eq(user.id, result.user.id));
 
   const [staff] = await db
     .insert(staffs)
