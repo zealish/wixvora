@@ -5,6 +5,7 @@ import { clientNavGroups } from "@/config/navigation";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/shared/app-sidebar";
 import { Topbar } from "@/components/shared/topbar";
+import { GlobalSearchProvider } from "@/components/shared/global-search-provider";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -27,17 +28,19 @@ export default async function ClientLayout({ children }: LayoutProps<"/">) {
   return (
     <div className={`${inter.className} font-sans`}>
       <SidebarProvider>
-        <div className="flex min-h-screen w-full">
-          <AppSidebar navGroups={clientNavGroups} brandHref="/client" />
-          <div className="flex flex-1 flex-col">
-            <Topbar
-              userImage={session.user.image}
-              userInitials={userInitials}
-              profileHref="/client/profile"
-            />
-            <main className="flex-1 p-6">{children}</main>
+        <GlobalSearchProvider navigationGroups={clientNavGroups}>
+          <div className="flex min-h-screen w-full">
+            <AppSidebar navGroups={clientNavGroups} brandHref="/client" />
+            <div className="flex flex-1 flex-col">
+              <Topbar
+                userImage={session.user.image}
+                userInitials={userInitials}
+                profileHref="/client/profile"
+              />
+              <main className="flex-1 p-6">{children}</main>
+            </div>
           </div>
-        </div>
+        </GlobalSearchProvider>
       </SidebarProvider>
     </div>
   );

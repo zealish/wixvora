@@ -14,6 +14,7 @@ import {
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/shared/app-sidebar";
 import { Topbar } from "@/components/shared/topbar";
+import { GlobalSearchProvider } from "@/components/shared/global-search-provider";
 import type { PermissionKey } from "@/types/rbac";
 
 const inter = Inter({
@@ -82,17 +83,19 @@ export default async function StaffLayout({ children }: LayoutProps<"/">) {
   return (
     <div className={`${inter.className} font-sans`}>
       <SidebarProvider>
-        <div className="flex min-h-screen w-full">
-          <AppSidebar navGroups={filteredNavGroups} brandHref="/staff" />
-          <div className="flex flex-1 flex-col">
-            <Topbar
-              userImage={session.user.image}
-              userInitials={userInitials}
-              profileHref="/staff/profile"
-            />
-            <main className="flex-1 p-6">{children}</main>
+        <GlobalSearchProvider navigationGroups={filteredNavGroups}>
+          <div className="flex min-h-screen w-full">
+            <AppSidebar navGroups={filteredNavGroups} brandHref="/staff" />
+            <div className="flex flex-1 flex-col">
+              <Topbar
+                userImage={session.user.image}
+                userInitials={userInitials}
+                profileHref="/staff/profile"
+              />
+              <main className="flex-1 p-6">{children}</main>
+            </div>
           </div>
-        </div>
+        </GlobalSearchProvider>
       </SidebarProvider>
     </div>
   );
