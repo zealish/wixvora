@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/shared/theme-toggle";
 import { GlobalSearch } from "@/components/shared/global-search";
 import { SidebarTrigger } from "@/components/ui/sidebar";
+import { signOut } from "@/lib/auth/auth-client";
 
 interface TopbarProps {
   userImage: string | null | undefined;
@@ -28,6 +29,10 @@ export function Topbar({ userImage, userInitials, profileHref }: TopbarProps) {
   useEffect(() => {
     setIsMac(navigator.platform.toUpperCase().indexOf("MAC") >= 0);
   }, []);
+
+  const handleSignOut = async () => {
+    await signOut();
+  };
 
   return (
     <header className="border-b">
@@ -70,15 +75,9 @@ export function Topbar({ userImage, userInitials, profileHref }: TopbarProps) {
               <DropdownMenuItem render={<Link href={profileHref} />}>
                 Profile
               </DropdownMenuItem>
-              <DropdownMenuItem
-                render={
-                  <form action="/api/auth/sign-out" method="POST">
-                    <button type="submit" className="w-full text-left">
-                      Sign Out
-                    </button>
-                  </form>
-                }
-              />
+              <DropdownMenuItem onClick={handleSignOut}>
+                Sign Out
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
