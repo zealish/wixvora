@@ -4,6 +4,7 @@ import type {
   PaginationState,
   SortingState,
   ColumnFiltersState,
+  RowData,
 } from '@tanstack/react-table';
 
 // String path to support nested access (e.g. 'staff.department')
@@ -110,7 +111,7 @@ export interface DataTableInstance<TData> {
 // Column meta augmentation for DataTable-specific features
 declare module '@tanstack/react-table' {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  interface ColumnMeta<TData, TValue> {
+  interface ColumnMeta<TData extends RowData, TValue> {
     label?: string;
     filterVariant?: 'text' | 'select' | 'date' | 'number';
     exportable?: boolean;
