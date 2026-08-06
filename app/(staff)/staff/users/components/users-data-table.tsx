@@ -2,9 +2,7 @@
 
 import { DataTable } from "@/components/shared/data-table";
 import type { UserWithProfile } from "@/features/users/types";
-import { userColumns } from "@/features/users/table/columns";
-import { userFilters } from "@/features/users/table/filters";
-import { userBulkActions } from "@/features/users/table/bulk-actions";
+import { staffColumns, staffFilters, staffBulkActions } from "@/features/users/table";
 
 interface UsersDataTableProps {
   users: UserWithProfile[];
@@ -19,12 +17,12 @@ export function UsersDataTable({
     <DataTable
       tableId="staff-users"
       data={users}
-      columns={userColumns}
+      columns={staffColumns}
       rowId={(row) => row.id}
       loading={isLoading}
       search={{ keys: ["name", "email"] }}
-      filters={userFilters}
-      bulkActions={userBulkActions}
+      filters={staffFilters}
+      bulkActions={staffBulkActions}
       exportOptions={{
         csv: true,
         excel: true,
