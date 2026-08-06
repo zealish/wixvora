@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { SearchIcon } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -25,6 +26,7 @@ interface TopbarProps {
 export function Topbar({ userImage, userInitials, profileHref }: TopbarProps) {
   const [searchOpen, setSearchOpen] = useState(false);
   const [isMac, setIsMac] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     setIsMac(navigator.platform.toUpperCase().indexOf("MAC") >= 0);
@@ -32,6 +34,7 @@ export function Topbar({ userImage, userInitials, profileHref }: TopbarProps) {
 
   const handleSignOut = async () => {
     await signOut();
+    router.push("/login");
   };
 
   return (
