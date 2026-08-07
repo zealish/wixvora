@@ -2,15 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  LayoutDashboardIcon,
-  GlobeIcon,
-  UserCheck,
-  UsersIcon,
-  ShieldIcon,
-  FileTextIcon,
-  SettingsIcon,
-} from "lucide-react";
+import * as Icons from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -25,20 +18,22 @@ import {
 } from "@/components/ui/sidebar";
 import type { NavGroup } from "@/config/navigation";
 
-const iconMap = {
-  LayoutDashboard: LayoutDashboardIcon,
-  Globe: GlobeIcon,
-  UserCheck: UserCheck,
-  Users: UsersIcon,
-  Shield: ShieldIcon,
-  FileText: FileTextIcon,
-  Settings: SettingsIcon,
-};
-
 interface AppSidebarProps {
   navGroups: NavGroup[];
   brandName?: string;
   brandHref: string;
+}
+
+function getIcon(iconName: string): LucideIcon | null {
+  const iconKey = iconName as keyof typeof Icons;
+  const Icon = Icons[iconKey];
+  
+  // Check if it's a valid React component (object with $$typeof or function)
+  if (Icon && (typeof Icon === "function" || typeof Icon === "object")) {
+    return Icon as LucideIcon;
+  }
+  
+  return null;
 }
 
 export function AppSidebar({
@@ -68,7 +63,7 @@ export function AppSidebar({
               <SidebarGroupContent>
                 <SidebarMenu>
                   {group.items.map((item) => {
-                    const Icon = iconMap[item.icon as keyof typeof iconMap];
+                    const Icon = getIcon(item.icon);
 
                     // Exact match for the item href
                     let isActive = pathname === item.href;
