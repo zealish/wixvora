@@ -104,6 +104,9 @@ importers:
       shadcn:
         specifier: ^4.16.1
         version: 4.16.1(typescript@5.9.3)
+      swiper:
+        specifier: ^14.0.7
+        version: 14.0.7
       tailwind-merge:
         specifier: ^3.6.0
         version: 3.6.0
@@ -4247,6 +4250,10 @@ packages:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
     engines: {node: '>= 0.4'}
 
+  swiper@14.0.7:
+    resolution: {integrity: sha512-PDMY+8hNQBh4kAYdfKIF1GNS7u3hg4xl3NVKBey0rENnpUpTsiE/aCcbgpmm1PIf4RMI7loO3XhW9BdxLzQw0A==}
+    engines: {node: '>= 4.7.0'}
+
   systeminformation@5.33.1:
     resolution: {integrity: sha512-DEN6ICHk3Tk0Uf/hrAHh7xlt7iL5CJFBtPZinA0H62DrGG/KPKqq/Nzj6lCXPS4Ay/sf/14zNnk9LpqKzBIc+w==}
     engines: {node: '>=10.0.0'}
@@ -8322,6 +8329,8 @@ snapshots:
       has-flag: 4.0.0
 
   supports-preserve-symlinks-flag@1.0.0: {}
+
+  swiper@14.0.7: {}
 
   systeminformation@5.33.1: {}
 
