@@ -15,6 +15,13 @@
       "when": 1786094184151,
       "tag": "0001_cuddly_baron_zemo",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1786112366803,
+      "tag": "0002_stiff_sabra",
+      "breakpoints": true
     }
   ]
 }
