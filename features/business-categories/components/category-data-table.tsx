@@ -90,7 +90,7 @@ export function CategoryDataTable({ data }: CategoryDataTableProps) {
       for (const cat of cats) {
         if (parentId === null || expandedIds.has(parentId)) {
           if (filterCategory(cat)) {
-            flat.push({ ...cat, children: [] });
+            flat.push(cat);
           }
           if (cat.children && cat.children.length > 0) {
             traverse(cat.children, cat.id);
