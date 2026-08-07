@@ -12,13 +12,13 @@ done
 echo "✅ PostgreSQL is ready!"
 
 echo "📦 Generating database migrations..."
-NODE_OPTIONS="--loader tsx" pnpm run db:generate || true
+pnpm run db:generate || true
 
 echo "🔄 Running database migrations..."
-NODE_OPTIONS="--loader tsx" pnpm run db:migrate
+pnpm run db:migrate
 
 echo "🌱 Seeding database..."
-NODE_OPTIONS="--loader tsx --experimental-specifier-resolution=node" pnpm run db:seed || echo "⚠️  Seeding failed or already completed"
+pnpm run db:seed || echo "⚠️  Seeding failed or already completed"
 
 echo "🎉 Starting Next.js application..."
 exec "$@"
