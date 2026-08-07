@@ -2,10 +2,12 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { ChevronDown } from "lucide-react";
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -59,20 +61,29 @@ export function Navbar() {
         </Link>
 
         <nav className="hidden items-center space-x-10 text-[15px] font-medium text-slate-700 md:flex">
+          <div className="relative py-1">
+            <Link
+              href="/features"
+              className={`transition-colors ${
+                pathname === "/features"
+                  ? "font-semibold text-indigo-600"
+                  : "hover:text-indigo-600"
+              }`}
+            >
+              Features
+            </Link>
+            {pathname === "/features" && (
+              <div className="absolute bottom-0 left-0 right-0 h-[2.5px] rounded-full bg-indigo-600"></div>
+            )}
+          </div>
           <a
-            href="#features"
-            className="transition-colors hover:text-indigo-600"
-          >
-            Features
-          </a>
-          <a
-            href="#templates"
+            href="/#templates"
             className="transition-colors hover:text-indigo-600"
           >
             Templates
           </a>
           <a
-            href="#pricing"
+            href="/#pricing"
             className="transition-colors hover:text-indigo-600"
           >
             Pricing
