@@ -61,6 +61,7 @@ export function BuilderPreview({ }: BuilderPreviewProps) {
         <div className="flex items-center space-x-1 rounded-lg bg-slate-100/80 p-1 text-slate-500">
           <button
             onClick={() => setDeviceView("desktop")}
+            aria-label="Desktop view"
             className={`rounded px-2.5 py-1 text-xs font-semibold transition-all ${
               deviceView === "desktop"
                 ? "bg-white text-slate-900 shadow-sm"
@@ -71,6 +72,7 @@ export function BuilderPreview({ }: BuilderPreviewProps) {
           </button>
           <button
             onClick={() => setDeviceView("mobile")}
+            aria-label="Mobile view"
             className={`rounded px-2.5 py-1 text-xs font-semibold transition-all ${
               deviceView === "mobile"
                 ? "bg-white text-slate-900 shadow-sm"
@@ -99,10 +101,10 @@ export function BuilderPreview({ }: BuilderPreviewProps) {
         {/* Left Sidebar */}
         <div className="w-36 flex-col space-y-1 border-r border-slate-100 bg-white p-3 text-xs font-medium text-slate-600 sm:w-44">
           {[
-            { icon: Plus, label: "Add", iconClass: "text-slate-400" },
-            { icon: FileText, label: "Pages", iconClass: "text-slate-400" },
-            { icon: Wand2, label: "Design", iconClass: "text-slate-400" },
-            { icon: Image, label: "Media", iconClass: "text-slate-400" },
+            { icon: Plus, label: "Add", iconClass: "text-slate-500" },
+            { icon: FileText, label: "Pages", iconClass: "text-slate-500" },
+            { icon: Wand2, label: "Design", iconClass: "text-slate-500" },
+            { icon: Image, label: "Media", iconClass: "text-slate-500" },
             {
               icon: Sparkles,
               label: "AI Tools",
@@ -123,7 +125,7 @@ export function BuilderPreview({ }: BuilderPreviewProps) {
             </button>
           ))}
           <button className="mt-auto flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-slate-700 transition hover:bg-slate-50">
-            <Settings className="h-3 w-3 text-slate-400" />
+            <Settings className="h-3 w-3 text-slate-500" />
             <span>Settings</span>
           </button>
         </div>
@@ -189,7 +191,7 @@ export function BuilderPreview({ }: BuilderPreviewProps) {
             <button className="flex-1 border-b-2 border-indigo-600 pb-1.5 text-center font-semibold text-indigo-600 -mb-2">
               Section
             </button>
-            <button className="flex-1 pb-1.5 text-center font-medium text-slate-400 hover:text-slate-600">
+            <button className="flex-1 pb-1.5 text-center font-medium text-slate-500 hover:text-slate-600">
               Style
             </button>
           </div>
@@ -234,25 +236,29 @@ export function BuilderPreview({ }: BuilderPreviewProps) {
             </span>
             <div className="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50/50 p-2">
               <div className="flex items-center gap-2">
-                <input
-                  type="color"
-                  value={bgColor}
-                  onChange={(e) => setBgColor(e.target.value)}
-                  className="h-5 w-5 cursor-pointer rounded-full border-0 bg-transparent p-0"
-                />
-                <span className="font-mono text-[11px] font-medium uppercase text-slate-700">
-                  {bgColor.toUpperCase()}
-                </span>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="color"
+                    value={bgColor}
+                    onChange={(e) => setBgColor(e.target.value)}
+                    className="h-5 w-5 cursor-pointer rounded-full border-0 bg-transparent p-0"
+                    aria-label="Background color"
+                  />
+                  <span className="font-mono text-[11px] font-medium uppercase text-slate-700">
+                    {bgColor.toUpperCase()}
+                  </span>
+                </label>
               </div>
             </div>
           </div>
 
           <div className="space-y-2 pt-1">
             <div className="flex items-center justify-between text-[11px]">
-              <span className="font-semibold text-slate-500">Spacing</span>
+              <label htmlFor="spacing-range" className="font-semibold text-slate-500">Spacing</label>
               <span className="font-medium text-slate-600">{spacing}</span>
             </div>
             <input
+              id="spacing-range"
               type="range"
               min={8}
               max={40}

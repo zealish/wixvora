@@ -39,7 +39,7 @@ export function CtaSection() {
                 <span>Start Building for Free</span>
                 <ArrowRight className="w-4 h-4" />
               </a>
-              <p className="text-xs text-slate-400 font-medium mt-3">
+              <p className="text-xs text-slate-500 font-medium mt-3">
                 No credit card required
               </p>
             </div>
@@ -66,14 +66,14 @@ export function CtaSection() {
                 </h3>
                 <div className="inline-flex items-center gap-2 text-xs text-slate-500 bg-slate-50 border border-slate-200/80 px-3 py-1.5 rounded-lg cursor-pointer hover:bg-slate-100 transition">
                   <span>Last 30 days</span>
-                  <ChevronDown className="w-3 h-3 text-slate-400" />
+                  <ChevronDown className="w-3 h-3 text-slate-500" />
                 </div>
               </div>
 
               {/* Stat Boxes */}
               <div className="grid grid-cols-3 gap-3 sm:gap-4 mb-6">
                 <div className="bg-slate-50/70 border border-slate-100 rounded-xl p-3 sm:p-4">
-                  <span className="text-[11px] font-medium text-slate-400 block mb-1">
+                  <span className="text-[11px] font-medium text-slate-500 block mb-1">
                     Visitors
                   </span>
                   <div className="text-base sm:text-2xl font-bold text-slate-900 tracking-tight">
@@ -85,7 +85,7 @@ export function CtaSection() {
                 </div>
 
                 <div className="bg-slate-50/70 border border-slate-100 rounded-xl p-3 sm:p-4">
-                  <span className="text-[11px] font-medium text-slate-400 block mb-1">
+                  <span className="text-[11px] font-medium text-slate-500 block mb-1">
                     Page Views
                   </span>
                   <div className="text-base sm:text-2xl font-bold text-slate-900 tracking-tight">
@@ -97,7 +97,7 @@ export function CtaSection() {
                 </div>
 
                 <div className="bg-slate-50/70 border border-slate-100 rounded-xl p-3 sm:p-4">
-                  <span className="text-[11px] font-medium text-slate-400 block mb-1">
+                  <span className="text-[11px] font-medium text-slate-500 block mb-1">
                     Conversions
                   </span>
                   <div className="text-base sm:text-2xl font-bold text-slate-900 tracking-tight">
@@ -113,7 +113,7 @@ export function CtaSection() {
               <div className="relative pt-2">
                 <div className="flex justify-between h-36 relative">
                   {/* Y Axis Labels */}
-                  <div className="flex flex-col justify-between text-[10px] font-medium text-slate-400 pr-2 py-1">
+                  <div className="flex flex-col justify-between text-[10px] font-medium text-slate-500 pr-2 py-1">
                     <span>20K</span>
                     <span>15K</span>
                     <span>10K</span>
@@ -187,7 +187,7 @@ export function CtaSection() {
                 </div>
 
                 {/* X Axis Labels */}
-                <div className="flex justify-between pl-8 text-[10px] font-medium text-slate-400 mt-3">
+                <div className="flex justify-between pl-8 text-[10px] font-medium text-slate-500 mt-3">
                   <span>May 5</span>
                   <span>May 12</span>
                   <span>May 19</span>
@@ -273,7 +273,7 @@ export function CtaSection() {
                     <h4 className="text-sm font-extrabold leading-snug">
                       Build your brand online
                     </h4>
-                    <p className="text-[10px] text-slate-400 leading-relaxed">
+                    <p className="text-[10px] text-slate-300 leading-relaxed">
                       Create a professional website that helps your business
                       grow and stand out.
                     </p>

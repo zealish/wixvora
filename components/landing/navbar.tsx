@@ -79,7 +79,7 @@ export function Navbar() {
           </a>
           <div className="group flex cursor-pointer items-center gap-1.5 transition-colors hover:text-indigo-600">
             <span>Resources</span>
-            <ChevronDown className="h-3 w-3 text-slate-400 transition-transform group-hover:rotate-180 group-hover:text-indigo-600" />
+            <ChevronDown className="h-3 w-3 text-slate-500 transition-transform group-hover:rotate-180 group-hover:text-indigo-600" />
           </div>
         </nav>
 

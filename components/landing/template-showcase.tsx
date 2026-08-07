@@ -283,7 +283,7 @@ export function TemplateShowcase() {
           <div className="mt-2.5 flex items-center justify-center gap-3">
             <button
               onClick={() => swiperRef.current?.slidePrev()}
-              className="cursor-pointer text-slate-400 transition-colors select-none hover:text-blue-500"
+              className="cursor-pointer text-slate-500 transition-colors select-none hover:text-blue-500"
               aria-label="Previous slide"
             >
               <ChevronLeft className="h-3.5 w-3.5" />
@@ -291,7 +291,7 @@ export function TemplateShowcase() {
             <div className="swiper-custom-pagination flex items-center gap-0" />
             <button
               onClick={() => swiperRef.current?.slideNext()}
-              className="cursor-pointer text-slate-400 transition-colors select-none hover:text-blue-500"
+              className="cursor-pointer text-slate-500 transition-colors select-none hover:text-blue-500"
               aria-label="Next slide"
             >
               <ChevronRight className="h-3.5 w-3.5" />
