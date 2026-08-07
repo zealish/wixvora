@@ -7,3 +7,4 @@ export * from "./role-permissions";
 export * from "./staff-roles";
 export * from "./audit-logs";
 export * from "./settings";
+export * from "./business-categories";

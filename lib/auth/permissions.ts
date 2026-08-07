@@ -21,4 +21,8 @@ export const PERMISSIONS = {
   TEMPLATES_CREATE: "templates.create" as PermissionKey,
   TEMPLATES_PUBLISH: "templates.publish" as PermissionKey,
   SITES_MANAGE: "sites.manage" as PermissionKey,
+  CATEGORIES_VIEW: "categories.view" as PermissionKey,
+  CATEGORIES_CREATE: "categories.create" as PermissionKey,
+  CATEGORIES_UPDATE: "categories.update" as PermissionKey,
+  CATEGORIES_DELETE: "categories.delete" as PermissionKey,
 } as const;
