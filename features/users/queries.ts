@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { user, staffs, roles, clients } from "@/lib/db/schema";
+import { user, staffs, roles, clients, staffRoles } from "@/lib/db/schema";
 import { eq, isNull } from "drizzle-orm";
 import type { UserWithProfile } from "./types";
 
@@ -114,6 +114,44 @@ export async function getStaffUserById(
             | "TERMINATED",
         }
       : null,
+  };
+}
+
+export async function getStaffByUserId(userId: string) {
+  const result = await db
+    .select({
+      id: staffs.id,
+      userId: staffs.userId,
+      employeeCode: staffs.employeeCode,
+      department: staffs.department,
+      position: staffs.position,
+      roleId: staffRoles.roleId,
+      roleCode: roles.code,
+      roleName: roles.name,
+    })
+    .from(staffs)
+    .leftJoin(staffRoles, eq(staffs.id, staffRoles.staffId))
+    .leftJoin(roles, eq(staffRoles.roleId, roles.id))
+    .where(eq(staffs.userId, userId));
+
+  if (result.length === 0) return null;
+
+  const firstRow = result[0]!;
+  const rolesData = result
+    .filter((row) => row.roleCode !== null)
+    .map((row) => ({
+      id: row.roleId!,
+      code: row.roleCode!,
+      name: row.roleName!,
+    }));
+
+  return {
+    id: firstRow.id,
+    userId: firstRow.userId,
+    employeeCode: firstRow.employeeCode,
+    department: firstRow.department,
+    position: firstRow.position,
+    roles: rolesData,
   };
 }
 
