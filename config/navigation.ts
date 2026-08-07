@@ -64,6 +64,12 @@ export const staffNavGroups: NavGroup[] = [
         icon: "FileText",
         permission: PERMISSIONS.AUDIT_VIEW,
       },
+      {
+        title: "Business Categories",
+        href: "/staff/business-categories",
+        icon: "FolderTree",
+        permission: PERMISSIONS.CATEGORIES_VIEW,
+      },
     ],
   },
   {
