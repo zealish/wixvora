@@ -17,7 +17,7 @@ export function Navbar() {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 w-full transition-all duration-300 ${
+      className={`fixed top-0 right-0 left-0 z-50 w-full transition-all duration-300 ${
         scrolled
           ? "border-b border-slate-200/60 bg-white/80 shadow-sm backdrop-blur-lg"
           : "bg-transparent"
@@ -73,22 +73,7 @@ export function Navbar() {
               Features
             </Link>
             {pathname === "/features" && (
-              <div className="absolute bottom-0 left-0 right-0 h-[2.5px] rounded-full bg-indigo-600"></div>
-            )}
-          </div>
-          <div className="relative py-1">
-            <Link
-              href="/features"
-              className={`transition-colors ${
-                pathname === "/features"
-                  ? "font-semibold text-indigo-600"
-                  : "hover:text-indigo-600"
-              }`}
-            >
-              Features
-            </Link>
-            {pathname === "/features" && (
-              <div className="absolute bottom-0 left-0 right-0 h-[2.5px] rounded-full bg-indigo-600"></div>
+              <div className="absolute right-0 bottom-0 left-0 h-[2.5px] rounded-full bg-indigo-600"></div>
             )}
           </div>
           <div className="relative py-1">
@@ -103,7 +88,7 @@ export function Navbar() {
               Templates
             </Link>
             {pathname === "/templates" && (
-              <div className="absolute bottom-0 left-0 right-0 h-[2.5px] rounded-full bg-indigo-600"></div>
+              <div className="absolute right-0 bottom-0 left-0 h-[2.5px] rounded-full bg-indigo-600"></div>
             )}
           </div>
           <div className="relative py-1">
@@ -118,7 +103,7 @@ export function Navbar() {
               Pricing
             </Link>
             {pathname === "/pricing" && (
-              <div className="absolute bottom-0 left-0 right-0 h-[2.5px] rounded-full bg-indigo-600"></div>
+              <div className="absolute right-0 bottom-0 left-0 h-[2.5px] rounded-full bg-indigo-600"></div>
             )}
           </div>
           <div className="group flex cursor-pointer items-center gap-1.5 transition-colors hover:text-indigo-600">
