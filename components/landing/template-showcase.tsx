@@ -92,7 +92,7 @@ export function TemplateShowcase() {
         </div>
 
         {/* Right Column: Swiper Carousel */}
-        <div className="lg:col-span-7 relative w-full overflow-hidden lg:overflow-visible">
+        <div className="lg:col-span-7 relative w-full overflow-hidden lg:overflow-visible flex flex-col items-center">
           <Swiper
             modules={[EffectCoverflow, Pagination]}
             effect="coverflow"
@@ -115,7 +115,7 @@ export function TemplateShowcase() {
             onSwiper={(swiper) => {
               swiperRef.current = swiper;
             }}
-            className="template-swiper"
+            className="template-swiper w-full"
           >
             {templates.map((template) => (
               <SwiperSlide key={template.id}>
