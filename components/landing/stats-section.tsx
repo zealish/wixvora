@@ -2,7 +2,7 @@ export function StatsSection() {
   const stats = [
     { number: "10K+", label: "Websites Created", color: "text-blue-600" },
     { number: "50K+", label: "Happy Users", color: "text-blue-600" },
-    { number: "100+", label: "Templates", color: "text-indigo-600" },
+    { number: "100+", label: "Templates", color: "text-blue-600" },
     { number: "99.9%", label: "Uptime", color: "text-indigo-600" },
   ];
 
