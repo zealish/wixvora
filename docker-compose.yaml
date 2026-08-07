@@ -1,0 +1,62 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: wixvora-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: wixvora_user
+      POSTGRES_PASSWORD: wixvora_pass
+      POSTGRES_DB: wixvora
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U wixvora_user -d wixvora"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - wixvora-network
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: wixvora-app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://wixvora_user:wixvora_pass@postgres:5432/wixvora
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:-change-this-secret-key-in-production}
+      BETTER_AUTH_URL: ${BETTER_AUTH_URL:-http://localhost:3000}
+      BETTER_AUTH_TRUSTED_ORIGINS: ${BETTER_AUTH_TRUSTED_ORIGINS:-http://localhost:3000}
+      SMTP_HOST: ${SMTP_HOST:-smtp.example.com}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_SECURE: ${SMTP_SECURE:-false}
+      SMTP_USER: ${SMTP_USER:-your-email@example.com}
+      SMTP_PASS: ${SMTP_PASS:-your-password}
+      SMTP_FROM: ${SMTP_FROM:-noreply@example.com}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - wixvora-network
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:3000/api/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  wixvora-network:
+    driver: bridge
