@@ -35,6 +35,7 @@ import {
 import { toast } from "@/components/ui/toast";
 import { getCategoryColumns } from "../table/category-columns";
 import { CategoryBulkActions } from "../table/category-bulk-actions";
+import { CategoryExportMenu } from "../table/category-export-menu";
 import {
   deleteCategoryAction,
   toggleStatusAction,
@@ -220,6 +221,7 @@ export function CategoryDataTable({ data }: CategoryDataTableProps) {
     data: flattenData,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    enableRowSelection: true,
     getRowId: (row) => row.id,
     state: {
       rowSelection: Object.fromEntries(selectedIds.map((id) => [id, true])),
@@ -251,6 +253,7 @@ export function CategoryDataTable({ data }: CategoryDataTableProps) {
             <SelectItem value="inactive">Inactive</SelectItem>
           </SelectContent>
         </Select>
+        <CategoryExportMenu data={flattenData} selectedIds={selectedIds} />
         <CategoryBulkActions
           selectedIds={selectedIds}
           onDelete={handleBulkDelete}
