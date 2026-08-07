@@ -4,3 +4,5 @@ export { BuilderPreview } from "./builder-preview";
 export { DemoModal } from "./demo-modal";
 export { FeaturesGrid } from "./features-grid";
 export { HowItWorks } from "./how-it-works";
+export { TemplateShowcase } from "./template-showcase";
+export { StatsSection } from "./stats-section";
