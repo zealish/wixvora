@@ -240,21 +240,21 @@ export function TemplateShowcase() {
           </Swiper>
 
           {/* Custom Pagination Controls */}
-          <div className="flex items-center justify-center gap-3 mt-2.5">
+          <div className="flex items-center justify-center gap-4 mt-8">
             <button
               onClick={() => swiperRef.current?.slidePrev()}
-              className="text-slate-400 hover:text-blue-500 transition-colors text-sm cursor-pointer"
+              className="w-10 h-10 flex items-center justify-center rounded-full bg-white border border-slate-200 text-slate-600 hover:text-blue-600 hover:border-blue-300 hover:bg-blue-50 transition-all duration-200 shadow-sm hover:shadow-md"
               aria-label="Previous slide"
             >
-              <ChevronLeft className="w-3.5 h-3.5" />
+              <ChevronLeft className="w-5 h-5" />
             </button>
-            <div className="swiper-custom-pagination flex items-center gap-3" />
+            <div className="swiper-custom-pagination flex items-center gap-2" />
             <button
               onClick={() => swiperRef.current?.slideNext()}
-              className="text-slate-400 hover:text-blue-500 transition-colors text-sm cursor-pointer"
+              className="w-10 h-10 flex items-center justify-center rounded-full bg-white border border-slate-200 text-slate-600 hover:text-blue-600 hover:border-blue-300 hover:bg-blue-50 transition-all duration-200 shadow-sm hover:shadow-md"
               aria-label="Next slide"
             >
-              <ChevronRight className="w-3.5 h-3.5" />
+              <ChevronRight className="w-5 h-5" />
             </button>
           </div>
         </div>
