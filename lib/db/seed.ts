@@ -1,6 +1,6 @@
 import "dotenv/config";
 import { db } from "@/lib/db";
-import { permissions, roles, rolePermissions } from "@/lib/db/schema";
+import { permissions, roles, rolePermissions, settings } from "@/lib/db/schema";
 
 const seedPermissions = [
   {
@@ -249,6 +249,19 @@ async function seed() {
         .onConflictDoNothing();
     }
   }
+
+  // Seed settings singleton
+  await db
+    .insert(settings)
+    .values({
+      id: 1,
+      seoSettings: {},
+      generalSettings: {},
+      emailSettings: {},
+      integrationsSettings: {},
+      securitySettings: {},
+    })
+    .onConflictDoNothing();
 
   console.log("✅ Database seeded successfully!");
 }

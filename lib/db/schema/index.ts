@@ -6,3 +6,4 @@ export * from "./permissions";
 export * from "./role-permissions";
 export * from "./staff-roles";
 export * from "./audit-logs";
+export * from "./settings";
