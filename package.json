@@ -39,6 +39,7 @@
     "dotenv": "^17.4.2",
     "drizzle-orm": "^0.45.2",
     "export-to-csv": "^1.4.0",
+    "framer-motion": "^13.0.0",
     "lucide-react": "^1.28.0",
     "nanoid": "^6.0.1",
     "next": "16.3.0",
