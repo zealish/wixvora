@@ -18,6 +18,7 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
 ENV NEXT_TELEMETRY_DISABLED=1
+ENV DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy"
 
 RUN pnpm run build
 
@@ -32,7 +33,10 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
 COPY --from=builder /app/public ./public
-COPY --from=builder /app/.next/standalone ./
+
+RUN mkdir -p .next/standalone/.next && \
+    cp -r /app/.next/standalone/* ./ 2>/dev/null || true
+
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/lib ./lib
 COPY --from=builder /app/drizzle.config.ts ./drizzle.config.ts
