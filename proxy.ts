@@ -1,12 +1,29 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-export function proxy(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const sessionCookie = request.cookies.get("better-auth.session_token");
 
   if (sessionCookie && (pathname === "/login" || pathname === "/signup")) {
-    return NextResponse.redirect(new URL("/staff", request.url));
+    try {
+      const sessionResponse = await fetch(
+        new URL("/api/auth/get-session", request.url),
+        {
+          headers: {
+            cookie: request.headers.get("cookie") || "",
+          },
+        }
+      );
+
+      if (sessionResponse.ok) {
+        const session = await sessionResponse.json();
+        const redirectPath = session?.user?.accountType === "STAFF" ? "/staff" : "/client";
+        return NextResponse.redirect(new URL(redirectPath, request.url));
+      }
+    } catch (error) {
+      console.error("Error fetching session:", error);
+    }
   }
 
   return NextResponse.next();

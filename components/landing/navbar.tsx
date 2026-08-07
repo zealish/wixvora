@@ -113,18 +113,18 @@ export function Navbar() {
         </nav>
 
         <div className="flex items-center space-x-6">
-          <a
-            href="#login"
+          <Link
+            href="/login"
             className="text-[15px] font-semibold text-slate-800 transition-colors hover:text-indigo-600"
           >
             Log in
-          </a>
-          <a
-            href="#get-started"
+          </Link>
+          <Link
+            href="/login?mode=signup"
             className="rounded-full bg-gradient-to-r from-blue-600 via-indigo-600 to-indigo-700 px-6 py-3 text-sm font-semibold text-white shadow-md shadow-indigo-500/20 transition-all hover:scale-[1.02] hover:shadow-lg hover:shadow-indigo-500/35 active:scale-[0.98]"
           >
             Get Started Free
-          </a>
+          </Link>
         </div>
       </div>
     </header>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "@/lib/auth/auth-client";
 import { registerClient } from "@/features/auth/actions";
 import { Button } from "@/components/ui/button";
@@ -14,7 +14,9 @@ import { AuthShowcase } from "./auth-showcase";
 
 export function AuthForm() {
   const router = useRouter();
-  const [mode, setMode] = useState<"signin" | "signup">("signin");
+  const searchParams = useSearchParams();
+  const initialMode = searchParams.get("mode") === "signup" ? "signup" : "signin";
+  const [mode, setMode] = useState<"signin" | "signup">(initialMode);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -47,9 +49,14 @@ export function AuthForm() {
           return;
         }
 
-        setSuccess("Welcome back! Redirecting to Wixvora Studio...");
+        setSuccess("Welcome back! Redirecting...");
+        
+        const sessionResponse = await fetch("/api/auth/get-session");
+        const sessionData = await sessionResponse.json();
+        const redirectPath = sessionData?.user?.accountType === "STAFF" ? "/staff" : "/client";
+
         setTimeout(() => {
-          router.push("/");
+          router.push(redirectPath);
           router.refresh();
         }, 1500);
       } else {
