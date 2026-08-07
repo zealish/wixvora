@@ -5,6 +5,7 @@ import {
   ChevronDown,
   Menu,
 } from "lucide-react";
+import { MotionWrapper } from "./motion-wrapper";
 
 export function CtaSection() {
   return (
@@ -12,7 +13,7 @@ export function CtaSection() {
       <div className="max-w-[1340px] mx-auto px-6 md:px-12">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
           {/* Left Content */}
-          <div className="lg:col-span-5 space-y-6">
+          <MotionWrapper variant="fade-right" className="lg:col-span-5 space-y-6">
             {/* Badge */}
             <div className="inline-flex items-center px-4 py-1.5 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-600 text-xs font-bold tracking-wider uppercase">
               READY TO GET STARTED?
@@ -42,10 +43,10 @@ export function CtaSection() {
                 No credit card required
               </p>
             </div>
-          </div>
+          </MotionWrapper>
 
           {/* Right Visual: Analytics Panel & Mobile Mockup */}
-          <div className="lg:col-span-7 relative flex items-center justify-center lg:justify-end pt-6 lg:pt-0">
+          <MotionWrapper variant="fade-left" className="lg:col-span-7 relative flex items-center justify-center lg:justify-end pt-6 lg:pt-0">
             {/* Ambient Blob */}
             <div className="absolute -left-12 top-10 w-80 h-80 bg-indigo-100/50 rounded-full blur-3xl pointer-events-none -z-10" />
 
@@ -286,7 +287,7 @@ export function CtaSection() {
                 </div>
               </div>
             </div>
-          </div>
+          </MotionWrapper>
         </div>
       </div>
     </section>

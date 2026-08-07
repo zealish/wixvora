@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { MotionWrapper } from "./motion-wrapper";
 
 const productLinks = [
   { label: "Features", href: "#features" },
@@ -94,7 +95,8 @@ function LinkColumn({
 
 export function Footer() {
   return (
-    <footer className="w-full bg-[#f8f9fc] border-t border-slate-200/60 pt-16 pb-12">
+    <MotionWrapper>
+      <footer className="w-full bg-[#f8f9fc] border-t border-slate-200/60 pt-16 pb-12">
       <div className="max-w-[1340px] mx-auto px-6 md:px-12">
         <div className="grid grid-cols-2 md:grid-cols-12 gap-8 lg:gap-12 pb-16 border-b border-slate-200/80">
           {/* Brand Column */}
@@ -163,6 +165,7 @@ export function Footer() {
           <p>&copy; {new Date().getFullYear()} Wixvora. All rights reserved.</p>
         </div>
       </div>
-    </footer>
+      </footer>
+    </MotionWrapper>
   );
 }

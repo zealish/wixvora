@@ -10,6 +10,7 @@ import {
   Square,
   X,
 } from "lucide-react";
+import { MotionWrapper } from "./motion-wrapper";
 import type { Swiper as SwiperType } from "swiper";
 import { useRef } from "react";
 
@@ -77,7 +78,7 @@ export function TemplateShowcase() {
     <section className="mx-auto max-w-[1440px] px-4 py-16 md:px-12 lg:px-16 lg:py-24">
       <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-12">
         {/* Left Column: Marketing Copy */}
-        <div className="z-20 flex flex-col items-start space-y-6 pr-0 lg:col-span-5 lg:pr-4">
+        <MotionWrapper variant="fade-right" className="z-20 flex flex-col items-start space-y-6 pr-0 lg:col-span-5 lg:pr-4">
           <div className="inline-flex items-center rounded-full border border-indigo-100 bg-indigo-50 px-3.5 py-1.5 text-xs font-semibold tracking-wide text-indigo-600 uppercase">
             PROFESSIONAL TEMPLATES
           </div>
@@ -98,10 +99,10 @@ export function TemplateShowcase() {
             Explore Templates
             <ArrowRight className="h-4 w-4" />
           </a>
-        </div>
+        </MotionWrapper>
 
         {/* Right Column: Swiper Carousel */}
-        <div className="relative flex w-full flex-col items-center overflow-hidden lg:col-span-7 lg:overflow-visible">
+        <MotionWrapper variant="fade-left" className="relative flex w-full flex-col items-center overflow-hidden lg:col-span-7 lg:overflow-visible">
           <Swiper
             modules={[EffectCoverflow, Pagination]}
             effect="coverflow"
@@ -296,7 +297,7 @@ export function TemplateShowcase() {
               <ChevronRight className="h-3.5 w-3.5" />
             </button>
           </div>
-        </div>
+        </MotionWrapper>
       </div>
     </section>
   );

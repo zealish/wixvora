@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ArrowRight, Play, Check } from "lucide-react";
 import { BuilderPreview } from "./builder-preview";
 import { DemoModal } from "./demo-modal";
+import { MotionWrapper } from "./motion-wrapper";
 
 export function HeroSection() {
   const [isDemoOpen, setIsDemoOpen] = useState(false);
@@ -18,59 +19,69 @@ export function HeroSection() {
         <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-12 lg:gap-8">
           {/* Left Column: Copy */}
           <div className="z-10 flex flex-col items-start space-y-7 pr-0 lg:col-span-5 lg:pr-2">
-            <div className="inline-flex items-center rounded-full border border-indigo-100 bg-indigo-50/90 px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-indigo-600 shadow-sm">
-              AI-POWERED WEBSITE BUILDER
-            </div>
+            <MotionWrapper delay={0}>
+              <div className="inline-flex items-center rounded-full border border-indigo-100 bg-indigo-50/90 px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-indigo-600 shadow-sm">
+                AI-POWERED WEBSITE BUILDER
+              </div>
+            </MotionWrapper>
 
-            <h1 className="text-5xl font-black leading-[1.08] tracking-tight text-slate-900 sm:text-6xl lg:text-[62px]">
-              Build <span className="text-gradient">Smarter.</span>
-              <br />
-              Launch <span className="text-gradient">Faster.</span>
-            </h1>
+            <MotionWrapper delay={0.1}>
+              <h1 className="text-5xl font-black leading-[1.08] tracking-tight text-slate-900 sm:text-6xl lg:text-[62px]">
+                Build <span className="text-gradient">Smarter.</span>
+                <br />
+                Launch <span className="text-gradient">Faster.</span>
+              </h1>
+            </MotionWrapper>
 
-            <p className="max-w-lg text-lg font-normal leading-relaxed text-slate-600 sm:text-xl">
-              Create professional websites effortlessly with the power of AI.
-            </p>
+            <MotionWrapper delay={0.2}>
+              <p className="max-w-lg text-lg font-normal leading-relaxed text-slate-600 sm:text-xl">
+                Create professional websites effortlessly with the power of AI.
+              </p>
+            </MotionWrapper>
 
-            <div className="flex flex-wrap items-center gap-4 pt-2">
-              <a
-                href="#build"
-                className="inline-flex items-center gap-3 rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-indigo-700 px-8 py-4 text-base font-semibold text-white shadow-xl shadow-indigo-500/30 transition-all hover:scale-[1.02] hover:shadow-indigo-500/45 active:scale-[0.98]"
-              >
-                <span>Start Building for Free</span>
-                <ArrowRight className="h-4 w-4" />
-              </a>
+            <MotionWrapper variant="scale-fade" delay={0.3}>
+              <div className="flex flex-wrap items-center gap-4 pt-2">
+                <a
+                  href="#build"
+                  className="inline-flex items-center gap-3 rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-indigo-700 px-8 py-4 text-base font-semibold text-white shadow-xl shadow-indigo-500/30 transition-all hover:scale-[1.02] hover:shadow-indigo-500/45 active:scale-[0.98]"
+                >
+                  <span>Start Building for Free</span>
+                  <ArrowRight className="h-4 w-4" />
+                </a>
 
-              <button
-                onClick={() => setIsDemoOpen(true)}
-                className="group inline-flex items-center gap-3 rounded-xl px-6 py-4 text-base font-semibold text-indigo-600 transition-all hover:bg-indigo-50/60"
-              >
-                <span className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-indigo-500/30 bg-white text-indigo-600 shadow-sm transition-all group-hover:scale-110 group-hover:border-indigo-600">
-                  <Play className="h-3 w-3 translate-x-[1px]" />
-                </span>
-                <span>Watch Demo</span>
-              </button>
-            </div>
-
-            <div className="grid w-full grid-cols-2 gap-x-6 gap-y-3.5 border-t border-slate-100 pt-6 text-sm font-medium text-slate-700">
-              {[
-                "No Coding Needed",
-                "AI-Powered",
-                "Mobile Responsive",
-                "SEO Optimized",
-              ].map((feature) => (
-                <div key={feature} className="flex items-center gap-2.5">
-                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-indigo-50 text-[10px] font-bold text-indigo-600">
-                    <Check className="h-3 w-3" />
+                <button
+                  onClick={() => setIsDemoOpen(true)}
+                  className="group inline-flex items-center gap-3 rounded-xl px-6 py-4 text-base font-semibold text-indigo-600 transition-all hover:bg-indigo-50/60"
+                >
+                  <span className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-indigo-500/30 bg-white text-indigo-600 shadow-sm transition-all group-hover:scale-110 group-hover:border-indigo-600">
+                    <Play className="h-3 w-3 translate-x-[1px]" />
                   </span>
-                  <span>{feature}</span>
-                </div>
-              ))}
-            </div>
+                  <span>Watch Demo</span>
+                </button>
+              </div>
+            </MotionWrapper>
+
+            <MotionWrapper delay={0.4}>
+              <div className="grid w-full grid-cols-2 gap-x-6 gap-y-3.5 border-t border-slate-100 pt-6 text-sm font-medium text-slate-700">
+                {[
+                  "No Coding Needed",
+                  "AI-Powered",
+                  "Mobile Responsive",
+                  "SEO Optimized",
+                ].map((feature) => (
+                  <div key={feature} className="flex items-center gap-2.5">
+                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-indigo-50 text-[10px] font-bold text-indigo-600">
+                      <Check className="h-3 w-3" />
+                    </span>
+                    <span>{feature}</span>
+                  </div>
+                ))}
+              </div>
+            </MotionWrapper>
           </div>
 
           {/* Right Column: Builder Preview */}
-          <div className="relative w-full pt-4 lg:col-span-7 lg:pt-0">
+          <MotionWrapper variant="fade-left" delay={0.2} className="relative w-full pt-4 lg:col-span-7 lg:pt-0">
             {/* Decorative Sparkle */}
             <div className="pointer-events-none absolute -top-10 right-28 z-20 hidden animate-float sm:block">
               <div className="relative">
@@ -99,7 +110,7 @@ export function HeroSection() {
             </div>
 
             <BuilderPreview onDemoClick={() => setIsDemoOpen(true)} />
-          </div>
+          </MotionWrapper>
         </div>
       </main>
 
