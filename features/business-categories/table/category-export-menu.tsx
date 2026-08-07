@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -73,11 +72,12 @@ export function CategoryExportMenu({
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger>
-        <Button variant="outline" size="sm" disabled={!hasData}>
-          <Download className="h-4 w-4 mr-2" />
-          Export{selectedCount > 0 && ` (${selectedCount} selected)`}
-        </Button>
+      <DropdownMenuTrigger
+        className="inline-flex h-9 items-center justify-center gap-2 rounded-md border border-input bg-background px-3 text-sm font-medium hover:bg-accent hover:text-accent-foreground disabled:pointer-events-none disabled:opacity-50"
+        disabled={!hasData}
+      >
+        <Download className="h-4 w-4" />
+        Export{selectedCount > 0 && ` (${selectedCount} selected)`}
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuItem onClick={() => handleExport("csv")}>
