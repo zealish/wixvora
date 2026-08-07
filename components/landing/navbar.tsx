@@ -106,12 +106,21 @@ export function Navbar() {
               <div className="absolute bottom-0 left-0 right-0 h-[2.5px] rounded-full bg-indigo-600"></div>
             )}
           </div>
-          <a
-            href="/#pricing"
-            className="transition-colors hover:text-indigo-600"
-          >
-            Pricing
-          </a>
+          <div className="relative py-1">
+            <Link
+              href="/pricing"
+              className={`transition-colors ${
+                pathname === "/pricing"
+                  ? "font-semibold text-indigo-600"
+                  : "hover:text-indigo-600"
+              }`}
+            >
+              Pricing
+            </Link>
+            {pathname === "/pricing" && (
+              <div className="absolute bottom-0 left-0 right-0 h-[2.5px] rounded-full bg-indigo-600"></div>
+            )}
+          </div>
           <div className="group flex cursor-pointer items-center gap-1.5 transition-colors hover:text-indigo-600">
             <span>Resources</span>
             <ChevronDown className="h-3 w-3 text-slate-500 transition-transform group-hover:rotate-180 group-hover:text-indigo-600" />
