@@ -215,8 +215,43 @@
 
   /* Templates page hero background */
   .hero-bg {
-    background: radial-gradient(circle at 80% 20%, rgba(99, 102, 241, 0.08) 0%, rgba(255, 255, 255, 0) 50%),
-                radial-gradient(circle at 10% 80%, rgba(139, 92, 246, 0.06) 0%, rgba(255, 255, 255, 0) 50%);
+    background: radial-gradient(circle at 80% 20%, rgba(99, 102, 241, 0.09) 0%, rgba(255, 255, 255, 0) 50%),
+                radial-gradient(circle at 10% 80%, rgba(139, 92, 246, 0.08) 0%, rgba(255, 255, 255, 0) 50%);
+  }
+
+  /* Auth page glow effect */
+  .glow-effect {
+    box-shadow: 0 0 50px -10px rgba(99, 102, 241, 0.22);
+  }
+
+  /* Pulse glow animation for background orbs */
+  @keyframes pulseGlow {
+    0%, 100% {
+      opacity: 0.6;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.9;
+      transform: scale(1.05);
+    }
+  }
+
+  .animate-pulse-glow {
+    animation: pulseGlow 4s ease-in-out infinite;
+  }
+
+  /* Float animation for floating cards */
+  @keyframes floatSlow {
+    0%, 100% {
+      transform: translateY(0px) rotate(0deg);
+    }
+    50% {
+      transform: translateY(-8px) rotate(1deg);
+    }
+  }
+
+  .animate-float {
+    animation: floatSlow 5s ease-in-out infinite;
   }
 
   /* Builder selection box */

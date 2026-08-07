@@ -7,14 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import Link from "next/link";
 
 export function LoginForm() {
@@ -56,75 +49,92 @@ export function LoginForm() {
   }
 
   return (
-    <Card className="w-full max-w-md">
-      <CardHeader>
-        <CardTitle>Welcome back</CardTitle>
-        <CardDescription>Log in to your account</CardDescription>
-      </CardHeader>
-      <form onSubmit={handleSubmit}>
-        <CardContent className="space-y-4">
-          {error && (
-            <div className="rounded-md bg-red-50 p-3 text-sm text-red-600">
-              {error}
+    <div className="w-full space-y-6">
+      <div className="space-y-2 text-center">
+        <h1 className="text-4xl font-black tracking-tight text-slate-900">
+          Welcome back
+        </h1>
+        <p className="text-base font-normal text-slate-600">
+          Log in to your account to continue
+        </p>
+      </div>
+
+      <Card className="border-slate-200/60 bg-white/90 shadow-xl backdrop-blur-sm">
+        <form onSubmit={handleSubmit}>
+          <CardContent className="space-y-5 pt-8">
+            {error && (
+              <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm font-medium text-red-600">
+                {error}
+              </div>
+            )}
+            <div className="space-y-2.5">
+              <Label htmlFor="email" className="text-sm font-semibold text-slate-700">
+                Email
+              </Label>
+              <Input
+                id="email"
+                name="email"
+                type="email"
+                required
+                disabled={loading}
+                placeholder="john@example.com"
+                className="h-12 rounded-xl border-slate-200 bg-white text-base transition-all focus:border-indigo-600 focus:ring-indigo-600"
+              />
             </div>
-          )}
-          <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              name="email"
-              type="email"
-              required
-              disabled={loading}
-              placeholder="john@example.com"
-            />
-          </div>
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <Label htmlFor="password">Password</Label>
-              <Link
-                href="/forgot-password"
-                className="text-primary text-xs hover:underline"
+            <div className="space-y-2.5">
+              <div className="flex items-center justify-between">
+                <Label htmlFor="password" className="text-sm font-semibold text-slate-700">
+                  Password
+                </Label>
+                <Link
+                  href="/forgot-password"
+                  className="text-xs font-semibold text-indigo-600 transition-colors hover:text-indigo-700"
+                >
+                  Forgot password?
+                </Link>
+              </div>
+              <Input
+                id="password"
+                name="password"
+                type="password"
+                required
+                disabled={loading}
+                placeholder="••••••••"
+                className="h-12 rounded-xl border-slate-200 bg-white text-base transition-all focus:border-indigo-600 focus:ring-indigo-600"
+              />
+            </div>
+            <div className="flex items-center space-x-2.5">
+              <Checkbox
+                id="rememberMe"
+                name="rememberMe"
+                disabled={loading}
+                defaultChecked
+              />
+              <Label
+                htmlFor="rememberMe"
+                className="cursor-pointer text-sm font-medium text-slate-700"
               >
-                Forgot password?
-              </Link>
+                Remember me
+              </Label>
             </div>
-            <Input
-              id="password"
-              name="password"
-              type="password"
-              required
+
+            <Button
+              type="submit"
               disabled={loading}
-              placeholder="••••••••"
-            />
-          </div>
-          <div className="flex items-center space-x-2">
-            <Checkbox
-              id="rememberMe"
-              name="rememberMe"
-              disabled={loading}
-              defaultChecked
-            />
-            <Label
-              htmlFor="rememberMe"
-              className="text-sm font-normal cursor-pointer"
+              className="h-12 w-full rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-indigo-700 text-base font-semibold shadow-xl shadow-indigo-500/30 transition-all hover:scale-[1.02] hover:shadow-indigo-500/45 active:scale-[0.98]"
             >
-              Remember me
-            </Label>
-          </div>
-        </CardContent>
-        <CardFooter className="flex flex-col space-y-4">
-          <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? "Logging in..." : "Log in"}
-          </Button>
-          <p className="text-muted-foreground text-center text-sm">
-            Don&apos;t have an account?{" "}
-            <Link href="/signup" className="text-primary hover:underline">
-              Sign up
-            </Link>
-          </p>
-        </CardFooter>
-      </form>
-    </Card>
+              {loading ? "Logging in..." : "Log in"}
+            </Button>
+          </CardContent>
+        </form>
+      </Card>
+
+      <p className="text-center text-sm font-medium text-slate-600">
+        Don&apos;t have an account?{" "}
+        <Link href="/signup" className="font-semibold text-indigo-600 transition-colors hover:text-indigo-700">
+          Sign up
+        </Link>
+      </p>
+    </div>
   );
 }
