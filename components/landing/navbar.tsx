@@ -76,12 +76,36 @@ export function Navbar() {
               <div className="absolute bottom-0 left-0 right-0 h-[2.5px] rounded-full bg-indigo-600"></div>
             )}
           </div>
-          <a
-            href="/#templates"
-            className="transition-colors hover:text-indigo-600"
-          >
-            Templates
-          </a>
+          <div className="relative py-1">
+            <Link
+              href="/features"
+              className={`transition-colors ${
+                pathname === "/features"
+                  ? "font-semibold text-indigo-600"
+                  : "hover:text-indigo-600"
+              }`}
+            >
+              Features
+            </Link>
+            {pathname === "/features" && (
+              <div className="absolute bottom-0 left-0 right-0 h-[2.5px] rounded-full bg-indigo-600"></div>
+            )}
+          </div>
+          <div className="relative py-1">
+            <Link
+              href="/templates"
+              className={`transition-colors ${
+                pathname === "/templates"
+                  ? "font-semibold text-indigo-600"
+                  : "hover:text-indigo-600"
+              }`}
+            >
+              Templates
+            </Link>
+            {pathname === "/templates" && (
+              <div className="absolute bottom-0 left-0 right-0 h-[2.5px] rounded-full bg-indigo-600"></div>
+            )}
+          </div>
           <a
             href="/#pricing"
             className="transition-colors hover:text-indigo-600"
