@@ -66,6 +66,18 @@ export const staffNavGroups: NavGroup[] = [
       },
     ],
   },
+  {
+    label: "Configuration",
+    icon: "Cog",
+    items: [
+      {
+        title: "Settings",
+        href: "/staff/settings",
+        icon: "Settings",
+        permission: PERMISSIONS.SETTINGS_UPDATE,
+      },
+    ],
+  },
 ];
 
 // Export flattened arrays for backward compatibility
