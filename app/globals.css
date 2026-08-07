@@ -237,3 +237,43 @@
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
   }
 }
+
+/* Swiper Template Showcase Overrides */
+.template-swiper {
+  width: 100%;
+  padding-top: 20px;
+  padding-bottom: 40px;
+  overflow: visible !important;
+}
+
+.template-swiper .swiper-slide {
+  width: 580px;
+  max-width: 90vw;
+  border-radius: 16px;
+  transition: all 0.4s ease;
+  opacity: 0.5;
+  transform: scale(0.88);
+  filter: blur(1px);
+}
+
+.template-swiper .swiper-slide-active {
+  opacity: 1;
+  transform: scale(1.05);
+  filter: blur(0px);
+  z-index: 10;
+}
+
+.template-swiper .swiper-pagination-bullet {
+  width: 8px;
+  height: 8px;
+  background-color: #cbd5e1;
+  opacity: 1;
+  border-radius: 9999px;
+  transition: all 0.3s ease;
+  margin: 0 !important;
+}
+
+.template-swiper .swiper-pagination-bullet-active {
+  width: 28px;
+  background-color: #3b82f6;
+}
