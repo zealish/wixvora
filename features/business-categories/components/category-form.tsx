@@ -52,7 +52,6 @@ export function CategoryForm({
 
   useEffect(() => {
     if (mode === "create" && watchName) {
-      const currentSlug = form.getValues("slug");
       const slug = watchName
         .toLowerCase()
         .replace(/[^a-z0-9\s-]/g, "")
@@ -60,9 +59,7 @@ export function CategoryForm({
         .replace(/-+/g, "-")
         .replace(/^-|-$/g, "");
       
-      if (!currentSlug || currentSlug === "") {
-        form.setValue("slug", slug);
-      }
+      form.setValue("slug", slug, { shouldValidate: false });
     }
   }, [watchName, mode, form]);
 
