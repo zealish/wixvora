@@ -19,7 +19,6 @@ import {
   ToggleLeft,
   ToggleRight,
 } from "lucide-react";
-import * as LucideIcons from "lucide-react";
 import type { CategoryWithChildren } from "../types";
 
 export function getCategoryColumns(
@@ -112,14 +111,12 @@ export function getCategoryColumns(
 
         return (
           <DropdownMenu>
-            <DropdownMenuTrigger
-              render={
-                <Button variant="ghost" size="icon" className="h-8 w-8">
-                  <span className="sr-only">Open menu</span>
-                  <MoreHorizontal className="h-4 w-4" />
-                </Button>
-              }
-            />
+            <DropdownMenuTrigger>
+              <Button variant="ghost" size="icon" className="h-8 w-8">
+                <span className="sr-only">Open menu</span>
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem onClick={() => onEdit(category.id)}>
                 <Pencil className="h-4 w-4 mr-2" />
@@ -165,41 +162,41 @@ function getIconComponent(iconName: string | null) {
   if (!iconName) return null;
 
   const icons: Record<string, React.ComponentType<{ className?: string }>> = {
-    Store: LucideIcons.Store,
-    ShoppingCart: LucideIcons.ShoppingCart,
-    Package: LucideIcons.Package,
-    Utensils: LucideIcons.Utensils,
-    Coffee: LucideIcons.Coffee,
-    Briefcase: LucideIcons.Briefcase,
-    Wrench: LucideIcons.Wrench,
-    Car: LucideIcons.Car,
-    Home: LucideIcons.Home,
-    Heart: LucideIcons.Heart,
-    BookOpen: LucideIcons.BookOpen,
-    Laptop: LucideIcons.Laptop,
-    Palette: LucideIcons.Palette,
-    Music: LucideIcons.Music,
-    Camera: LucideIcons.Camera,
-    Star: LucideIcons.Star,
-    Zap: LucideIcons.Zap,
-    Globe: LucideIcons.Globe,
-    Shield: LucideIcons.Shield,
-    Users: LucideIcons.Users,
-    FileText: LucideIcons.FileText,
-    Settings: LucideIcons.Settings,
-    LayoutDashboard: LucideIcons.LayoutDashboard,
-    FolderTree: LucideIcons.FolderTree,
-    Tag: LucideIcons.Tag,
-    Gift: LucideIcons.Gift,
-    Truck: LucideIcons.Truck,
-    CreditCard: LucideIcons.CreditCard,
-    BarChart3: LucideIcons.BarChart3,
-    MessageSquare: LucideIcons.MessageSquare,
-    Phone: LucideIcons.Phone,
-    Mail: LucideIcons.Mail,
-    MapPin: LucideIcons.MapPin,
-    Calendar: LucideIcons.Calendar,
-    Clock: LucideIcons.Clock,
+    Store: require("lucide-react").Store,
+    ShoppingCart: require("lucide-react").ShoppingCart,
+    Package: require("lucide-react").Package,
+    Utensils: require("lucide-react").Utensils,
+    Coffee: require("lucide-react").Coffee,
+    Briefcase: require("lucide-react").Briefcase,
+    Wrench: require("lucide-react").Wrench,
+    Car: require("lucide-react").Car,
+    Home: require("lucide-react").Home,
+    Heart: require("lucide-react").Heart,
+    BookOpen: require("lucide-react").BookOpen,
+    Laptop: require("lucide-react").Laptop,
+    Palette: require("lucide-react").Palette,
+    Music: require("lucide-react").Music,
+    Camera: require("lucide-react").Camera,
+    Star: require("lucide-react").Star,
+    Zap: require("lucide-react").Zap,
+    Globe: require("lucide-react").Globe,
+    Shield: require("lucide-react").Shield,
+    Users: require("lucide-react").Users,
+    FileText: require("lucide-react").FileText,
+    Settings: require("lucide-react").Settings,
+    LayoutDashboard: require("lucide-react").LayoutDashboard,
+    FolderTree: require("lucide-react").FolderTree,
+    Tag: require("lucide-react").Tag,
+    Gift: require("lucide-react").Gift,
+    Truck: require("lucide-react").Truck,
+    CreditCard: require("lucide-react").CreditCard,
+    BarChart3: require("lucide-react").BarChart3,
+    MessageSquare: require("lucide-react").MessageSquare,
+    Phone: require("lucide-react").Phone,
+    Mail: require("lucide-react").Mail,
+    MapPin: require("lucide-react").MapPin,
+    Calendar: require("lucide-react").Calendar,
+    Clock: require("lucide-react").Clock,
   };
 
   return icons[iconName] ?? null;
