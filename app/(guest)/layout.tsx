@@ -3,7 +3,7 @@ import { Footer } from "@/components/landing/footer";
 
 export default function GuestLayout({ children }: LayoutProps<"/">) {
   return (
-    <div className="flex min-h-screen flex-col overflow-x-hidden">
+    <div className="flex min-h-screen flex-col">
       <Navbar />
       <main className="flex-1">{children}</main>
       <Footer />
