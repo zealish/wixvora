@@ -53,7 +53,7 @@ export const staffNavGroups: NavGroup[] = [
         permission: PERMISSIONS.CLIENTS_VIEW,
       },
       {
-        title: "Roles",
+        title: "Roles & Permissions",
         href: "/staff/roles",
         icon: "Shield",
         permission: PERMISSIONS.ROLES_VIEW,

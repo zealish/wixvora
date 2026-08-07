@@ -1,4 +1,5 @@
 import { Inter } from "next/font/google";
+import { ThemeProvider } from "@/providers/theme-provider";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -6,5 +7,14 @@ const inter = Inter({
 });
 
 export default function StaffLayoutWrapper({ children }: LayoutProps<"/">) {
-  return <div className={inter.className}>{children}</div>;
+  return (
+    <ThemeProvider
+      attribute="class"
+      defaultTheme="system"
+      enableSystem
+      disableTransitionOnChange
+    >
+      <div className={inter.className}>{children}</div>
+    </ThemeProvider>
+  );
 }
