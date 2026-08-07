@@ -19,6 +19,7 @@ export function prepareExportData(
 ): ExportRow[] {
   const rows: ExportRow[] = [];
   const parentMap = new Map<string, string>();
+  const categoryMap = new Map<string, ExportRow>();
 
   const flatten = (cats: CategoryWithChildren[], parentName: string | null = null) => {
     for (const cat of cats) {
@@ -38,6 +39,7 @@ export function prepareExportData(
       };
 
       rows.push(row);
+      categoryMap.set(cat.id, row);
 
       if (cat.children && cat.children.length > 0) {
         flatten(cat.children, cat.name);
@@ -48,47 +50,23 @@ export function prepareExportData(
   flatten(categories);
 
   if (selectedIds.length > 0) {
-    const selectedSet = new Set(selectedIds);
-    return rows.filter((_, idx) => {
-      const cat = findCategoryByIndex(categories, idx);
-      return cat && selectedSet.has(cat.id);
-    });
+    return selectedIds
+      .map((id) => categoryMap.get(id))
+      .filter((row): row is ExportRow => row !== undefined);
   }
 
   return rows;
 }
 
-function findCategoryByIndex(
-  categories: CategoryWithChildren[],
-  targetIndex: number
-): CategoryWithChildren | null {
-  let currentIndex = 0;
-
-  const search = (cats: CategoryWithChildren[]): CategoryWithChildren | null => {
-    for (const cat of cats) {
-      if (currentIndex === targetIndex) {
-        return cat;
-      }
-      currentIndex++;
-
-      if (cat.children && cat.children.length > 0) {
-        const found = search(cat.children);
-        if (found) return found;
-      }
-    }
-    return null;
-  };
-
-  return search(categories);
-}
-
 function generateFilename(format: string): string {
   const now = new Date();
-  const timestamp = now
-    .toISOString()
-    .replace(/[-:]/g, "")
-    .replace(/\.\d+Z$/, "")
-    .replace("T", "-");
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+  const hours = String(now.getHours()).padStart(2, "0");
+  const minutes = String(now.getMinutes()).padStart(2, "0");
+  const seconds = String(now.getSeconds()).padStart(2, "0");
+  const timestamp = `${year}-${month}-${day}-${hours}${minutes}${seconds}`;
   return `business-categories-${timestamp}.${format}`;
 }
 
