@@ -1,3 +1,10 @@
+export interface BlockCatalogItem {
+  type: BlockType;
+  label: string;
+  icon: any;
+  defaultProps: any;
+}
+
 export interface NavLink {
   label: string;
   url: string;

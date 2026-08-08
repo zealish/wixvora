@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { toast } from "@/components/ui/toast";
@@ -11,11 +11,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import type { CategoryWithChildren } from "@/features/business-categories/types";
 import { DEFAULT_PAGE_SETTINGS } from "../lib/block-types";
-import { PRESET_TEMPLATES } from "../lib/block-catalog";
 import type { Template } from "../types";
 import { createTemplateAction, updateTemplateAction } from "../actions";
-import { BlockEditor } from "./block-editor";
-import type { BlockEditorHandle } from "./block-editor";
 
 interface TemplateFormProps {
   mode: "create" | "edit";
@@ -38,7 +35,6 @@ export function TemplateForm({
   initialData,
 }: TemplateFormProps) {
   const router = useRouter();
-  const editorRef = useRef<BlockEditorHandle>(null);
   const [submitting, setSubmitting] = useState(false);
 
   const { register, handleSubmit, setValue } = useForm<BasicValues>({
@@ -54,16 +50,13 @@ export function TemplateForm({
 
   const persist = useCallback(
     async (values: BasicValues, status: "draft" | "published") => {
-      const editorData = editorRef.current?.getData();
-      if (!editorData) return;
-
       const payload = {
         name: values.name,
         description: values.description.trim() || null,
         previewImageUrl: values.previewImageUrl.trim() || null,
         categoryId: values.categoryId ? values.categoryId : null,
-        blocks: editorData.blocks,
-        pageSettings: editorData.pageSettings,
+        blocks: [], // Empty blocks - use full-page editor for block editing
+        pageSettings: DEFAULT_PAGE_SETTINGS,
         isFeatured: values.isFeatured,
         sortOrder: Number(values.sortOrder) || 0,
         status,
@@ -94,9 +87,10 @@ export function TemplateForm({
             status === "published" ? "Template published" : "Template saved",
         });
 
+        // Redirect to the full-page editor after creation
         const target =
           mode === "create" && result.data?.id
-            ? `/staff/templates/${result.data.id}/edit`
+            ? `/templates-editor/${result.data.id}`
             : "/staff/templates";
         router.push(target);
         router.refresh();
@@ -191,17 +185,6 @@ export function TemplateForm({
         </div>
       </div>
 
-      <div>
-        <h3 className="mb-2 text-lg font-semibold">Block Editor</h3>
-        <BlockEditor
-          ref={editorRef}
-          initialBlocks={initialData?.blocks ?? PRESET_TEMPLATES.saas ?? []}
-          initialPageSettings={
-            initialData?.pageSettings ?? DEFAULT_PAGE_SETTINGS
-          }
-        />
-      </div>
-
       <div className="flex gap-2">
         <Button type="submit" disabled={submitting}>
           {submitting ? "Saving..." : "Save as Draft"}
@@ -222,6 +205,12 @@ export function TemplateForm({
           Cancel
         </Button>
       </div>
+      
+      {mode === "create" && (
+        <p className="text-sm text-muted-foreground">
+          💡 After saving, you&apos;ll be redirected to the full-page block editor to design your template layout.
+        </p>
+      )}
     </form>
   );
 }
