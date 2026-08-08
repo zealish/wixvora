@@ -60,7 +60,7 @@ export const staffNavGroups: NavGroup[] = [
       },
       {
         title: "Audit Logs",
-        href: "/staff/audit",
+        href: "/staff/audit-logs",
         icon: "FileText",
         permission: PERMISSIONS.AUDIT_VIEW,
       },
