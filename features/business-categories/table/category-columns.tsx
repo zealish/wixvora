@@ -21,8 +21,9 @@ import {
   ToggleRight,
 } from "lucide-react";
 import type { CategoryWithChildren } from "../types";
+import { DataTableColumnHeader } from "@/components/shared/data-table/column-header";
 
-export function getCategoryColumns(
+export function createCategoryColumns(
   expandedIds: Set<string>,
   onToggleExpand: (id: string) => void,
   onEdit: (id: string) => void,
@@ -91,7 +92,9 @@ export function getCategoryColumns(
     },
     {
       accessorKey: "name",
-      header: "Name",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Name" />
+      ),
       cell: ({ row }) => {
         const category = row.original;
         const IconComponent = getIconComponent(category.icon);
@@ -105,31 +108,54 @@ export function getCategoryColumns(
           </div>
         );
       },
+      meta: {
+        searchable: true,
+        exportable: true,
+      },
     },
     {
       accessorKey: "slug",
-      header: "Slug",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Slug" />
+      ),
       cell: ({ row }) => (
         <code className="text-sm bg-muted px-1.5 py-0.5 rounded">
           {row.original.slug}
         </code>
       ),
+      meta: {
+        searchable: true,
+        exportable: true,
+        copyable: true,
+      },
     },
     {
       accessorKey: "displayOrder",
-      header: "Order",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Order" />
+      ),
       cell: ({ row }) => (
         <span className="text-muted-foreground">{row.original.displayOrder}</span>
       ),
+      meta: {
+        exportable: true,
+        align: "center",
+      },
     },
     {
       accessorKey: "status",
-      header: "Status",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Status" />
+      ),
       cell: ({ row }) => (
         <Badge variant={row.original.status === "active" ? "default" : "secondary"}>
           {row.original.status}
         </Badge>
       ),
+      meta: {
+        exportable: true,
+        filterVariant: "select",
+      },
     },
     {
       id: "actions",
@@ -180,6 +206,9 @@ export function getCategoryColumns(
             </DropdownMenuContent>
           </DropdownMenu>
         );
+      },
+      meta: {
+        exportable: false,
       },
     },
   ];

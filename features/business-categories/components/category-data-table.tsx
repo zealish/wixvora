@@ -3,28 +3,6 @@
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import {
-  useReactTable,
-  getCoreRowModel,
-  flexRender,
-} from "@tanstack/react-table";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -32,10 +10,12 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/toast";
-import { getCategoryColumns } from "../table/category-columns";
-import { CategoryBulkActions } from "../table/category-bulk-actions";
-import { CategoryExportMenu } from "../table/category-export-menu";
+import { DataTable } from "@/components/shared/data-table";
+import { createCategoryColumns } from "../table/category-columns";
+import { createCategoryBulkActions } from "../table/category-bulk-actions-config";
+import { categoryFilters } from "../table/category-filters";
 import {
   deleteCategoryAction,
   toggleStatusAction,
@@ -49,14 +29,11 @@ interface CategoryDataTableProps {
 export function CategoryDataTable({ data }: CategoryDataTableProps) {
   const router = useRouter();
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
-  const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<{
     id: string;
     hasChildren: boolean;
   } | null>(null);
-  const [statusFilter, setStatusFilter] = useState("all");
-  const [searchFilter, setSearchFilter] = useState("");
 
   const toggleExpand = (id: string) => {
     setExpandedIds((prev) => {
@@ -73,26 +50,10 @@ export function CategoryDataTable({ data }: CategoryDataTableProps) {
   const flattenData = useMemo(() => {
     const flat: CategoryWithChildren[] = [];
 
-    const filterCategory = (cat: CategoryWithChildren): boolean => {
-      if (statusFilter !== "all" && cat.status !== statusFilter) return false;
-      if (searchFilter) {
-        const search = searchFilter.toLowerCase();
-        if (
-          !cat.name.toLowerCase().includes(search) &&
-          !cat.slug.toLowerCase().includes(search)
-        ) {
-          return false;
-        }
-      }
-      return true;
-    };
-
     const traverse = (cats: CategoryWithChildren[], parentId: string | null = null) => {
       for (const cat of cats) {
         if (parentId === null || expandedIds.has(parentId)) {
-          if (filterCategory(cat)) {
-            flat.push(cat);
-          }
+          flat.push(cat);
           if (cat.children && cat.children.length > 0) {
             traverse(cat.children, cat.id);
           }
@@ -102,7 +63,7 @@ export function CategoryDataTable({ data }: CategoryDataTableProps) {
 
     traverse(data);
     return flat;
-  }, [data, expandedIds, statusFilter, searchFilter]);
+  }, [data, expandedIds]);
 
   const handleEdit = (id: string) => {
     router.push(`/staff/business-categories/${id}/edit`);
@@ -161,54 +122,11 @@ export function CategoryDataTable({ data }: CategoryDataTableProps) {
     }
   };
 
-  const handleBulkDelete = async (ids: string[]) => {
-    const promises = ids.map((id) => deleteCategoryAction(id));
-    const results = await Promise.all(promises);
-    
-    const failures = results.filter((r) => !r.success);
-    if (failures.length === 0) {
-      toast.add({
-        type: "success",
-        title: "Success",
-        description: `${ids.length} categories deleted successfully`,
-      });
-      router.refresh();
-    } else {
-      toast.add({
-        type: "error",
-        title: "Error",
-        description: `${failures.length} categories failed to delete`,
-      });
-    }
-    setSelectedIds([]);
+  const handleRefresh = () => {
+    router.refresh();
   };
 
-  const handleBulkToggleStatus = async (
-    ids: string[],
-    status: "active" | "inactive"
-  ) => {
-    const promises = ids.map((id) => toggleStatusAction(id, status));
-    const results = await Promise.all(promises);
-    
-    const failures = results.filter((r) => !r.success);
-    if (failures.length === 0) {
-      toast.add({
-        type: "success",
-        title: "Success",
-        description: `${ids.length} categories updated to ${status}`,
-      });
-      router.refresh();
-    } else {
-      toast.add({
-        type: "error",
-        title: "Error",
-        description: `${failures.length} categories failed to update`,
-      });
-    }
-    setSelectedIds([]);
-  };
-
-  const columns = getCategoryColumns(
+  const columns = createCategoryColumns(
     expandedIds,
     toggleExpand,
     handleEdit,
@@ -217,95 +135,40 @@ export function CategoryDataTable({ data }: CategoryDataTableProps) {
     handleToggleStatus
   );
 
-  const table = useReactTable({
-    data: flattenData,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-    enableRowSelection: true,
-    getRowId: (row) => row.id,
-    state: {
-      rowSelection: Object.fromEntries(selectedIds.map((id) => [id, true])),
-    },
-    onRowSelectionChange: (updater) => {
-      const current = Object.fromEntries(selectedIds.map((id) => [id, true]));
-      const newSelection =
-        typeof updater === "function" ? updater(current) : updater;
-      setSelectedIds(Object.keys(newSelection).filter((id) => newSelection[id]));
-    },
-  });
+  const bulkActions = createCategoryBulkActions(handleRefresh);
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center gap-4">
-        <Input
-          placeholder="Search categories..."
-          value={searchFilter}
-          onChange={(e) => setSearchFilter(e.target.value)}
-          className="max-w-sm"
-        />
-        <Select value={statusFilter} onValueChange={(value) => setStatusFilter(value || "all")}>
-          <SelectTrigger className="w-32">
-            <SelectValue placeholder="Status" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All</SelectItem>
-            <SelectItem value="active">Active</SelectItem>
-            <SelectItem value="inactive">Inactive</SelectItem>
-          </SelectContent>
-        </Select>
-        <CategoryExportMenu data={flattenData} selectedIds={selectedIds} />
-        <CategoryBulkActions
-          selectedIds={selectedIds}
-          onDelete={handleBulkDelete}
-          onToggleStatus={handleBulkToggleStatus}
-        />
-      </div>
-
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                  </TableHead>
-                ))}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id}>
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
-                  No categories found.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
+    <>
+      <DataTable
+        tableId="business-categories"
+        data={flattenData}
+        columns={columns}
+        rowId={(row) => row.id}
+        search={{
+          keys: ["name", "slug"],
+          placeholder: "Search categories...",
+        }}
+        filters={categoryFilters}
+        bulkActions={bulkActions}
+        exportOptions={{
+          csv: true,
+          excel: true,
+          filename: "business-categories",
+        }}
+        enabledFeatures={{
+          sorting: true,
+          filtering: true,
+          pagination: false,
+          export: true,
+          rowSelection: true,
+          columnVisibility: true,
+        }}
+        locale={{
+          searchPlaceholder: "Search categories...",
+          noResults: "No categories found.",
+          rowsSelected: (count) => `${count} selected`,
+        }}
+      />
 
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <DialogContent>
@@ -327,6 +190,6 @@ export function CategoryDataTable({ data }: CategoryDataTableProps) {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </div>
+    </>
   );
 }

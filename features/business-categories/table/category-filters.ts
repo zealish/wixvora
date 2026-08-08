@@ -1,4 +1,4 @@
-import type { DataTableFilter } from "@/components/shared/data-table/types";
+import type { DataTableFilter } from "@/components/shared/data-table";
 
 export const categoryFilters: DataTableFilter[] = [
   {
