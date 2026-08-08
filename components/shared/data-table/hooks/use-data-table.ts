@@ -138,7 +138,9 @@ export function useDataTable<TData>(props: DataTableProps<TData>) {
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
+    ...(enabledFeatures?.pagination && { 
+      getPaginationRowModel: getPaginationRowModel() 
+    }),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
     enableRowSelection: enabledFeatures?.rowSelection ?? false,
