@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
   Dialog,
@@ -29,11 +29,45 @@ interface CategoryDataTableProps {
 export function CategoryDataTable({ data }: CategoryDataTableProps) {
   const router = useRouter();
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
+  const [searchQuery, setSearchQuery] = useState("");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<{
     id: string;
     hasChildren: boolean;
   } | null>(null);
+
+  // Auto-expand parents when search matches children
+  useEffect(() => {
+    if (!searchQuery.trim()) return;
+
+    const query = searchQuery.toLowerCase();
+    const parentsToExpand = new Set<string>();
+
+    const findMatches = (cats: CategoryWithChildren[], parentId: string | null = null) => {
+      for (const cat of cats) {
+        const matches = 
+          cat.name.toLowerCase().includes(query) ||
+          cat.slug.toLowerCase().includes(query);
+
+        // If this category or its children match, expand parent
+        if (matches && parentId) {
+          parentsToExpand.add(parentId);
+        }
+
+        if (cat.children && cat.children.length > 0) {
+          findMatches(cat.children, cat.id);
+          
+          // If any child matched, expand this parent too
+          if (parentsToExpand.has(cat.id) && parentId) {
+            parentsToExpand.add(parentId);
+          }
+        }
+      }
+    };
+
+    findMatches(data);
+    setExpandedIds(parentsToExpand);
+  }, [searchQuery, data]);
 
   const toggleExpand = (id: string) => {
     setExpandedIds((prev) => {
@@ -166,6 +200,7 @@ export function CategoryDataTable({ data }: CategoryDataTableProps) {
           rowSelection: true,
           columnVisibility: true,
         }}
+        onGlobalFilterChange={(filter) => setSearchQuery(filter)}
         locale={{
           searchPlaceholder: "Search categories...",
           noResults: "No categories found.",
