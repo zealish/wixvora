@@ -38,7 +38,10 @@ export function CategoryDataTable({ data }: CategoryDataTableProps) {
 
   // Auto-expand parents when search matches children
   useEffect(() => {
-    if (!searchQuery.trim()) return;
+    if (!searchQuery.trim()) {
+      // Don't collapse when search is cleared, let user manually control
+      return;
+    }
 
     const query = searchQuery.toLowerCase();
     const parentsToExpand = new Set<string>();
@@ -66,7 +69,15 @@ export function CategoryDataTable({ data }: CategoryDataTableProps) {
     };
 
     findMatches(data);
-    setExpandedIds(parentsToExpand);
+    
+    // Only update if there are new parents to expand
+    if (parentsToExpand.size > 0) {
+      setExpandedIds(prev => {
+        const next = new Set(prev);
+        parentsToExpand.forEach(id => next.add(id));
+        return next;
+      });
+    }
   }, [searchQuery, data]);
 
   const toggleExpand = (id: string) => {
