@@ -43,41 +43,54 @@ export function CategoryDataTable({ data }: CategoryDataTableProps) {
       return;
     }
 
-    const query = searchQuery.toLowerCase();
-    const parentsToExpand = new Set<string>();
+    // Debounce search to prevent lag
+    const timer = setTimeout(() => {
+      const query = searchQuery.toLowerCase();
+      const parentsToExpand = new Set<string>();
 
-    const findMatches = (cats: CategoryWithChildren[], parentId: string | null = null) => {
-      for (const cat of cats) {
-        const matches = 
-          cat.name.toLowerCase().includes(query) ||
-          cat.slug.toLowerCase().includes(query);
+      const findMatches = (cats: CategoryWithChildren[], parentId: string | null = null) => {
+        for (const cat of cats) {
+          const matches = 
+            cat.name.toLowerCase().includes(query) ||
+            cat.slug.toLowerCase().includes(query);
 
-        // If this category or its children match, expand parent
-        if (matches && parentId) {
-          parentsToExpand.add(parentId);
-        }
-
-        if (cat.children && cat.children.length > 0) {
-          findMatches(cat.children, cat.id);
-          
-          // If any child matched, expand this parent too
-          if (parentsToExpand.has(cat.id) && parentId) {
+          // If this category or its children match, expand parent
+          if (matches && parentId) {
             parentsToExpand.add(parentId);
           }
-        }
-      }
-    };
 
-    findMatches(data);
-    
-    // Only update if there are new parents to expand
-    if (parentsToExpand.size > 0) {
-      setExpandedIds(prev => {
-        const next = new Set(prev);
-        parentsToExpand.forEach(id => next.add(id));
-        return next;
-      });
-    }
+          if (cat.children && cat.children.length > 0) {
+            findMatches(cat.children, cat.id);
+            
+            // If any child matched, expand this parent too
+            if (parentsToExpand.has(cat.id) && parentId) {
+              parentsToExpand.add(parentId);
+            }
+          }
+        }
+      };
+
+      findMatches(data);
+      
+      // Only update if there are new parents to expand
+      if (parentsToExpand.size > 0) {
+        setExpandedIds(prev => {
+          const next = new Set(prev);
+          let hasChanges = false;
+          
+          parentsToExpand.forEach(id => {
+            if (!next.has(id)) {
+              next.add(id);
+              hasChanges = true;
+            }
+          });
+          
+          return hasChanges ? next : prev;
+        });
+      }
+    }, 300); // 300ms debounce
+
+    return () => clearTimeout(timer);
   }, [searchQuery, data]);
 
   const toggleExpand = (id: string) => {
