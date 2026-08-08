@@ -17,7 +17,15 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { AuditLogDetailDialog } from "./audit-log-detail-dialog";
 import { AuditLogsExportMenu } from "./audit-logs-export-menu";
 import {
@@ -27,26 +35,22 @@ import {
   type VisibilityState,
   flexRender,
   getCoreRowModel,
-  getFacetedRowModel,
-  getFacetedUniqueValues,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { ArrowUpDown, Settings } from "lucide-react";
-import { useMemo, useState } from "react";
+import { ArrowUpDown, Settings, Search, X, FileText } from "lucide-react";
+import { useMemo, useState, useEffect } from "react";
 import type { AuditLogsFilters, AuditLogWithUser } from "../types";
-import { columns as allColumns } from "./columns";
+import { columns as allColumns, formatActionEmoji } from "./columns";
 import { toast } from "@/components/ui/toast";
 import * as XLSX from "xlsx";
+import { format } from "date-fns";
 
 interface AuditLogsTableProps {
   data: AuditLogWithUser[];
   total: number;
   filters: AuditLogsFilters;
-  onPageChange: (newPage: number) => void;
-  onFilterChange: (newFilters: AuditLogsFilters) => void;
+  distinctActions: string[];
+  distinctEntities: string[];
 }
 
 async function generateExportBlob(
@@ -152,25 +156,43 @@ function getExportFilename(format: string): string {
   return `audit-logs-${timestamp}.${format}`;
 }
 
-export default AuditLogsTable;
-
 export function AuditLogsTable({
   data,
   total,
   filters,
-  onPageChange,
+  distinctActions,
+  distinctEntities,
 }: AuditLogsTableProps): React.JSX.Element {
   const router = useRouter();
   const searchParams = useSearchParams();
 
   const [sorting, setSorting] = useState<SortingState>([
-    { id: "createdAt", desc: true },
+    { id: filters.sortBy || "createdAt", desc: filters.sortOrder === "desc" },
   ]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
   const [detailLog, setDetailLog] = useState<AuditLogWithUser | null>(null);
   const [hoveredRowId, setHoveredRowId] = useState<string | null>(null);
+
+  const [searchInput, setSearchInput] = useState(filters.searchTerm || "");
+  const [selectedAction, setSelectedAction] = useState<string>(filters.action || "");
+  const [selectedEntity, setSelectedEntity] = useState<string>(filters.entity || "");
+  const [startDateInput, setStartDateInput] = useState(
+    filters.startDate ? format(filters.startDate, "yyyy-MM-dd") : ""
+  );
+  const [endDateInput, setEndDateInput] = useState(
+    filters.endDate ? format(filters.endDate, "yyyy-MM-dd") : ""
+  );
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (searchInput !== (filters.searchTerm || "")) {
+        applyFilters({ page: 1, searchTerm: searchInput });
+      }
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [searchInput]);
 
   const columnDefs = useMemo(
     () => allColumns as ColumnDef<AuditLogWithUser>[],
@@ -183,13 +205,9 @@ export function AuditLogsTable({
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getFacetedRowModel: getFacetedRowModel(),
-    getFacetedUniqueValues: getFacetedUniqueValues(),
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
+    manualSorting: true,
     state: {
       sorting,
       columnFilters,
@@ -209,17 +227,17 @@ export function AuditLogsTable({
     if (newFilters.pageSize)
       params.set("pageSize", newFilters.pageSize.toString());
     if (newFilters.action) params.set("action", newFilters.action);
-    else params.delete("action");
+    else if ("action" in newFilters) params.delete("action");
     if (newFilters.entity) params.set("entity", newFilters.entity);
-    else params.delete("entity");
+    else if ("entity" in newFilters) params.delete("entity");
     if (newFilters.searchTerm) params.set("search", newFilters.searchTerm);
-    else params.delete("search");
+    else if ("searchTerm" in newFilters) params.delete("search");
     if (newFilters.startDate)
-      params.set("startDate", newFilters.startDate.toISOString());
-    else params.delete("startDate");
+      params.set("startDate", format(newFilters.startDate, "yyyy-MM-dd"));
+    else if ("startDate" in newFilters) params.delete("startDate");
     if (newFilters.endDate)
-      params.set("endDate", newFilters.endDate.toISOString());
-    else params.delete("endDate");
+      params.set("endDate", format(newFilters.endDate, "yyyy-MM-dd"));
+    else if ("endDate" in newFilters) params.delete("endDate");
     if (newFilters.sortBy) params.set("sortBy", newFilters.sortBy);
     if (newFilters.sortOrder) params.set("sortOrder", newFilters.sortOrder);
 
@@ -233,6 +251,137 @@ export function AuditLogsTable({
         onOpenChange={(open) => !open && setDetailLog(null)}
         log={detailLog}
       />
+
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
+          <div className="flex-1">
+            <label className="text-sm font-medium mb-2 block">Search</label>
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search by user name, email, or entity ID..."
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                className="pl-9"
+              />
+            </div>
+          </div>
+
+          <div className="w-full sm:w-[200px]">
+            <label className="text-sm font-medium mb-2 block">Action</label>
+            <Select
+              value={selectedAction}
+              onValueChange={(value) => {
+                setSelectedAction(value || "");
+                applyFilters({ page: 1, action: value || "" });
+              }}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="All actions" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="">All actions</SelectItem>
+                {distinctActions.map((action) => (
+                  <SelectItem key={action} value={action}>
+                    <span className="flex items-center gap-2">
+                      <span>{formatActionEmoji(action)}</span>
+                      <span>{action}</span>
+                    </span>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="w-full sm:w-[200px]">
+            <label className="text-sm font-medium mb-2 block">Entity</label>
+            <Select
+              value={selectedEntity}
+              onValueChange={(value) => {
+                setSelectedEntity(value || "");
+                applyFilters({ page: 1, entity: value || "" });
+              }}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="All entities" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="">All entities</SelectItem>
+                {distinctEntities.map((entity) => (
+                  <SelectItem key={entity} value={entity}>
+                    <span className="flex items-center gap-2">
+                      <FileText className="h-4 w-4" />
+                      <span>{entity}</span>
+                    </span>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
+          <div className="w-full sm:w-[200px]">
+            <label className="text-sm font-medium mb-2 block">Start Date</label>
+            <Input
+              type="date"
+              value={startDateInput}
+              onChange={(e) => {
+                setStartDateInput(e.target.value);
+                if (e.target.value) {
+                  applyFilters({ page: 1, startDate: new Date(e.target.value) });
+                } else {
+                  const params = new URLSearchParams(
+                    window.location.search
+                  );
+                  params.delete("startDate");
+                  params.set("page", "1");
+                  router.push(`/staff/audit-logs?${params.toString()}`);
+                }
+              }}
+            />
+          </div>
+
+          <div className="w-full sm:w-[200px]">
+            <label className="text-sm font-medium mb-2 block">End Date</label>
+            <Input
+              type="date"
+              value={endDateInput}
+              onChange={(e) => {
+                setEndDateInput(e.target.value);
+                if (e.target.value) {
+                  const date = new Date(e.target.value);
+                  date.setHours(23, 59, 59, 999);
+                  applyFilters({ page: 1, endDate: date });
+                } else {
+                  const params = new URLSearchParams(
+                    window.location.search
+                  );
+                  params.delete("endDate");
+                  params.set("page", "1");
+                  router.push(`/staff/audit-logs?${params.toString()}`);
+                }
+              }}
+            />
+          </div>
+
+          <Button
+            variant="outline"
+            onClick={() => {
+              setSearchInput("");
+              setSelectedAction("");
+              setSelectedEntity("");
+              setStartDateInput("");
+              setEndDateInput("");
+              router.push("/staff/audit-logs?page=1");
+            }}
+            className="w-full sm:w-auto"
+          >
+            <X className="mr-2 h-4 w-4" />
+            Clear Filters
+          </Button>
+        </div>
+      </div>
 
       <div className="flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-center">
         <div className="flex flex-col gap-2">
@@ -258,8 +407,6 @@ export function AuditLogsTable({
 
         <div className="flex items-center gap-2">
           <AuditLogsExportMenu
-            data={data}
-            filters={filters}
             onExport={async (format) => {
               const blob = await generateExportBlob(data, format);
               const url = URL.createObjectURL(blob);
@@ -359,7 +506,7 @@ export function AuditLogsTable({
           <TableBody>
             {table.getRowModel().rows.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} className="h-24 text-center">
+                <TableCell colSpan={6} className="h-24 text-center">
                   <div className="flex flex-col items-center justify-center gap-2">
                     <span className="text-4xl">📄</span>
                     <p className="text-muted-foreground">No audit logs found</p>
@@ -409,7 +556,7 @@ export function AuditLogsTable({
           <Button
             variant="outline"
             size="sm"
-            onClick={() => onPageChange(Math.max(1, (filters.page || 1) - 1))}
+            onClick={() => applyFilters({ page: Math.max(1, (filters.page || 1) - 1) })}
             disabled={filters.page === undefined || filters.page === 1}
           >
             {"<"} Previous
@@ -417,7 +564,7 @@ export function AuditLogsTable({
           <Button
             variant="outline"
             size="sm"
-            onClick={() => onPageChange((filters.page || 1) + 1)}
+            onClick={() => applyFilters({ page: (filters.page || 1) + 1 })}
             disabled={
               filters.page !== undefined &&
               filters.page >= Math.ceil(total / (filters.pageSize || 50))

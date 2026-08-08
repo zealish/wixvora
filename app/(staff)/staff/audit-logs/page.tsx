@@ -1,7 +1,7 @@
 import { authorize } from "@/lib/auth/authorize";
 import { PERMISSIONS } from "@/lib/auth/permissions";
 import { redirect } from "next/navigation";
-import { getAuditLogs } from "@/features/audit/queries";
+import { getAuditLogs, getDistinctActions, getDistinctEntities } from "@/features/audit/queries";
 import { AuditLogsTable } from "@/features/audit/components/audit-logs-table";
 import { PageHeader } from "@/components/shared/page-header";
 import { parse } from "date-fns";
@@ -88,7 +88,11 @@ export default async function AuditLogsPage({
   if (startDate) filters.startDate = startDate;
   if (endDate) filters.endDate = endDate;
 
-  const auditLogsData = await getAuditLogs(filters);
+  const [auditLogsData, distinctActions, distinctEntities] = await Promise.all([
+    getAuditLogs(filters),
+    getDistinctActions(),
+    getDistinctEntities(),
+  ]);
 
   return (
     <div className="space-y-6">
@@ -101,8 +105,8 @@ export default async function AuditLogsPage({
         data={auditLogsData.data}
         total={auditLogsData.total}
         filters={filters}
-        onPageChange={(newPage) => newPage}
-        onFilterChange={(newFilters) => newFilters}
+        distinctActions={distinctActions}
+        distinctEntities={distinctEntities}
       />
     </div>
   );

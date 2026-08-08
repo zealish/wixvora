@@ -10,8 +10,6 @@ import {
 import { Download, Loader2, FileType } from "lucide-react";
 
 interface ExportMenuProps {
-  data: unknown[];
-  filters: unknown;
   onExport: (format: "csv" | "xlsx" | "json") => void;
   disabled?: boolean;
 }
@@ -28,7 +26,6 @@ export function AuditLogsExportMenu({
       await onExport(format);
     } finally {
       setIsExporting(false);
-      window.location.reload();
     }
   };
 

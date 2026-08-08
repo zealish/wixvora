@@ -34,11 +34,12 @@ export async function getAuditLogs(
   }
 
   if (searchTerm) {
+    const escapedTerm = searchTerm.replace(/[\\%_]/g, "\\$&");
     conditions.push(
       or(
-        ilike(auditLogs.entityId, `%${searchTerm}%`),
-        ilike(user.name, `%${searchTerm}%`),
-        ilike(user.email, `%${searchTerm}%`)
+        ilike(auditLogs.entityId, `%${escapedTerm}%`),
+        ilike(user.name, `%${escapedTerm}%`),
+        ilike(user.email, `%${escapedTerm}%`)
       )
     );
   }
