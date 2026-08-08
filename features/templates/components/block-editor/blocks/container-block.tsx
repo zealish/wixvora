@@ -1,0 +1,18 @@
+"use client";
+
+import type { ContainerProps } from "../../../lib/block-types";
+
+export function ContainerBlock({ props }: { props: ContainerProps }) {
+  return (
+    <div
+      style={{
+        backgroundColor: props.bgColor,
+        color: props.textColor,
+        borderColor: props.borderColor,
+      }}
+      className={`${props.paddingY} ${props.paddingX} ${props.borderRadius} ${props.borderWidth} ${props.bgGradient} max-w-6xl mx-auto my-4 transition-all`}
+    >
+      <p className="leading-relaxed text-sm">{props.content}</p>
+    </div>
+  );
+}
