@@ -11,6 +11,7 @@ export interface CategoryWithChildren {
   createdAt: Date;
   updatedAt: Date;
   children: CategoryWithChildren[];
+  depth?: number;
 }
 
 export interface CategoryListItem {

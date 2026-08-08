@@ -96,13 +96,15 @@ export function createCategoryColumns(
         <DataTableColumnHeader column={column} title="Name" />
       ),
       cell: ({ row }) => {
-        const category = row.original;
+        const category = row.original as CategoryWithChildren & { depth?: number };
         const IconComponent = getIconComponent(category.icon);
+        const depth = category.depth ?? 0;
+        const paddingLeft = depth * 24; // 24px per level
 
         return (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2" style={{ paddingLeft: `${paddingLeft}px` }}>
             {IconComponent && <IconComponent className="h-4 w-4" />}
-            <span className={category.parentId ? "pl-4 text-muted-foreground" : "font-medium"}>
+            <span className={depth > 0 ? "text-muted-foreground" : "font-medium"}>
               {category.name}
             </span>
           </div>

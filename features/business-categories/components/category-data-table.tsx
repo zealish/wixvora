@@ -48,14 +48,22 @@ export function CategoryDataTable({ data }: CategoryDataTableProps) {
   };
 
   const flattenData = useMemo(() => {
-    const flat: CategoryWithChildren[] = [];
+    const flat: (CategoryWithChildren & { depth: number })[] = [];
 
-    const traverse = (cats: CategoryWithChildren[], parentId: string | null = null) => {
+    const traverse = (
+      cats: CategoryWithChildren[], 
+      depth: number = 0,
+      parentId: string | null = null
+    ) => {
       for (const cat of cats) {
-        if (parentId === null || expandedIds.has(parentId)) {
-          flat.push(cat);
-          if (cat.children && cat.children.length > 0) {
-            traverse(cat.children, cat.id);
+        // Always show root level (depth 0)
+        // For children, only show if parent is expanded
+        if (depth === 0 || (parentId && expandedIds.has(parentId))) {
+          flat.push({ ...cat, depth });
+          
+          // Only traverse children if current item is expanded
+          if (cat.children && cat.children.length > 0 && expandedIds.has(cat.id)) {
+            traverse(cat.children, depth + 1, cat.id);
           }
         }
       }
@@ -158,16 +166,11 @@ export function CategoryDataTable({ data }: CategoryDataTableProps) {
         enabledFeatures={{
           sorting: true,
           filtering: true,
-          pagination: true,
+          pagination: false,
           export: true,
           rowSelection: true,
           columnVisibility: true,
         }}
-        pagination={{
-          pageIndex: 0,
-          pageSize: 10,
-        }}
-        pageSizeOptions={[10, 20, 30, 50, 100]}
         locale={{
           searchPlaceholder: "Search categories...",
           noResults: "No categories found.",
