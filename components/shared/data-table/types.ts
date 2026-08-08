@@ -27,6 +27,7 @@ export interface DataTableProps<TData> {
   bulkActions?: DataTableBulkAction<TData>[];
   exportOptions?: DataTableExportOptions<TData>;
   pagination?: PaginationState;
+  pageSizeOptions?: number[];
   pageCount?: number;
   onPaginationChange?: (pagination: PaginationState) => void;
   onSortingChange?: (sorting: SortingState) => void;

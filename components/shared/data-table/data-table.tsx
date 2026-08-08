@@ -32,6 +32,7 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
     filters,
     exportOptions,
     bulkActions,
+    pageSizeOptions,
     locale,
     slots,
   } = props;
@@ -151,7 +152,12 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
         </div>
       </div>
 
-      {enabledFeatures?.pagination && <DataTablePagination table={table} />}
+      {enabledFeatures?.pagination && (
+        <DataTablePagination 
+          table={table} 
+          {...(pageSizeOptions && { pageSizeOptions })} 
+        />
+      )}
     </div>
   );
 }

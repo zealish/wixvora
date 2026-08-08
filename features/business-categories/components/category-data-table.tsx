@@ -158,11 +158,16 @@ export function CategoryDataTable({ data }: CategoryDataTableProps) {
         enabledFeatures={{
           sorting: true,
           filtering: true,
-          pagination: false,
+          pagination: true,
           export: true,
           rowSelection: true,
           columnVisibility: true,
         }}
+        pagination={{
+          pageIndex: 0,
+          pageSize: 10,
+        }}
+        pageSizeOptions={[10, 20, 30, 50, 100]}
         locale={{
           searchPlaceholder: "Search categories...",
           noResults: "No categories found.",
