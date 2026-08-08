@@ -1,0 +1,35 @@
+CREATE TYPE "public"."website_status" AS ENUM('draft', 'published', 'archived');--> statement-breakpoint
+CREATE TABLE "websites" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"name" varchar(255) NOT NULL,
+	"slug" varchar(255) NOT NULL,
+	"description" text,
+	"owner_id" uuid NOT NULL,
+	"template_id" uuid,
+	"status" "website_status" DEFAULT 'draft' NOT NULL,
+	"is_published" boolean DEFAULT false NOT NULL,
+	"published_at" timestamp,
+	"main_domain" varchar(512),
+	"subdomain" varchar(255),
+	"custom_domain" varchar(512),
+	"custom_domain_verified" boolean DEFAULT false NOT NULL,
+	"ssl_enabled" boolean DEFAULT false NOT NULL,
+	"analytics_id" varchar(255),
+	"analytics_enabled" boolean DEFAULT false NOT NULL,
+	"html_content" text DEFAULT '' NOT NULL,
+	"css_styles" text DEFAULT '' NOT NULL,
+	"js_scripts" text DEFAULT '' NOT NULL,
+	"seo_title" varchar(255),
+	"seo_description" text,
+	"seo_keywords" text,
+	"seo_image" varchar(512),
+	"seo_canonical_url" varchar(512),
+	"theme_settings" text,
+	"layout_settings" text,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
+	"deleted_at" timestamp,
+	CONSTRAINT "websites_slug_unique" UNIQUE("slug")
+);
+--> statement-breakpoint
+ALTER TABLE "websites" ADD CONSTRAINT "websites_template_id_templates_id_fk" FOREIGN KEY ("template_id") REFERENCES "public"."templates"("id") ON DELETE set null ON UPDATE no action;
