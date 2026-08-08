@@ -27,12 +27,12 @@ interface AppSidebarProps {
 function getIcon(iconName: string): LucideIcon | null {
   const iconKey = iconName as keyof typeof Icons;
   const Icon = Icons[iconKey];
-  
+
   // Check if it's a valid React component (object with $$typeof or function)
   if (Icon && (typeof Icon === "function" || typeof Icon === "object")) {
     return Icon as LucideIcon;
   }
-  
+
   return null;
 }
 

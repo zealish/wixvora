@@ -18,7 +18,7 @@ export function CategoryBulkActions({
 
   return (
     <div className="flex items-center gap-2">
-      <span className="text-sm text-muted-foreground">
+      <span className="text-muted-foreground text-sm">
         {selectedIds.length} selected
       </span>
       <Button
@@ -26,7 +26,7 @@ export function CategoryBulkActions({
         size="sm"
         onClick={() => onToggleStatus(selectedIds, "active")}
       >
-        <ToggleRight className="h-4 w-4 mr-1" />
+        <ToggleRight className="mr-1 h-4 w-4" />
         Activate
       </Button>
       <Button
@@ -34,7 +34,7 @@ export function CategoryBulkActions({
         size="sm"
         onClick={() => onToggleStatus(selectedIds, "inactive")}
       >
-        <ToggleLeft className="h-4 w-4 mr-1" />
+        <ToggleLeft className="mr-1 h-4 w-4" />
         Deactivate
       </Button>
       <Button
@@ -42,7 +42,7 @@ export function CategoryBulkActions({
         size="sm"
         onClick={() => onDelete(selectedIds)}
       >
-        <Trash2 className="h-4 w-4 mr-1" />
+        <Trash2 className="mr-1 h-4 w-4" />
         Delete
       </Button>
     </div>

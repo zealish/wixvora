@@ -28,10 +28,22 @@ const ALIGN_OPTIONS = [
 
 const GRADIENT_OPTIONS = [
   { value: "", label: "None (Solid)" },
-  { value: "bg-gradient-to-r from-blue-950 via-slate-900 to-indigo-950", label: "Midnight Cyber" },
-  { value: "bg-gradient-to-r from-amber-600 via-orange-600 to-red-600", label: "Sunset Gold" },
-  { value: "bg-gradient-to-r from-emerald-900 via-teal-900 to-cyan-950", label: "Emerald Luxe" },
-  { value: "bg-gradient-to-r from-purple-900 via-indigo-900 to-blue-950", label: "Royal Violet" },
+  {
+    value: "bg-gradient-to-r from-blue-950 via-slate-900 to-indigo-950",
+    label: "Midnight Cyber",
+  },
+  {
+    value: "bg-gradient-to-r from-amber-600 via-orange-600 to-red-600",
+    label: "Sunset Gold",
+  },
+  {
+    value: "bg-gradient-to-r from-emerald-900 via-teal-900 to-cyan-950",
+    label: "Emerald Luxe",
+  },
+  {
+    value: "bg-gradient-to-r from-purple-900 via-indigo-900 to-blue-950",
+    label: "Royal Violet",
+  },
 ];
 
 const ICON_OPTIONS = [
@@ -59,10 +71,7 @@ const ICON_BY_TYPE: Record<BlockConfig["type"], string> = {
   footer: "layout",
 };
 
-export function InspectorPanel({
-  block,
-  onUpdateProps,
-}: InspectorPanelProps) {
+export function InspectorPanel({ block, onUpdateProps }: InspectorPanelProps) {
   const [tab, setTab] = useState<InspectorTab>("content");
   const Icon = getBlockIcon(ICON_BY_TYPE[block.type]);
 
@@ -71,10 +80,7 @@ export function InspectorPanel({
 
   const renderLinks = (links: NavLink[]) => {
     const addLink = () =>
-      set("links", [
-        ...links,
-        { label: `Menu ${links.length + 1}`, url: "#" },
-      ]);
+      set("links", [...links, { label: `Menu ${links.length + 1}`, url: "#" }]);
     const removeLink = (index: number) =>
       set(
         "links",
@@ -89,7 +95,7 @@ export function InspectorPanel({
             className="space-y-2 rounded-xl border border-slate-800 bg-slate-950/40 p-2"
           >
             <div className="flex items-center justify-between">
-              <span className="text-[10px] uppercase tracking-wider text-slate-500">
+              <span className="text-[10px] tracking-wider text-slate-500 uppercase">
                 Link {i + 1}
               </span>
               <IconButton onClick={() => removeLink(i)} />
@@ -133,7 +139,7 @@ export function InspectorPanel({
               type="text"
               value={feature}
               onChange={(e) => updateFeature(i, e.target.value)}
-              className="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white outline-none text-xs"
+              className="flex-1 rounded-xl border border-slate-800 bg-slate-950 px-3 py-2 text-xs text-white outline-none"
             />
             <IconButton onClick={() => removeFeature(i)} />
           </div>
@@ -193,7 +199,7 @@ export function InspectorPanel({
             className="space-y-2 rounded-xl border border-slate-800 bg-slate-950/40 p-2"
           >
             <div className="flex items-center justify-between">
-              <span className="text-[10px] uppercase tracking-wider text-slate-500">
+              <span className="text-[10px] tracking-wider text-slate-500 uppercase">
                 Column {i + 1}
               </span>
               <IconButton onClick={() => removeColumn(i)} />
@@ -254,38 +260,92 @@ export function InspectorPanel({
       case "navbar":
         return (
           <>
-            <TextField label="Logo Text" value={block.props.logoText} onChange={(v) => set("logoText", v)} />
+            <TextField
+              label="Logo Text"
+              value={block.props.logoText}
+              onChange={(v) => set("logoText", v)}
+            />
             <div className="grid grid-cols-2 gap-2">
-              <TextField label="CTA Text" value={block.props.ctaText} onChange={(v) => set("ctaText", v)} />
-              <TextField label="CTA URL" value={block.props.ctaUrl} onChange={(v) => set("ctaUrl", v)} />
+              <TextField
+                label="CTA Text"
+                value={block.props.ctaText}
+                onChange={(v) => set("ctaText", v)}
+              />
+              <TextField
+                label="CTA URL"
+                value={block.props.ctaUrl}
+                onChange={(v) => set("ctaUrl", v)}
+              />
             </div>
           </>
         );
       case "hero":
         return (
           <>
-            <TextField label="Badge Text" value={block.props.badge} onChange={(v) => set("badge", v)} />
-            <TextField label="Title" value={block.props.title} onChange={(v) => set("title", v)} />
-            <TextAreaField label="Subtitle" value={block.props.subtitle} onChange={(v) => set("subtitle", v)} rows={3} />
+            <TextField
+              label="Badge Text"
+              value={block.props.badge}
+              onChange={(v) => set("badge", v)}
+            />
+            <TextField
+              label="Title"
+              value={block.props.title}
+              onChange={(v) => set("title", v)}
+            />
+            <TextAreaField
+              label="Subtitle"
+              value={block.props.subtitle}
+              onChange={(v) => set("subtitle", v)}
+              rows={3}
+            />
             <div className="grid grid-cols-2 gap-2">
-              <TextField label="Primary Button" value={block.props.buttonText} onChange={(v) => set("buttonText", v)} />
-              <TextField label="Primary URL" value={block.props.buttonUrl} onChange={(v) => set("buttonUrl", v)} />
+              <TextField
+                label="Primary Button"
+                value={block.props.buttonText}
+                onChange={(v) => set("buttonText", v)}
+              />
+              <TextField
+                label="Primary URL"
+                value={block.props.buttonUrl}
+                onChange={(v) => set("buttonUrl", v)}
+              />
             </div>
             <div className="grid grid-cols-2 gap-2">
-              <TextField label="Secondary Button" value={block.props.secondaryButtonText} onChange={(v) => set("secondaryButtonText", v)} />
-              <TextField label="Secondary URL" value={block.props.secondaryButtonUrl} onChange={(v) => set("secondaryButtonUrl", v)} />
+              <TextField
+                label="Secondary Button"
+                value={block.props.secondaryButtonText}
+                onChange={(v) => set("secondaryButtonText", v)}
+              />
+              <TextField
+                label="Secondary URL"
+                value={block.props.secondaryButtonUrl}
+                onChange={(v) => set("secondaryButtonUrl", v)}
+              />
             </div>
           </>
         );
       case "container":
         return (
-          <TextAreaField label="Container Content" value={block.props.content} onChange={(v) => set("content", v)} rows={4} />
+          <TextAreaField
+            label="Container Content"
+            value={block.props.content}
+            onChange={(v) => set("content", v)}
+            rows={4}
+          />
         );
       case "grid_custom":
         return (
           <>
-            <TextField label="Section Title" value={block.props.title} onChange={(v) => set("title", v)} />
-            <TextField label="Section Subtitle" value={block.props.subtitle} onChange={(v) => set("subtitle", v)} />
+            <TextField
+              label="Section Title"
+              value={block.props.title}
+              onChange={(v) => set("title", v)}
+            />
+            <TextField
+              label="Section Subtitle"
+              value={block.props.subtitle}
+              onChange={(v) => set("subtitle", v)}
+            />
           </>
         );
       case "heading":
@@ -302,46 +362,108 @@ export function InspectorPanel({
                 { value: "h4", label: "H4 - Sub Section" },
               ]}
             />
-            <TextAreaField label="Heading Text" value={block.props.text} onChange={(v) => set("text", v)} rows={3} />
+            <TextAreaField
+              label="Heading Text"
+              value={block.props.text}
+              onChange={(v) => set("text", v)}
+              rows={3}
+            />
           </>
         );
       case "paragraph":
         return (
-          <TextAreaField label="Paragraph Text" value={block.props.text} onChange={(v) => set("text", v)} rows={4} />
+          <TextAreaField
+            label="Paragraph Text"
+            value={block.props.text}
+            onChange={(v) => set("text", v)}
+            rows={4}
+          />
         );
       case "image":
         return (
           <>
-            <TextField label="Image URL" value={block.props.url} onChange={(v) => set("url", v)} />
-            <TextField label="Alt Text" value={block.props.alt} onChange={(v) => set("alt", v)} />
-            <TextField label="Caption" value={block.props.caption} onChange={(v) => set("caption", v)} />
+            <TextField
+              label="Image URL"
+              value={block.props.url}
+              onChange={(v) => set("url", v)}
+            />
+            <TextField
+              label="Alt Text"
+              value={block.props.alt}
+              onChange={(v) => set("alt", v)}
+            />
+            <TextField
+              label="Caption"
+              value={block.props.caption}
+              onChange={(v) => set("caption", v)}
+            />
           </>
         );
       case "pricing":
         return (
           <>
-            <TextField label="Plan Name" value={block.props.planName} onChange={(v) => set("planName", v)} />
-            <TextField label="Badge" value={block.props.badge} onChange={(v) => set("badge", v)} />
+            <TextField
+              label="Plan Name"
+              value={block.props.planName}
+              onChange={(v) => set("planName", v)}
+            />
+            <TextField
+              label="Badge"
+              value={block.props.badge}
+              onChange={(v) => set("badge", v)}
+            />
             <div className="grid grid-cols-2 gap-2">
-              <TextField label="Price" value={block.props.price} onChange={(v) => set("price", v)} />
-              <TextField label="Period" value={block.props.period} onChange={(v) => set("period", v)} />
+              <TextField
+                label="Price"
+                value={block.props.price}
+                onChange={(v) => set("price", v)}
+              />
+              <TextField
+                label="Period"
+                value={block.props.period}
+                onChange={(v) => set("period", v)}
+              />
             </div>
           </>
         );
       case "form_contact":
         return (
           <>
-            <TextField label="Title" value={block.props.title} onChange={(v) => set("title", v)} />
-            <TextField label="Subtitle" value={block.props.subtitle} onChange={(v) => set("subtitle", v)} />
-            <TextField label="Placeholder" value={block.props.placeholder} onChange={(v) => set("placeholder", v)} />
-            <TextField label="Button Text" value={block.props.buttonText} onChange={(v) => set("buttonText", v)} />
+            <TextField
+              label="Title"
+              value={block.props.title}
+              onChange={(v) => set("title", v)}
+            />
+            <TextField
+              label="Subtitle"
+              value={block.props.subtitle}
+              onChange={(v) => set("subtitle", v)}
+            />
+            <TextField
+              label="Placeholder"
+              value={block.props.placeholder}
+              onChange={(v) => set("placeholder", v)}
+            />
+            <TextField
+              label="Button Text"
+              value={block.props.buttonText}
+              onChange={(v) => set("buttonText", v)}
+            />
           </>
         );
       case "footer":
         return (
           <>
-            <TextField label="Brand Name" value={block.props.brandName} onChange={(v) => set("brandName", v)} />
-            <TextField label="Copyright" value={block.props.copyright} onChange={(v) => set("copyright", v)} />
+            <TextField
+              label="Brand Name"
+              value={block.props.brandName}
+              onChange={(v) => set("brandName", v)}
+            />
+            <TextField
+              label="Copyright"
+              value={block.props.copyright}
+              onChange={(v) => set("copyright", v)}
+            />
           </>
         );
     }
@@ -353,25 +475,59 @@ export function InspectorPanel({
       case "hero":
         return (
           <>
-            <ColorField label="Background" value={block.props.bgColor} onChange={(v) => set("bgColor", v)} />
-            <ColorField label="Text" value={block.props.textColor} onChange={(v) => set("textColor", v)} />
+            <ColorField
+              label="Background"
+              value={block.props.bgColor}
+              onChange={(v) => set("bgColor", v)}
+            />
+            <ColorField
+              label="Text"
+              value={block.props.textColor}
+              onChange={(v) => set("textColor", v)}
+            />
             {"accentColor" in block.props && (
-              <ColorField label="Accent" value={block.props.accentColor} onChange={(v) => set("accentColor", v)} />
+              <ColorField
+                label="Accent"
+                value={block.props.accentColor}
+                onChange={(v) => set("accentColor", v)}
+              />
             )}
             {"bgGradient" in block.props && (
-              <SelectField label="Background Gradient" value={block.props.bgGradient} onChange={(v) => set("bgGradient", v)} options={GRADIENT_OPTIONS} />
+              <SelectField
+                label="Background Gradient"
+                value={block.props.bgGradient}
+                onChange={(v) => set("bgGradient", v)}
+                options={GRADIENT_OPTIONS}
+              />
             )}
             {"align" in block.props && (
-              <SelectField label="Alignment" value={block.props.align} onChange={(v) => set("align", v as "left" | "center" | "right")} options={ALIGN_OPTIONS} />
+              <SelectField
+                label="Alignment"
+                value={block.props.align}
+                onChange={(v) => set("align", v as "left" | "center" | "right")}
+                options={ALIGN_OPTIONS}
+              />
             )}
           </>
         );
       case "container":
         return (
           <>
-            <ColorField label="Background" value={block.props.bgColor} onChange={(v) => set("bgColor", v)} />
-            <ColorField label="Text" value={block.props.textColor} onChange={(v) => set("textColor", v)} />
-            <ColorField label="Border" value={block.props.borderColor} onChange={(v) => set("borderColor", v)} />
+            <ColorField
+              label="Background"
+              value={block.props.bgColor}
+              onChange={(v) => set("bgColor", v)}
+            />
+            <ColorField
+              label="Text"
+              value={block.props.textColor}
+              onChange={(v) => set("textColor", v)}
+            />
+            <ColorField
+              label="Border"
+              value={block.props.borderColor}
+              onChange={(v) => set("borderColor", v)}
+            />
             <SelectField
               label="Border Radius"
               value={block.props.borderRadius}
@@ -400,7 +556,11 @@ export function InspectorPanel({
       case "heading":
         return (
           <>
-            <ColorField label="Text" value={block.props.textColor} onChange={(v) => set("textColor", v)} />
+            <ColorField
+              label="Text"
+              value={block.props.textColor}
+              onChange={(v) => set("textColor", v)}
+            />
             <SelectField
               label="Font Size"
               value={block.props.fontSize}
@@ -421,14 +581,28 @@ export function InspectorPanel({
                 { value: "font-semibold", label: "Semibold" },
               ]}
             />
-            <SelectField label="Alignment" value={block.props.align} onChange={(v) => set("align", v as "left" | "center" | "right")} options={ALIGN_OPTIONS} />
+            <SelectField
+              label="Alignment"
+              value={block.props.align}
+              onChange={(v) => set("align", v as "left" | "center" | "right")}
+              options={ALIGN_OPTIONS}
+            />
           </>
         );
       case "paragraph":
         return (
           <>
-            <ColorField label="Text" value={block.props.textColor} onChange={(v) => set("textColor", v)} />
-            <SelectField label="Alignment" value={block.props.align} onChange={(v) => set("align", v as "left" | "center" | "right")} options={ALIGN_OPTIONS} />
+            <ColorField
+              label="Text"
+              value={block.props.textColor}
+              onChange={(v) => set("textColor", v)}
+            />
+            <SelectField
+              label="Alignment"
+              value={block.props.align}
+              onChange={(v) => set("align", v as "left" | "center" | "right")}
+              options={ALIGN_OPTIONS}
+            />
             <SelectField
               label="Font Size"
               value={block.props.fontSize}
@@ -469,24 +643,56 @@ export function InspectorPanel({
       case "pricing":
         return (
           <>
-            <ColorField label="Background" value={block.props.bgColor} onChange={(v) => set("bgColor", v)} />
-            <ColorField label="Accent" value={block.props.accentColor} onChange={(v) => set("accentColor", v)} />
-            <ColorField label="Text" value={block.props.textColor} onChange={(v) => set("textColor", v)} />
+            <ColorField
+              label="Background"
+              value={block.props.bgColor}
+              onChange={(v) => set("bgColor", v)}
+            />
+            <ColorField
+              label="Accent"
+              value={block.props.accentColor}
+              onChange={(v) => set("accentColor", v)}
+            />
+            <ColorField
+              label="Text"
+              value={block.props.textColor}
+              onChange={(v) => set("textColor", v)}
+            />
           </>
         );
       case "form_contact":
         return (
           <>
-            <ColorField label="Background" value={block.props.bgColor} onChange={(v) => set("bgColor", v)} />
-            <ColorField label="Accent" value={block.props.accentColor} onChange={(v) => set("accentColor", v)} />
-            <ColorField label="Text" value={block.props.textColor} onChange={(v) => set("textColor", v)} />
+            <ColorField
+              label="Background"
+              value={block.props.bgColor}
+              onChange={(v) => set("bgColor", v)}
+            />
+            <ColorField
+              label="Accent"
+              value={block.props.accentColor}
+              onChange={(v) => set("accentColor", v)}
+            />
+            <ColorField
+              label="Text"
+              value={block.props.textColor}
+              onChange={(v) => set("textColor", v)}
+            />
           </>
         );
       case "footer":
         return (
           <>
-            <ColorField label="Background" value={block.props.bgColor} onChange={(v) => set("bgColor", v)} />
-            <ColorField label="Text" value={block.props.textColor} onChange={(v) => set("textColor", v)} />
+            <ColorField
+              label="Background"
+              value={block.props.bgColor}
+              onChange={(v) => set("bgColor", v)}
+            />
+            <ColorField
+              label="Text"
+              value={block.props.textColor}
+              onChange={(v) => set("textColor", v)}
+            />
           </>
         );
     }
@@ -497,7 +703,7 @@ export function InspectorPanel({
       case "navbar":
         return (
           <div className="space-y-3">
-            <p className="text-[10px] uppercase tracking-wider text-slate-500">
+            <p className="text-[10px] tracking-wider text-slate-500 uppercase">
               Navigation Links
             </p>
             {renderLinks(block.props.links)}
@@ -513,8 +719,12 @@ export function InspectorPanel({
               max={4}
               onChange={(v) => set("columnsCount", Math.max(1, Math.min(4, v)))}
             />
-            <TextField label="Column Gap" value={block.props.gap} onChange={(v) => set("gap", v)} />
-            <p className="text-[10px] uppercase tracking-wider text-slate-500">
+            <TextField
+              label="Column Gap"
+              value={block.props.gap}
+              onChange={(v) => set("gap", v)}
+            />
+            <p className="text-[10px] tracking-wider text-slate-500 uppercase">
               Columns
             </p>
             {renderColumns(block.props.columns)}
@@ -523,7 +733,7 @@ export function InspectorPanel({
       case "pricing":
         return (
           <div className="space-y-3">
-            <p className="text-[10px] uppercase tracking-wider text-slate-500">
+            <p className="text-[10px] tracking-wider text-slate-500 uppercase">
               Features
             </p>
             {renderFeatures(block.props.features)}
@@ -543,7 +753,7 @@ export function InspectorPanel({
       <div className="flex shrink-0 items-center justify-between border-b border-slate-800 bg-slate-950 p-3">
         <div className="flex items-center space-x-2">
           <Icon className="h-4 w-4 text-blue-400" />
-          <h2 className="text-xs font-bold uppercase tracking-wider text-white">
+          <h2 className="text-xs font-bold tracking-wider text-white uppercase">
             Inspector
           </h2>
         </div>
@@ -561,7 +771,11 @@ export function InspectorPanel({
                 : "text-slate-400 hover:text-white"
             }`}
           >
-            {t === "content" ? "Content" : t === "style" ? "Style" : "Grid / List"}
+            {t === "content"
+              ? "Content"
+              : t === "style"
+                ? "Style"
+                : "Grid / List"}
           </button>
         ))}
       </div>
@@ -574,7 +788,7 @@ export function InspectorPanel({
                 type="text"
                 value={block.props.layerName || ""}
                 onChange={(e) => set("layerName", e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:border-blue-500 outline-none text-xs"
+                className="w-full rounded-xl border border-slate-800 bg-slate-950 px-3 py-2 text-xs text-white outline-none focus:border-blue-500"
               />
             </FieldShell>
             {renderContent()}

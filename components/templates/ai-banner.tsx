@@ -18,8 +18,13 @@ export function AiBanner() {
               <Sparkles className="h-7 w-7" />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-slate-900 sm:text-xl">Can't find the perfect template?</h3>
-              <p className="mt-1 text-sm text-slate-600">Let AI help you create a custom template that fits your needs perfectly.</p>
+              <h3 className="text-lg font-bold text-slate-900 sm:text-xl">
+                Can't find the perfect template?
+              </h3>
+              <p className="mt-1 text-sm text-slate-600">
+                Let AI help you create a custom template that fits your needs
+                perfectly.
+              </p>
             </div>
           </div>
           <motion.button

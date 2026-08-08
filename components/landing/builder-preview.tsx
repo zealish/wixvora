@@ -16,7 +16,7 @@ interface BuilderPreviewProps {
   onDemoClick?: () => void;
 }
 
-export function BuilderPreview({ }: BuilderPreviewProps) {
+export function BuilderPreview({}: BuilderPreviewProps) {
   const [deviceView, setDeviceView] = useState<"desktop" | "mobile">("desktop");
   const [bgColor, setBgColor] = useState("#ffffff");
   const [spacing, setSpacing] = useState(20);
@@ -138,14 +138,14 @@ export function BuilderPreview({ }: BuilderPreviewProps) {
           <div className="grid w-full max-w-xl grid-cols-1 items-center gap-6 md:grid-cols-12">
             {/* Editable Text Block */}
             <div className="builder-selection-box rounded-xl bg-white/60 p-3 md:col-span-7">
-              <div className="builder-handle -left-1.5 -top-1.5" />
-              <div className="builder-handle -right-1.5 -top-1.5" />
+              <div className="builder-handle -top-1.5 -left-1.5" />
+              <div className="builder-handle -top-1.5 -right-1.5" />
               <div className="builder-handle -bottom-1.5 -left-1.5" />
-              <div className="builder-handle -bottom-1.5 -right-1.5" />
+              <div className="builder-handle -right-1.5 -bottom-1.5" />
               <h2
                 contentEditable
                 suppressContentEditableWarning
-                className="rounded px-1 text-2xl font-black leading-tight text-slate-900 outline-none focus:ring-1 focus:ring-indigo-300 sm:text-3xl"
+                className="rounded px-1 text-2xl leading-tight font-black text-slate-900 outline-none focus:ring-1 focus:ring-indigo-300 sm:text-3xl"
               >
                 Your Vision, Built with AI
               </h2>
@@ -154,7 +154,8 @@ export function BuilderPreview({ }: BuilderPreviewProps) {
                 suppressContentEditableWarning
                 className="mt-4 rounded px-1 text-xs leading-relaxed text-slate-600 outline-none focus:ring-1 focus:ring-indigo-300 sm:text-sm"
               >
-                Bring your ideas to life with beautiful, high-converting websites.
+                Bring your ideas to life with beautiful, high-converting
+                websites.
               </p>
               <div className="mt-4">
                 <button className="rounded-xl bg-indigo-600 px-5 py-2.5 text-xs font-semibold text-white shadow-md shadow-indigo-500/20 transition hover:bg-indigo-700">
@@ -177,7 +178,7 @@ export function BuilderPreview({ }: BuilderPreviewProps) {
                   }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-indigo-950/80 via-indigo-900/30 to-transparent" />
-                <div className="absolute bottom-3 left-3 right-3 text-white">
+                <div className="absolute right-3 bottom-3 left-3 text-white">
                   <div className="mb-1 h-6 w-6 rounded-full bg-indigo-300/40 backdrop-blur" />
                 </div>
               </div>
@@ -186,9 +187,9 @@ export function BuilderPreview({ }: BuilderPreviewProps) {
         </div>
 
         {/* Right Properties Panel */}
-        <div className="absolute bottom-6 right-4 top-6 z-20 flex w-52 flex-col space-y-4 rounded-2xl border border-slate-100/80 bg-white/95 p-4 text-xs shadow-[0_10px_30px_-5px_rgba(0,0,0,0.08),0_4px_12px_-2px_rgba(0,0,0,0.03)] backdrop-blur-md sm:w-56">
+        <div className="absolute top-6 right-4 bottom-6 z-20 flex w-52 flex-col space-y-4 rounded-2xl border border-slate-100/80 bg-white/95 p-4 text-xs shadow-[0_10px_30px_-5px_rgba(0,0,0,0.08),0_4px_12px_-2px_rgba(0,0,0,0.03)] backdrop-blur-md sm:w-56">
           <div className="flex items-center border-b border-slate-100 pb-2">
-            <button className="flex-1 border-b-2 border-indigo-600 pb-1.5 text-center font-semibold text-indigo-600 -mb-2">
+            <button className="-mb-2 flex-1 border-b-2 border-indigo-600 pb-1.5 text-center font-semibold text-indigo-600">
               Section
             </button>
             <button className="flex-1 pb-1.5 text-center font-medium text-slate-500 hover:text-slate-600">
@@ -236,7 +237,7 @@ export function BuilderPreview({ }: BuilderPreviewProps) {
             </span>
             <div className="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50/50 p-2">
               <div className="flex items-center gap-2">
-                <label className="flex items-center gap-2 cursor-pointer">
+                <label className="flex cursor-pointer items-center gap-2">
                   <input
                     type="color"
                     value={bgColor}
@@ -244,7 +245,7 @@ export function BuilderPreview({ }: BuilderPreviewProps) {
                     className="h-5 w-5 cursor-pointer rounded-full border-0 bg-transparent p-0"
                     aria-label="Background color"
                   />
-                  <span className="font-mono text-[11px] font-medium uppercase text-slate-700">
+                  <span className="font-mono text-[11px] font-medium text-slate-700 uppercase">
                     {bgColor.toUpperCase()}
                   </span>
                 </label>
@@ -254,7 +255,12 @@ export function BuilderPreview({ }: BuilderPreviewProps) {
 
           <div className="space-y-2 pt-1">
             <div className="flex items-center justify-between text-[11px]">
-              <label htmlFor="spacing-range" className="font-semibold text-slate-500">Spacing</label>
+              <label
+                htmlFor="spacing-range"
+                className="font-semibold text-slate-500"
+              >
+                Spacing
+              </label>
               <span className="font-medium text-slate-600">{spacing}</span>
             </div>
             <input

@@ -126,26 +126,26 @@ declare module "@tanstack/react-table" {
     sortableLabel?: string;
     tooltip?: string;
     exportFormatter?: (value: unknown) => string | number | boolean | null;
-    
+
     // Width constraints
     width?: number;
     minWidth?: number;
     maxWidth?: number;
-    
+
     // Text behavior
     wrap?: boolean;
     truncate?: boolean;
-    
+
     // Responsive visibility
     visibleFrom?: ResponsiveBreakpoint;
-    
+
     // Custom styling
     className?: string;
     headerClassName?: string;
     cellClassName?: string;
     cellStyle?: React.CSSProperties;
     headerStyle?: React.CSSProperties;
-    
+
     // Future-proofing
     sticky?: "left" | "right";
   }

@@ -59,6 +59,7 @@ app/(guest)/
     - 6 cards total
 
 **Feature Cards (each):**
+
 - Background: white with border, rounded-3xl
 - Shadow: `shadow-[0_10px_30px_-10px_rgba(0,0,0,0.04)]` → `hover:shadow-lg`
 - Padding: `p-8`
@@ -71,6 +72,7 @@ app/(guest)/
 - Description: `text-slate-500 text-sm leading-relaxed`
 
 **6 Features:**
+
 1. AI Website Generation (Sparkles icon)
 2. Drag & Drop Builder (Layers icon)
 3. Responsive Design (Smartphone icon)
@@ -92,6 +94,7 @@ app/(guest)/
     - 4 steps with connector lines between them
 
 **Step Component (each):**
+
 - Layout: flex column, centered, text-center
 - Number badge:
   - Size: `w-8 h-8`
@@ -114,6 +117,7 @@ app/(guest)/
 - Description: `text-slate-500 text-sm leading-relaxed max-w-[210px]`
 
 **4 Steps:**
+
 1. Tell AI Your Idea (Sparkles icon) - "Answer a few questions about your website."
 2. AI Builds Your Website (Laptop icon) - "Our AI generates a complete website tailored for you."
 3. Customize & Edit (Wand2 icon) - "Edit content, images, and design with our easy drag & drop builder."
@@ -158,17 +162,17 @@ app/(guest)/
 
 ## Icon Mapping (FontAwesome → Lucide)
 
-| Original FA Icon | Lucide Replacement | Used In |
-|------------------|-------------------|---------|
-| fa-sparkles | Sparkles | Features #1, Step #1 |
-| fa-layer-group | Layers | Features #2 |
-| fa-mobile-screen-button | Smartphone | Features #3 |
-| fa-magnifying-glass-chart | TrendingUp | Features #4 |
-| fa-rocket | Rocket | Features #5 |
-| fa-paper-plane | Send | Features #6 |
-| fa-laptop-code | Laptop | Step #2 |
-| fa-wand-magic-sparkles | Wand2 | Step #3 |
-| fa-globe | Globe | Step #4 |
+| Original FA Icon          | Lucide Replacement | Used In              |
+| ------------------------- | ------------------ | -------------------- |
+| fa-sparkles               | Sparkles           | Features #1, Step #1 |
+| fa-layer-group            | Layers             | Features #2          |
+| fa-mobile-screen-button   | Smartphone         | Features #3          |
+| fa-magnifying-glass-chart | TrendingUp         | Features #4          |
+| fa-rocket                 | Rocket             | Features #5          |
+| fa-paper-plane            | Send               | Features #6          |
+| fa-laptop-code            | Laptop             | Step #2              |
+| fa-wand-magic-sparkles    | Wand2              | Step #3              |
+| fa-globe                  | Globe              | Step #4              |
 
 ---
 
@@ -213,12 +217,12 @@ export default async function HomePage() {
 Add barrel exports:
 
 ```typescript
-export { Navbar } from './navbar';
-export { HeroSection } from './hero-section';
-export { BuilderPreview } from './builder-preview';
-export { DemoModal } from './demo-modal';
-export { FeaturesGrid } from './features-grid';
-export { HowItWorks } from './how-it-works';
+export { Navbar } from "./navbar";
+export { HeroSection } from "./hero-section";
+export { BuilderPreview } from "./builder-preview";
+export { DemoModal } from "./demo-modal";
+export { FeaturesGrid } from "./features-grid";
+export { HowItWorks } from "./how-it-works";
 ```
 
 ---
@@ -228,6 +232,7 @@ export { HowItWorks } from './how-it-works';
 ### Server Components Only
 
 Both new components are server components (no "use client" directive):
+
 - No interactive state needed
 - Pure presentational components
 - Hover effects handled via CSS
@@ -236,16 +241,19 @@ Both new components are server components (no "use client" directive):
 ### Responsive Strategy
 
 **Mobile (< 640px):**
+
 - Single column layout
 - No connector lines in How It Works
 - Full-width cards
 
 **Tablet (640px - 1023px):**
+
 - Features: 2-column grid
 - How It Works: 2-column grid
 - Still no connector lines
 
 **Desktop (≥ 1024px):**
+
 - Features: 3-column grid
 - How It Works: 4-column grid
 - Connector lines visible between steps
@@ -272,13 +280,14 @@ Both components have no props (fully self-contained):
 
 ```typescript
 // features-grid.tsx
-export function FeaturesGrid(): JSX.Element
+export function FeaturesGrid(): JSX.Element;
 
 // how-it-works.tsx
-export function HowItWorks(): JSX.Element
+export function HowItWorks(): JSX.Element;
 ```
 
 Future enhancement could add props for:
+
 - Custom feature data (array of feature objects)
 - Custom step data (array of step objects)
 - Section IDs for anchor navigation
@@ -312,6 +321,7 @@ Future enhancement could add props for:
 ## Dependencies
 
 **No new dependencies required.** Uses existing:
+
 - React 19
 - Next.js 16
 - Tailwind CSS 4

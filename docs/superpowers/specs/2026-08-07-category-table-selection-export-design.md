@@ -39,6 +39,7 @@ features/business-categories/
 ### Dependencies
 
 **New packages to install:**
+
 - `xlsx` (^0.18.5) - Excel file generation
 - `file-saver` (^2.0.5) - Browser download trigger
 - `@types/file-saver` (^2.0.5) - TypeScript definitions
@@ -85,11 +86,13 @@ Add checkbox column as the **first column** in `getCategoryColumns()`:
 ### Selection State Management
 
 **TanStack Table built-in:**
+
 - Use `rowSelection` state object: `{[rowId: string]: boolean}`
 - Enable via `enableRowSelection: true` in table config
 - Handle state changes via `onRowSelectionChange` callback
 
 **Selection Behavior:**
+
 - **Independent selection** - parent and children are independent; no cascade
 - **Select all** affects only currently visible rows (respects filters and expand state)
 - Selected count badge appears in toolbar when `selectedIds.length > 0`
@@ -97,6 +100,7 @@ Add checkbox column as the **first column** in `getCategoryColumns()`:
 ### UI Changes in DataTable
 
 **Toolbar additions:**
+
 - Selected count badge: `"{count} selected"` (only when selection active)
 - Export button group positioned before "Add Category" button
 - Bulk actions remain in current position
@@ -114,10 +118,12 @@ Add checkbox column as the **first column** in `getCategoryColumns()`:
 ### Export Scope
 
 **Data selection logic:**
+
 - If rows are selected → export **selected rows only**
 - If no selection → export **all visible rows** (respecting current filters)
 
 **Filtering behavior:**
+
 - Respect status filter (all/active/inactive)
 - Respect search filter (name/slug)
 - Respect expand/collapse state (only export visible rows in flattened structure)
@@ -125,6 +131,7 @@ Add checkbox column as the **first column** in `getCategoryColumns()`:
 ### Data Mapping
 
 **Exported columns:**
+
 1. Name
 2. Slug
 3. Parent Category (parent's name, or "—" if root)
@@ -135,12 +142,14 @@ Add checkbox column as the **first column** in `getCategoryColumns()`:
 8. Updated At (ISO 8601 string)
 
 **Excluded fields:**
+
 - `id` (internal)
 - `parentId` (internal, replaced by parent name)
 - `deletedAt` (internal)
 - `children` (flattened structure)
 
 **Hierarchical flattening:**
+
 - Parent categories and their children are exported as separate flat rows
 - Parent name column shows relationship
 - No nested structure in export
@@ -150,25 +159,26 @@ Add checkbox column as the **first column** in `getCategoryColumns()`:
 **Component:** `CategoryExportMenu`
 
 **Structure:**
+
 ```tsx
 <DropdownMenu>
   <DropdownMenuTrigger>
     <Button variant="outline" size="sm">
-      <Download className="h-4 w-4 mr-2" />
+      <Download className="mr-2 h-4 w-4" />
       Export {selectedCount > 0 && `(${selectedCount} selected)`}
     </Button>
   </DropdownMenuTrigger>
   <DropdownMenuContent align="end">
     <DropdownMenuItem onClick={handleExportCSV}>
-      <FileText className="h-4 w-4 mr-2" />
+      <FileText className="mr-2 h-4 w-4" />
       Export as CSV
     </DropdownMenuItem>
     <DropdownMenuItem onClick={handleExportExcel}>
-      <FileSpreadsheet className="h-4 w-4 mr-2" />
+      <FileSpreadsheet className="mr-2 h-4 w-4" />
       Export as Excel
     </DropdownMenuItem>
     <DropdownMenuItem onClick={handleExportJSON}>
-      <Code className="h-4 w-4 mr-2" />
+      <Code className="mr-2 h-4 w-4" />
       Export as JSON
     </DropdownMenuItem>
   </DropdownMenuContent>
@@ -176,10 +186,11 @@ Add checkbox column as the **first column** in `getCategoryColumns()`:
 ```
 
 **Props:**
+
 ```typescript
 interface CategoryExportMenuProps {
-  data: CategoryWithChildren[];  // All flattened visible rows
-  selectedIds: string[];          // Currently selected row IDs
+  data: CategoryWithChildren[]; // All flattened visible rows
+  selectedIds: string[]; // Currently selected row IDs
 }
 ```
 
@@ -209,6 +220,7 @@ interface CategoryExportMenuProps {
    - Return array of plain objects
 
 **Export row type:**
+
 ```typescript
 interface ExportRow {
   name: string;
@@ -227,16 +239,19 @@ interface ExportRow {
 ## Error Handling & Edge Cases
 
 ### Empty State
+
 - Disable export button if no data available (after filtering)
 - Show toast notification: `"No data to export"`
 
 ### Large Datasets
+
 - No artificial pagination limit
 - Export all visible/selected rows
 - Browser handles download natively
 - Memory consideration: flattened structure may duplicate parent metadata in each child row
 
 ### Failed Export
+
 - Wrap all export functions in try-catch blocks
 - Show toast on error: `"Failed to export data. Please try again."`
 - Log full error to console for debugging
@@ -244,15 +259,18 @@ interface ExportRow {
 ### Format-Specific Handling
 
 **CSV:**
+
 - Escape commas in category names with double quotes
 - Use UTF-8 BOM for proper Excel compatibility
 
 **Excel:**
+
 - Apply bold style to header row
 - Auto-width columns based on content
 - Freeze header row for scrolling
 
 **JSON:**
+
 - Pretty-print with 2-space indentation
 - Valid JSON array structure
 

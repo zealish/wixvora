@@ -26,9 +26,7 @@ export function DemoModal({ isOpen, onClose }: DemoModalProps) {
   return (
     <div
       className={`fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-sm transition-all duration-300 ${
-        isOpen
-          ? "opacity-100"
-          : "pointer-events-none opacity-0"
+        isOpen ? "opacity-100" : "pointer-events-none opacity-0"
       }`}
       onClick={onClose}
     >
@@ -38,7 +36,7 @@ export function DemoModal({ isOpen, onClose }: DemoModalProps) {
       >
         <button
           onClick={onClose}
-          className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-slate-500 transition hover:bg-slate-200"
+          className="absolute top-4 right-4 flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-slate-500 transition hover:bg-slate-200"
           aria-label="Close modal"
         >
           <X className="h-4 w-4" />

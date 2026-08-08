@@ -112,7 +112,7 @@ export const createAuditLogColumns = (
         <div className="font-medium">
           {formatTimestamp(row.original.createdAt)}
         </div>
-        <div className="text-xs text-muted-foreground">
+        <div className="text-muted-foreground text-xs">
           ({formatRelativeTime(row.original.createdAt)})
         </div>
       </div>
@@ -123,7 +123,7 @@ export const createAuditLogColumns = (
       exportable: true,
       visibleFrom: "always",
       minWidth: 150,
-      exportFormatter: (value) => 
+      exportFormatter: (value) =>
         value instanceof Date ? value.toISOString() : String(value),
     },
   },
@@ -137,22 +137,19 @@ export const createAuditLogColumns = (
       const user = row.original.user;
       if (!user) {
         return (
-          <div 
+          <div
             className="flex items-center gap-2"
             onClick={() => onRowClick(row.original)}
           >
-            <UserCircle className="h-4 w-4 text-muted-foreground" />
+            <UserCircle className="text-muted-foreground h-4 w-4" />
             <span>System</span>
           </div>
         );
       }
       return (
-        <div 
-          className="flex flex-col"
-          onClick={() => onRowClick(row.original)}
-        >
+        <div className="flex flex-col" onClick={() => onRowClick(row.original)}>
           <div className="font-medium">{user.name}</div>
-          <div className="text-xs text-muted-foreground">{user.email}</div>
+          <div className="text-muted-foreground text-xs">{user.email}</div>
         </div>
       );
     },
@@ -172,11 +169,13 @@ export const createAuditLogColumns = (
       <DataTableColumnHeader column={column} title="Action" />
     ),
     cell: ({ row }) => (
-      <div 
+      <div
         className="flex items-center gap-2"
         onClick={() => onRowClick(row.original)}
       >
-        <span className="text-lg">{formatActionEmoji(row.original.action)}</span>
+        <span className="text-lg">
+          {formatActionEmoji(row.original.action)}
+        </span>
         <Badge className={getActionBadgeColor(row.original.action)}>
           {row.original.action}
         </Badge>
@@ -223,7 +222,7 @@ export const createAuditLogColumns = (
       const parsed = truncateIP(row.original.ipAddress);
       if (!parsed.full)
         return (
-          <span 
+          <span
             className="text-muted-foreground"
             onClick={() => onRowClick(row.original)}
           >
@@ -231,10 +230,7 @@ export const createAuditLogColumns = (
           </span>
         );
       return (
-        <div 
-          title={parsed.full}
-          onClick={() => onRowClick(row.original)}
-        >
+        <div title={parsed.full} onClick={() => onRowClick(row.original)}>
           {parsed.display}
         </div>
       );
@@ -254,7 +250,7 @@ export const createAuditLogColumns = (
       <DataTableColumnHeader column={column} title="User Agent" />
     ),
     cell: ({ row }) => (
-      <div 
+      <div
         title={row.original.userAgent || ""}
         onClick={() => onRowClick(row.original)}
       >

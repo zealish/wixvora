@@ -23,6 +23,7 @@
 ### Task 1: Data Layer — Extend types, queries, and create client CRUD
 
 **Files:**
+
 - Modify: `features/users/types.ts`
 - Modify: `features/users/queries.ts`
 - Create: `features/clients/service.ts`
@@ -30,6 +31,7 @@
 - Modify: `features/clients/actions.ts`
 
 **Interfaces:**
+
 - Produces: `UserWithProfile` (with optional `client` field), `getAllClientUsers()`, `createClientUser()`, `createClientSchema`
 
 - [ ] **Step 1: Extend UserWithProfile type**
@@ -59,8 +61,7 @@ export interface UserWithProfile {
 }
 
 export type UserActionResult =
-  | { success: true }
-  | { success: false; error: string };
+  { success: true } | { success: false; error: string };
 ```
 
 - [ ] **Step 2: Add getAllClientUsers query**
@@ -285,6 +286,7 @@ git commit -m "feat: add client data layer - query, service, validation, action"
 ### Task 2: Table Configurations — Rename staff columns, create client table config
 
 **Files:**
+
 - Rename: `features/users/table/columns.tsx` → `features/users/table/staff-columns.tsx`
 - Modify: `features/users/table/filters.ts`
 - Modify: `features/users/table/bulk-actions.tsx` → `features/users/table/staff-bulk-actions.tsx`
@@ -295,6 +297,7 @@ git commit -m "feat: add client data layer - query, service, validation, action"
 - Create: `features/clients/table/index.ts`
 
 **Interfaces:**
+
 - Consumes: `UserWithProfile` (from Task 1)
 - Produces: `staffColumns`, `staffFilters`, `staffBulkActions`, `clientColumns`, `clientFilters`, `clientBulkActions`
 
@@ -464,9 +467,7 @@ export const staffColumns: ColumnDef<UserWithProfile, unknown>[] = [
             }
           />
           <DropdownMenuContent align="end">
-            <DropdownMenuItem
-              render={<Link href={`/staff/staffs/${u.id}`} />}
-            >
+            <DropdownMenuItem render={<Link href={`/staff/staffs/${u.id}`} />}>
               <Eye className="mr-2 size-4" />
               View
             </DropdownMenuItem>
@@ -703,9 +704,7 @@ export const clientColumns: ColumnDef<UserWithProfile, unknown>[] = [
             }
           />
           <DropdownMenuContent align="end">
-            <DropdownMenuItem
-              render={<Link href={`/staff/clients/${u.id}`} />}
-            >
+            <DropdownMenuItem render={<Link href={`/staff/clients/${u.id}`} />}>
               <Eye className="mr-2 size-4" />
               View
             </DropdownMenuItem>
@@ -822,6 +821,7 @@ git commit -m "feat: add staff and client table configurations"
 ### Task 3: Shared Data-Table Components — Create reusable StaffDataTable and ClientDataTable
 
 **Files:**
+
 - Create: `features/user-management/components/staff-data-table.tsx`
 - Create: `features/user-management/components/client-data-table.tsx`
 - Create: `features/user-management/components/staff-form.tsx`
@@ -829,6 +829,7 @@ git commit -m "feat: add staff and client table configurations"
 - Create: `features/user-management/components/index.ts`
 
 **Interfaces:**
+
 - Consumes: `staffColumns`, `staffFilters`, `staffBulkActions` (Task 2), `clientColumns`, `clientFilters`, `clientBulkActions` (Task 2), `UserWithProfile` (Task 1)
 - Produces: `StaffDataTable`, `ClientDataTable`, `StaffForm`, `ClientForm`
 
@@ -1218,10 +1219,12 @@ git commit -m "feat: add shared staff and client components"
 ### Task 4: Staff Routes — Create `/staff/staffs/` pages
 
 **Files:**
+
 - Create: `app/(staff)/staff/staffs/page.tsx`
 - Create: `app/(staff)/staff/staffs/create/page.tsx`
 
 **Interfaces:**
+
 - Consumes: `StaffDataTable`, `StaffForm` (Task 3), `getAllStaffUsers`, `getAllRoles` (existing)
 
 - [ ] **Step 1: Create staff list page**
@@ -1330,10 +1333,12 @@ git commit -m "feat: add /staff/staffs route pages"
 ### Task 5: Client Routes — Create `/staff/clients/` pages
 
 **Files:**
+
 - Create: `app/(staff)/staff/clients/page.tsx`
 - Create: `app/(staff)/staff/clients/create/page.tsx`
 
 **Interfaces:**
+
 - Consumes: `ClientDataTable`, `ClientForm` (Task 3), `getAllClientUsers` (Task 1)
 
 - [ ] **Step 1: Create client list page**
@@ -1431,11 +1436,13 @@ git commit -m "feat: add /staff/clients route pages"
 ### Task 6: Navigation, Redirects, and Cleanup
 
 **Files:**
+
 - Modify: `config/navigation.ts`
 - Modify: `next.config.ts`
 - Delete: `app/(staff)/staff/users/` directory
 
 **Interfaces:**
+
 - Consumes: All previous tasks complete
 
 - [ ] **Step 1: Update navigation config**

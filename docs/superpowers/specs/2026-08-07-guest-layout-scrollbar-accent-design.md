@@ -52,10 +52,11 @@ Apply custom scrollbar styling to the guest layout group (`app/(guest)/layout.ts
 ### File Changes
 
 1. **`app/globals.css`** — Add scrollbar styles in `@layer components` section (after existing landing page styles):
+
    ```css
    /* Guest layout scrollbar accent styling */
    .scrollbar-accent {
-     scrollbar-color: #4F46E5 transparent;
+     scrollbar-color: #4f46e5 transparent;
      scrollbar-width: thin;
    }
 
@@ -68,16 +69,16 @@ Apply custom scrollbar styling to the guest layout group (`app/(guest)/layout.ts
    }
 
    .scrollbar-accent::-webkit-scrollbar-thumb {
-     background: #4F46E5;
+     background: #4f46e5;
      border-radius: 4px;
    }
 
    .scrollbar-accent::-webkit-scrollbar-thumb:hover {
-     background: #818CF8;
+     background: #818cf8;
    }
 
    .scrollbar-accent::-webkit-scrollbar-thumb:active {
-     background: #A5B4FC;
+     background: #a5b4fc;
    }
    ```
 

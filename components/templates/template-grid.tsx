@@ -30,8 +30,12 @@ export function TemplateGrid({ templates, onPreview }: TemplateGridProps) {
         className="col-span-full py-12 text-center text-slate-400"
       >
         <SearchX className="mx-auto mb-3 h-12 w-12 stroke-1 text-slate-300" />
-        <p className="text-base font-semibold text-slate-600">No templates found matching your criteria</p>
-        <p className="mt-1 text-sm text-slate-400">Try resetting filters or searching with different keywords.</p>
+        <p className="text-base font-semibold text-slate-600">
+          No templates found matching your criteria
+        </p>
+        <p className="mt-1 text-sm text-slate-400">
+          Try resetting filters or searching with different keywords.
+        </p>
       </motion.div>
     );
   }

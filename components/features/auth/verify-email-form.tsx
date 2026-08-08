@@ -71,7 +71,8 @@ export function VerifyEmailForm() {
         <CardContent className="space-y-5 pt-8">
           <div className="space-y-3">
             <p className="text-sm font-medium text-slate-700">
-              Please check your email and click the verification link to activate your account.
+              Please check your email and click the verification link to
+              activate your account.
             </p>
             <p className="text-sm text-slate-500">
               If you don&apos;t see the email, check your spam folder.
@@ -80,7 +81,10 @@ export function VerifyEmailForm() {
 
           <div className="border-t border-slate-100 pt-5">
             <div className="space-y-3">
-              <Label htmlFor="email" className="text-sm font-semibold text-slate-700">
+              <Label
+                htmlFor="email"
+                className="text-sm font-semibold text-slate-700"
+              >
                 Resend verification email
               </Label>
               <Input
@@ -106,7 +110,10 @@ export function VerifyEmailForm() {
       </Card>
 
       <p className="text-center text-sm font-medium text-slate-600">
-        <Link href="/login" className="font-semibold text-indigo-600 transition-colors hover:text-indigo-700">
+        <Link
+          href="/login"
+          className="font-semibold text-indigo-600 transition-colors hover:text-indigo-700"
+        >
           Return to login
         </Link>
       </p>

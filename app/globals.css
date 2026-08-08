@@ -39,11 +39,11 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
-  --color-brand-50: #EEF2FF;
-  --color-brand-100: #E0E7FF;
-  --color-brand-500: #6366F1;
-  --color-brand-600: #4F46E5;
-  --color-brand-700: #4338CA;
+  --color-brand-50: #eef2ff;
+  --color-brand-100: #e0e7ff;
+  --color-brand-500: #6366f1;
+  --color-brand-600: #4f46e5;
+  --color-brand-700: #4338ca;
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -140,11 +140,11 @@
   .animation-delay-100 {
     animation-delay: 100ms;
   }
-  
+
   .animation-delay-200 {
     animation-delay: 200ms;
   }
-  
+
   .animation-delay-300 {
     animation-delay: 300ms;
   }
@@ -154,7 +154,8 @@
 @layer components {
   /* Floating animation for decorative elements */
   @keyframes float {
-    0%, 100% {
+    0%,
+    100% {
       transform: translateY(0px);
     }
     50% {
@@ -168,7 +169,8 @@
 
   /* Pulse glow for CTA buttons */
   @keyframes pulse-glow {
-    0%, 100% {
+    0%,
+    100% {
       box-shadow: 0 0 20px rgba(147, 51, 234, 0.3);
     }
     50% {
@@ -182,22 +184,24 @@
 
   /* Floating background shapes animations */
   @keyframes floatSlow {
-    0%, 100% { 
-      transform: translateY(0px) rotate(0deg); 
+    0%,
+    100% {
+      transform: translateY(0px) rotate(0deg);
     }
-    50% { 
-      transform: translateY(-12px) rotate(3deg); 
+    50% {
+      transform: translateY(-12px) rotate(3deg);
     }
   }
 
   @keyframes pulseSoft {
-    0%, 100% { 
-      opacity: 0.6; 
-      transform: scale(1); 
+    0%,
+    100% {
+      opacity: 0.6;
+      transform: scale(1);
     }
-    50% { 
-      opacity: 0.85; 
-      transform: scale(1.05); 
+    50% {
+      opacity: 0.85;
+      transform: scale(1.05);
     }
   }
 
@@ -207,7 +211,7 @@
 
   /* Landing page gradient text */
   .text-gradient {
-    background: linear-gradient(135deg, #4F46E5 0%, #3B82F6 100%);
+    background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -215,8 +219,17 @@
 
   /* Templates page hero background */
   .hero-bg {
-    background: radial-gradient(circle at 80% 20%, rgba(99, 102, 241, 0.09) 0%, rgba(255, 255, 255, 0) 50%),
-                radial-gradient(circle at 10% 80%, rgba(139, 92, 246, 0.08) 0%, rgba(255, 255, 255, 0) 50%);
+    background:
+      radial-gradient(
+        circle at 80% 20%,
+        rgba(99, 102, 241, 0.09) 0%,
+        rgba(255, 255, 255, 0) 50%
+      ),
+      radial-gradient(
+        circle at 10% 80%,
+        rgba(139, 92, 246, 0.08) 0%,
+        rgba(255, 255, 255, 0) 50%
+      );
   }
 
   /* Auth page glow effect */
@@ -226,7 +239,8 @@
 
   /* Pulse glow animation for background orbs */
   @keyframes pulseGlow {
-    0%, 100% {
+    0%,
+    100% {
       opacity: 0.6;
       transform: scale(1);
     }
@@ -242,7 +256,8 @@
 
   /* Float animation for floating cards */
   @keyframes floatSlow {
-    0%, 100% {
+    0%,
+    100% {
       transform: translateY(0px) rotate(0deg);
     }
     50% {
@@ -272,7 +287,7 @@
 
   /* Guest layout scrollbar accent styling */
   .scrollbar-accent {
-    scrollbar-color: #4F46E5 transparent;
+    scrollbar-color: #4f46e5 transparent;
     scrollbar-width: thin;
   }
 
@@ -285,34 +300,37 @@
   }
 
   .scrollbar-accent::-webkit-scrollbar-thumb {
-    background: #4F46E5;
+    background: #4f46e5;
     border-radius: 4px;
   }
 
   .scrollbar-accent::-webkit-scrollbar-thumb:hover {
-    background: #818CF8;
+    background: #818cf8;
   }
 
   .scrollbar-accent::-webkit-scrollbar-thumb:active {
-    background: #A5B4FC;
+    background: #a5b4fc;
   }
 
   /* Pricing page card shadows */
   .card-shadow {
-    box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05),
-                0 2px 6px -1px rgba(15, 23, 42, 0.03);
+    box-shadow:
+      0 4px 20px -2px rgba(15, 23, 42, 0.05),
+      0 2px 6px -1px rgba(15, 23, 42, 0.03);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .card-shadow:hover {
     transform: translateY(-4px);
-    box-shadow: 0 20px 25px -5px rgba(15, 23, 42, 0.08),
-                0 10px 10px -5px rgba(15, 23, 42, 0.03);
+    box-shadow:
+      0 20px 25px -5px rgba(15, 23, 42, 0.08),
+      0 10px 10px -5px rgba(15, 23, 42, 0.03);
   }
 
   .popular-card-shadow {
-    box-shadow: 0 20px 35px -5px rgba(79, 70, 229, 0.15),
-                0 10px 15px -5px rgba(79, 70, 229, 0.05);
+    box-shadow:
+      0 20px 35px -5px rgba(79, 70, 229, 0.15),
+      0 10px 15px -5px rgba(79, 70, 229, 0.05);
   }
 
   /* Range slider custom styling */
@@ -322,7 +340,7 @@
     width: 14px;
     height: 14px;
     border-radius: 50%;
-    background: #4F46E5;
+    background: #4f46e5;
     cursor: pointer;
     border: 2px solid #ffffff;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
@@ -364,29 +382,33 @@
   margin: 0 !important;
 }
 
-  .template-swiper .swiper-pagination-bullet-active {
-    width: 28px;
-    background-color: #3b82f6;
-    border-radius: 9999px;
-  }
+.template-swiper .swiper-pagination-bullet-active {
+  width: 28px;
+  background-color: #3b82f6;
+  border-radius: 9999px;
+}
 
-  /* Block Editor Canvas */
-  .canvas-bg-grid {
-    background-size: 28px 28px;
-    background-image: radial-gradient(circle, rgba(255, 255, 255, 0.07) 1px, transparent 1px);
-  }
+/* Block Editor Canvas */
+.canvas-bg-grid {
+  background-size: 28px 28px;
+  background-image: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.07) 1px,
+    transparent 1px
+  );
+}
 
-  .block-outline {
-    outline: 2px solid transparent;
-    transition: all 0.15s ease-in-out;
-  }
+.block-outline {
+  outline: 2px solid transparent;
+  transition: all 0.15s ease-in-out;
+}
 
-  .block-outline:hover {
-    outline-color: #3b82f6;
-  }
+.block-outline:hover {
+  outline-color: #3b82f6;
+}
 
-  .block-outline.is-selected {
-    outline-color: #2563eb;
-    outline-width: 2px;
-    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
-  }
+.block-outline.is-selected {
+  outline-color: #2563eb;
+  outline-width: 2px;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
+}

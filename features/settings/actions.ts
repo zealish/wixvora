@@ -30,7 +30,10 @@ export async function updateSeoSettingsAction(
       (role: { code: string }) => role.code === "SUPER_ADMIN"
     );
     if (!isSuperAdmin) {
-      return { success: false, error: "Forbidden: SUPER_ADMIN access required" };
+      return {
+        success: false,
+        error: "Forbidden: SUPER_ADMIN access required",
+      };
     }
 
     const validated = seoSettingsSchema.parse(data);

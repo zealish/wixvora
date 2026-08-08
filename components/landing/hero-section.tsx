@@ -13,20 +13,20 @@ export function HeroSection() {
     <>
       <main className="relative mx-auto my-auto w-full max-w-[1400px] px-6 py-8 md:px-12 lg:py-16">
         {/* Ambient Glows */}
-        <div className="pointer-events-none absolute -right-20 top-0 -z-10 h-[600px] w-[600px] animate-pulse-soft rounded-full bg-indigo-100/60 blur-3xl" />
+        <div className="animate-pulse-soft pointer-events-none absolute top-0 -right-20 -z-10 h-[600px] w-[600px] rounded-full bg-indigo-100/60 blur-3xl" />
         <div className="pointer-events-none absolute bottom-0 left-1/3 -z-10 h-[400px] w-[400px] rounded-full bg-blue-50/80 blur-3xl" />
 
         <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-12 lg:gap-8">
           {/* Left Column: Copy */}
           <div className="z-10 flex flex-col items-start space-y-7 pr-0 lg:col-span-5 lg:pr-2">
             <MotionWrapper delay={0}>
-              <div className="inline-flex items-center rounded-full border border-indigo-100 bg-indigo-50/90 px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-indigo-600 shadow-sm">
+              <div className="inline-flex items-center rounded-full border border-indigo-100 bg-indigo-50/90 px-4 py-1.5 text-xs font-bold tracking-wider text-indigo-600 uppercase shadow-sm">
                 AI-POWERED WEBSITE BUILDER
               </div>
             </MotionWrapper>
 
             <MotionWrapper delay={0.1}>
-              <h1 className="text-5xl font-black leading-[1.08] tracking-tight text-slate-900 sm:text-6xl lg:text-[62px]">
+              <h1 className="text-5xl leading-[1.08] font-black tracking-tight text-slate-900 sm:text-6xl lg:text-[62px]">
                 Build <span className="text-gradient">Smarter.</span>
                 <br />
                 Launch <span className="text-gradient">Faster.</span>
@@ -34,7 +34,7 @@ export function HeroSection() {
             </MotionWrapper>
 
             <MotionWrapper delay={0.2}>
-              <p className="max-w-lg text-lg font-normal leading-relaxed text-slate-600 sm:text-xl">
+              <p className="max-w-lg text-lg leading-relaxed font-normal text-slate-600 sm:text-xl">
                 Create professional websites effortlessly with the power of AI.
               </p>
             </MotionWrapper>
@@ -81,9 +81,13 @@ export function HeroSection() {
           </div>
 
           {/* Right Column: Builder Preview */}
-          <MotionWrapper variant="fade-left" delay={0.2} className="relative w-full pt-4 lg:col-span-7 lg:pt-0">
+          <MotionWrapper
+            variant="fade-left"
+            delay={0.2}
+            className="relative w-full pt-4 lg:col-span-7 lg:pt-0"
+          >
             {/* Decorative Sparkle */}
-            <div className="pointer-events-none absolute -top-10 right-28 z-20 hidden animate-float sm:block">
+            <div className="animate-float pointer-events-none absolute -top-10 right-28 z-20 hidden sm:block">
               <div className="relative">
                 <svg
                   width="120"
@@ -103,8 +107,13 @@ export function HeroSection() {
             </div>
 
             {/* Decorative Star */}
-            <div className="pointer-events-none absolute -right-6 top-12 z-20 hidden animate-pulse-soft text-amber-400 sm:block">
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+            <div className="animate-pulse-soft pointer-events-none absolute top-12 -right-6 z-20 hidden text-amber-400 sm:block">
+              <svg
+                width="32"
+                height="32"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
                 <path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z" />
               </svg>
             </div>

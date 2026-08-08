@@ -23,10 +23,12 @@
 ### Task 1: Create FeaturesGrid Component
 
 **Files:**
+
 - Create: `components/landing/features-grid.tsx`
 - Test: Manual visual inspection (server component, no unit tests needed)
 
 **Interfaces:**
+
 - Consumes: Nothing (self-contained)
 - Produces: `export function FeaturesGrid(): JSX.Element`
 
@@ -206,10 +208,12 @@ git commit -m "feat(landing): add FeaturesGrid component"
 ### Task 2: Create HowItWorks Component
 
 **Files:**
+
 - Create: `components/landing/how-it-works.tsx`
 - Test: Manual visual inspection (server component, no unit tests needed)
 
 **Interfaces:**
+
 - Consumes: Nothing (self-contained)
 - Produces: `export function HowItWorks(): JSX.Element`
 
@@ -369,9 +373,11 @@ git commit -m "feat(landing): add HowItWorks component"
 ### Task 3: Update Barrel Export
 
 **Files:**
+
 - Modify: `components/landing/index.ts`
 
 **Interfaces:**
+
 - Consumes: `FeaturesGrid` from `./features-grid`, `HowItWorks` from `./how-it-works`
 - Produces: Re-exports both components
 
@@ -403,9 +409,11 @@ git commit -m "feat(landing): export FeaturesGrid and HowItWorks"
 ### Task 4: Integrate Sections into Landing Page
 
 **Files:**
+
 - Modify: `app/(guest)/page.tsx`
 
 **Interfaces:**
+
 - Consumes: `FeaturesGrid` and `HowItWorks` from `@/components/landing`
 - Produces: Complete landing page with all sections
 
@@ -452,6 +460,7 @@ Run: `pnpm dev`
 Expected: Dev server starts successfully
 
 Open browser to `http://localhost:3000` and verify:
+
 - Features section shows below hero with 6 cards in responsive grid
 - How It Works section shows 4 steps with connector lines on desktop
 - All hover animations work (card shadows, icon scales, icon color changes)
@@ -470,9 +479,11 @@ git commit -m "feat(landing): integrate FeaturesGrid and HowItWorks sections"
 ### Task 5: Final Verification
 
 **Files:**
+
 - N/A (verification only)
 
 **Interfaces:**
+
 - Consumes: All components from previous tasks
 - Produces: Verified, working feature
 
@@ -484,6 +495,7 @@ Expected: No TypeScript errors
 - [ ] **Step 2: Verify responsive design**
 
 Test viewports:
+
 - Mobile (375px): Single column, no connector lines
 - Tablet (768px): 2-column grid for features, 2-column for steps
 - Desktop (1280px+): 3-column features, 4-column steps with connectors
@@ -493,6 +505,7 @@ Expected: All layouts render correctly at each breakpoint
 - [ ] **Step 3: Verify hover interactions**
 
 Test interactions:
+
 - Feature cards: shadow grows on hover, icon scales up
 - Workflow steps: icon box changes to indigo-600 background with white icon
 - Smooth transitions on all hover effects
@@ -502,6 +515,7 @@ Expected: All hover animations work smoothly
 - [ ] **Step 4: Verify visual fidelity to original HTML**
 
 Compare against `/home/zealish/Downloads/new_section.html`:
+
 - Pill badge styling matches
 - Typography sizes and weights match
 - Spacing and padding match

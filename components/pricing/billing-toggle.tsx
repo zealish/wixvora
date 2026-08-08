@@ -42,7 +42,7 @@ export function BillingToggle() {
           >
             Yearly
           </span>
-          <span className="relative z-10 rounded-full bg-emerald-100 px-2 py-0.5 text-[11px] font-extrabold uppercase text-emerald-700">
+          <span className="relative z-10 rounded-full bg-emerald-100 px-2 py-0.5 text-[11px] font-extrabold text-emerald-700 uppercase">
             Save 20%
           </span>
         </button>

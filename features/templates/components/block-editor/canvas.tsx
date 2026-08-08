@@ -36,10 +36,10 @@ export function EditorCanvas({
         : "w-[375px]";
 
   return (
-    <main className="canvas-bg-grid flex-1 bg-slate-950 overflow-y-auto p-4 md:p-8 flex justify-center items-start">
+    <main className="canvas-bg-grid flex flex-1 items-start justify-center overflow-y-auto bg-slate-950 p-4 md:p-8">
       <div
         style={{ backgroundColor: pageSettings.bgColor }}
-        className={`shadow-2xl rounded-2xl border border-slate-800/80 transition-all duration-300 relative min-h-[85%] ${canvasWidth} ${pageSettings.fontFamily}`}
+        className={`relative min-h-[85%] rounded-2xl border border-slate-800/80 shadow-2xl transition-all duration-300 ${canvasWidth} ${pageSettings.fontFamily}`}
       >
         <div className="relative py-4">
           {blocks.map((block) => {
@@ -50,16 +50,16 @@ export function EditorCanvas({
               <div
                 key={block.id}
                 onClick={() => !isPreviewMode && onSelectBlock(block.id)}
-                className={`relative group transition cursor-pointer ${
+                className={`group relative cursor-pointer transition ${
                   !isPreviewMode ? "block-outline my-1 py-1" : ""
                 } ${isSelected ? "is-selected" : ""}`}
               >
                 {!isPreviewMode && isSelected && (
-                  <div className="absolute -top-3.5 right-4 bg-blue-600 text-white rounded-lg shadow-xl flex items-center space-x-1 px-2 py-1 z-30 text-xs select-none">
-                    <span className="text-[10px] font-bold uppercase tracking-wider px-1 text-blue-200">
+                  <div className="absolute -top-3.5 right-4 z-30 flex items-center space-x-1 rounded-lg bg-blue-600 px-2 py-1 text-xs text-white shadow-xl select-none">
+                    <span className="px-1 text-[10px] font-bold tracking-wider text-blue-200 uppercase">
                       {block.props.layerName || block.type}
                     </span>
-                    <div className="h-3 w-px bg-blue-400 mx-1" />
+                    <div className="mx-1 h-3 w-px bg-blue-400" />
                     <button
                       type="button"
                       onClick={(e) => {
@@ -67,9 +67,9 @@ export function EditorCanvas({
                         onMove(block.id, "up");
                       }}
                       title="Move Up"
-                      className="p-1 hover:bg-blue-700 rounded"
+                      className="rounded p-1 hover:bg-blue-700"
                     >
-                      <ArrowUp className="w-3.5 h-3.5" />
+                      <ArrowUp className="h-3.5 w-3.5" />
                     </button>
                     <button
                       type="button"
@@ -78,9 +78,9 @@ export function EditorCanvas({
                         onMove(block.id, "down");
                       }}
                       title="Move Down"
-                      className="p-1 hover:bg-blue-700 rounded"
+                      className="rounded p-1 hover:bg-blue-700"
                     >
-                      <ArrowDown className="w-3.5 h-3.5" />
+                      <ArrowDown className="h-3.5 w-3.5" />
                     </button>
                     <button
                       type="button"
@@ -89,9 +89,9 @@ export function EditorCanvas({
                         onDuplicate(block.id);
                       }}
                       title="Duplicate"
-                      className="p-1 hover:bg-blue-700 rounded"
+                      className="rounded p-1 hover:bg-blue-700"
                     >
-                      <Copy className="w-3.5 h-3.5" />
+                      <Copy className="h-3.5 w-3.5" />
                     </button>
                     <button
                       type="button"
@@ -100,9 +100,9 @@ export function EditorCanvas({
                         onDelete(block.id);
                       }}
                       title="Delete"
-                      className="p-1 hover:bg-red-600 rounded text-red-200"
+                      className="rounded p-1 text-red-200 hover:bg-red-600"
                     >
-                      <Trash2 className="w-3.5 h-3.5" />
+                      <Trash2 className="h-3.5 w-3.5" />
                     </button>
                   </div>
                 )}

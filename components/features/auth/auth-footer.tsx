@@ -11,16 +11,16 @@ export function AuthFooter() {
           <span>© 2026 Wixvora. All rights reserved.</span>
         </div>
         <div className="flex items-center gap-6">
-          <Link href="#" className="transition-colors hover:text-brand-600">
+          <Link href="#" className="hover:text-brand-600 transition-colors">
             Privacy Policy
           </Link>
-          <Link href="#" className="transition-colors hover:text-brand-600">
+          <Link href="#" className="hover:text-brand-600 transition-colors">
             Terms of Service
           </Link>
-          <Link href="#" className="transition-colors hover:text-brand-600">
+          <Link href="#" className="hover:text-brand-600 transition-colors">
             Security
           </Link>
-          <Link href="#" className="transition-colors hover:text-brand-600">
+          <Link href="#" className="hover:text-brand-600 transition-colors">
             Contact
           </Link>
         </div>

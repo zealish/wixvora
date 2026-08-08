@@ -30,7 +30,7 @@ export default async function CreateTemplatePage() {
         actions={
           <Link href="/staff/templates">
             <Button variant="outline">
-              <ArrowLeft className="h-4 w-4 mr-2" />
+              <ArrowLeft className="mr-2 h-4 w-4" />
               Back
             </Button>
           </Link>

@@ -157,7 +157,12 @@ export type BlockConfig =
   | { id: string; type: "paragraph"; hidden: boolean; props: ParagraphProps }
   | { id: string; type: "image"; hidden: boolean; props: ImageProps }
   | { id: string; type: "pricing"; hidden: boolean; props: PricingProps }
-  | { id: string; type: "form_contact"; hidden: boolean; props: FormContactProps }
+  | {
+      id: string;
+      type: "form_contact";
+      hidden: boolean;
+      props: FormContactProps;
+    }
   | { id: string; type: "footer"; hidden: boolean; props: FooterProps };
 
 export interface PageSettings {
@@ -177,14 +182,28 @@ export function createBlockId(): string {
 }
 
 export function gridColsClass(count: number): string {
-  const classes = ["", "grid-cols-1", "md:grid-cols-2", "md:grid-cols-3", "md:grid-cols-4"];
+  const classes = [
+    "",
+    "grid-cols-1",
+    "md:grid-cols-2",
+    "md:grid-cols-3",
+    "md:grid-cols-4",
+  ];
   return classes[count] ?? "md:grid-cols-3";
 }
 
 export function textAlignClass(align: "left" | "center" | "right"): string {
-  return align === "center" ? "text-center" : align === "right" ? "text-right" : "text-left";
+  return align === "center"
+    ? "text-center"
+    : align === "right"
+      ? "text-right"
+      : "text-left";
 }
 
 export function justifyAlignClass(align: "left" | "center" | "right"): string {
-  return align === "center" ? "justify-center" : align === "right" ? "justify-end" : "justify-start";
+  return align === "center"
+    ? "justify-center"
+    : align === "right"
+      ? "justify-end"
+      : "justify-start";
 }

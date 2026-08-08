@@ -38,7 +38,7 @@ export function PreviewModal({ isOpen, onClose, template }: PreviewModalProps) {
           >
             <button
               onClick={onClose}
-              className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-slate-500 transition-colors hover:bg-slate-200"
+              className="absolute top-4 right-4 flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-slate-500 transition-colors hover:bg-slate-200"
             >
               <X className="h-5 w-5" />
             </button>
@@ -50,17 +50,22 @@ export function PreviewModal({ isOpen, onClose, template }: PreviewModalProps) {
                 alt={template.name}
               />
               {template.badge && (
-                <span className="absolute right-3 top-3 rounded-full bg-slate-900 px-2.5 py-1 text-xs font-bold text-white">
+                <span className="absolute top-3 right-3 rounded-full bg-slate-900 px-2.5 py-1 text-xs font-bold text-white">
                   {template.badge}
                 </span>
               )}
             </div>
 
             <div>
-              <h3 className="text-2xl font-extrabold text-slate-900">{template.name}</h3>
-              <p className="mt-1 text-sm font-semibold text-brand-600">{template.categoryLabel}</p>
+              <h3 className="text-2xl font-extrabold text-slate-900">
+                {template.name}
+              </h3>
+              <p className="text-brand-600 mt-1 text-sm font-semibold">
+                {template.categoryLabel}
+              </p>
               <p className="mt-3 text-sm text-slate-600">
-                Fully responsive template equipped with modern layouts, custom CMS fields, and seamless animations ready to publish.
+                Fully responsive template equipped with modern layouts, custom
+                CMS fields, and seamless animations ready to publish.
               </p>
             </div>
 
@@ -73,7 +78,7 @@ export function PreviewModal({ isOpen, onClose, template }: PreviewModalProps) {
               </button>
               <a
                 href="#"
-                className="rounded-xl bg-brand-600 px-6 py-2.5 text-sm font-bold text-white shadow-md transition-colors hover:bg-brand-700"
+                className="bg-brand-600 hover:bg-brand-700 rounded-xl px-6 py-2.5 text-sm font-bold text-white shadow-md transition-colors"
               >
                 Use This Template
               </a>

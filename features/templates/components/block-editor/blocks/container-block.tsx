@@ -10,9 +10,9 @@ export function ContainerBlock({ props }: { props: ContainerProps }) {
         color: props.textColor,
         borderColor: props.borderColor,
       }}
-      className={`${props.paddingY} ${props.paddingX} ${props.borderRadius} ${props.borderWidth} ${props.bgGradient} max-w-6xl mx-auto my-4 transition-all`}
+      className={`${props.paddingY} ${props.paddingX} ${props.borderRadius} ${props.borderWidth} ${props.bgGradient} mx-auto my-4 max-w-6xl transition-all`}
     >
-      <p className="leading-relaxed text-sm">{props.content}</p>
+      <p className="text-sm leading-relaxed">{props.content}</p>
     </div>
   );
 }

@@ -102,8 +102,8 @@ export function GlobalSearch({ open, onOpenChange }: GlobalSearchProps) {
         <CommandList>
           <CommandEmpty>
             <div className="py-6 text-center">
-              <p className="text-sm text-muted-foreground">No results found.</p>
-              <p className="mt-1 text-xs text-muted-foreground">
+              <p className="text-muted-foreground text-sm">No results found.</p>
+              <p className="text-muted-foreground mt-1 text-xs">
                 Try searching by page name, action, or keyword.
               </p>
             </div>
@@ -122,7 +122,7 @@ export function GlobalSearch({ open, onOpenChange }: GlobalSearchProps) {
                     <div className="flex flex-col">
                       <span>{item.title}</span>
                       {item.description && (
-                        <span className="text-xs text-muted-foreground">
+                        <span className="text-muted-foreground text-xs">
                           {item.description}
                         </span>
                       )}

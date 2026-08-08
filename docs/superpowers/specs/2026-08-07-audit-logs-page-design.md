@@ -11,6 +11,7 @@ The user has already created the database schema for Audit Logs in the system. T
 ## Requirements Summary
 
 ### Mandatory Features
+
 - Display audit logs in a paginated table
 - Show: User, Action, Entity, Entity ID, Timestamp, IP Address, User Agent
 - Detail view modal for full metadata
@@ -21,6 +22,7 @@ The user has already created the database schema for Audit Logs in the system. T
 - Authorization using existing `PERMISSIONS.AUDIT_VIEW`
 
 ### User Experience Goals
+
 - Fast loading even with large datasets
 - Easy filtering and searching
 - Clear visual distinction between action types
@@ -186,26 +188,31 @@ Showing 1-50 of 1,234 results    [< Previous]  [Next >]
 ### Filter Controls
 
 **Search Input**:
+
 - Placeholder: "Search by entity ID, user name, or email..."
 - Debounced input (300ms)
 - Searches: entityId, user.name, user.email
 
 **Action Filter**:
+
 - Dropdown select with options from distinct actions in database
 - Default: "All Actions"
 - Options dynamically loaded from database
 
 **Entity Filter**:
+
 - Dropdown select with options from distinct entities in database
 - Default: "All Entities"
 - Options dynamically loaded from database
 
 **Date Range Picker**:
+
 - Two date inputs: Start Date and End Date
 - Uses shadcn/ui Calendar component
 - Clear button to reset date range
 
 **Export Button**:
+
 - Dropdown menu with options: CSV, Excel, JSON
 - Respects current filters (exports filtered data)
 
@@ -249,6 +256,7 @@ When user clicks a row or "View Details" button:
 ```
 
 **Dialog Content**:
+
 - All fields displayed in full (no truncation)
 - Metadata displayed as formatted JSON (indented, syntax highlighted if possible)
 - Scrollable if content is long
@@ -257,6 +265,7 @@ When user clicks a row or "View Details" button:
 ### Empty States
 
 **No logs exist**:
+
 ```
 ┌─────────────────────────────────────────────┐
 │                                             │
@@ -267,6 +276,7 @@ When user clicks a row or "View Details" button:
 ```
 
 **No results after filtering**:
+
 ```
 ┌─────────────────────────────────────────────┐
 │                                             │
@@ -288,6 +298,7 @@ When user clicks a row or "View Details" button:
 ### Export Menu Component
 
 Dropdown button with three options:
+
 1. **Export as CSV**
 2. **Export as Excel**
 3. **Export as JSON**
@@ -302,18 +313,21 @@ Dropdown button with three options:
 ### Export Formats
 
 **CSV Format**:
+
 ```csv
 Timestamp,User Name,User Email,Action,Entity,Entity ID,IP Address,User Agent,Metadata
 "2026-08-07 23:17:43","John Doe","john@example.com","created","User","xyz-789",192.168.1.100,"Mozilla/5.0...","{"key":"value"}"
 ```
 
 **Excel Format**:
+
 - Same columns as CSV
 - Formatted with headers in bold
 - Auto-sized columns
 - Freeze first row
 
 **JSON Format**:
+
 ```json
 [
   {
@@ -348,6 +362,7 @@ Timestamp,User Name,User Email,Action,Entity,Entity ID,IP Address,User Agent,Met
 ### Navigation Integration
 
 **Add to Staff Navigation**:
+
 - Location: `app/(staff)/staff/layout.tsx`
 - Menu item: "Audit Logs"
 - Icon: `FileText` or `ScrollText` from lucide-react
@@ -359,11 +374,13 @@ Timestamp,User Name,User Email,Action,Entity,Entity ID,IP Address,User Agent,Met
 **Main Route**: `/staff/audit-logs`
 
 **URL Structure with Filters**:
+
 ```
 /staff/audit-logs?page=2&action=created&entity=user&search=john&startDate=2026-08-01&endDate=2026-08-07&sortBy=createdAt&sortOrder=desc
 ```
 
 **searchParams**:
+
 - `page`: number (default: 1)
 - `pageSize`: number (default: 50)
 - `action`: string (optional)
@@ -412,36 +429,41 @@ export interface AuditLogsFilters {
   searchTerm?: string;
   startDate?: Date;
   endDate?: Date;
-  sortBy?: 'createdAt' | 'action' | 'entity';
-  sortOrder?: 'asc' | 'desc';
+  sortBy?: "createdAt" | "action" | "entity";
+  sortOrder?: "asc" | "desc";
 }
 ```
 
 ## Implementation Checklist
 
 ### Phase 1: Data Layer
+
 - [ ] Extend `features/audit/types.ts` with new types
 - [ ] Create `features/audit/queries.ts` with `getAuditLogs()` function
 - [ ] Create helper functions: `getDistinctActions()`, `getDistinctEntities()`
 - [ ] Test query performance with sample data
 
 ### Phase 2: Components
+
 - [ ] Create `features/audit/components/columns.tsx` with column definitions
 - [ ] Create `features/audit/components/audit-log-detail-dialog.tsx`
 - [ ] Create `features/audit/components/audit-logs-export-menu.tsx`
 - [ ] Create `features/audit/components/audit-logs-table.tsx` (main table component)
 
 ### Phase 3: Page
+
 - [ ] Create `app/(staff)/staff/audit-logs/page.tsx`
 - [ ] Implement authorization check
 - [ ] Implement searchParams parsing
 - [ ] Wire up data fetching and component rendering
 
 ### Phase 4: Navigation
+
 - [ ] Update `app/(staff)/staff/layout.tsx` to add Audit Logs menu item
 - [ ] Test navigation and active states
 
 ### Phase 5: Testing & Polish
+
 - [ ] Test with various filter combinations
 - [ ] Test pagination with large datasets
 - [ ] Test export functionality for all formats

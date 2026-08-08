@@ -87,75 +87,79 @@ export function DataTable<TData>(props: DataTableProps<TData>) {
       <div className="w-full rounded-md border">
         <div className="w-full overflow-x-auto">
           <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  const meta = header.column.columnDef.meta;
-                  const isVisible = header.column.getIsVisible();
-                  
-                  return (
-                    <TableHead
-                      key={header.id}
-                      colSpan={header.colSpan}
-                      className={getHeaderClasses(meta)}
-                      style={{
-                        ...getHeaderStyles(meta),
-                        ...(isVisible ? {} : { display: 'none' }),
-                      }}
-                    >
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  );
-                })}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows.map((row) => (
-              <TableRow
-                key={row.id}
-                data-state={row.getIsSelected() && "selected"}
-              >
-                {row.getAllCells().map((cell) => {
-                  const meta = cell.column.columnDef.meta;
-                  const cellValue = cell.getValue();
-                  const isVisible = cell.column.getIsVisible();
-                  
-                  return (
-                    <TableCell
-                      key={cell.id}
-                      className={getCellClasses(meta)}
-                      style={{
-                        ...getCellStyles(meta),
-                        ...(isVisible ? {} : { display: 'none' }),
-                      }}
-                      title={
-                        meta?.truncate !== false && typeof cellValue === "string"
-                          ? cellValue
-                          : undefined
-                      }
-                    >
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </TableCell>
-                  );
-                })}
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            <TableHeader>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => {
+                    const meta = header.column.columnDef.meta;
+                    const isVisible = header.column.getIsVisible();
+
+                    return (
+                      <TableHead
+                        key={header.id}
+                        colSpan={header.colSpan}
+                        className={getHeaderClasses(meta)}
+                        style={{
+                          ...getHeaderStyles(meta),
+                          ...(isVisible ? {} : { display: "none" }),
+                        }}
+                      >
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
+                      </TableHead>
+                    );
+                  })}
+                </TableRow>
+              ))}
+            </TableHeader>
+            <TableBody>
+              {table.getRowModel().rows.map((row) => (
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() && "selected"}
+                >
+                  {row.getAllCells().map((cell) => {
+                    const meta = cell.column.columnDef.meta;
+                    const cellValue = cell.getValue();
+                    const isVisible = cell.column.getIsVisible();
+
+                    return (
+                      <TableCell
+                        key={cell.id}
+                        className={getCellClasses(meta)}
+                        style={{
+                          ...getCellStyles(meta),
+                          ...(isVisible ? {} : { display: "none" }),
+                        }}
+                        title={
+                          meta?.truncate !== false &&
+                          typeof cellValue === "string"
+                            ? cellValue
+                            : undefined
+                        }
+                      >
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </TableCell>
+                    );
+                  })}
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </div>
       </div>
 
       {enabledFeatures?.pagination && (
-        <DataTablePagination 
-          table={table} 
-          {...(pageSizeOptions && { pageSizeOptions })} 
+        <DataTablePagination
+          table={table}
+          {...(pageSizeOptions && { pageSizeOptions })}
         />
       )}
     </div>

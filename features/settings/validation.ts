@@ -4,7 +4,10 @@ export const googleAnalyticsSchema = z.object({
   enabled: z.boolean().default(false),
   measurementId: z
     .string()
-    .regex(/^G-[A-Za-z0-9]{10}$/, "Invalid GA Measurement ID format (e.g. G-XXXXXXXXXX)")
+    .regex(
+      /^G-[A-Za-z0-9]{10}$/,
+      "Invalid GA Measurement ID format (e.g. G-XXXXXXXXXX)"
+    )
     .or(z.literal(""))
     .transform((v) => (v === "" ? null : v))
     .nullable()

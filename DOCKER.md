@@ -20,6 +20,7 @@ cp .env.example .env
 ```
 
 **Important:** For production, change these values in `docker-compose.yaml` or via `.env`:
+
 - `BETTER_AUTH_SECRET` - Use a strong random secret
 - SMTP credentials for email functionality
 
@@ -34,6 +35,7 @@ docker-compose up -d --build
 ```
 
 The first startup will automatically:
+
 1. ✅ Start PostgreSQL database
 2. ✅ Wait for database to be ready
 3. ✅ Run database migrations
@@ -137,11 +139,11 @@ If ports 3000 or 5432 are already in use, modify `docker-compose.yaml`:
 services:
   postgres:
     ports:
-      - "5433:5432"  # Change host port
-  
+      - "5433:5432" # Change host port
+
   app:
     ports:
-      - "3001:3000"  # Change host port
+      - "3001:3000" # Change host port
 ```
 
 ## Production Deployment
@@ -149,6 +151,7 @@ services:
 For production deployment:
 
 1. **Update secrets** in `docker-compose.yaml`:
+
    ```yaml
    environment:
      BETTER_AUTH_SECRET: "your-strong-random-secret-here"
@@ -168,7 +171,7 @@ For production deployment:
        deploy:
          resources:
            limits:
-             cpus: '1'
+             cpus: "1"
              memory: 1G
    ```
 

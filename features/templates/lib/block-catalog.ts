@@ -1,4 +1,10 @@
-import type { BlockConfig, BlockType, BlockProps, NavbarProps, HeroProps } from "./block-types";
+import type {
+  BlockConfig,
+  BlockType,
+  BlockProps,
+  NavbarProps,
+  HeroProps,
+} from "./block-types";
 import { createBlockId } from "./block-types";
 
 export interface BlockCatalogItem {
@@ -166,7 +172,8 @@ export const BLOCK_CATALOG: BlockCatalogCategory[] = [
           secondaryButtonUrl: "#",
           bgColor: "#090d16",
           textColor: "#ffffff",
-          bgGradient: "bg-gradient-to-r from-blue-950 via-slate-900 to-indigo-950",
+          bgGradient:
+            "bg-gradient-to-r from-blue-950 via-slate-900 to-indigo-950",
           align: "center",
         },
       },
@@ -205,7 +212,8 @@ export const BLOCK_CATALOG: BlockCatalogCategory[] = [
         defaultProps: {
           layerName: "Contact Form",
           title: "Subscribe to Our Newsletter",
-          subtitle: "Get design tips and feature updates straight to your email.",
+          subtitle:
+            "Get design tips and feature updates straight to your email.",
           placeholder: "Enter your email address...",
           buttonText: "Subscribe Now",
           bgColor: "#1e293b",
@@ -277,13 +285,41 @@ const saasGrid: BlockConfig = {
   props: {
     layerName: "Features Grid",
     title: "Flexible Key Features",
-    subtitle: "Each column is fully customizable to match your visual preferences",
+    subtitle:
+      "Each column is fully customizable to match your visual preferences",
     columnsCount: 3,
     gap: "gap-6",
     columns: [
-      { icon: "grid", title: "Dynamic Column Grid", desc: "Arrange 1 to 4 columns with independent background styles.", bgColor: "#1e293b", textColor: "#f8fafc", accentColor: "#3b82f6", btnText: "Details", btnUrl: "#" },
-      { icon: "palette", title: "Custom Hex Colors", desc: "Full color control for backgrounds, text, and borders per element.", bgColor: "#0f172a", textColor: "#f8fafc", accentColor: "#10b981", btnText: "Try", btnUrl: "#" },
-      { icon: "layers", title: "Clean Layer Tree", desc: "Manage layer order and names with an intuitive sidebar.", bgColor: "#18181b", textColor: "#f8fafc", accentColor: "#f59e0b", btnText: "Manage", btnUrl: "#" },
+      {
+        icon: "grid",
+        title: "Dynamic Column Grid",
+        desc: "Arrange 1 to 4 columns with independent background styles.",
+        bgColor: "#1e293b",
+        textColor: "#f8fafc",
+        accentColor: "#3b82f6",
+        btnText: "Details",
+        btnUrl: "#",
+      },
+      {
+        icon: "palette",
+        title: "Custom Hex Colors",
+        desc: "Full color control for backgrounds, text, and borders per element.",
+        bgColor: "#0f172a",
+        textColor: "#f8fafc",
+        accentColor: "#10b981",
+        btnText: "Try",
+        btnUrl: "#",
+      },
+      {
+        icon: "layers",
+        title: "Clean Layer Tree",
+        desc: "Manage layer order and names with an intuitive sidebar.",
+        bgColor: "#18181b",
+        textColor: "#f8fafc",
+        accentColor: "#f59e0b",
+        btnText: "Manage",
+        btnUrl: "#",
+      },
     ],
   },
 };

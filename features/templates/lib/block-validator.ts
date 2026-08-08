@@ -132,16 +132,48 @@ const baseBlock = {
 };
 
 export const blockConfigSchema = z.discriminatedUnion("type", [
-  z.object({ ...baseBlock, type: z.literal("navbar"), props: navbarPropsSchema }),
+  z.object({
+    ...baseBlock,
+    type: z.literal("navbar"),
+    props: navbarPropsSchema,
+  }),
   z.object({ ...baseBlock, type: z.literal("hero"), props: heroPropsSchema }),
-  z.object({ ...baseBlock, type: z.literal("container"), props: containerPropsSchema }),
-  z.object({ ...baseBlock, type: z.literal("grid_custom"), props: gridCustomPropsSchema }),
-  z.object({ ...baseBlock, type: z.literal("heading"), props: headingPropsSchema }),
-  z.object({ ...baseBlock, type: z.literal("paragraph"), props: paragraphPropsSchema }),
+  z.object({
+    ...baseBlock,
+    type: z.literal("container"),
+    props: containerPropsSchema,
+  }),
+  z.object({
+    ...baseBlock,
+    type: z.literal("grid_custom"),
+    props: gridCustomPropsSchema,
+  }),
+  z.object({
+    ...baseBlock,
+    type: z.literal("heading"),
+    props: headingPropsSchema,
+  }),
+  z.object({
+    ...baseBlock,
+    type: z.literal("paragraph"),
+    props: paragraphPropsSchema,
+  }),
   z.object({ ...baseBlock, type: z.literal("image"), props: imagePropsSchema }),
-  z.object({ ...baseBlock, type: z.literal("pricing"), props: pricingPropsSchema }),
-  z.object({ ...baseBlock, type: z.literal("form_contact"), props: formContactPropsSchema }),
-  z.object({ ...baseBlock, type: z.literal("footer"), props: footerPropsSchema }),
+  z.object({
+    ...baseBlock,
+    type: z.literal("pricing"),
+    props: pricingPropsSchema,
+  }),
+  z.object({
+    ...baseBlock,
+    type: z.literal("form_contact"),
+    props: formContactPropsSchema,
+  }),
+  z.object({
+    ...baseBlock,
+    type: z.literal("footer"),
+    props: footerPropsSchema,
+  }),
 ]);
 
 export const pageSettingsSchema = z.object({

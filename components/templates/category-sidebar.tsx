@@ -36,7 +36,10 @@ interface CategorySidebarProps {
   onCategoryChange: (category: string) => void;
 }
 
-export function CategorySidebar({ selectedCategory, onCategoryChange }: CategorySidebarProps) {
+export function CategorySidebar({
+  selectedCategory,
+  onCategoryChange,
+}: CategorySidebarProps) {
   return (
     <motion.aside
       initial={{ opacity: 0, x: -20 }}
@@ -48,7 +51,7 @@ export function CategorySidebar({ selectedCategory, onCategoryChange }: Category
         {categories.map((category, index) => {
           const Icon = category.icon;
           const isActive = selectedCategory === category.id;
-          
+
           return (
             <motion.button
               key={category.id}

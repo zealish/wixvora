@@ -12,16 +12,16 @@ export function PricingHero() {
           {/* Left Text */}
           <div className="space-y-6 lg:col-span-7">
             <MotionWrapper delay={0}>
-              <div className="inline-flex items-center gap-2 rounded-full border border-brand-100 bg-brand-50 px-3 py-1 text-xs font-bold uppercase tracking-wider text-brand-600">
+              <div className="border-brand-100 bg-brand-50 text-brand-600 inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-bold tracking-wider uppercase">
                 PRICING
               </div>
             </MotionWrapper>
 
             <MotionWrapper delay={0.1}>
-              <h1 className="text-4xl font-extrabold leading-tight text-slate-900 sm:text-5xl lg:text-6xl">
+              <h1 className="text-4xl leading-tight font-extrabold text-slate-900 sm:text-5xl lg:text-6xl">
                 Simple, Transparent Pricing <br />
                 for{" "}
-                <span className="bg-gradient-to-r from-brand-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                <span className="from-brand-600 bg-gradient-to-r via-indigo-600 to-purple-600 bg-clip-text text-transparent">
                   Everything You Need
                 </span>
               </h1>

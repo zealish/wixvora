@@ -22,7 +22,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${inter.variable} h-full antialiased scrollbar-accent`}
+      className={`${inter.variable} scrollbar-accent h-full antialiased`}
       suppressHydrationWarning
     >
       <head>

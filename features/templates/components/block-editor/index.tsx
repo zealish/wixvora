@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  forwardRef,
-  useImperativeHandle,
-  useMemo,
-  useCallback,
-} from "react";
+import { forwardRef, useImperativeHandle, useMemo, useCallback } from "react";
 import type { BlockConfig, PageSettings } from "../../lib/block-types";
 import { useBlockEditor } from "./hooks/use-block-editor";
 import type { EditorTab } from "./hooks/use-block-editor";
@@ -50,8 +45,7 @@ export const BlockEditor = forwardRef<BlockEditorHandle, BlockEditorProps>(
     );
 
     const activeBlock = useMemo(
-      () =>
-        editor.blocks.find((b) => b.id === editor.selectedBlockId) ?? null,
+      () => editor.blocks.find((b) => b.id === editor.selectedBlockId) ?? null,
       [editor.blocks, editor.selectedBlockId]
     );
 
@@ -106,20 +100,20 @@ export const BlockEditor = forwardRef<BlockEditorHandle, BlockEditorProps>(
 
         <div className="flex flex-1 overflow-hidden">
           {!editor.isPreviewMode && (
-            <aside className="w-72 shrink-0 border-r border-slate-800/80 bg-slate-900/90 flex flex-col overflow-hidden select-none">
+            <aside className="flex w-72 shrink-0 flex-col overflow-hidden border-r border-slate-800/80 bg-slate-900/90 select-none">
               <div className="grid grid-cols-4 border-b border-slate-800 bg-slate-950 p-1 text-[11px]">
                 {TABS.map(({ value, label, Icon }) => (
                   <button
                     key={value}
                     type="button"
                     onClick={() => editor.setActiveTab(value)}
-                    className={`py-2 flex flex-col items-center justify-center space-y-1 rounded-lg font-medium transition ${
+                    className={`flex flex-col items-center justify-center space-y-1 rounded-lg py-2 font-medium transition ${
                       editor.activeTab === value
-                        ? "bg-blue-600/20 text-blue-400 border border-blue-500/30"
+                        ? "border border-blue-500/30 bg-blue-600/20 text-blue-400"
                         : "text-slate-400 hover:text-white"
                     }`}
                   >
-                    <Icon className="w-4 h-4" />
+                    <Icon className="h-4 w-4" />
                     <span>{label}</span>
                   </button>
                 ))}
@@ -163,7 +157,7 @@ export const BlockEditor = forwardRef<BlockEditorHandle, BlockEditorProps>(
           />
 
           {!editor.isPreviewMode && activeBlock && (
-            <aside className="w-80 shrink-0 border-l border-slate-800/80 bg-slate-900/90 flex flex-col overflow-hidden select-none">
+            <aside className="flex w-80 shrink-0 flex-col overflow-hidden border-l border-slate-800/80 bg-slate-900/90 select-none">
               <InspectorPanel
                 block={activeBlock}
                 onUpdateProps={(patch: Record<string, unknown>) =>

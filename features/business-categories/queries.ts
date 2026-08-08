@@ -13,7 +13,9 @@ export async function getCategoriesTree(): Promise<CategoryWithChildren[]> {
   return buildTree(allCategories);
 }
 
-export async function getActiveCategoriesTree(): Promise<CategoryWithChildren[]> {
+export async function getActiveCategoriesTree(): Promise<
+  CategoryWithChildren[]
+> {
   const allCategories = await db
     .select()
     .from(businessCategories)
@@ -158,7 +160,9 @@ export async function generateUniqueSlug(
 
     const isAvailable =
       existing.length === 0 ||
-      (excludeId !== undefined && existing.length === 1 && existing[0]?.id === excludeId);
+      (excludeId !== undefined &&
+        existing.length === 1 &&
+        existing[0]?.id === excludeId);
 
     if (isAvailable) return slug;
     counter++;

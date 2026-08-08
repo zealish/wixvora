@@ -112,6 +112,7 @@ StatsSection      ← NEW
 **Right Column - Swiper Carousel:**
 
 **Swiper Configuration:**
+
 ```typescript
 {
   effect: 'coverflow',
@@ -134,15 +135,18 @@ StatsSection      ← NEW
 ```
 
 **Swiper Container Styling:**
+
 - Width: 100%
 - Padding: `pt-5 pb-10`
 - Overflow: `overflow-visible` (allows 3D effect to show outside bounds)
 
 **Slide Dimensions:**
+
 - Width: `580px` (or `max-w-[90vw]` on mobile)
 - Min height: `300px sm:340px`
 
 **Slide States:**
+
 - **Inactive slides:**
   - Opacity: `0.5`
   - Transform: `scale(0.88)`
@@ -157,6 +161,7 @@ StatsSection      ← NEW
 **3 Template Slides (Placeholder Data):**
 
 **Slide 1: GreenScape**
+
 - Browser header:
   - Brand: "Green**Scape**" (Scape in emerald-700, italic, serif)
   - Nav links: Home, About, Services, Projects, Contact (text-xs, font-medium)
@@ -169,6 +174,7 @@ StatsSection      ← NEW
   - Placeholder image: Right side, emerald gradient fallback
 
 **Slide 2: AURORA**
+
 - Browser header:
   - Brand: "AURORA" (uppercase, bold, tracking-wider)
   - Window controls: minimize/maximize/close icons (FontAwesome replaced with Lucide: Minus, Square, X)
@@ -179,6 +185,7 @@ StatsSection      ← NEW
   - Card text: "Fully customizable / Easy to use"
 
 **Slide 3: LUMINA Tech**
+
 - Browser header:
   - Dot indicator: `w-3 h-3 rounded-full bg-indigo-500`
   - Brand: "LUMINA.AI" (bold, tracking-tight)
@@ -190,6 +197,7 @@ StatsSection      ← NEW
   - CTA buttons: "Get Started" (indigo-600 bg) + "Docs" (border)
 
 **Custom Pagination:**
+
 - Container: `flex items-center justify-center gap-3 mt-2.5`
 - Prev/Next buttons:
   - Lucide ChevronLeft/ChevronRight icons
@@ -247,6 +255,7 @@ StatsSection      ← NEW
 ```
 
 **Image Placeholders:**
+
 - Use Next.js Image component with placeholder gradients
 - GreenScape: `from-emerald-100 to-emerald-200` gradient
 - Aurora: `from-slate-100 to-slate-200` gradient
@@ -273,10 +282,12 @@ StatsSection      ← NEW
   - Text: `text-center`
 
 **Header Text:**
+
 - Text: "Trusted by creators and businesses worldwide"
 - Classes: `text-slate-600 font-medium text-sm sm:text-base mb-8 sm:mb-10 tracking-wide`
 
 **Stats Grid:**
+
 - Layout: `grid grid-cols-2 md:grid-cols-4`
 - Gap: `gap-8 md:gap-4`
 - Dividers: `divide-y md:divide-y-0 md:divide-x divide-slate-200/60`
@@ -306,6 +317,7 @@ StatsSection      ← NEW
    - Color: `text-indigo-600`
 
 **Stat Item Structure (each):**
+
 - Container: `flex flex-col items-center justify-center pt-4 md:pt-0`
 - Number:
   - Classes: `text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight`
@@ -320,6 +332,7 @@ StatsSection      ← NEW
 ### Update `components/landing/index.ts`
 
 Add exports:
+
 ```typescript
 export { TemplateShowcase } from "./template-showcase";
 export { StatsSection } from "./stats-section";
@@ -328,6 +341,7 @@ export { StatsSection } from "./stats-section";
 ### Update `app/(guest)/page.tsx`
 
 Import and render new sections:
+
 ```typescript
 import { TemplateShowcase } from "@/components/landing/template-showcase";
 import { StatsSection } from "@/components/landing/stats-section";
@@ -352,6 +366,7 @@ pnpm add swiper
 ```
 
 **Package:** `swiper@^11.0.0`
+
 - Official Swiper.js library with React support
 - Includes TypeScript definitions
 - Bundle size: ~40KB gzipped (with coverflow effect)
@@ -363,17 +378,20 @@ pnpm add swiper
 ### TemplateShowcase
 
 **Mobile (< 640px):**
+
 - Single column layout
 - Carousel slides at 90vw max-width
 - Reduced padding
 - Stacked content (copy above carousel)
 
 **Tablet (640px - 1024px):**
+
 - Single column layout
 - Larger slides (up to 580px)
 - Increased spacing
 
 **Desktop (> 1024px):**
+
 - Two-column grid (5-7 split)
 - Full carousel effect visible
 - Side-by-side content
@@ -381,17 +399,20 @@ pnpm add swiper
 ### StatsSection
 
 **Mobile (< 768px):**
+
 - 2-column grid (2x2)
 - Horizontal dividers between rows
 - Smaller text sizes (3xl numbers)
 - Reduced padding
 
 **Tablet (768px - 1024px):**
+
 - 4-column grid (1x4)
 - Vertical dividers
 - Medium text sizes (4xl numbers)
 
 **Desktop (> 1024px):**
+
 - 4-column grid
 - Vertical dividers
 - Large text sizes (5xl numbers)
@@ -402,12 +423,14 @@ pnpm add swiper
 ## Accessibility
 
 ### TemplateShowcase
+
 - Carousel navigation buttons have `aria-label` attributes
 - Swiper includes keyboard navigation by default
 - Focus states on interactive elements
 - Alt text on all template placeholder images
 
 ### StatsSection
+
 - Semantic HTML structure
 - Proper heading hierarchy
 - High contrast text (WCAG AA compliant)
@@ -428,6 +451,7 @@ pnpm add swiper
 ## Visual Fidelity Checklist
 
 ### TemplateShowcase
+
 - ✓ Badge styling matches original (indigo theme)
 - ✓ Heading sizes and weights match
 - ✓ Gradient button with proper hover states
@@ -439,6 +463,7 @@ pnpm add swiper
 - ✓ Proper spacing and alignment
 
 ### StatsSection
+
 - ✓ Rounded card container with subtle background
 - ✓ Centered text alignment
 - ✓ Grid layout with dividers

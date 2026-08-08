@@ -20,10 +20,10 @@ async function seedBusinessCategories() {
   // Step 2: Read CSV file
   const csvPath = "/home/zealish/Downloads/business_sub_categories.csv";
   console.log(`📖 Reading CSV from ${csvPath}...`);
-  
+
   const csvContent = fs.readFileSync(csvPath, "utf-8");
   const lines = csvContent.trim().split("\n");
-  
+
   const rows: CategoryCSVRow[] = lines.slice(1).map((line) => {
     const values = line.split(",");
     return {
@@ -38,7 +38,7 @@ async function seedBusinessCategories() {
 
   // Step 3: Group by parent categories
   const parentCategories = new Map<string, { name: string; slug: string }>();
-  
+
   rows.forEach((row) => {
     if (!parentCategories.has(row.parentSlug)) {
       parentCategories.set(row.parentSlug, {
@@ -82,7 +82,7 @@ async function seedBusinessCategories() {
 
   for (const row of rows) {
     const parentId = parentIdMap.get(row.parentSlug);
-    
+
     if (!parentId) {
       console.warn(`⚠️  Parent not found for ${row.slug}, skipping...`);
       continue;

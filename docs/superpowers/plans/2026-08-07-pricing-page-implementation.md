@@ -23,6 +23,7 @@
 ## File Map
 
 **Create:**
+
 - `components/pricing/pricing-provider.tsx` — React Context + Provider + usePricing hook
 - `components/pricing/pricing-hero.tsx` — Hero section
 - `components/pricing/hero-visual-cards.tsx` — Animated visual cards in hero
@@ -37,6 +38,7 @@
 - `app/(guest)/pricing/page.tsx` — Page route
 
 **Modify:**
+
 - `components/landing/navbar.tsx` — Change Pricing link from anchor to Next.js Link with active state
 - `app/globals.css` — Add `.card-shadow` and `.popular-card-shadow` classes
 
@@ -45,9 +47,11 @@
 ### Task 1: Global CSS — Add card shadow utilities
 
 **Files:**
+
 - Modify: `app/globals.css`
 
 **Interfaces:**
+
 - Consumes: nothing
 - Produces: `.card-shadow` and `.popular-card-shadow` CSS classes used by `pricing-card.tsx`
 
@@ -56,23 +60,26 @@
 Open `app/globals.css` and append the following inside the `@layer components` block (after the `.builder-handle` rule, before the closing `}` of `@layer components`):
 
 ```css
-  /* Pricing page card shadows */
-  .card-shadow {
-    box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05),
-                0 2px 6px -1px rgba(15, 23, 42, 0.03);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
+/* Pricing page card shadows */
+.card-shadow {
+  box-shadow:
+    0 4px 20px -2px rgba(15, 23, 42, 0.05),
+    0 2px 6px -1px rgba(15, 23, 42, 0.03);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
 
-  .card-shadow:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 20px 25px -5px rgba(15, 23, 42, 0.08),
-                0 10px 10px -5px rgba(15, 23, 42, 0.03);
-  }
+.card-shadow:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    0 20px 25px -5px rgba(15, 23, 42, 0.08),
+    0 10px 10px -5px rgba(15, 23, 42, 0.03);
+}
 
-  .popular-card-shadow {
-    box-shadow: 0 20px 35px -5px rgba(79, 70, 229, 0.15),
-                0 10px 15px -5px rgba(79, 70, 229, 0.05);
-  }
+.popular-card-shadow {
+  box-shadow:
+    0 20px 35px -5px rgba(79, 70, 229, 0.15),
+    0 10px 15px -5px rgba(79, 70, 229, 0.05);
+}
 ```
 
 - [ ] **Step 2: Verify no build errors**
@@ -92,9 +99,11 @@ git commit -m "style: add card-shadow and popular-card-shadow utilities for pric
 ### Task 2: Pricing Provider — React Context for billing state
 
 **Files:**
+
 - Create: `components/pricing/pricing-provider.tsx`
 
 **Interfaces:**
+
 - Consumes: nothing
 - Produces: `PricingProvider` component, `usePricing()` hook returning `{ billingCycle: 'monthly' | 'yearly', setBillingCycle: (cycle) => void }`
 
@@ -152,9 +161,11 @@ git commit -m "feat(pricing): add PricingProvider context for billing cycle stat
 ### Task 3: Hero Visual Cards — Animated mockup component
 
 **Files:**
+
 - Create: `components/pricing/hero-visual-cards.tsx`
 
 **Interfaces:**
+
 - Consumes: nothing
 - Produces: `HeroVisualCards` default export, used by `pricing-hero.tsx`
 
@@ -172,13 +183,8 @@ export default function HeroVisualCards() {
   return (
     <div className="relative flex min-h-[320px] items-center justify-center">
       {/* Golden Sparkle */}
-      <div className="absolute -top-6 right-6 text-amber-400 animate-pulse">
-        <svg
-          width="36"
-          height="36"
-          viewBox="0 0 24 24"
-          fill="currentColor"
-        >
+      <div className="absolute -top-6 right-6 animate-pulse text-amber-400">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="currentColor">
           <path d="M12 0L14.5 9.5L24 12L14.5 14.5L12 24L9.5 14.5L0 12L9.5 9.5L12 0Z" />
         </svg>
       </div>
@@ -189,7 +195,7 @@ export default function HeroVisualCards() {
           initial={{ opacity: 0, rotate: -2, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="space-y-3 rounded-2xl border border-slate-200/80 bg-white p-3 shadow-xl -rotate-2"
+          className="-rotate-2 space-y-3 rounded-2xl border border-slate-200/80 bg-white p-3 shadow-xl"
         >
           <div className="flex items-center gap-2 rounded-xl border border-slate-100 bg-slate-50 px-3 py-2 text-xs text-slate-400">
             <Lock className="h-3.5 w-3.5" />
@@ -210,7 +216,9 @@ export default function HeroVisualCards() {
             <CheckCircle2 className="h-5 w-5" />
           </div>
           <div>
-            <p className="text-xs font-bold text-slate-900">Your Site is Live!</p>
+            <p className="text-xs font-bold text-slate-900">
+              Your Site is Live!
+            </p>
             <div className="mt-1 h-1.5 w-20 overflow-hidden rounded-full bg-emerald-500/20">
               <div className="h-full w-3/4 rounded-full bg-emerald-500" />
             </div>
@@ -223,14 +231,14 @@ export default function HeroVisualCards() {
           animate={{ opacity: 1, scale: 1, rotate: 3 }}
           transition={{ duration: 0.6, delay: 0.3 }}
           whileHover={{ scale: 1.05 }}
-          className="absolute -bottom-6 right-2 w-56 rounded-2xl bg-gradient-to-br from-indigo-600 to-purple-600 p-4 text-white shadow-xl shadow-indigo-300 rotate-3"
+          className="absolute right-2 -bottom-6 w-56 rotate-3 rounded-2xl bg-gradient-to-br from-indigo-600 to-purple-600 p-4 text-white shadow-xl shadow-indigo-300"
         >
           <div className="flex items-center gap-2">
             <span className="rounded-md bg-white/20 px-2 py-0.5 text-[10px] font-bold tracking-wider">
               AI-Powered
             </span>
           </div>
-          <p className="mt-2 text-xs font-bold leading-snug">
+          <p className="mt-2 text-xs leading-snug font-bold">
             Smarter Websites,
             <br />
             Better Results.
@@ -259,9 +267,11 @@ git commit -m "feat(pricing): add hero visual cards with Framer Motion animation
 ### Task 4: Pricing Hero — Hero section component
 
 **Files:**
+
 - Create: `components/pricing/pricing-hero.tsx`
 
 **Interfaces:**
+
 - Consumes: `HeroVisualCards` from `./hero-visual-cards`
 - Produces: `PricingHero` named export, used by `app/(guest)/pricing/page.tsx`
 
@@ -284,16 +294,16 @@ export function PricingHero() {
           {/* Left Text */}
           <div className="space-y-6 lg:col-span-7">
             <MotionWrapper delay={0}>
-              <div className="inline-flex items-center gap-2 rounded-full border border-brand-100 bg-brand-50 px-3 py-1 text-xs font-bold uppercase tracking-wider text-brand-600">
+              <div className="border-brand-100 bg-brand-50 text-brand-600 inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-bold tracking-wider uppercase">
                 PRICING
               </div>
             </MotionWrapper>
 
             <MotionWrapper delay={0.1}>
-              <h1 className="text-4xl font-extrabold leading-tight text-slate-900 sm:text-5xl lg:text-6xl">
+              <h1 className="text-4xl leading-tight font-extrabold text-slate-900 sm:text-5xl lg:text-6xl">
                 Simple, Transparent Pricing <br />
                 for{" "}
-                <span className="bg-gradient-to-r from-brand-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                <span className="from-brand-600 bg-gradient-to-r via-indigo-600 to-purple-600 bg-clip-text text-transparent">
                   Everything You Need
                 </span>
               </h1>
@@ -352,9 +362,11 @@ git commit -m "feat(pricing): add hero section with gradient heading and checkma
 ### Task 5: Billing Toggle — Monthly/yearly segmented control
 
 **Files:**
+
 - Create: `components/pricing/billing-toggle.tsx`
 
 **Interfaces:**
+
 - Consumes: `usePricing()` from `./pricing-provider`
 - Produces: `BillingToggle` named export, used by page
 
@@ -393,7 +405,7 @@ export function BillingToggle() {
           }`}
         >
           <span>Yearly</span>
-          <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[11px] font-extrabold uppercase text-emerald-700">
+          <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[11px] font-extrabold text-emerald-700 uppercase">
             Save 20%
           </span>
         </button>
@@ -420,9 +432,11 @@ git commit -m "feat(pricing): add billing toggle with monthly/yearly switcher"
 ### Task 6: Pricing Card — Individual plan card component
 
 **Files:**
+
 - Create: `components/pricing/pricing-card.tsx`
 
 **Interfaces:**
+
 - Consumes: `usePricing()` from `./pricing-provider`
 - Produces: `PricingCard` named export (props: `{ plan: PricingPlan }`)
 - Type `PricingPlan` is defined here and re-exported
@@ -471,7 +485,7 @@ export function PricingCard({ plan }: PricingCardProps) {
     >
       {/* Popular Badge */}
       {plan.popular && (
-        <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-brand-600 px-3.5 py-1 text-[10px] font-extrabold uppercase tracking-wider text-white shadow-md">
+        <div className="bg-brand-600 absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full px-3.5 py-1 text-[10px] font-extrabold tracking-wider text-white uppercase shadow-md">
           MOST POPULAR
         </div>
       )}
@@ -498,7 +512,7 @@ export function PricingCard({ plan }: PricingCardProps) {
           className={`w-full rounded-xl py-3 text-sm font-bold transition-all ${
             plan.buttonVariant === "gradient"
               ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md shadow-indigo-200 hover:scale-[1.02] hover:from-indigo-700 hover:to-purple-700 active:scale-95"
-              : "border-2 border-indigo-100 text-brand-600 hover:border-indigo-600 hover:bg-brand-50"
+              : "text-brand-600 hover:bg-brand-50 border-2 border-indigo-100 hover:border-indigo-600"
           }`}
         >
           {plan.buttonText}
@@ -508,7 +522,7 @@ export function PricingCard({ plan }: PricingCardProps) {
         <div className="space-y-3 border-t border-slate-100 pt-4 text-xs font-semibold text-slate-600">
           {plan.featuresHeader && (
             <p
-              className={`text-[11px] font-extrabold uppercase tracking-wider ${
+              className={`text-[11px] font-extrabold tracking-wider uppercase ${
                 plan.popular ? "text-brand-600" : "text-slate-900"
               }`}
             >
@@ -554,9 +568,11 @@ git commit -m "feat(pricing): add pricing card component with features list"
 ### Task 7: Pricing Cards Grid — Data + grid wrapper
 
 **Files:**
+
 - Create: `components/pricing/pricing-cards-grid.tsx`
 
 **Interfaces:**
+
 - Consumes: `PricingCard` from `./pricing-card`, `PricingPlan` type from `./pricing-card`, `StaggerContainer`/`StaggerItem` from `@/components/landing/motion-wrapper`
 - Produces: `PricingCardsGrid` named export
 
@@ -567,7 +583,10 @@ Create `components/pricing/pricing-cards-grid.tsx`:
 ```tsx
 "use client";
 
-import { StaggerContainer, StaggerItem } from "@/components/landing/motion-wrapper";
+import {
+  StaggerContainer,
+  StaggerItem,
+} from "@/components/landing/motion-wrapper";
 import { PricingCard, type PricingPlan } from "./pricing-card";
 
 const PRICING_PLANS: PricingPlan[] = [
@@ -677,9 +696,11 @@ git commit -m "feat(pricing): add pricing cards grid with 4 plan data entries"
 ### Task 8: Comparison Table — Feature comparison table
 
 **Files:**
+
 - Create: `components/pricing/comparison-table.tsx`
 
 **Interfaces:**
+
 - Consumes: `Check`, `Minus` from `lucide-react`, `MotionWrapper` from `@/components/landing/motion-wrapper`
 - Produces: `ComparisonTable` named export
 
@@ -789,9 +810,9 @@ export function ComparisonTable() {
                 <th className="w-1/5 p-4 text-center font-bold text-slate-900 sm:p-5">
                   Starter
                 </th>
-                <th className="relative w-1/5 p-4 text-center font-bold text-brand-600 sm:p-5">
+                <th className="text-brand-600 relative w-1/5 p-4 text-center font-bold sm:p-5">
                   Pro
-                  <span className="mt-0.5 inline-block rounded-full bg-brand-50 px-2 py-0.5 text-[9px] font-extrabold text-brand-600">
+                  <span className="bg-brand-50 text-brand-600 mt-0.5 inline-block rounded-full px-2 py-0.5 text-[9px] font-extrabold">
                     MOST POPULAR
                   </span>
                 </th>
@@ -849,9 +870,11 @@ git commit -m "feat(pricing): add feature comparison table with 8 feature rows"
 ### Task 9: FAQ Item — Individual collapsible accordion item
 
 **Files:**
+
 - Create: `components/pricing/faq-item.tsx`
 
 **Interfaces:**
+
 - Consumes: `motion`, `AnimatePresence` from `framer-motion`, `Plus` from `lucide-react`
 - Produces: `FaqItem` named export (props: `{ question: string; answer: string; isOpen: boolean; onToggle: () => void }`)
 
@@ -927,9 +950,11 @@ git commit -m "feat(pricing): add FAQ item with accordion animation"
 ### Task 10: FAQ Section — FAQ list with accordion state
 
 **Files:**
+
 - Create: `components/pricing/faq-section.tsx`
 
 **Interfaces:**
+
 - Consumes: `FaqItem` from `./faq-item`, `MotionWrapper` from `@/components/landing/motion-wrapper`
 - Produces: `FaqSection` named export
 
@@ -1011,9 +1036,11 @@ git commit -m "feat(pricing): add FAQ section with accordion state management"
 ### Task 11: Pricing CTA Banner — Bottom call-to-action
 
 **Files:**
+
 - Create: `components/pricing/pricing-cta-banner.tsx`
 
 **Interfaces:**
+
 - Consumes: `Sparkles`, `ArrowRight` from `lucide-react`, `MotionWrapper` from `@/components/landing/motion-wrapper`
 - Produces: `PricingCtaBanner` named export
 
@@ -1072,9 +1099,11 @@ git commit -m "feat(pricing): add CTA banner with sparkles icon and gradient but
 ### Task 12: Barrel Exports — index.ts
 
 **Files:**
+
 - Create: `components/pricing/index.ts`
 
 **Interfaces:**
+
 - Consumes: all pricing components
 - Produces: single entry point for `@/components/pricing` imports
 
@@ -1113,9 +1142,11 @@ git commit -m "feat(pricing): add barrel exports for pricing components"
 ### Task 13: Page Route — app/(guest)/pricing/page.tsx
 
 **Files:**
+
 - Create: `app/(guest)/pricing/page.tsx`
 
 **Interfaces:**
+
 - Consumes: all pricing components from `@/components/pricing`
 - Produces: `/pricing` route
 
@@ -1175,9 +1206,11 @@ git commit -m "feat(pricing): add pricing page route with all sections"
 ### Task 14: Navbar — Update Pricing link to route
 
 **Files:**
+
 - Modify: `components/landing/navbar.tsx`
 
 **Interfaces:**
+
 - Consumes: `Link` from `next/link`, `usePathname` from `next/navigation`
 - Produces: Updated Pricing link with active state
 
@@ -1186,32 +1219,29 @@ git commit -m "feat(pricing): add pricing page route with all sections"
 Open `components/landing/navbar.tsx`. Replace lines 109-114:
 
 ```tsx
-          <a
-            href="/#pricing"
-            className="transition-colors hover:text-indigo-600"
-          >
-            Pricing
-          </a>
+<a href="/#pricing" className="transition-colors hover:text-indigo-600">
+  Pricing
+</a>
 ```
 
 With:
 
 ```tsx
-          <div className="relative py-1">
-            <Link
-              href="/pricing"
-              className={`transition-colors ${
-                pathname === "/pricing"
-                  ? "font-semibold text-indigo-600"
-                  : "hover:text-indigo-600"
-              }`}
-            >
-              Pricing
-            </Link>
-            {pathname === "/pricing" && (
-              <div className="absolute bottom-0 left-0 right-0 h-[2.5px] rounded-full bg-indigo-600"></div>
-            )}
-          </div>
+<div className="relative py-1">
+  <Link
+    href="/pricing"
+    className={`transition-colors ${
+      pathname === "/pricing"
+        ? "font-semibold text-indigo-600"
+        : "hover:text-indigo-600"
+    }`}
+  >
+    Pricing
+  </Link>
+  {pathname === "/pricing" && (
+    <div className="absolute right-0 bottom-0 left-0 h-[2.5px] rounded-full bg-indigo-600"></div>
+  )}
+</div>
 ```
 
 - [ ] **Step 2: Verify no TypeScript errors**

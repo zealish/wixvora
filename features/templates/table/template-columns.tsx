@@ -40,8 +40,11 @@ function formatDate(date: Date | string | null): string {
   if (!date) return "-";
   const d = new Date(date);
   const now = new Date();
-  const diffDays = Math.floor((now.getTime() - d.getTime()) / (1000 * 60 * 60 * 24));
-  if (diffDays === 0) return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  const diffDays = Math.floor(
+    (now.getTime() - d.getTime()) / (1000 * 60 * 60 * 24)
+  );
+  if (diffDays === 0)
+    return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
   if (diffDays === 1) return "Yesterday";
   if (diffDays < 7) return `${diffDays} days ago`;
   return d.toLocaleDateString();
@@ -59,7 +62,8 @@ export function createTemplateColumns(
         <Checkbox
           checked={table.getIsAllPageRowsSelected()}
           indeterminate={
-            table.getIsSomePageRowsSelected() && !table.getIsAllPageRowsSelected()
+            table.getIsSomePageRowsSelected() &&
+            !table.getIsAllPageRowsSelected()
           }
           onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
           aria-label="Select all"
@@ -99,8 +103,8 @@ export function createTemplateColumns(
                 className="h-10 w-10 rounded-md border object-cover"
               />
             ) : (
-              <div className="flex h-10 w-10 items-center justify-center rounded-md border bg-muted">
-                <ImageIcon className="h-4 w-4 text-muted-foreground" />
+              <div className="bg-muted flex h-10 w-10 items-center justify-center rounded-md border">
+                <ImageIcon className="text-muted-foreground h-4 w-4" />
               </div>
             )}
             <div className="flex flex-col">
@@ -110,7 +114,7 @@ export function createTemplateColumns(
                   <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
                 )}
               </span>
-              <span className="text-xs text-muted-foreground">{t.slug}</span>
+              <span className="text-muted-foreground text-xs">{t.slug}</span>
             </div>
           </div>
         );
@@ -132,7 +136,7 @@ export function createTemplateColumns(
         <DataTableColumnHeader column={column} title="Category" />
       ),
       cell: ({ row }) => (
-        <span className="text-sm text-muted-foreground">
+        <span className="text-muted-foreground text-sm">
           {categoryText(row.original)}
         </span>
       ),
@@ -178,7 +182,7 @@ export function createTemplateColumns(
         <DataTableColumnHeader column={column} title="Usage" />
       ),
       cell: ({ row }) => (
-        <span className="text-sm text-muted-foreground">
+        <span className="text-muted-foreground text-sm">
           {row.original.usageCount}
         </span>
       ),
@@ -197,7 +201,7 @@ export function createTemplateColumns(
         <DataTableColumnHeader column={column} title="Created By" />
       ),
       cell: ({ row }) => (
-        <span className="text-sm text-muted-foreground">
+        <span className="text-muted-foreground text-sm">
           {row.original.createdByName ?? "-"}
         </span>
       ),
@@ -216,7 +220,7 @@ export function createTemplateColumns(
         <DataTableColumnHeader column={column} title="Updated" />
       ),
       cell: ({ row }) => (
-        <span className="text-sm text-muted-foreground">
+        <span className="text-muted-foreground text-sm">
           {formatDate(row.original.updatedAt)}
         </span>
       ),
@@ -247,7 +251,9 @@ export function createTemplateColumns(
               }
             />
             <DropdownMenuContent align="end">
-              <DropdownMenuItem render={<Link href={`/staff/templates/${t.id}/edit`} />}>
+              <DropdownMenuItem
+                render={<Link href={`/staff/templates/${t.id}/edit`} />}
+              >
                 <Pencil className="mr-2 size-4" />
                 Edit
               </DropdownMenuItem>
@@ -264,7 +270,10 @@ export function createTemplateColumns(
                 Duplicate
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem variant="destructive" onClick={() => onDelete(t)}>
+              <DropdownMenuItem
+                variant="destructive"
+                onClick={() => onDelete(t)}
+              >
                 <Trash2 className="mr-2 size-4" />
                 Delete
               </DropdownMenuItem>

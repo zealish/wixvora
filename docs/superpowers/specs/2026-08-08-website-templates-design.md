@@ -24,6 +24,7 @@ The Website Templates feature enables staff to create, manage, and publish websi
 ## Approved Approach: Phased Implementation
 
 ### Phase 1: Core Foundation (Week 1)
+
 - Database schema + migrations
 - Basic CRUD operations with DataTable
 - Simple form-based block configuration (JSON editor)
@@ -31,12 +32,14 @@ The Website Templates feature enables staff to create, manage, and publish websi
 - Permissions + audit logging
 
 ### Phase 2: Visual Block Editor (Week 2-3)
+
 - Full React conversion of HTML block editor
 - All panels: toolbar, palette, layers, canvas, inspector
 - Undo/redo, viewport switching
 - Live preview
 
 ### Phase 3: Advanced Features (Week 4)
+
 - Preview modal
 - Duplicate template
 - Usage tracking
@@ -56,23 +59,23 @@ CREATE TABLE templates (
   slug VARCHAR(220) UNIQUE NOT NULL,
   description TEXT,
   preview_image_url VARCHAR(500),
-  
+
   -- Category relationship (can be parent OR subcategory)
   category_id UUID REFERENCES business_categories(id) ON DELETE SET NULL,
-  
+
   -- Block configuration
   blocks_json JSONB NOT NULL,
   html_snapshot TEXT NOT NULL,
-  
+
   -- Metadata
   is_featured BOOLEAN DEFAULT false,
   sort_order INTEGER DEFAULT 0,
   status VARCHAR(20) DEFAULT 'draft', -- 'draft' | 'published'
-  
+
   -- Usage tracking
   usage_count INTEGER DEFAULT 0,
   last_used_at TIMESTAMP,
-  
+
   -- Ownership & audit
   created_by UUID REFERENCES users(id) ON DELETE SET NULL,
   created_at TIMESTAMP DEFAULT NOW(),
@@ -103,23 +106,23 @@ CREATE UNIQUE INDEX idx_templates_slug ON templates(slug);
 
 ```typescript
 interface BlockConfig {
-  id: string;           // Unique block ID (e.g., "layer_abc123")
-  type: BlockType;      // Block type enum
-  hidden: boolean;      // Visibility toggle
-  props: BlockProps;    // Type-specific properties
+  id: string; // Unique block ID (e.g., "layer_abc123")
+  type: BlockType; // Block type enum
+  hidden: boolean; // Visibility toggle
+  props: BlockProps; // Type-specific properties
 }
 
-type BlockType = 
-  | 'navbar' 
-  | 'hero' 
-  | 'container' 
-  | 'grid_custom' 
-  | 'heading' 
-  | 'paragraph' 
-  | 'image' 
-  | 'pricing' 
-  | 'form_contact' 
-  | 'footer';
+type BlockType =
+  | "navbar"
+  | "hero"
+  | "container"
+  | "grid_custom"
+  | "heading"
+  | "paragraph"
+  | "image"
+  | "pricing"
+  | "form_contact"
+  | "footer";
 
 // Example: Grid Custom Block Props
 interface GridCustomProps {
@@ -129,12 +132,12 @@ interface GridCustomProps {
   columnsCount: 1 | 2 | 3 | 4;
   gap: string; // Tailwind class (e.g., 'gap-6')
   columns: Array<{
-    icon: string;         // Icon name
+    icon: string; // Icon name
     title: string;
     desc: string;
-    bgColor: string;      // Hex color
-    textColor: string;    // Hex color
-    accentColor: string;  // Hex color
+    bgColor: string; // Hex color
+    textColor: string; // Hex color
+    accentColor: string; // Hex color
     btnText?: string;
     btnUrl?: string;
   }>;
@@ -186,6 +189,7 @@ interface GridCustomProps {
 ### HTML Snapshot Generation
 
 Server-side function that:
+
 1. Iterates through `blocks_json` array
 2. Maps each block type to HTML template function
 3. Injects props into template literals with proper escaping
@@ -202,31 +206,34 @@ Server-side function that:
 
 ```typescript
 // lib/auth/permissions.ts - additions
-TEMPLATES_VIEW: "templates.view"
-TEMPLATES_CREATE: "templates.create"
-TEMPLATES_UPDATE_OWN: "templates.update.own"     // Edit own templates
-TEMPLATES_UPDATE_ANY: "templates.update.any"     // Edit any template
-TEMPLATES_DELETE_OWN: "templates.delete.own"     // Delete own
-TEMPLATES_DELETE_ANY: "templates.delete.any"     // Delete any
-TEMPLATES_PUBLISH: "templates.publish"           // Publish to clients
-TEMPLATES_MANAGE_ALL: "templates.manage.all"     // Super permission
+TEMPLATES_VIEW: "templates.view";
+TEMPLATES_CREATE: "templates.create";
+TEMPLATES_UPDATE_OWN: "templates.update.own"; // Edit own templates
+TEMPLATES_UPDATE_ANY: "templates.update.any"; // Edit any template
+TEMPLATES_DELETE_OWN: "templates.delete.own"; // Delete own
+TEMPLATES_DELETE_ANY: "templates.delete.any"; // Delete any
+TEMPLATES_PUBLISH: "templates.publish"; // Publish to clients
+TEMPLATES_MANAGE_ALL: "templates.manage.all"; // Super permission
 ```
 
 ### Role Permission Mapping
 
 **Template Designer Role** (new role to create):
+
 - `templates.view`
 - `templates.create`
 - `templates.update.own`
 - `templates.delete.own`
 
 **Template Manager Role** (new role):
+
 - All Template Designer permissions
 - `templates.update.any`
 - `templates.delete.any`
 - `templates.publish`
 
 **Admin/Super Admin** (existing roles):
+
 - `templates.manage.all` (grants all template permissions)
 
 ### Authorization Logic
@@ -234,12 +241,12 @@ TEMPLATES_MANAGE_ALL: "templates.manage.all"     // Super permission
 ```typescript
 // Ownership-based authorization
 async function canEditTemplate(templateId: string, userId: string) {
-  const hasUpdateAny = await hasPermission(userId, 'templates.update.any');
+  const hasUpdateAny = await hasPermission(userId, "templates.update.any");
   if (hasUpdateAny) return true;
-  
+
   const template = await getTemplateById(templateId);
-  const hasUpdateOwn = await hasPermission(userId, 'templates.update.own');
-  
+  const hasUpdateOwn = await hasPermission(userId, "templates.update.own");
+
   return hasUpdateOwn && template.createdBy === userId;
 }
 ```
@@ -247,6 +254,7 @@ async function canEditTemplate(templateId: string, userId: string) {
 ### Audit Log Events
 
 Track these actions in `audit_logs` table:
+
 - `template.created`
 - `template.updated` (log changed fields in metadata)
 - `template.deleted` (soft delete)
@@ -320,6 +328,7 @@ app/(staff)/staff/templates/
 ### Index Page (`/staff/templates`)
 
 **Layout:**
+
 - `PageHeader` with:
   - Title: "Website Templates"
   - Description: "Create and manage website templates for clients"
@@ -335,6 +344,7 @@ app/(staff)/staff/templates/
   - **Actions:** Dropdown with View, Edit, Duplicate, Delete
 
 **Features:**
+
 - **Search:** By name/description (debounced)
 - **Filters:**
   - Status: All, Draft, Published
@@ -352,6 +362,7 @@ app/(staff)/staff/templates/
 ### Create Page (`/staff/templates/create`)
 
 **Phase 1 Layout (Form-based):**
+
 - `PageHeader` with "Create Template" title
 - Form with sections:
   1. **Basic Information**
@@ -375,6 +386,7 @@ app/(staff)/staff/templates/
   - Cancel (link back to index)
 
 **Phase 2 Layout (Visual Editor):**
+
 - Full-screen editor matching HTML example structure:
   - **Top Toolbar:**
     - Logo/Brand
@@ -404,6 +416,7 @@ app/(staff)/staff/templates/
 ### Edit Page (`/staff/templates/[id]/edit`)
 
 Same layout as Create but:
+
 - Pre-populated with existing data
 - Header shows: "Edit Template: [Name]"
 - Metadata displayed: "Created by [User] on [Date]"
@@ -416,6 +429,7 @@ Same layout as Create but:
 ### Preview Modal (Phase 3)
 
 Full-screen modal showing:
+
 - Template rendered in iframe
 - Viewport switcher (desktop/tablet/mobile)
 - Close button
@@ -450,18 +464,18 @@ Using React `useState` and custom hooks:
 
 ```typescript
 interface EditorState {
-  blocks: BlockConfig[];           // Array of block configurations
-  selectedBlockId: string | null;  // Currently selected block
-  viewport: 'desktop' | 'tablet' | 'mobile';
-  history: BlockConfig[][];        // History stack for undo
-  historyIndex: number;            // Current position in history
-  isDirty: boolean;                // Unsaved changes flag
+  blocks: BlockConfig[]; // Array of block configurations
+  selectedBlockId: string | null; // Currently selected block
+  viewport: "desktop" | "tablet" | "mobile";
+  history: BlockConfig[][]; // History stack for undo
+  historyIndex: number; // Current position in history
+  isDirty: boolean; // Unsaved changes flag
 }
 
 // Custom hooks
-useBlockEditor(initialBlocks) // Main editor state
-useUndoRedo(blocks, setBlocks) // Undo/redo logic
-useAutoSave(blocks, templateId) // Auto-save every 30s
+useBlockEditor(initialBlocks); // Main editor state
+useUndoRedo(blocks, setBlocks); // Undo/redo logic
+useAutoSave(blocks, templateId); // Auto-save every 30s
 ```
 
 ### HTML Snapshot Generation
@@ -482,17 +496,17 @@ function generateHTMLSnapshot(blocks: BlockConfig[]): string {
     </head>
     <body class="font-sans antialiased">
   `;
-  
+
   const bodyContent = blocks
-    .filter(block => !block.hidden)
-    .map(block => renderBlockToHTML(block))
-    .join('\n');
-  
+    .filter((block) => !block.hidden)
+    .map((block) => renderBlockToHTML(block))
+    .join("\n");
+
   const footer = `
     </body>
     </html>
   `;
-  
+
   return head + bodyContent + footer;
 }
 
@@ -510,16 +524,19 @@ function renderBlockToHTML(block: BlockConfig): string {
 ### Phase 1: Core Foundation (Week 1)
 
 **Database & Schema:**
+
 - ✅ Create `templates.ts` schema file
 - ✅ Generate migration
 - ✅ Add to schema index exports
 
 **Permissions & Roles:**
+
 - ✅ Add template permissions to `PERMISSIONS` constant
 - ✅ Create Template Designer and Template Manager roles
 - ✅ Seed roles with permissions
 
 **Service Layer:**
+
 - ✅ `features/templates/types.ts` - TypeScript interfaces
 - ✅ `features/templates/validation.ts` - Zod schemas
 - ✅ `features/templates/queries.ts` - Database queries (CRUD)
@@ -529,6 +546,7 @@ function renderBlockToHTML(block: BlockConfig): string {
 - ✅ `features/templates/lib/html-generator.ts` - HTML generation
 
 **UI Components:**
+
 - ✅ `app/(staff)/staff/templates/page.tsx` - Index with DataTable
 - ✅ `features/templates/components/template-data-table.tsx` - Table wrapper
 - ✅ `features/templates/table/template-columns.tsx` - Column definitions
@@ -538,6 +556,7 @@ function renderBlockToHTML(block: BlockConfig): string {
 - ✅ `features/templates/components/template-form-basic.tsx` - Form component
 
 **What Staff Can Do:**
+
 - View all templates in searchable/filterable table
 - Create templates by editing JSON in form
 - Assign templates to categories (parent or subcategory)
@@ -547,6 +566,7 @@ function renderBlockToHTML(block: BlockConfig): string {
 - See live preview of blocks rendering
 
 **Success Criteria:**
+
 - All CRUD operations work
 - Permissions enforced correctly
 - Audit logs created for all actions
@@ -558,6 +578,7 @@ function renderBlockToHTML(block: BlockConfig): string {
 ### Phase 2: Visual Block Editor (Week 2-3)
 
 **Block Editor Components:**
+
 - ✅ `features/templates/components/block-editor/index.tsx` - Main editor
 - ✅ `features/templates/components/block-editor/toolbar.tsx` - Top toolbar
 - ✅ `features/templates/components/block-editor/block-palette.tsx` - Add blocks sidebar
@@ -568,6 +589,7 @@ function renderBlockToHTML(block: BlockConfig): string {
 - ✅ `features/templates/lib/block-catalog.ts` - Block definitions and defaults
 
 **Block Renderers:**
+
 - ✅ `features/templates/components/block-editor/blocks/navbar-block.tsx`
 - ✅ `features/templates/components/block-editor/blocks/hero-block.tsx`
 - ✅ `features/templates/components/block-editor/blocks/container-block.tsx`
@@ -580,6 +602,7 @@ function renderBlockToHTML(block: BlockConfig): string {
 - ✅ `features/templates/components/block-editor/blocks/footer-block.tsx`
 
 **Editor Features:**
+
 - ✅ Add blocks from palette
 - ✅ Select blocks on canvas
 - ✅ Edit block props in inspector (dynamic form based on type)
@@ -594,10 +617,12 @@ function renderBlockToHTML(block: BlockConfig): string {
 - ✅ Unsaved changes warning
 
 **UI Updates:**
+
 - ✅ Replace JSON editor in create/edit pages with visual editor
 - ✅ Keep basic info form (name, category, etc.) above or in sidebar
 
 **What Staff Can Do:**
+
 - Build templates visually (no JSON editing required)
 - See live preview while editing
 - Drag blocks to reorder (via move up/down buttons)
@@ -608,6 +633,7 @@ function renderBlockToHTML(block: BlockConfig): string {
 - Export layouts for backup
 
 **Success Criteria:**
+
 - Editor matches HTML example functionality
 - All 10 block types render correctly
 - Inspector forms are type-safe and validated
@@ -620,6 +646,7 @@ function renderBlockToHTML(block: BlockConfig): string {
 ### Phase 3: Advanced Features (Week 4)
 
 **Preview & Usage:**
+
 - ✅ Template preview modal (full-screen)
 - ✅ Usage tracking:
   - Increment `usage_count` when client uses template
@@ -628,6 +655,7 @@ function renderBlockToHTML(block: BlockConfig): string {
 - ✅ "View Usage" feature in edit page (lists client sites using this template)
 
 **Template Management:**
+
 - ✅ Duplicate template functionality
   - Creates exact copy with "(Copy)" suffix
   - New slug generated
@@ -641,6 +669,7 @@ function renderBlockToHTML(block: BlockConfig): string {
   - Featured templates shown first to clients (future)
 
 **Bulk Operations:**
+
 - ✅ `features/templates/table/template-bulk-actions.tsx` - Bulk action components
 - ✅ Publish selected (draft → published)
 - ✅ Unpublish selected (published → draft)
@@ -648,16 +677,19 @@ function renderBlockToHTML(block: BlockConfig): string {
 - ✅ Set as featured (batch update)
 
 **Data Export:**
+
 - ✅ Export to CSV (name, status, category, usage, created by, dates)
 - ✅ Export to Excel (same fields, formatted)
 
 **Advanced Filters:**
+
 - ✅ Multi-select category filter (with parent/child hierarchy)
 - ✅ Date range filter (created date, last used date)
 - ✅ Usage count range filter (e.g., "used 10+ times")
 - ✅ Sort by usage count (most/least used)
 
 **What Staff Can Do:**
+
 - Preview templates in full-screen before publishing
 - See analytics on template usage
 - Duplicate successful templates as starting points
@@ -667,6 +699,7 @@ function renderBlockToHTML(block: BlockConfig): string {
 - Filter by advanced criteria (usage, dates, etc.)
 
 **Success Criteria:**
+
 - Preview modal renders correctly
 - Usage tracking integrates with client site creation (stub for now)
 - Duplicate creates perfect copy
@@ -769,16 +802,19 @@ function renderBlockToHTML(block: BlockConfig): string {
 ## Success Metrics
 
 ### Phase 1
+
 - 10+ templates created by staff
 - Zero permission bypass incidents
 - All audit logs captured correctly
 
 ### Phase 2
+
 - 90%+ of staff prefer visual editor over JSON
 - Average template creation time < 30 minutes
 - Zero data loss incidents (auto-save working)
 
 ### Phase 3
+
 - Top 5 templates account for 50%+ of usage
 - 20+ templates marked as featured
 - Bulk operations used regularly (5+ times/week)

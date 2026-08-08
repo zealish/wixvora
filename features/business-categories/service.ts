@@ -2,10 +2,7 @@ import { db } from "@/lib/db";
 import { businessCategories } from "@/lib/db/schema";
 import { eq, and, isNull } from "drizzle-orm";
 import type { CreateCategoryInput, UpdateCategoryInput } from "./validation";
-import {
-  generateUniqueSlug,
-  validateDisplayOrder,
-} from "./queries";
+import { generateUniqueSlug, validateDisplayOrder } from "./queries";
 import { createAuditLog } from "@/features/audit/service";
 
 export async function createCategory(
@@ -15,7 +12,10 @@ export async function createCategory(
   await validateHierarchyDepth(data.parentId);
 
   const slug = await generateUniqueSlug(data.name);
-  const orderValid = await validateDisplayOrder(data.parentId ?? null, data.displayOrder);
+  const orderValid = await validateDisplayOrder(
+    data.parentId ?? null,
+    data.displayOrder
+  );
   if (!orderValid) {
     throw new Error(
       `Display order ${data.displayOrder} is already used by another category at this level.`
@@ -73,7 +73,10 @@ export async function updateCategory(
     throw new Error("Category not found");
   }
 
-  if (data.displayOrder !== undefined && data.displayOrder !== existing.displayOrder) {
+  if (
+    data.displayOrder !== undefined &&
+    data.displayOrder !== existing.displayOrder
+  ) {
     const orderValid = await validateDisplayOrder(
       data.parentId ?? existing.parentId,
       data.displayOrder,
@@ -90,7 +93,9 @@ export async function updateCategory(
     if (existing.parentId === null && data.parentId !== null) {
       const childCount = await countChildren(id);
       if (childCount > 0) {
-        throw new Error("Cannot change parent: this category has children. Moving it would exceed the maximum depth of 2 levels.");
+        throw new Error(
+          "Cannot change parent: this category has children. Moving it would exceed the maximum depth of 2 levels."
+        );
       }
     }
   }
@@ -107,7 +112,8 @@ export async function updateCategory(
   if (data.name !== undefined) updateData.name = data.name;
   if (data.slug !== undefined) updateData.slug = data.slug;
   if (data.icon !== undefined) updateData.icon = data.icon;
-  if (data.displayOrder !== undefined) updateData.displayOrder = data.displayOrder;
+  if (data.displayOrder !== undefined)
+    updateData.displayOrder = data.displayOrder;
   if (data.status !== undefined) updateData.status = data.status;
   if (data.parentId !== undefined) updateData.parentId = data.parentId;
 
@@ -250,7 +256,7 @@ export async function toggleCategoryStatus(
         before: { status: existing.status },
         after: { status },
         cascadeCount: children.length,
-        cascadeIds: children.map(c => c.id),
+        cascadeIds: children.map((c) => c.id),
       },
     });
   } else {
@@ -273,7 +279,9 @@ export async function toggleCategoryStatus(
   }
 }
 
-async function validateHierarchyDepth(parentId: string | null | undefined): Promise<void> {
+async function validateHierarchyDepth(
+  parentId: string | null | undefined
+): Promise<void> {
   if (parentId === null || parentId === undefined) return;
 
   const [parent] = await db

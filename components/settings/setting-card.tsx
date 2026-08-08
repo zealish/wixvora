@@ -12,7 +12,11 @@ interface SettingCardProps {
   children: React.ReactNode;
 }
 
-export function SettingCard({ title, description, children }: SettingCardProps) {
+export function SettingCard({
+  title,
+  description,
+  children,
+}: SettingCardProps) {
   return (
     <Card>
       <CardHeader>

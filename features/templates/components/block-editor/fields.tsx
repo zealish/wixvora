@@ -11,7 +11,7 @@ interface FieldShellProps {
 export function FieldShell({ label, children, hint }: FieldShellProps) {
   return (
     <div className="space-y-1.5">
-      <label className="font-semibold text-slate-300 text-xs">{label}</label>
+      <label className="text-xs font-semibold text-slate-300">{label}</label>
       {children}
       {hint && <p className="text-[10px] text-slate-500">{hint}</p>}
     </div>
@@ -38,7 +38,7 @@ export function TextField({
         value={value}
         placeholder={placeholder}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:border-blue-500 outline-none text-xs"
+        className="w-full rounded-xl border border-slate-800 bg-slate-950 px-3 py-2 text-xs text-white outline-none focus:border-blue-500"
       />
     </FieldShell>
   );
@@ -63,7 +63,7 @@ export function TextAreaField({
         rows={rows}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:border-blue-500 outline-none text-xs"
+        className="w-full rounded-xl border border-slate-800 bg-slate-950 px-3 py-2 text-xs text-white outline-none focus:border-blue-500"
       />
     </FieldShell>
   );
@@ -83,13 +83,13 @@ export function ColorField({ label, value, onChange }: ColorFieldProps) {
           type="color"
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className="w-9 h-9 rounded-lg bg-transparent cursor-pointer border border-slate-700"
+          className="h-9 w-9 cursor-pointer rounded-lg border border-slate-700 bg-transparent"
         />
         <input
           type="text"
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white outline-none text-xs"
+          className="flex-1 rounded-xl border border-slate-800 bg-slate-950 px-3 py-2 text-xs text-white outline-none"
         />
       </div>
     </FieldShell>
@@ -114,7 +114,7 @@ export function SelectField({
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white outline-none text-xs"
+        className="w-full rounded-xl border border-slate-800 bg-slate-950 px-3 py-2 text-xs text-white outline-none"
       >
         {options.map((o) => (
           <option key={o.value} value={o.value}>
@@ -149,7 +149,7 @@ export function NumberField({
         min={min}
         max={max}
         onChange={(e) => onChange(Number(e.target.value))}
-        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:border-blue-500 outline-none text-xs"
+        className="w-full rounded-xl border border-slate-800 bg-slate-950 px-3 py-2 text-xs text-white outline-none focus:border-blue-500"
       />
     </FieldShell>
   );

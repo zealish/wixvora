@@ -9,20 +9,39 @@ interface PaginationProps {
   onPageChange: (page: number) => void;
 }
 
-export function Pagination({ currentPage, totalPages, onPageChange }: PaginationProps) {
+export function Pagination({
+  currentPage,
+  totalPages,
+  onPageChange,
+}: PaginationProps) {
   const pages = [];
-  
+
   if (totalPages <= 7) {
     for (let i = 1; i <= totalPages; i++) {
       pages.push(i);
     }
   } else {
     if (currentPage <= 3) {
-      pages.push(1, 2, 3, 4, '...', totalPages);
+      pages.push(1, 2, 3, 4, "...", totalPages);
     } else if (currentPage >= totalPages - 2) {
-      pages.push(1, '...', totalPages - 3, totalPages - 2, totalPages - 1, totalPages);
+      pages.push(
+        1,
+        "...",
+        totalPages - 3,
+        totalPages - 2,
+        totalPages - 1,
+        totalPages
+      );
     } else {
-      pages.push(1, '...', currentPage - 1, currentPage, currentPage + 1, '...', totalPages);
+      pages.push(
+        1,
+        "...",
+        currentPage - 1,
+        currentPage,
+        currentPage + 1,
+        "...",
+        totalPages
+      );
     }
   }
 
@@ -38,15 +57,18 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
         whileTap={{ scale: 0.95 }}
         onClick={() => onPageChange(Math.max(1, currentPage - 1))}
         disabled={currentPage === 1}
-        className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 transition-all hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed"
+        className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 transition-all hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
       >
         <ChevronLeft className="h-4 w-4" />
       </motion.button>
 
       {pages.map((page, index) => {
-        if (page === '...') {
+        if (page === "...") {
           return (
-            <span key={`ellipsis-${index}`} className="px-1 font-bold text-slate-400">
+            <span
+              key={`ellipsis-${index}`}
+              className="px-1 font-bold text-slate-400"
+            >
               ...
             </span>
           );
@@ -77,7 +99,7 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
         whileTap={{ scale: 0.95 }}
         onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
         disabled={currentPage === totalPages}
-        className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 transition-all hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed"
+        className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 transition-all hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
       >
         <ChevronRight className="h-4 w-4" />
       </motion.button>

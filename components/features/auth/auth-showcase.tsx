@@ -4,14 +4,14 @@ export function AuthShowcase() {
   return (
     <div className="space-y-8 lg:col-span-6">
       <div className="space-y-4">
-        <div className="inline-flex items-center gap-2 rounded-full border border-brand-100 bg-brand-50 px-3.5 py-1.5 text-xs font-extrabold uppercase tracking-wider text-brand-600">
+        <div className="border-brand-100 bg-brand-50 text-brand-600 inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-xs font-extrabold tracking-wider uppercase">
           <Sparkles className="h-3.5 w-3.5" />
           <span>AI-Powered Website Builder</span>
         </div>
 
-        <h1 className="text-4xl font-extrabold leading-tight text-slate-900 sm:text-5xl">
+        <h1 className="text-4xl leading-tight font-extrabold text-slate-900 sm:text-5xl">
           Build, Launch & Scale <br />
-          <span className="bg-gradient-to-r from-brand-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
+          <span className="from-brand-600 bg-gradient-to-r via-indigo-600 to-purple-600 bg-clip-text text-transparent">
             Your Web Dream
           </span>
         </h1>
@@ -23,12 +23,12 @@ export function AuthShowcase() {
       </div>
 
       {/* Interactive Preview Card */}
-      <div className="relative pb-4 pr-4 pt-2">
+      <div className="relative pt-2 pr-4 pb-4">
         <div className="relative z-10 space-y-5 rounded-3xl border border-slate-200/90 bg-white/85 p-6 shadow-2xl backdrop-blur-xl">
           {/* Header status bar */}
           <div className="flex items-center justify-between border-b border-slate-100 pb-3">
             <div className="flex items-center gap-3">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-brand-500 to-purple-600 text-xs font-black text-white shadow-md shadow-brand-200">
+              <div className="from-brand-500 shadow-brand-200 flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr to-purple-600 text-xs font-black text-white shadow-md">
                 AI
               </div>
               <div>
@@ -40,7 +40,7 @@ export function AuthShowcase() {
                 </p>
               </div>
             </div>
-            <span className="flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wide text-emerald-600">
+            <span className="flex items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-[10px] font-extrabold tracking-wide text-emerald-600 uppercase">
               <span className="h-1.5 w-1.5 animate-ping rounded-full bg-emerald-500"></span>
               Live Studio
             </span>
@@ -48,7 +48,7 @@ export function AuthShowcase() {
 
           {/* Prompt Simulation */}
           <div className="flex items-center gap-3 rounded-2xl border border-slate-200/70 bg-slate-50/80 p-3.5 text-xs font-medium text-slate-700">
-            <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg bg-brand-100 text-brand-600">
+            <div className="bg-brand-100 text-brand-600 flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg">
               <svg
                 className="h-4 w-4"
                 fill="none"
@@ -63,9 +63,9 @@ export function AuthShowcase() {
                 />
               </svg>
             </div>
-            <span className="italic text-slate-700">
-              &quot;Create a high-converting portfolio with dark mode, animations, and
-              custom domain setup...&quot;
+            <span className="text-slate-700 italic">
+              &quot;Create a high-converting portfolio with dark mode,
+              animations, and custom domain setup...&quot;
             </span>
           </div>
 
@@ -76,35 +76,51 @@ export function AuthShowcase() {
               <span className="text-brand-600">98% Complete</span>
             </div>
             <div className="h-2 w-full overflow-hidden rounded-full border border-slate-200/50 bg-slate-100 p-0.5">
-              <div className="h-full w-[98%] rounded-full bg-gradient-to-r from-indigo-500 via-brand-600 to-purple-600 transition-all duration-1000"></div>
+              <div className="via-brand-600 h-full w-[98%] rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 transition-all duration-1000"></div>
             </div>
           </div>
 
           {/* Badges Grid */}
           <div className="grid grid-cols-3 gap-2 pt-1 text-center">
             <div className="rounded-xl border border-slate-100 bg-slate-50 p-2">
-              <p className="text-[10px] font-bold uppercase text-slate-400">Speed</p>
-              <p className="mt-0.5 text-xs font-extrabold text-slate-900">&lt; 30 sec</p>
+              <p className="text-[10px] font-bold text-slate-400 uppercase">
+                Speed
+              </p>
+              <p className="mt-0.5 text-xs font-extrabold text-slate-900">
+                &lt; 30 sec
+              </p>
             </div>
             <div className="rounded-xl border border-slate-100 bg-slate-50 p-2">
-              <p className="text-[10px] font-bold uppercase text-slate-400">Code</p>
-              <p className="mt-0.5 text-xs font-extrabold text-slate-900">Clean HTML/JS</p>
+              <p className="text-[10px] font-bold text-slate-400 uppercase">
+                Code
+              </p>
+              <p className="mt-0.5 text-xs font-extrabold text-slate-900">
+                Clean HTML/JS
+              </p>
             </div>
             <div className="rounded-xl border border-slate-100 bg-slate-50 p-2">
-              <p className="text-[10px] font-bold uppercase text-slate-400">SEO</p>
-              <p className="mt-0.5 text-xs font-extrabold text-emerald-600">Automated</p>
+              <p className="text-[10px] font-bold text-slate-400 uppercase">
+                SEO
+              </p>
+              <p className="mt-0.5 text-xs font-extrabold text-emerald-600">
+                Automated
+              </p>
             </div>
           </div>
         </div>
 
         {/* Floating Metric 1 */}
-        <div className="absolute -right-2 -top-4 z-20 flex animate-float items-center gap-3 rounded-2xl border border-slate-100 bg-white p-3 shadow-xl">
+        <div className="animate-float absolute -top-4 -right-2 z-20 flex items-center gap-3 rounded-2xl border border-slate-100 bg-white p-3 shadow-xl">
           <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-purple-100 text-purple-600">
             <Zap className="h-5 w-5" />
           </div>
           <div>
-            <p className="text-xs font-extrabold text-slate-900">100+ Templates</p>
-            <p className="text-[10px] font-medium text-slate-500">Fully customizable</p>
+            <p className="text-xs font-extrabold text-slate-900">
+              100+ Templates
+            </p>
+            <p className="text-[10px] font-medium text-slate-500">
+              Fully customizable
+            </p>
           </div>
         </div>
 
@@ -122,8 +138,12 @@ export function AuthShowcase() {
             </div>
           </div>
           <div>
-            <p className="text-xs font-extrabold text-slate-900">12,500+ Creators</p>
-            <p className="text-[10px] font-bold text-emerald-600">★ 4.9/5 Rating</p>
+            <p className="text-xs font-extrabold text-slate-900">
+              12,500+ Creators
+            </p>
+            <p className="text-[10px] font-bold text-emerald-600">
+              ★ 4.9/5 Rating
+            </p>
           </div>
         </div>
       </div>

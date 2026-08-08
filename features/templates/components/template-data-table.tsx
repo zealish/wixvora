@@ -160,15 +160,12 @@ export function TemplateDataTable({ data }: TemplateDataTableProps) {
             <DialogTitle>Delete Template</DialogTitle>
             <DialogDescription>
               Are you sure you want to delete
-              {deleteTarget ? ` "${deleteTarget.name}"` : " this template"}? This
-              action cannot be undone.
+              {deleteTarget ? ` "${deleteTarget.name}"` : " this template"}?
+              This action cannot be undone.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setDeleteTarget(null)}
-            >
+            <Button variant="outline" onClick={() => setDeleteTarget(null)}>
               Cancel
             </Button>
             <Button variant="destructive" onClick={confirmDelete}>

@@ -39,9 +39,7 @@ export function StaffEditForm({ staff }: StaffEditFormProps) {
       department: formData.get("department") as string,
       position: formData.get("position") as string,
       employmentStatus: employmentStatus as
-        | "ACTIVE"
-        | "INACTIVE"
-        | "TERMINATED",
+        "ACTIVE" | "INACTIVE" | "TERMINATED",
     };
 
     startTransition(async () => {
@@ -58,7 +56,7 @@ export function StaffEditForm({ staff }: StaffEditFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl">
+    <form onSubmit={handleSubmit} className="max-w-2xl space-y-6">
       {error && (
         <div className="bg-destructive/15 text-destructive rounded-md p-3 text-sm">
           {error}

@@ -22,10 +22,7 @@ export default async function RolesPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        title="Roles"
-        description="Manage roles and permissions"
-      />
+      <PageHeader title="Roles" description="Manage roles and permissions" />
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
         {roles.map((role) => (
           <Link key={role.id} href={`/staff/roles/${role.id}`}>

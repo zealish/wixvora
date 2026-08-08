@@ -159,9 +159,7 @@ export const clientColumns: ColumnDef<UserWithProfile, unknown>[] = [
             }
           />
           <DropdownMenuContent align="end">
-            <DropdownMenuItem
-              render={<Link href={`/staff/clients/${u.id}`} />}
-            >
+            <DropdownMenuItem render={<Link href={`/staff/clients/${u.id}`} />}>
               <Eye className="mr-2 size-4" />
               View
             </DropdownMenuItem>

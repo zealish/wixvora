@@ -37,7 +37,7 @@ export function PricingCard({ plan }: PricingCardProps) {
     >
       {/* Popular Badge */}
       {plan.popular && (
-        <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-brand-600 px-3.5 py-1 text-[10px] font-extrabold uppercase tracking-wider text-white shadow-md">
+        <div className="bg-brand-600 absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full px-3.5 py-1 text-[10px] font-extrabold tracking-wider text-white uppercase shadow-md">
           MOST POPULAR
         </div>
       )}
@@ -64,7 +64,7 @@ export function PricingCard({ plan }: PricingCardProps) {
           className={`w-full rounded-xl py-3 text-sm font-bold transition-all ${
             plan.buttonVariant === "gradient"
               ? "bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md shadow-indigo-200 hover:scale-[1.02] hover:from-indigo-700 hover:to-purple-700 active:scale-95"
-              : "border-2 border-indigo-100 text-brand-600 hover:border-indigo-600 hover:bg-brand-50"
+              : "text-brand-600 hover:bg-brand-50 border-2 border-indigo-100 hover:border-indigo-600"
           }`}
         >
           {plan.buttonText}
@@ -74,7 +74,7 @@ export function PricingCard({ plan }: PricingCardProps) {
         <div className="space-y-3 border-t border-slate-100 pt-4 text-xs font-semibold text-slate-600">
           {plan.featuresHeader && (
             <p
-              className={`text-[11px] font-extrabold uppercase tracking-wider ${
+              className={`text-[11px] font-extrabold tracking-wider uppercase ${
                 plan.popular ? "text-brand-600" : "text-slate-900"
               }`}
             >

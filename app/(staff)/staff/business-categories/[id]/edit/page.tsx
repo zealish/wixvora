@@ -15,7 +15,9 @@ interface EditCategoryPageProps {
   params: Promise<{ id: string }>;
 }
 
-export default async function EditCategoryPage({ params }: EditCategoryPageProps) {
+export default async function EditCategoryPage({
+  params,
+}: EditCategoryPageProps) {
   const { id } = await params;
   const session = await getSession();
   if (!session) redirect("/login");

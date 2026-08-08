@@ -99,9 +99,7 @@ export async function resendVerificationEmail(
   }
 }
 
-export async function requestPasswordReset(
-  email: string
-): Promise<AuthResult> {
+export async function requestPasswordReset(email: string): Promise<AuthResult> {
   try {
     const emailSchema = z.string().email("Invalid email address");
     const validated = emailSchema.parse(email);

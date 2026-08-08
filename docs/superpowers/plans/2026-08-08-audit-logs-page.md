@@ -23,6 +23,7 @@
 ## File Structure
 
 ### Created Files:
+
 - `features/audit/queries.ts` - Server-side data fetching functions
 - `features/audit/components/columns.tsx` - TanStack Table column definitions with formatting utilities
 - `features/audit/components/audit-log-detail-dialog.tsx` - Detail modal component
@@ -31,6 +32,7 @@
 - `app/(staff)/staff/audit-logs/page.tsx` - Server component page with URL-based filtering
 
 ### Modified Files:
+
 - `features/audit/types.ts` - Add AuditLogWithUser, AuditLogsResult, AuditLogsFilters types (Task 1 already done)
 - `config/navigation.ts` - Update Audit Logs route from `/staff/audit` to `/staff/audit-logs` (Task 8)
 - `features/audit/service.ts` - No changes needed, existing createAuditLog is fine
@@ -40,13 +42,15 @@
 ## Task 1: Extend Types [ALREADY DONE]
 
 **Files:**
+
 - Modify: `features/audit/types.ts`
 
 **Step 1: Verify existing types**
 
 Verify file has the extended types from previous work:
+
 - AuditLogWithUser
-- AuditLogsResult  
+- AuditLogsResult
 - AuditLogsFilters
 
 **Step 2: Run TypeScript check**
@@ -67,6 +71,7 @@ git commit -m "feat: add audit logs result types and filters"
 ## Task 2: Create Server-Side Queries
 
 **Files:**
+
 - Create: `features/audit/queries.ts`
 
 **Step 1: Create queries.ts**
@@ -226,6 +231,7 @@ git commit -m "feat: add server-side audit logs data queries"
 ## Task 3: Create TanStack Table Column Definitions
 
 **Files:**
+
 - Create: `features/audit/components/columns.tsx`
 
 **Step 1: Create columns.tsx**
@@ -263,7 +269,7 @@ export function formatTimestamp(date: Date): string {
 export function formatRelativeTime(date: Date): string {
   const now = new Date();
   const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
-  
+
   if (diffInSeconds < 60) return `${diffInSeconds}s ago`;
   if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
   if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
@@ -423,6 +429,7 @@ git commit -m "feat: add TanStack Table column definitions for audit logs"
 ## Task 4: Create Export Menu Component
 
 **Files:**
+
 - Create: `features/audit/components/audit-logs-export-menu.tsx`
 
 **Step 1: Create export menu component**
@@ -524,6 +531,7 @@ git commit -m "feat: add export menu component for audit logs"
 ## Task 5: Create Detail Dialog Component
 
 **Files:**
+
 - Create: `features/audit/components/audit-log-detail-dialog.tsx`
 
 **Step 1: Create detail dialog component**
@@ -724,6 +732,7 @@ git commit -m "feat: add audit log detail dialog component"
 ## Task 6: Create Main Table Component
 
 **Files:**
+
 - Create: `features/audit/components/audit-logs-table.tsx`
 
 **Step 1: Create table component**
@@ -825,7 +834,7 @@ export function AuditLogsTable({
 
   const applyFilters = (newFilters: Partial<AuditLogsFilters>): void => {
     const params = new URLSearchParams(searchParams.toString());
-    
+
     if (newFilters.page) params.set("page", newFilters.page.toString());
     if (newFilters.pageSize) params.set("pageSize", newFilters.pageSize.toString());
     if (newFilters.action) params.set("action", newFilters.action);
@@ -840,7 +849,7 @@ export function AuditLogsTable({
     else params.delete("endDate");
     if (newFilters.sortBy) params.set("sortBy", newFilters.sortBy);
     if (newFilters.sortOrder) params.set("sortOrder", newFilters.sortOrder);
-    
+
     router.push(`/staff/audit-logs?${params.toString()}`);
   };
 
@@ -1048,7 +1057,7 @@ export function AuditLogsTable({
 
 async function generateExportBlob(any[], format: string): Promise<Blob | null> {
   const timestamp = new Date().toISOString();
-  
+
   if (format === "csv") {
     const headers = [
       "Timestamp",
@@ -1061,7 +1070,7 @@ async function generateExportBlob(any[], format: string): Promise<Blob | null> {
       "User Agent",
       "Metadata",
     ];
-    
+
     const rows = data.map((log) => {
       const metadataStr = log.metadata
         ? JSON.stringify(log.metadata).replace(/"/g, '""')
@@ -1078,7 +1087,7 @@ async function generateExportBlob(any[], format: string): Promise<Blob | null> {
         `"${metadataStr}"`,
       ].join(",");
     });
-    
+
     const csv = [headers.join(","), ...rows].join("\n");
     return new Blob([csv], { type: "text/csv;charset=utf-8;" });
   } else if (format === "json") {
@@ -1104,7 +1113,7 @@ async function generateExportBlob(any[], format: string): Promise<Blob | null> {
       "Timestamp", "User Name", "User Email", "Action",
       "Entity", "Entity ID", "IP Address", "User Agent", "Metadata",
     ];
-    
+
     const rows = data.map((log) => {
       const metadata = log.metadata ? JSON.stringify(log.metadata) : "";
       return [
@@ -1119,16 +1128,16 @@ async function generateExportBlob(any[], format: string): Promise<Blob | null> {
         mdetadata,
       ];
     });
-    
+
     const worksheetData = [headers, ...rows];
     const ws = XLSX.utils.aoa_to_sheet(worksheetData);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Audit Logs");
     XLSX.writeFile(wb, `audit-logs-${timestamp}.xlsx`);
-    
+
     return new Blob([], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
   }
-  
+
   return null;
 }
 
@@ -1156,6 +1165,7 @@ git commit -m "feat: add main audit logs table with sort, pagination, and export
 ## Task 7: Create Server Component Page
 
 **Files:**
+
 - Create: `app/(staff)/staff/audit-logs/page.tsx`
 
 **Step 1: Create page component**
@@ -1313,8 +1323,8 @@ export default async function AuditLogsPage({
                 className="mt-1"
                 defaultValue={startDateStr || ""}
                 onChange={(e) => {
-                  const newFilters = { 
-                    ...filters, 
+                  const newFilters = {
+                    ...filters,
                     startDate: e.target.value ? new Date(e.target.value) : undefined,
                     page: 1
                   };
@@ -1332,8 +1342,8 @@ export default async function AuditLogsPage({
                 className="mt-1"
                 defaultValue={endDateStr || ""}
                 onChange={(e) => {
-                  const newFilters = { 
-                    ...filters, 
+                  const newFilters = {
+                    ...filters,
                     endDate: e.target.value ? new Date(e.target.value) : undefined,
                     page: 1
                   };
@@ -1354,7 +1364,7 @@ export default async function AuditLogsPage({
 
 function updateURL(filters: any, newPage: number = filters.page) {
   const params = new URLSearchParams();
-  
+
   if (newPage) params.set("page", String(newPage));
   if (filters.pageSize) params.set("pageSize", String(filters.pageSize));
   if (filters.action) params.set("action", String(filters.action));
@@ -1369,7 +1379,7 @@ function updateURL(filters: any, newPage: number = filters.page) {
   else params.delete("endDate");
   if (filters.sortBy) params.set("sortBy", String(filters.sortBy));
   if (filters.sortOrder) params.set("sortOrder", String(filters.sortOrder));
-  
+
   window.location.href = `/staff/audit-logs?${params.toString()}`;
 }
 
@@ -1378,7 +1388,7 @@ function clearFilters() {
   params.set("page", "1");
   params.set("sortBy", "createdAt");
   params.set("sortOrder", "desc");
-  
+
   window.location.href = `/staff/audit-logs?${params.toString()}`;
 }
 
@@ -1419,6 +1429,7 @@ git commit -m "feat: add audit logs page with URL-based filtering and authorizat
 ## Task 8: Update Navigation Route
 
 **Files:**
+
 - Modify: `config/navigation.ts`
 
 **Step 1: Update navigation route**

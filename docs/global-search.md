@@ -67,12 +67,12 @@ export default function UsersPage() {
 ```typescript
 useGlobalSearch("settings-page", [
   {
-    id: 'email-config',
-    title: 'Email Configuration',
+    id: "email-config",
+    title: "Email Configuration",
     category: SearchCategory.Page,
     icon: MailIcon,
-    href: '/staff/settings/email',
-    keywords: ['smtp', 'mail', 'notification', 'sender'],
+    href: "/staff/settings/email",
+    keywords: ["smtp", "mail", "notification", "sender"],
     priority: 30,
   },
 ]);
@@ -83,11 +83,11 @@ useGlobalSearch("settings-page", [
 ```typescript
 useGlobalSearch("dashboard-page", [
   {
-    id: 'export-report',
-    title: 'Export Report',
+    id: "export-report",
+    title: "Export Report",
     category: SearchCategory.Action,
     icon: FileDownIcon,
-    href: '/staff/reports/export',
+    href: "/staff/reports/export",
     hidden: !hasExportPermission, // Dynamically hide
     priority: 20,
   },
@@ -98,43 +98,44 @@ useGlobalSearch("dashboard-page", [
 
 ```typescript
 interface SearchItem {
-  id: string;                    // Unique identifier
-  title: string;                 // Display title
-  description?: string;          // Optional subtitle
-  href?: string;                 // Navigation URL
-  category: SearchCategory;      // One of: navigation, action, page, content, user
-  icon?: LucideIcon;            // Typed Lucide icon component
-  keywords?: string[];          // Additional search terms
-  priority?: number;            // Lower = higher priority (default: 50)
-  hidden?: boolean;             // Conditionally hide item
+  id: string; // Unique identifier
+  title: string; // Display title
+  description?: string; // Optional subtitle
+  href?: string; // Navigation URL
+  category: SearchCategory; // One of: navigation, action, page, content, user
+  icon?: LucideIcon; // Typed Lucide icon component
+  keywords?: string[]; // Additional search terms
+  priority?: number; // Lower = higher priority (default: 50)
+  hidden?: boolean; // Conditionally hide item
   meta?: Record<string, unknown>; // Custom metadata
-  onSelect?: () => void;        // Custom callback (alternative to href)
+  onSelect?: () => void; // Custom callback (alternative to href)
 }
 ```
 
 ## Search Categories
 
-| Category | Default Priority | Use For |
-|----------|-----------------|---------|
-| `SearchCategory.Navigation` | 10 | Sidebar navigation items |
-| `SearchCategory.Action` | 20 | Quick actions (create, import, export) |
-| `SearchCategory.Page` | 30 | Page-specific content |
-| `SearchCategory.Content` | 50 | Dynamic content items |
-| `SearchCategory.User` | 60 | User records (future) |
+| Category                    | Default Priority | Use For                                |
+| --------------------------- | ---------------- | -------------------------------------- |
+| `SearchCategory.Navigation` | 10               | Sidebar navigation items               |
+| `SearchCategory.Action`     | 20               | Quick actions (create, import, export) |
+| `SearchCategory.Page`       | 30               | Page-specific content                  |
+| `SearchCategory.Content`    | 50               | Dynamic content items                  |
+| `SearchCategory.User`       | 60               | User records (future)                  |
 
 ## Scoring Algorithm
 
 Search results are scored based on match quality:
 
-| Match Type | Score |
-|------------|-------|
-| Exact match | 100 |
-| Starts with | 80 |
-| Title includes | 60 |
-| Keyword match | 40 |
-| Description match | 20 |
+| Match Type        | Score |
+| ----------------- | ----- |
+| Exact match       | 100   |
+| Starts with       | 80    |
+| Title includes    | 60    |
+| Keyword match     | 40    |
+| Description match | 20    |
 
 Results are then sorted by:
+
 1. Score (descending)
 2. Priority (ascending - lower is better)
 3. Title (alphabetically)
@@ -148,12 +149,12 @@ Results are then sorted by:
 
 ## Keyboard Shortcuts
 
-| Shortcut | Action |
-|----------|--------|
-| `Cmd/Ctrl + K` | Open search dialog |
-| `Escape` | Close dialog |
-| `Arrow Up/Down` | Navigate results |
-| `Enter` | Select current result |
+| Shortcut        | Action                |
+| --------------- | --------------------- |
+| `Cmd/Ctrl + K`  | Open search dialog    |
+| `Escape`        | Close dialog          |
+| `Arrow Up/Down` | Navigate results      |
+| `Enter`         | Select current result |
 
 ## Advanced: Manual Registration
 

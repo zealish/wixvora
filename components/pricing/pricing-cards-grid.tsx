@@ -1,6 +1,9 @@
 "use client";
 
-import { StaggerContainer, StaggerItem } from "@/components/landing/motion-wrapper";
+import {
+  StaggerContainer,
+  StaggerItem,
+} from "@/components/landing/motion-wrapper";
 import { PricingCard, type PricingPlan } from "./pricing-card";
 
 const PRICING_PLANS: PricingPlan[] = [

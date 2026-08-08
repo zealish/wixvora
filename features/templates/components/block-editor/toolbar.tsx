@@ -32,42 +32,46 @@ export function EditorToolbar({
   onImportJSON,
 }: EditorToolbarProps) {
   return (
-    <header className="h-14 shrink-0 border-b border-slate-800/80 bg-slate-900/90 backdrop-blur-md px-4 flex items-center justify-between gap-4 select-none">
+    <header className="flex h-14 shrink-0 items-center justify-between gap-4 border-b border-slate-800/80 bg-slate-900/90 px-4 backdrop-blur-md select-none">
       <div className="flex items-center space-x-2">
-        <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center shadow-lg shadow-blue-500/25">
-          <Sparkles className="w-4 h-4 text-white" />
+        <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 shadow-lg shadow-blue-500/25">
+          <Sparkles className="h-4 w-4 text-white" />
         </div>
         <div className="hidden lg:block">
-          <h2 className="font-bold text-sm text-white leading-tight">Block Editor</h2>
-          <p className="text-[10px] text-slate-400">Wix & WordPress style builder</p>
+          <h2 className="text-sm leading-tight font-bold text-white">
+            Block Editor
+          </h2>
+          <p className="text-[10px] text-slate-400">
+            Wix & WordPress style builder
+          </p>
         </div>
       </div>
 
       <ViewportSwitcher viewport={viewport} onChange={onViewportChange} />
 
       <div className="flex items-center space-x-2">
-        <div className="flex items-center bg-slate-950 rounded-xl border border-slate-800 p-1 mr-1">
+        <div className="mr-1 flex items-center rounded-xl border border-slate-800 bg-slate-950 p-1">
           <button
             type="button"
             onClick={onUndo}
             disabled={!canUndo}
             title="Undo"
-            className="p-1.5 text-slate-400 hover:text-white disabled:opacity-30 rounded hover:bg-slate-800 transition"
+            className="rounded p-1.5 text-slate-400 transition hover:bg-slate-800 hover:text-white disabled:opacity-30"
           >
-            <Undo className="w-4 h-4" />
+            <Undo className="h-4 w-4" />
           </button>
           <button
             type="button"
             onClick={onRedo}
             disabled={!canRedo}
             title="Redo"
-            className="p-1.5 text-slate-400 hover:text-white disabled:opacity-30 rounded hover:bg-slate-800 transition"
+            className="rounded p-1.5 text-slate-400 transition hover:bg-slate-800 hover:text-white disabled:opacity-30"
           >
-            <Redo className="w-4 h-4" />
+            <Redo className="h-4 w-4" />
           </button>
         </div>
 
-        <label className="cursor-pointer px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium border border-slate-700 flex items-center space-x-1 transition">
+        <label className="flex cursor-pointer items-center space-x-1 rounded-xl border border-slate-700 bg-slate-800 px-3 py-2 text-xs font-medium text-slate-300 transition hover:bg-slate-700">
           Import JSON
           <input
             type="file"
@@ -84,7 +88,7 @@ export function EditorToolbar({
         <button
           type="button"
           onClick={onExportJSON}
-          className="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium border border-slate-700 flex items-center space-x-1 transition"
+          className="flex items-center space-x-1 rounded-xl border border-slate-700 bg-slate-800 px-3 py-2 text-xs font-medium text-slate-300 transition hover:bg-slate-700"
         >
           Export JSON
         </button>
@@ -92,16 +96,16 @@ export function EditorToolbar({
         <button
           type="button"
           onClick={onTogglePreview}
-          className={`flex items-center space-x-1.5 px-3 py-2 rounded-xl text-xs font-medium border transition ${
+          className={`flex items-center space-x-1.5 rounded-xl border px-3 py-2 text-xs font-medium transition ${
             isPreviewMode
-              ? "bg-amber-500/20 text-amber-400 border-amber-500/30"
-              : "bg-slate-800 text-slate-300 border-slate-700 hover:text-white"
+              ? "border-amber-500/30 bg-amber-500/20 text-amber-400"
+              : "border-slate-700 bg-slate-800 text-slate-300 hover:text-white"
           }`}
         >
           {isPreviewMode ? (
-            <EyeOff className="w-4 h-4" />
+            <EyeOff className="h-4 w-4" />
           ) : (
-            <Eye className="w-4 h-4" />
+            <Eye className="h-4 w-4" />
           )}
           <span className="hidden sm:inline">
             {isPreviewMode ? "Exit Preview" : "Preview"}
@@ -111,9 +115,9 @@ export function EditorToolbar({
         <button
           type="button"
           onClick={onExportHTML}
-          className="flex items-center space-x-1.5 px-4 py-2 rounded-xl text-xs font-semibold bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white shadow-lg shadow-blue-500/20 transition"
+          className="flex items-center space-x-1.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-2 text-xs font-semibold text-white shadow-lg shadow-blue-500/20 transition hover:from-blue-500 hover:to-indigo-500"
         >
-          <Code className="w-4 h-4" />
+          <Code className="h-4 w-4" />
           <span>Export HTML</span>
         </button>
       </div>

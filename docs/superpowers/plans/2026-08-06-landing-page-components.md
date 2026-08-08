@@ -39,6 +39,7 @@ app/(guest)/
 ### Task 1: Create Custom Styles in globals.css
 
 **Files:**
+
 - Modify: `app/globals.css`
 
 **Purpose:** Add the missing custom CSS classes from the original HTML that aren't already present.
@@ -54,7 +55,7 @@ Append after the existing `@layer components` block in `app/globals.css`:
 ```css
 /* Landing page gradient text */
 .text-gradient {
-  background: linear-gradient(135deg, #4F46E5 0%, #3B82F6 100%);
+  background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -83,7 +84,7 @@ input[type="range"]::-webkit-slider-thumb {
   width: 14px;
   height: 14px;
   border-radius: 50%;
-  background: #4F46E5;
+  background: #4f46e5;
   cursor: pointer;
   border: 2px solid #ffffff;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
@@ -106,9 +107,11 @@ git commit -m "feat: add landing page custom CSS styles"
 ### Task 2: Create Demo Modal Component
 
 **Files:**
+
 - Create: `components/landing/demo-modal.tsx`
 
 **Interfaces:**
+
 - Produces: `DemoModal` component with `isOpen: boolean` and `onClose: () => void` props
 
 - [ ] **Step 1: Create demo-modal.tsx**
@@ -142,9 +145,7 @@ export function DemoModal({ isOpen, onClose }: DemoModalProps) {
   return (
     <div
       className={`fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-sm transition-all duration-300 ${
-        isOpen
-          ? "opacity-100"
-          : "pointer-events-none opacity-0"
+        isOpen ? "opacity-100" : "pointer-events-none opacity-0"
       }`}
       onClick={onClose}
     >
@@ -154,7 +155,7 @@ export function DemoModal({ isOpen, onClose }: DemoModalProps) {
       >
         <button
           onClick={onClose}
-          className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-slate-500 transition hover:bg-slate-200"
+          className="absolute top-4 right-4 flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-slate-500 transition hover:bg-slate-200"
           aria-label="Close modal"
         >
           <X className="h-4 w-4" />
@@ -190,9 +191,11 @@ git commit -m "feat: add demo modal component"
 ### Task 3: Create Builder Preview Component
 
 **Files:**
+
 - Create: `components/landing/builder-preview.tsx`
 
 **Interfaces:**
+
 - Consumes: `onDemoClick?: () => void` callback prop
 - Produces: `BuilderPreview` component with full interactive builder demo
 
@@ -340,14 +343,14 @@ export function BuilderPreview({ onDemoClick }: BuilderPreviewProps) {
           <div className="grid w-full max-w-xl grid-cols-1 items-center gap-6 md:grid-cols-12">
             {/* Editable Text Block */}
             <div className="builder-selection-box rounded-xl bg-white/60 p-3 md:col-span-7">
-              <div className="builder-handle -left-1.5 -top-1.5" />
-              <div className="builder-handle -right-1.5 -top-1.5" />
+              <div className="builder-handle -top-1.5 -left-1.5" />
+              <div className="builder-handle -top-1.5 -right-1.5" />
               <div className="builder-handle -bottom-1.5 -left-1.5" />
-              <div className="builder-handle -bottom-1.5 -right-1.5" />
+              <div className="builder-handle -right-1.5 -bottom-1.5" />
               <h2
                 contentEditable
                 suppressContentEditableWarning
-                className="rounded px-1 text-2xl font-black leading-tight text-slate-900 outline-none focus:ring-1 focus:ring-indigo-300 sm:text-3xl"
+                className="rounded px-1 text-2xl leading-tight font-black text-slate-900 outline-none focus:ring-1 focus:ring-indigo-300 sm:text-3xl"
               >
                 Your Vision, Built with AI
               </h2>
@@ -356,7 +359,8 @@ export function BuilderPreview({ onDemoClick }: BuilderPreviewProps) {
                 suppressContentEditableWarning
                 className="mt-4 rounded px-1 text-xs leading-relaxed text-slate-600 outline-none focus:ring-1 focus:ring-indigo-300 sm:text-sm"
               >
-                Bring your ideas to life with beautiful, high-converting websites.
+                Bring your ideas to life with beautiful, high-converting
+                websites.
               </p>
               <div className="mt-4">
                 <button className="rounded-xl bg-indigo-600 px-5 py-2.5 text-xs font-semibold text-white shadow-md shadow-indigo-500/20 transition hover:bg-indigo-700">
@@ -379,7 +383,7 @@ export function BuilderPreview({ onDemoClick }: BuilderPreviewProps) {
                   }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-indigo-950/80 via-indigo-900/30 to-transparent" />
-                <div className="absolute bottom-3 left-3 right-3 text-white">
+                <div className="absolute right-3 bottom-3 left-3 text-white">
                   <div className="mb-1 h-6 w-6 rounded-full bg-indigo-300/40 backdrop-blur" />
                 </div>
               </div>
@@ -388,9 +392,9 @@ export function BuilderPreview({ onDemoClick }: BuilderPreviewProps) {
         </div>
 
         {/* Right Properties Panel */}
-        <div className="absolute bottom-6 right-4 top-6 z-20 flex w-52 flex-col space-y-4 rounded-2xl border border-slate-100/80 bg-white/95 p-4 text-xs shadow-[0_10px_30px_-5px_rgba(0,0,0,0.08),0_4px_12px_-2px_rgba(0,0,0,0.03)] backdrop-blur-md sm:w-56">
+        <div className="absolute top-6 right-4 bottom-6 z-20 flex w-52 flex-col space-y-4 rounded-2xl border border-slate-100/80 bg-white/95 p-4 text-xs shadow-[0_10px_30px_-5px_rgba(0,0,0,0.08),0_4px_12px_-2px_rgba(0,0,0,0.03)] backdrop-blur-md sm:w-56">
           <div className="flex items-center border-b border-slate-100 pb-2">
-            <button className="flex-1 border-b-2 border-indigo-600 pb-1.5 text-center font-semibold text-indigo-600 -mb-2">
+            <button className="-mb-2 flex-1 border-b-2 border-indigo-600 pb-1.5 text-center font-semibold text-indigo-600">
               Section
             </button>
             <button className="flex-1 pb-1.5 text-center font-medium text-slate-400 hover:text-slate-600">
@@ -444,7 +448,7 @@ export function BuilderPreview({ onDemoClick }: BuilderPreviewProps) {
                   onChange={(e) => setBgColor(e.target.value)}
                   className="h-5 w-5 cursor-pointer rounded-full border-0 bg-transparent p-0"
                 />
-                <span className="font-mono text-[11px] font-medium uppercase text-slate-700">
+                <span className="font-mono text-[11px] font-medium text-slate-700 uppercase">
                   {bgColor.toUpperCase()}
                 </span>
               </div>
@@ -488,9 +492,11 @@ git commit -m "feat: add interactive builder preview component"
 ### Task 4: Create Navbar Component
 
 **Files:**
+
 - Create: `components/landing/navbar.tsx`
 
 **Interfaces:**
+
 - Produces: `Navbar` server component (no props)
 
 - [ ] **Step 1: Create navbar.tsx**
@@ -539,10 +545,7 @@ export function Navbar() {
       </Link>
 
       <nav className="hidden items-center space-x-10 text-[15px] font-medium text-slate-700 md:flex">
-        <a
-          href="#features"
-          className="transition-colors hover:text-indigo-600"
-        >
+        <a href="#features" className="transition-colors hover:text-indigo-600">
           Features
         </a>
         <a
@@ -551,10 +554,7 @@ export function Navbar() {
         >
           Templates
         </a>
-        <a
-          href="#pricing"
-          className="transition-colors hover:text-indigo-600"
-        >
+        <a href="#pricing" className="transition-colors hover:text-indigo-600">
           Pricing
         </a>
         <div className="group flex cursor-pointer items-center gap-1.5 transition-colors hover:text-indigo-600">
@@ -598,9 +598,11 @@ git commit -m "feat: add landing page navbar component"
 ### Task 5: Create Hero Section Component
 
 **Files:**
+
 - Create: `components/landing/hero-section.tsx`
 
 **Interfaces:**
+
 - Consumes: `DemoModal` from `./demo-modal`, `BuilderPreview` from `./builder-preview`
 - Produces: `HeroSection` component (server wrapper with client children)
 
@@ -621,23 +623,23 @@ export function HeroSection() {
     <>
       <main className="relative mx-auto my-auto w-full max-w-[1400px] px-6 py-8 md:px-12 lg:py-16">
         {/* Ambient Glows */}
-        <div className="pointer-events-none absolute -right-20 top-0 -z-10 h-[600px] w-[600px] animate-pulse-soft rounded-full bg-indigo-100/60 blur-3xl" />
+        <div className="animate-pulse-soft pointer-events-none absolute top-0 -right-20 -z-10 h-[600px] w-[600px] rounded-full bg-indigo-100/60 blur-3xl" />
         <div className="pointer-events-none absolute bottom-0 left-1/3 -z-10 h-[400px] w-[400px] rounded-full bg-blue-50/80 blur-3xl" />
 
         <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-12 lg:gap-8">
           {/* Left Column: Copy */}
           <div className="z-10 flex flex-col items-start space-y-7 pr-0 lg:col-span-5 lg:pr-2">
-            <div className="inline-flex items-center rounded-full border border-indigo-100 bg-indigo-50/90 px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-indigo-600 shadow-sm">
+            <div className="inline-flex items-center rounded-full border border-indigo-100 bg-indigo-50/90 px-4 py-1.5 text-xs font-bold tracking-wider text-indigo-600 uppercase shadow-sm">
               AI-POWERED WEBSITE BUILDER
             </div>
 
-            <h1 className="text-5xl font-black leading-[1.08] tracking-tight text-slate-900 sm:text-6xl lg:text-[62px]">
+            <h1 className="text-5xl leading-[1.08] font-black tracking-tight text-slate-900 sm:text-6xl lg:text-[62px]">
               Build <span className="text-gradient">Smarter.</span>
               <br />
               Launch <span className="text-gradient">Faster.</span>
             </h1>
 
-            <p className="max-w-lg text-lg font-normal leading-relaxed text-slate-600 sm:text-xl">
+            <p className="max-w-lg text-lg leading-relaxed font-normal text-slate-600 sm:text-xl">
               Create professional websites effortlessly with the power of AI.
             </p>
 
@@ -681,7 +683,7 @@ export function HeroSection() {
           {/* Right Column: Builder Preview */}
           <div className="relative w-full pt-4 lg:col-span-7 lg:pt-0">
             {/* Decorative Sparkle */}
-            <div className="pointer-events-none absolute -top-10 right-28 z-20 hidden animate-float sm:block">
+            <div className="animate-float pointer-events-none absolute -top-10 right-28 z-20 hidden sm:block">
               <div className="relative">
                 <svg
                   width="120"
@@ -701,8 +703,13 @@ export function HeroSection() {
             </div>
 
             {/* Decorative Star */}
-            <div className="pointer-events-none absolute -right-6 top-12 z-20 hidden animate-pulse-soft text-amber-400 sm:block">
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+            <div className="animate-pulse-soft pointer-events-none absolute top-12 -right-6 z-20 hidden text-amber-400 sm:block">
+              <svg
+                width="32"
+                height="32"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
                 <path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z" />
               </svg>
             </div>
@@ -734,6 +741,7 @@ git commit -m "feat: add landing page hero section component"
 ### Task 6: Create Barrel Export
 
 **Files:**
+
 - Create: `components/landing/index.ts`
 
 - [ ] **Step 1: Create index.ts**
@@ -757,9 +765,11 @@ git commit -m "feat: add landing components barrel export"
 ### Task 7: Update Guest Landing Page
 
 **Files:**
+
 - Modify: `app/(guest)/page.tsx`
 
 **Interfaces:**
+
 - Consumes: `Navbar`, `HeroSection` from `@/components/landing`
 
 - [ ] **Step 1: Update page.tsx**
@@ -821,6 +831,7 @@ Run: `pnpm dev`
 Open `http://localhost:3000` in browser
 
 Verify against original HTML:
+
 - Navbar renders with logo, nav links, auth buttons
 - Hero section shows badge, headline, subtitle, CTAs, feature grid
 - Builder preview is interactive (device switcher, color picker, spacing slider)

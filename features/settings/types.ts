@@ -12,5 +12,4 @@ export interface SettingsRecord {
 }
 
 export type SettingsActionResult =
-  | { success: true }
-  | { success: false; error: string };
+  { success: true } | { success: false; error: string };

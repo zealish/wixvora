@@ -14,21 +14,24 @@ const OPTIONS: { value: Viewport; label: string; Icon: typeof Monitor }[] = [
   { value: "mobile", label: "Mobile", Icon: Smartphone },
 ];
 
-export function ViewportSwitcher({ viewport, onChange }: ViewportSwitcherProps) {
+export function ViewportSwitcher({
+  viewport,
+  onChange,
+}: ViewportSwitcherProps) {
   return (
-    <div className="flex items-center bg-slate-950 p-1 rounded-xl border border-slate-800">
+    <div className="flex items-center rounded-xl border border-slate-800 bg-slate-950 p-1">
       {OPTIONS.map(({ value, label, Icon }) => (
         <button
           key={value}
           type="button"
           onClick={() => onChange(value)}
-          className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition ${
+          className={`flex items-center space-x-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition ${
             viewport === value
               ? "bg-blue-600 text-white shadow"
               : "text-slate-400 hover:text-white"
           }`}
         >
-          <Icon className="w-4 h-4" />
+          <Icon className="h-4 w-4" />
           <span>{label}</span>
         </button>
       ))}

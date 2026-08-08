@@ -38,7 +38,8 @@ export function createCategoryColumns(
         <Checkbox
           checked={table.getIsAllPageRowsSelected()}
           indeterminate={
-            table.getIsSomePageRowsSelected() && !table.getIsAllPageRowsSelected()
+            table.getIsSomePageRowsSelected() &&
+            !table.getIsAllPageRowsSelected()
           }
           onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
           aria-label="Select all"
@@ -96,15 +97,22 @@ export function createCategoryColumns(
         <DataTableColumnHeader column={column} title="Name" />
       ),
       cell: ({ row }) => {
-        const category = row.original as CategoryWithChildren & { depth?: number };
+        const category = row.original as CategoryWithChildren & {
+          depth?: number;
+        };
         const IconComponent = getIconComponent(category.icon);
         const depth = category.depth ?? 0;
         const paddingLeft = depth * 24; // 24px per level
 
         return (
-          <div className="flex items-center gap-2" style={{ paddingLeft: `${paddingLeft}px` }}>
+          <div
+            className="flex items-center gap-2"
+            style={{ paddingLeft: `${paddingLeft}px` }}
+          >
             {IconComponent && <IconComponent className="h-4 w-4" />}
-            <span className={depth > 0 ? "text-muted-foreground" : "font-medium"}>
+            <span
+              className={depth > 0 ? "text-muted-foreground" : "font-medium"}
+            >
               {category.name}
             </span>
           </div>
@@ -121,7 +129,7 @@ export function createCategoryColumns(
         <DataTableColumnHeader column={column} title="Slug" />
       ),
       cell: ({ row }) => (
-        <code className="text-sm bg-muted px-1.5 py-0.5 rounded">
+        <code className="bg-muted rounded px-1.5 py-0.5 text-sm">
           {row.original.slug}
         </code>
       ),
@@ -137,7 +145,9 @@ export function createCategoryColumns(
         <DataTableColumnHeader column={column} title="Order" />
       ),
       cell: ({ row }) => (
-        <span className="text-muted-foreground">{row.original.displayOrder}</span>
+        <span className="text-muted-foreground">
+          {row.original.displayOrder}
+        </span>
       ),
       meta: {
         exportable: true,
@@ -150,7 +160,9 @@ export function createCategoryColumns(
         <DataTableColumnHeader column={column} title="Status" />
       ),
       cell: ({ row }) => (
-        <Badge variant={row.original.status === "active" ? "default" : "secondary"}>
+        <Badge
+          variant={row.original.status === "active" ? "default" : "secondary"}
+        >
           {row.original.status}
         </Badge>
       ),
@@ -168,33 +180,28 @@ export function createCategoryColumns(
 
         return (
           <DropdownMenu>
-            <DropdownMenuTrigger className="inline-flex h-8 w-8 items-center justify-center rounded-md hover:bg-accent hover:text-accent-foreground">
+            <DropdownMenuTrigger className="hover:bg-accent hover:text-accent-foreground inline-flex h-8 w-8 items-center justify-center rounded-md">
               <span className="sr-only">Open menu</span>
               <MoreHorizontal className="h-4 w-4" />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem onClick={() => onEdit(category.id)}>
-                <Pencil className="h-4 w-4 mr-2" />
+                <Pencil className="mr-2 h-4 w-4" />
                 Edit
               </DropdownMenuItem>
               {isRoot && (
                 <DropdownMenuItem onClick={() => onAddSubCategory(category.id)}>
-                  <FolderPlus className="h-4 w-4 mr-2" />
+                  <FolderPlus className="mr-2 h-4 w-4" />
                   Add Sub-Category
                 </DropdownMenuItem>
               )}
               <DropdownMenuItem
-                onClick={() =>
-                  onToggleStatus(
-                    category.id,
-                    category.status
-                  )
-                }
+                onClick={() => onToggleStatus(category.id, category.status)}
               >
                 {category.status === "active" ? (
-                  <ToggleRight className="h-4 w-4 mr-2" />
+                  <ToggleRight className="mr-2 h-4 w-4" />
                 ) : (
-                  <ToggleLeft className="h-4 w-4 mr-2" />
+                  <ToggleLeft className="mr-2 h-4 w-4" />
                 )}
                 Toggle Status
               </DropdownMenuItem>
@@ -202,7 +209,7 @@ export function createCategoryColumns(
                 onClick={() => onDelete(category.id, hasChildren)}
                 className="text-destructive"
               >
-                <Trash2 className="h-4 w-4 mr-2" />
+                <Trash2 className="mr-2 h-4 w-4" />
                 Delete
               </DropdownMenuItem>
             </DropdownMenuContent>

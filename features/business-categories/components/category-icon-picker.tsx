@@ -90,11 +90,7 @@ const POPULAR_ICONS = [
   Clock,
 ];
 
-const ALL_ICONS = [
-  ...POPULAR_ICONS,
-  Check,
-  XIcon,
-];
+const ALL_ICONS = [...POPULAR_ICONS, Check, XIcon];
 
 interface CategoryIconPickerProps {
   value: string | null;
@@ -122,7 +118,11 @@ export function CategoryIconPicker({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger
         render={
-          <Button variant="outline" type="button" className="w-full justify-start gap-2" />
+          <Button
+            variant="outline"
+            type="button"
+            className="w-full justify-start gap-2"
+          />
         }
       >
         {SelectedIcon ? (
@@ -140,7 +140,7 @@ export function CategoryIconPicker({
         </DialogHeader>
         <div className="space-y-4">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
             <Input
               placeholder="Search icons..."
               value={search}
@@ -148,7 +148,7 @@ export function CategoryIconPicker({
               className="pl-9"
             />
           </div>
-          <div className="grid grid-cols-8 gap-2 max-h-80 overflow-y-auto">
+          <div className="grid max-h-80 grid-cols-8 gap-2 overflow-y-auto">
             {filteredIcons.map((Icon) => (
               <Button
                 key={Icon.displayName}

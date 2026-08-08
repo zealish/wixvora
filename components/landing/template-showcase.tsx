@@ -2,12 +2,7 @@
 
 import { Swiper, SwiperSlide } from "swiper/react";
 import { EffectCoverflow, Pagination } from "swiper/modules";
-import {
-  ArrowRight,
-  Minus,
-  Square,
-  X,
-} from "lucide-react";
+import { ArrowRight, Minus, Square, X } from "lucide-react";
 import { MotionWrapper } from "./motion-wrapper";
 import type { Swiper as SwiperType } from "swiper";
 import { useRef } from "react";

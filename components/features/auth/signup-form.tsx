@@ -57,7 +57,10 @@ export function SignupForm() {
               </div>
             )}
             <div className="space-y-2.5">
-              <Label htmlFor="name" className="text-sm font-semibold text-slate-700">
+              <Label
+                htmlFor="name"
+                className="text-sm font-semibold text-slate-700"
+              >
                 Name
               </Label>
               <Input
@@ -71,7 +74,10 @@ export function SignupForm() {
               />
             </div>
             <div className="space-y-2.5">
-              <Label htmlFor="email" className="text-sm font-semibold text-slate-700">
+              <Label
+                htmlFor="email"
+                className="text-sm font-semibold text-slate-700"
+              >
                 Email
               </Label>
               <Input
@@ -85,7 +91,10 @@ export function SignupForm() {
               />
             </div>
             <div className="space-y-2.5">
-              <Label htmlFor="password" className="text-sm font-semibold text-slate-700">
+              <Label
+                htmlFor="password"
+                className="text-sm font-semibold text-slate-700"
+              >
                 Password
               </Label>
               <Input
@@ -99,7 +108,10 @@ export function SignupForm() {
               />
             </div>
             <div className="space-y-2.5">
-              <Label htmlFor="companyName" className="text-sm font-semibold text-slate-700">
+              <Label
+                htmlFor="companyName"
+                className="text-sm font-semibold text-slate-700"
+              >
                 Company Name <span className="text-slate-400">(Optional)</span>
               </Label>
               <Input
@@ -125,7 +137,10 @@ export function SignupForm() {
 
       <p className="text-center text-sm font-medium text-slate-600">
         Already have an account?{" "}
-        <Link href="/login" className="font-semibold text-indigo-600 transition-colors hover:text-indigo-700">
+        <Link
+          href="/login"
+          className="font-semibold text-indigo-600 transition-colors hover:text-indigo-700"
+        >
           Log in
         </Link>
       </p>

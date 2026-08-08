@@ -24,11 +24,13 @@
 ### Task 1: Database Schema & Migration
 
 **Files:**
+
 - Create: `lib/db/schema/settings.ts`
 - Modify: `lib/db/schema/index.ts`
 - Modify: `types/rbac.ts` (add "settings" to permission types if needed)
 
 **Interfaces:**
+
 - Produces: `settings` Drizzle table object used by Tasks 2, 3, 4
 
 - [ ] **Step 1: Create the settings schema file**
@@ -117,10 +119,12 @@ git commit -m "feat: add settings table with JSONB columns and seed data"
 ### Task 2: Validation Schemas
 
 **Files:**
+
 - Create: `features/settings/validation.ts`
 - Create: `features/settings/types.ts`
 
 **Interfaces:**
+
 - Produces: `seoSettingsSchema`, `SeoSettings` type used by Tasks 3, 4, 5
 
 - [ ] **Step 1: Create validation schemas**
@@ -133,7 +137,10 @@ export const googleAnalyticsSchema = z.object({
   enabled: z.boolean().default(false),
   measurementId: z
     .string()
-    .regex(/^G-[A-Z0-9]{10}$/, "Invalid GA Measurement ID format (e.g. G-XXXXXXXXXX)")
+    .regex(
+      /^G-[A-Z0-9]{10}$/,
+      "Invalid GA Measurement ID format (e.g. G-XXXXXXXXXX)"
+    )
     .or(z.literal(""))
     .transform((v) => (v === "" ? null : v))
     .nullable()
@@ -185,8 +192,7 @@ export interface SettingsRecord {
 }
 
 export type SettingsActionResult =
-  | { success: true }
-  | { success: false; error: string };
+  { success: true } | { success: false; error: string };
 ```
 
 - [ ] **Step 3: Commit**
@@ -201,10 +207,12 @@ git commit -m "feat: add settings validation schemas and types"
 ### Task 3: Service Layer (Queries + Business Logic)
 
 **Files:**
+
 - Create: `features/settings/queries.ts`
 - Create: `features/settings/service.ts`
 
 **Interfaces:**
+
 - Consumes: `settings` table from Task 1, `SeoSettings` from Task 2
 - Produces: `getSeoSettings()`, `updateSeoSettings()` used by Tasks 4, 6
 
@@ -283,9 +291,11 @@ git commit -m "feat: add settings query and service layers with cached reads"
 ### Task 4: Server Actions
 
 **Files:**
+
 - Create: `features/settings/actions.ts`
 
 **Interfaces:**
+
 - Consumes: `getSeoSettings()`, `updateSeoSettings()` from Task 3, `getSession()` from auth, `createAuditLog()` from audit
 - Produces: `updateSeoSettingsAction()` used by Task 5
 
@@ -325,7 +335,10 @@ export async function updateSeoSettingsAction(
       (role: { code: string }) => role.code === "SUPER_ADMIN"
     );
     if (!isSuperAdmin) {
-      return { success: false, error: "Forbidden: SUPER_ADMIN access required" };
+      return {
+        success: false,
+        error: "Forbidden: SUPER_ADMIN access required",
+      };
     }
 
     const validated = seoSettingsSchema.parse(data);
@@ -375,6 +388,7 @@ git commit -m "feat: add settings server actions with SUPER_ADMIN auth and audit
 ### Task 5: Settings Page UI
 
 **Files:**
+
 - Create: `app/(staff)/staff/settings/page.tsx`
 - Create: `app/(staff)/staff/settings/layout.tsx`
 - Create: `components/settings/settings-tabs.tsx`
@@ -383,6 +397,7 @@ git commit -m "feat: add settings server actions with SUPER_ADMIN auth and audit
 - Create: `components/settings/toggle-switch.tsx`
 
 **Interfaces:**
+
 - Consumes: `updateSeoSettingsAction()` from Task 4, `getSeoSettings()` from Task 3
 - Consumes: shadcn components (Tabs, Card, Input, Label, Button, Textarea)
 
@@ -731,11 +746,13 @@ If roles are not included in the query, you'll need to add a join with `staffRol
 - [ ] **Step 7: Install Switch component if needed**
 
 Check if shadcn switch exists:
+
 ```bash
 ls components/ui/switch.tsx 2>/dev/null || echo "not found"
 ```
 
 If not found and you prefer Switch over the custom ToggleSwitch, install it:
+
 ```bash
 npx shadcn@latest add switch
 ```
@@ -749,6 +766,7 @@ npm run dev
 ```
 
 Navigate to `http://localhost:3000/staff/settings` as a SUPER_ADMIN user. Verify:
+
 - Tabs render with SEO tab active
 - Google Analytics section shows enable toggle and measurement ID input
 - Search Console section shows site URL and verification token inputs
@@ -766,10 +784,12 @@ git commit -m "feat: add settings page with SEO form UI"
 ### Task 6: Google Analytics Script Injection
 
 **Files:**
+
 - Create: `components/analytics/google-analytics.tsx`
 - Modify: `app/layout.tsx`
 
 **Interfaces:**
+
 - Consumes: `getSeoSettings()` from Task 3
 - Produces: GA script + Search Console meta tag in HTML head
 
@@ -812,6 +832,7 @@ export function GoogleAnalytics({ measurementId }: GoogleAnalyticsProps) {
 - [ ] **Step 2: Update root layout to inject GA + Search Console**
 
 Current `app/layout.tsx`:
+
 ```typescript
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
@@ -847,6 +868,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
 ```
 
 Replace with:
+
 ```typescript
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
@@ -931,9 +953,11 @@ git commit -m "feat: inject GA script and Search Console meta tag from settings"
 ### Task 7: Navigation Integration
 
 **Files:**
+
 - Modify: `config/navigation.ts`
 
 **Interfaces:**
+
 - Consumes: navigation pattern from existing config
 - Produces: Settings link visible to SUPER_ADMIN
 
@@ -967,6 +991,7 @@ Note: Check how icons are handled in the navigation. If icons are stored as stri
 - [ ] **Step 2: Verify navigation renders**
 
 Run dev server and check:
+
 - Settings link appears in sidebar for SUPER_ADMIN
 - Settings link does NOT appear for other roles (filtered by permissions)
 - Clicking navigates to `/staff/settings`
@@ -983,10 +1008,12 @@ git commit -m "feat: add Settings link to staff navigation"
 ### Task 8: Testing & Verification
 
 **Files:**
+
 - Create: `features/settings/__tests__/validation.test.ts`
 - Create: `features/settings/__tests__/service.test.ts`
 
 **Interfaces:**
+
 - Tests all layers: validation, service, actions
 
 - [ ] **Step 1: Create validation tests**
@@ -1117,6 +1144,7 @@ Ensure all tests pass.
 - [ ] **Step 4: Review all created/modified files**
 
 Verify:
+
 - `lib/db/schema/settings.ts` - Schema matches design
 - `features/settings/validation.ts` - Zod schemas are correct
 - `features/settings/service.ts` - Cache and revalidation work

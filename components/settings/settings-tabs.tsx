@@ -20,7 +20,7 @@ export function SettingsTabs({ seoSettings }: SettingsTabsProps) {
       </TabsList>
 
       <TabsContent value="general">
-        <div className="rounded-lg border p-8 text-center text-muted-foreground">
+        <div className="text-muted-foreground rounded-lg border p-8 text-center">
           General settings coming soon.
         </div>
       </TabsContent>
@@ -30,19 +30,19 @@ export function SettingsTabs({ seoSettings }: SettingsTabsProps) {
       </TabsContent>
 
       <TabsContent value="email">
-        <div className="rounded-lg border p-8 text-center text-muted-foreground">
+        <div className="text-muted-foreground rounded-lg border p-8 text-center">
           Email settings coming soon.
         </div>
       </TabsContent>
 
       <TabsContent value="integrations">
-        <div className="rounded-lg border p-8 text-center text-muted-foreground">
+        <div className="text-muted-foreground rounded-lg border p-8 text-center">
           Integration settings coming soon.
         </div>
       </TabsContent>
 
       <TabsContent value="security">
-        <div className="rounded-lg border p-8 text-center text-muted-foreground">
+        <div className="text-muted-foreground rounded-lg border p-8 text-center">
           Security settings coming soon.
         </div>
       </TabsContent>

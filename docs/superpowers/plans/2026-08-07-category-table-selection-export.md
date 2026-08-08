@@ -44,9 +44,11 @@ features/business-categories/
 ### Task 1: Install Dependencies
 
 **Files:**
+
 - Modify: `package.json`
 
 **Interfaces:**
+
 - Consumes: None
 - Produces: `xlsx`, `file-saver` packages available for import
 
@@ -79,9 +81,11 @@ git commit -m "chore(deps): add xlsx and file-saver for category export"
 ### Task 2: Create Export Utilities
 
 **Files:**
+
 - Create: `features/business-categories/lib/export-utils.ts`
 
 **Interfaces:**
+
 - Consumes: `CategoryWithChildren` from `../types`
 - Produces:
   - `type ExportRow`
@@ -251,7 +255,10 @@ export function prepareExportData(
   const rows: ExportRow[] = [];
   const parentMap = new Map<string, string>();
 
-  const flatten = (cats: CategoryWithChildren[], parentName: string | null = null) => {
+  const flatten = (
+    cats: CategoryWithChildren[],
+    parentName: string | null = null
+  ) => {
     for (const cat of cats) {
       if (parentName) {
         parentMap.set(cat.id, parentName);
@@ -295,7 +302,9 @@ function findCategoryByIndex(
 ): CategoryWithChildren | null {
   let currentIndex = 0;
 
-  const search = (cats: CategoryWithChildren[]): CategoryWithChildren | null => {
+  const search = (
+    cats: CategoryWithChildren[]
+  ): CategoryWithChildren | null => {
     for (const cat of cats) {
       if (currentIndex === targetIndex) {
         return cat;
@@ -423,7 +432,10 @@ export function exportToExcel(data: ExportRow[], filename?: string): void {
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Categories");
 
-    const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+    const excelBuffer = XLSX.write(workbook, {
+      bookType: "xlsx",
+      type: "array",
+    });
     const blob = new Blob([excelBuffer], {
       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     });
@@ -441,7 +453,9 @@ export function exportToJSON(data: ExportRow[], filename?: string): void {
     }
 
     const jsonString = JSON.stringify(data, null, 2);
-    const blob = new Blob([jsonString], { type: "application/json;charset=utf-8;" });
+    const blob = new Blob([jsonString], {
+      type: "application/json;charset=utf-8;",
+    });
     saveAs(blob, filename || generateFilename("json"));
   } catch (error) {
     console.error("JSON export failed:", error);
@@ -470,9 +484,11 @@ git commit -m "feat(categories): add export utility functions for CSV/Excel/JSON
 ### Task 3: Add Checkbox Column to Category Columns
 
 **Files:**
+
 - Modify: `features/business-categories/table/category-columns.tsx`
 
 **Interfaces:**
+
 - Consumes: `Checkbox` from `@/components/ui/checkbox`, `CategoryWithChildren` from `../types`
 - Produces: Updated `getCategoryColumns()` with checkbox column as first column
 
@@ -539,9 +555,11 @@ git commit -m "feat(categories): add checkbox selection column to table"
 ### Task 4: Create Export Menu Component
 
 **Files:**
+
 - Create: `features/business-categories/table/category-export-menu.tsx`
 
 **Interfaces:**
+
 - Consumes:
   - `CategoryWithChildren` from `../types`
   - `exportToCSV`, `exportToExcel`, `exportToJSON`, `prepareExportData` from `../lib/export-utils`
@@ -673,9 +691,11 @@ git commit -m "feat(categories): add export menu component with CSV/Excel/JSON o
 ### Task 5: Integrate Selection and Export into DataTable
 
 **Files:**
+
 - Modify: `features/business-categories/components/category-data-table.tsx`
 
 **Interfaces:**
+
 - Consumes:
   - `CategoryExportMenu` from `../table/category-export-menu`
   - TanStack Table row selection API
@@ -739,6 +759,7 @@ pnpm dev
 ```
 
 Navigate to `/staff/business-categories` and verify:
+
 - Checkbox column appears as first column
 - Individual checkbox selection works
 - Header checkbox selects all visible rows
@@ -760,10 +781,12 @@ git commit -m "feat(categories): integrate row selection and export menu into ta
 ### Task 6: Final Verification and Documentation
 
 **Files:**
+
 - Modify: None (verification only)
 - Test: Manual testing of all features
 
 **Interfaces:**
+
 - Consumes: All implemented features
 - Produces: Verified working implementation
 
@@ -864,6 +887,7 @@ In browser:
 - [ ] **Step 8: Verify filename format**
 
 Check downloaded files:
+
 - Expected format: `business-categories-20260807-143045.{csv,xlsx,json}`
 - Expected: Timestamp in filename
 
@@ -878,6 +902,7 @@ Expected: All commits pushed successfully
 - [ ] **Step 10: Mark plan as complete**
 
 Update plan status in this file header:
+
 - Change status from "In Progress" to "Completed"
 - Add completion date
 

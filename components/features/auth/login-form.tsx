@@ -68,7 +68,10 @@ export function LoginForm() {
               </div>
             )}
             <div className="space-y-2.5">
-              <Label htmlFor="email" className="text-sm font-semibold text-slate-700">
+              <Label
+                htmlFor="email"
+                className="text-sm font-semibold text-slate-700"
+              >
                 Email
               </Label>
               <Input
@@ -83,7 +86,10 @@ export function LoginForm() {
             </div>
             <div className="space-y-2.5">
               <div className="flex items-center justify-between">
-                <Label htmlFor="password" className="text-sm font-semibold text-slate-700">
+                <Label
+                  htmlFor="password"
+                  className="text-sm font-semibold text-slate-700"
+                >
                   Password
                 </Label>
                 <Link
@@ -131,7 +137,10 @@ export function LoginForm() {
 
       <p className="text-center text-sm font-medium text-slate-600">
         Don&apos;t have an account?{" "}
-        <Link href="/signup" className="font-semibold text-indigo-600 transition-colors hover:text-indigo-700">
+        <Link
+          href="/signup"
+          className="font-semibold text-indigo-600 transition-colors hover:text-indigo-700"
+        >
           Sign up
         </Link>
       </p>

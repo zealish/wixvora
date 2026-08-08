@@ -105,7 +105,10 @@ export function ResetPasswordForm() {
         </Card>
 
         <p className="text-center text-sm font-medium text-slate-600">
-          <Link href="/login" className="font-semibold text-indigo-600 transition-colors hover:text-indigo-700">
+          <Link
+            href="/login"
+            className="font-semibold text-indigo-600 transition-colors hover:text-indigo-700"
+          >
             Return to login
           </Link>
         </p>
@@ -136,7 +139,10 @@ export function ResetPasswordForm() {
               </div>
             )}
             <div className="space-y-2.5">
-              <Label htmlFor="newPassword" className="text-sm font-semibold text-slate-700">
+              <Label
+                htmlFor="newPassword"
+                className="text-sm font-semibold text-slate-700"
+              >
                 New Password
               </Label>
               <Input
@@ -152,7 +158,10 @@ export function ResetPasswordForm() {
               />
             </div>
             <div className="space-y-2.5">
-              <Label htmlFor="confirmPassword" className="text-sm font-semibold text-slate-700">
+              <Label
+                htmlFor="confirmPassword"
+                className="text-sm font-semibold text-slate-700"
+              >
                 Confirm Password
               </Label>
               <Input
@@ -180,7 +189,10 @@ export function ResetPasswordForm() {
       </Card>
 
       <p className="text-center text-sm font-medium text-slate-600">
-        <Link href="/login" className="font-semibold text-indigo-600 transition-colors hover:text-indigo-700">
+        <Link
+          href="/login"
+          className="font-semibold text-indigo-600 transition-colors hover:text-indigo-700"
+        >
           Back to login
         </Link>
       </p>

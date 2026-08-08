@@ -56,7 +56,7 @@ export function SeoSettingsForm({ initialData }: SeoSettingsFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {error && (
-        <div className="rounded-md bg-destructive/15 p-3 text-sm text-destructive">
+        <div className="bg-destructive/15 text-destructive rounded-md p-3 text-sm">
           {error}
         </div>
       )}
@@ -74,7 +74,7 @@ export function SeoSettingsForm({ initialData }: SeoSettingsFormProps) {
         <div className="flex items-center justify-between">
           <div className="space-y-0.5">
             <Label htmlFor="ga_enabled">Enable Google Analytics</Label>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-muted-foreground text-sm">
               Inject GA tracking script on all pages
             </p>
           </div>
@@ -95,7 +95,7 @@ export function SeoSettingsForm({ initialData }: SeoSettingsFormProps) {
             defaultValue={initialData.googleAnalytics.measurementId ?? ""}
             disabled={!gaEnabled}
           />
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             Format: G-XXXXXXXXXX (10 alphanumeric characters)
           </p>
         </div>
@@ -114,7 +114,7 @@ export function SeoSettingsForm({ initialData }: SeoSettingsFormProps) {
             placeholder="https://example.com"
             defaultValue={initialData.searchConsole.siteUrl ?? ""}
           />
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             The URL of your property in Search Console
           </p>
         </div>
@@ -128,7 +128,7 @@ export function SeoSettingsForm({ initialData }: SeoSettingsFormProps) {
             defaultValue={initialData.searchConsole.verificationToken ?? ""}
             rows={3}
           />
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             Copy the content attribute value from the verification meta tag
           </p>
         </div>

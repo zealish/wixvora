@@ -20,7 +20,8 @@ const steps = [
     number: 3,
     icon: Wand2,
     title: "Customize & Edit",
-    description: "Edit content, images, and design with our easy drag & drop builder.",
+    description:
+      "Edit content, images, and design with our easy drag & drop builder.",
     hasLine: true,
   },
   {
@@ -34,37 +35,40 @@ const steps = [
 
 export function HowItWorks() {
   return (
-    <section className="w-full bg-slate-50/60 py-20 relative">
-      <div className="max-w-[1280px] mx-auto px-6 md:px-12 space-y-24">
-        <div className="flex flex-col items-center text-center space-y-12 pt-6">
+    <section className="relative w-full bg-slate-50/60 py-20">
+      <div className="mx-auto max-w-[1280px] space-y-24 px-6 md:px-12">
+        <div className="flex flex-col items-center space-y-12 pt-6 text-center">
           <MotionWrapper>
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+            <h2 className="text-3xl font-extrabold tracking-tight text-slate-900 sm:text-4xl">
               How Wixvora Works
             </h2>
           </MotionWrapper>
 
-          <div className="w-full relative">
-            <StaggerContainer staggerDelay={0.15} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 relative z-10">
+          <div className="relative w-full">
+            <StaggerContainer
+              staggerDelay={0.15}
+              className="relative z-10 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4"
+            >
               {steps.map((step) => (
                 <StaggerItem key={step.number}>
-                  <div className="flex flex-col items-center text-center group">
-                    <div className="relative w-full flex justify-center items-center mb-6">
+                  <div className="group flex flex-col items-center text-center">
+                    <div className="relative mb-6 flex w-full items-center justify-center">
                       {step.hasLine && (
-                        <div className="hidden lg:block absolute top-1/2 left-[50%] right-[-50%] h-[2px] border-t-2 border-dashed border-indigo-200 -translate-y-1/2 -z-10" />
+                        <div className="absolute top-1/2 right-[-50%] left-[50%] -z-10 hidden h-[2px] -translate-y-1/2 border-t-2 border-dashed border-indigo-200 lg:block" />
                       )}
-                      <div className="w-8 h-8 rounded-full bg-indigo-600 text-white font-bold text-xs flex items-center justify-center shadow-md shadow-indigo-500/30">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-600 text-xs font-bold text-white shadow-md shadow-indigo-500/30">
                         {step.number}
                       </div>
                     </div>
 
-                    <div className="w-20 h-20 rounded-2xl bg-indigo-50/90 text-indigo-600 flex items-center justify-center text-2xl mb-5 shadow-sm group-hover:scale-105 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300">
-                      <step.icon className="w-8 h-8" />
+                    <div className="mb-5 flex h-20 w-20 items-center justify-center rounded-2xl bg-indigo-50/90 text-2xl text-indigo-600 shadow-sm transition-all duration-300 group-hover:scale-105 group-hover:bg-indigo-600 group-hover:text-white">
+                      <step.icon className="h-8 w-8" />
                     </div>
 
-                    <h3 className="text-lg font-bold text-slate-900 mb-2">
+                    <h3 className="mb-2 text-lg font-bold text-slate-900">
                       {step.title}
                     </h3>
-                    <p className="text-slate-500 text-sm leading-relaxed max-w-[210px]">
+                    <p className="max-w-[210px] text-sm leading-relaxed text-slate-500">
                       {step.description}
                     </p>
                   </div>

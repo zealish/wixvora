@@ -18,7 +18,12 @@ interface FilterBarProps {
   onSortChange: (sort: string) => void;
 }
 
-export function FilterBar({ selectedFilter, onFilterChange, sortBy, onSortChange }: FilterBarProps) {
+export function FilterBar({
+  selectedFilter,
+  onFilterChange,
+  sortBy,
+  onSortChange,
+}: FilterBarProps) {
   return (
     <motion.div
       initial={{ opacity: 0, y: -10 }}
@@ -29,7 +34,7 @@ export function FilterBar({ selectedFilter, onFilterChange, sortBy, onSortChange
       <div className="flex flex-wrap items-center gap-2">
         {filterTypes.map((filter, index) => {
           const isActive = selectedFilter === filter.id;
-          
+
           return (
             <motion.button
               key={filter.id}
@@ -56,7 +61,7 @@ export function FilterBar({ selectedFilter, onFilterChange, sortBy, onSortChange
           id="sortSelect"
           value={sortBy}
           onChange={(e) => onSortChange(e.target.value)}
-          className="appearance-none rounded-xl border border-slate-200 bg-white px-4 py-2 pr-9 text-xs font-semibold text-slate-700 shadow-sm focus:border-brand-500 focus:outline-none sm:text-sm cursor-pointer"
+          className="focus:border-brand-500 cursor-pointer appearance-none rounded-xl border border-slate-200 bg-white px-4 py-2 pr-9 text-xs font-semibold text-slate-700 shadow-sm focus:outline-none sm:text-sm"
         >
           <option value="popular">Sort by: Popular</option>
           <option value="newest">Sort by: Newest</option>

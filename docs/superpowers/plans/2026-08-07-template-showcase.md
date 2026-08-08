@@ -24,10 +24,12 @@
 ## File Structure
 
 ### New Files
+
 - `components/landing/template-showcase.tsx` - 3D carousel component (client)
 - `components/landing/stats-section.tsx` - Statistics grid (server)
 
 ### Modified Files
+
 - `components/landing/index.ts` - Add new component exports
 - `app/(guest)/page.tsx` - Integrate new sections
 - `app/globals.css` - Add Swiper custom styles
@@ -38,9 +40,11 @@
 ### Task 1: Install Swiper Dependency
 
 **Files:**
+
 - Modify: `package.json`
 
 **Interfaces:**
+
 - Consumes: None
 - Produces: `swiper` package available for import
 
@@ -72,9 +76,11 @@ git commit -m "deps: add swiper for template carousel"
 ### Task 2: Create StatsSection Component
 
 **Files:**
+
 - Create: `components/landing/stats-section.tsx`
 
 **Interfaces:**
+
 - Consumes: None
 - Produces: `StatsSection` server component export
 
@@ -90,24 +96,24 @@ export function StatsSection() {
   ];
 
   return (
-    <section className="w-full mt-12 lg:mt-16 px-4 md:px-12 lg:px-16 max-w-[1440px] mx-auto">
-      <div className="bg-slate-50/80 border border-slate-100 rounded-3xl p-8 sm:p-10 md:p-12 text-center shadow-sm">
-        <p className="text-slate-600 font-medium text-sm sm:text-base mb-8 sm:mb-10 tracking-wide">
+    <section className="mx-auto mt-12 w-full max-w-[1440px] px-4 md:px-12 lg:mt-16 lg:px-16">
+      <div className="rounded-3xl border border-slate-100 bg-slate-50/80 p-8 text-center shadow-sm sm:p-10 md:p-12">
+        <p className="mb-8 text-sm font-medium tracking-wide text-slate-600 sm:mb-10 sm:text-base">
           Trusted by creators and businesses worldwide
         </p>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-4 divide-y md:divide-y-0 md:divide-x divide-slate-200/60">
+        <div className="grid grid-cols-2 gap-8 divide-y divide-slate-200/60 md:grid-cols-4 md:gap-4 md:divide-x md:divide-y-0">
           {stats.map((stat, index) => (
             <div
               key={index}
               className="flex flex-col items-center justify-center pt-4 md:pt-0"
             >
               <div
-                className={`text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight ${stat.color}`}
+                className={`text-3xl font-extrabold tracking-tight sm:text-4xl lg:text-5xl ${stat.color}`}
               >
                 {stat.number}
               </div>
-              <div className="text-xs sm:text-sm font-medium text-slate-600 mt-2">
+              <div className="mt-2 text-xs font-medium text-slate-600 sm:text-sm">
                 {stat.label}
               </div>
             </div>
@@ -139,9 +145,11 @@ git commit -m "feat(landing): add StatsSection component"
 ### Task 3: Add Swiper Custom Styles
 
 **Files:**
+
 - Modify: `app/globals.css`
 
 **Interfaces:**
+
 - Consumes: None
 - Produces: `.template-swiper` CSS class with custom Swiper overrides
 
@@ -150,7 +158,6 @@ git commit -m "feat(landing): add StatsSection component"
 Append to end of `app/globals.css`:
 
 ```css
-
 /* Swiper Template Showcase Overrides */
 .template-swiper {
   width: 100%;
@@ -204,9 +211,11 @@ git commit -m "style: add Swiper custom styles for template carousel"
 ### Task 4: Create TemplateShowcase Component
 
 **Files:**
+
 - Create: `components/landing/template-showcase.tsx`
 
 **Interfaces:**
+
 - Consumes: `.template-swiper` CSS class from globals.css
 - Produces: `TemplateShowcase` client component export
 
@@ -217,7 +226,14 @@ git commit -m "style: add Swiper custom styles for template carousel"
 
 import { Swiper, SwiperSlide } from "swiper/react";
 import { EffectCoverflow, Pagination } from "swiper/modules";
-import { ArrowRight, ChevronLeft, ChevronRight, Minus, Square, X } from "lucide-react";
+import {
+  ArrowRight,
+  ChevronLeft,
+  ChevronRight,
+  Minus,
+  Square,
+  X,
+} from "lucide-react";
 import type { Swiper as SwiperType } from "swiper";
 import { useRef } from "react";
 
@@ -236,7 +252,8 @@ export function TemplateShowcase() {
       brandAccent: "Scape",
       navLinks: ["Home", "About", "Services", "Projects", "Contact"],
       heading: "Beautiful spaces, better living.",
-      subtitle: "We design sustainable indoor and outdoor spaces that inspire and rejuvenate.",
+      subtitle:
+        "We design sustainable indoor and outdoor spaces that inspire and rejuvenate.",
       ctaText: "Discover More",
       theme: {
         headerBg: "bg-white",
@@ -281,33 +298,34 @@ export function TemplateShowcase() {
   ];
 
   return (
-    <section className="py-16 lg:py-24 px-4 md:px-12 lg:px-16 max-w-[1440px] mx-auto">
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+    <section className="mx-auto max-w-[1440px] px-4 py-16 md:px-12 lg:px-16 lg:py-24">
+      <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-12">
         {/* Left Column: Marketing Copy */}
-        <div className="lg:col-span-5 flex flex-col items-start space-y-6 z-20 pr-0 lg:pr-4">
-          <div className="inline-flex items-center px-3.5 py-1.5 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-600 text-xs font-semibold tracking-wide uppercase">
+        <div className="z-20 flex flex-col items-start space-y-6 pr-0 lg:col-span-5 lg:pr-4">
+          <div className="inline-flex items-center rounded-full border border-indigo-100 bg-indigo-50 px-3.5 py-1.5 text-xs font-semibold tracking-wide text-indigo-600 uppercase">
             PROFESSIONAL TEMPLATES
           </div>
 
-          <h2 className="text-4xl sm:text-5xl lg:text-[52px] font-extrabold tracking-tight text-slate-900 leading-[1.15]">
+          <h2 className="text-4xl leading-[1.15] font-extrabold tracking-tight text-slate-900 sm:text-5xl lg:text-[52px]">
             Beautiful templates for every business
           </h2>
 
-          <p className="text-slate-600 text-lg sm:text-xl font-normal leading-relaxed max-w-md">
-            Choose from 100+ professionally designed templates that you can fully customize.
+          <p className="max-w-md text-lg leading-relaxed font-normal text-slate-600 sm:text-xl">
+            Choose from 100+ professionally designed templates that you can
+            fully customize.
           </p>
 
           <a
             href="#explore"
-            className="inline-flex items-center gap-2.5 px-7 py-3.5 rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-indigo-700 text-white font-semibold text-base shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
+            className="inline-flex items-center gap-2.5 rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-indigo-700 px-7 py-3.5 text-base font-semibold text-white shadow-lg shadow-indigo-500/25 transition-all duration-200 hover:scale-[1.02] hover:shadow-indigo-500/40 active:scale-[0.98]"
           >
             Explore Templates
-            <ArrowRight className="w-4 h-4" />
+            <ArrowRight className="h-4 w-4" />
           </a>
         </div>
 
         {/* Right Column: Swiper Carousel */}
-        <div className="lg:col-span-7 relative w-full overflow-hidden lg:overflow-visible">
+        <div className="relative w-full overflow-hidden lg:col-span-7 lg:overflow-visible">
           <Swiper
             modules={[EffectCoverflow, Pagination]}
             effect="coverflow"
@@ -335,22 +353,30 @@ export function TemplateShowcase() {
             {templates.map((template) => (
               <SwiperSlide key={template.id}>
                 {template.name === "GreenScape" && (
-                  <div className="bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden">
+                  <div className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-2xl">
                     {/* Browser Header */}
-                    <div className={`${template.theme.headerBg} border-b border-slate-100 px-6 py-4 flex items-center justify-between`}>
+                    <div
+                      className={`${template.theme.headerBg} flex items-center justify-between border-b border-slate-100 px-6 py-4`}
+                    >
                       <div className="flex items-center space-x-2">
-                        <span className="text-lg font-bold text-slate-900 tracking-tight flex items-center gap-1.5">
+                        <span className="flex items-center gap-1.5 text-lg font-bold tracking-tight text-slate-900">
                           {template.brandName}
-                          <span className={`${template.theme.accentColor} font-serif italic`}>
+                          <span
+                            className={`${template.theme.accentColor} font-serif italic`}
+                          >
                             {template.brandAccent}
                           </span>
                         </span>
                       </div>
-                      <div className="hidden sm:flex items-center space-x-6 text-xs font-medium text-slate-600">
+                      <div className="hidden items-center space-x-6 text-xs font-medium text-slate-600 sm:flex">
                         {template.navLinks?.map((link, idx) => (
                           <span
                             key={idx}
-                            className={idx === 0 ? "text-slate-900 font-semibold cursor-pointer" : "hover:text-slate-900 cursor-pointer"}
+                            className={
+                              idx === 0
+                                ? "cursor-pointer font-semibold text-slate-900"
+                                : "cursor-pointer hover:text-slate-900"
+                            }
                           >
                             {link}
                           </span>
@@ -359,58 +385,72 @@ export function TemplateShowcase() {
                     </div>
 
                     {/* Mockup Body */}
-                    <div className={`${template.theme.bodyBg} p-6 sm:p-8 min-h-[300px] sm:min-h-[340px] flex items-center relative overflow-hidden`}>
-                      <div className="max-w-[240px] sm:max-w-[280px] z-10 space-y-3">
-                        <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 leading-tight">
+                    <div
+                      className={`${template.theme.bodyBg} relative flex min-h-[300px] items-center overflow-hidden p-6 sm:min-h-[340px] sm:p-8`}
+                    >
+                      <div className="z-10 max-w-[240px] space-y-3 sm:max-w-[280px]">
+                        <h2 className="text-2xl leading-tight font-extrabold text-slate-900 sm:text-3xl">
                           {template.heading}
                         </h2>
-                        <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                        <p className="text-xs leading-relaxed text-slate-600 sm:text-sm">
                           {template.subtitle}
                         </p>
-                        <button className={`mt-2 px-4 py-2 rounded-lg ${template.theme.buttonBg} text-white text-xs font-medium transition`}>
+                        <button
+                          className={`mt-2 rounded-lg px-4 py-2 ${template.theme.buttonBg} text-xs font-medium text-white transition`}
+                        >
                           {template.ctaText}
                         </button>
                       </div>
 
                       {/* Placeholder Image */}
-                      <div className="absolute right-0 bottom-0 top-0 w-1/2 flex items-end justify-end p-2 pointer-events-none">
-                        <div className={`h-full w-full ${template.theme.imageBg} rounded-xl shadow-md`} />
+                      <div className="pointer-events-none absolute top-0 right-0 bottom-0 flex w-1/2 items-end justify-end p-2">
+                        <div
+                          className={`h-full w-full ${template.theme.imageBg} rounded-xl shadow-md`}
+                        />
                       </div>
                     </div>
                   </div>
                 )}
 
                 {template.name === "Aurora" && (
-                  <div className="bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden">
+                  <div className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-2xl">
                     {/* Browser Header */}
-                    <div className={`${template.theme.headerBg} border-b border-slate-100 px-6 py-4 flex items-center justify-between`}>
+                    <div
+                      className={`${template.theme.headerBg} flex items-center justify-between border-b border-slate-100 px-6 py-4`}
+                    >
                       <div className="flex items-center space-x-2">
-                        <span className="text-base font-bold text-slate-900 tracking-wider uppercase">
+                        <span className="text-base font-bold tracking-wider text-slate-900 uppercase">
                           {template.brandName}
                         </span>
                       </div>
-                      <div className="flex items-center space-x-3 text-slate-400 text-xs">
-                        <Minus className="w-3 h-3" />
-                        <Square className="w-2.5 h-2.5" />
-                        <X className="w-3 h-3" />
+                      <div className="flex items-center space-x-3 text-xs text-slate-400">
+                        <Minus className="h-3 w-3" />
+                        <Square className="h-2.5 w-2.5" />
+                        <X className="h-3 w-3" />
                       </div>
                     </div>
 
                     {/* Mockup Body */}
-                    <div className={`${template.theme.bodyBg} p-6 sm:p-8 min-h-[300px] sm:min-h-[340px] flex items-center justify-between relative overflow-hidden`}>
-                      <div className="space-y-1 text-slate-500 text-xs tracking-widest uppercase font-mono">
+                    <div
+                      className={`${template.theme.bodyBg} relative flex min-h-[300px] items-center justify-between overflow-hidden p-6 sm:min-h-[340px] sm:p-8`}
+                    >
+                      <div className="space-y-1 font-mono text-xs tracking-widest text-slate-500 uppercase">
                         <div>Minimal.</div>
                         <div>Modern.</div>
                         <div>Sustainable.</div>
                       </div>
 
                       {/* Portrait Placeholder */}
-                      <div className="relative h-[260px] w-[180px] sm:w-[210px] rounded-lg overflow-hidden shadow-lg border border-white">
-                        <div className={`h-full w-full ${template.theme.imageBg}`} />
+                      <div className="relative h-[260px] w-[180px] overflow-hidden rounded-lg border border-white shadow-lg sm:w-[210px]">
+                        <div
+                          className={`h-full w-full ${template.theme.imageBg}`}
+                        />
 
                         {/* Floating Tag */}
-                        <div className="absolute bottom-3 -left-6 bg-white/95 backdrop-blur px-3 py-1.5 rounded-md shadow-md border border-slate-100 text-[10px] space-y-0.5">
-                          <div className="font-bold text-slate-800">Fully customizable</div>
+                        <div className="absolute bottom-3 -left-6 space-y-0.5 rounded-md border border-slate-100 bg-white/95 px-3 py-1.5 text-[10px] shadow-md backdrop-blur">
+                          <div className="font-bold text-slate-800">
+                            Fully customizable
+                          </div>
                           <div className="text-slate-500">Easy to use</div>
                         </div>
                       </div>
@@ -419,12 +459,16 @@ export function TemplateShowcase() {
                 )}
 
                 {template.name === "Lumina" && (
-                  <div className={`${template.theme.headerBg} text-white rounded-2xl shadow-2xl border border-slate-800 overflow-hidden`}>
+                  <div
+                    className={`${template.theme.headerBg} overflow-hidden rounded-2xl border border-slate-800 text-white shadow-2xl`}
+                  >
                     {/* Browser Header */}
-                    <div className="border-b border-slate-800 px-6 py-4 flex items-center justify-between">
+                    <div className="flex items-center justify-between border-b border-slate-800 px-6 py-4">
                       <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 rounded-full bg-indigo-500"></div>
-                        <span className="text-base font-bold tracking-tight">{template.brandName}</span>
+                        <div className="h-3 w-3 rounded-full bg-indigo-500"></div>
+                        <span className="text-base font-bold tracking-tight">
+                          {template.brandName}
+                        </span>
                       </div>
                       <div className="text-xs text-slate-400">
                         {template.navLinks?.join(" • ")}
@@ -432,18 +476,22 @@ export function TemplateShowcase() {
                     </div>
 
                     {/* Mockup Body */}
-                    <div className={`${template.theme.bodyBg} p-8 min-h-[300px] sm:min-h-[340px] flex flex-col justify-center`}>
-                      <span className={`${template.theme.accentColor} text-xs font-mono mb-2`}>
+                    <div
+                      className={`${template.theme.bodyBg} flex min-h-[300px] flex-col justify-center p-8 sm:min-h-[340px]`}
+                    >
+                      <span
+                        className={`${template.theme.accentColor} mb-2 font-mono text-xs`}
+                      >
                         {template.subtitle}
                       </span>
-                      <h2 className="text-2xl sm:text-3xl font-bold leading-tight">
+                      <h2 className="text-2xl leading-tight font-bold sm:text-3xl">
                         {template.heading}
                       </h2>
                       <div className="mt-6 flex gap-3">
-                        <span className="px-4 py-2 bg-indigo-600 rounded-lg text-xs font-semibold">
+                        <span className="rounded-lg bg-indigo-600 px-4 py-2 text-xs font-semibold">
                           Get Started
                         </span>
-                        <span className="px-4 py-2 border border-slate-700 rounded-lg text-xs font-semibold text-slate-300">
+                        <span className="rounded-lg border border-slate-700 px-4 py-2 text-xs font-semibold text-slate-300">
                           Docs
                         </span>
                       </div>
@@ -455,21 +503,21 @@ export function TemplateShowcase() {
           </Swiper>
 
           {/* Custom Pagination Controls */}
-          <div className="flex items-center justify-center gap-3 mt-2.5">
+          <div className="mt-2.5 flex items-center justify-center gap-3">
             <button
               onClick={() => swiperRef.current?.slidePrev()}
-              className="text-slate-400 hover:text-blue-500 transition-colors text-sm cursor-pointer"
+              className="cursor-pointer text-sm text-slate-400 transition-colors hover:text-blue-500"
               aria-label="Previous slide"
             >
-              <ChevronLeft className="w-3.5 h-3.5" />
+              <ChevronLeft className="h-3.5 w-3.5" />
             </button>
             <div className="swiper-custom-pagination flex items-center gap-3" />
             <button
               onClick={() => swiperRef.current?.slideNext()}
-              className="text-slate-400 hover:text-blue-500 transition-colors text-sm cursor-pointer"
+              className="cursor-pointer text-sm text-slate-400 transition-colors hover:text-blue-500"
               aria-label="Next slide"
             >
-              <ChevronRight className="w-3.5 h-3.5" />
+              <ChevronRight className="h-3.5 w-3.5" />
             </button>
           </div>
         </div>
@@ -499,9 +547,11 @@ git commit -m "feat(landing): add TemplateShowcase component with Swiper carouse
 ### Task 5: Update Barrel Export
 
 **Files:**
+
 - Modify: `components/landing/index.ts`
 
 **Interfaces:**
+
 - Consumes: `TemplateShowcase` from `./template-showcase.tsx`, `StatsSection` from `./stats-section.tsx`
 - Produces: Exports for new components
 
@@ -534,9 +584,11 @@ git commit -m "feat(landing): export TemplateShowcase and StatsSection"
 ### Task 6: Integrate Sections into Landing Page
 
 **Files:**
+
 - Modify: `app/(guest)/page.tsx`
 
 **Interfaces:**
+
 - Consumes: `TemplateShowcase` and `StatsSection` from `@/components/landing`
 - Produces: Complete landing page with all sections
 
@@ -593,9 +645,11 @@ git commit -m "feat(landing): integrate TemplateShowcase and StatsSection into p
 ### Task 7: Final Verification
 
 **Files:**
+
 - All created/modified files
 
 **Interfaces:**
+
 - Consumes: All previous tasks
 - Produces: Verified working implementation
 
@@ -633,6 +687,7 @@ Open http://localhost:3000 in browser and verify:
 - [ ] **Step 4: Test responsive breakpoints**
 
 Resize browser window and verify:
+
 - Mobile (< 640px): Single column, stacked layout
 - Tablet (640px - 1024px): Proper spacing
 - Desktop (> 1024px): Two-column layout for carousel section

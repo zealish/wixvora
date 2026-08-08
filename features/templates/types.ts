@@ -43,5 +43,4 @@ export interface TemplateListItem {
 }
 
 export type TemplateActionResult =
-  | { success: true; data?: { id: string } }
-  | { success: false; error: string };
+  { success: true; data?: { id: string } } | { success: false; error: string };

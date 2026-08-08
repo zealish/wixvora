@@ -4,7 +4,10 @@ import { useCallback, useState } from "react";
 import type { BlockConfig, PageSettings } from "../../../lib/block-types";
 import { DEFAULT_PAGE_SETTINGS, createBlockId } from "../../../lib/block-types";
 import type { BlockCatalogItem } from "../../../lib/block-catalog";
-import { createBlockFromCatalog, PRESET_TEMPLATES } from "../../../lib/block-catalog";
+import {
+  createBlockFromCatalog,
+  PRESET_TEMPLATES,
+} from "../../../lib/block-catalog";
 
 export type Viewport = "desktop" | "tablet" | "mobile";
 export type EditorTab = "blocks" | "layers" | "templates" | "settings";

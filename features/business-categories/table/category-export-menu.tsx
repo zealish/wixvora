@@ -73,7 +73,7 @@ export function CategoryExportMenu({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
-        className="inline-flex h-9 items-center justify-center gap-2 rounded-md border border-input bg-background px-3 text-sm font-medium hover:bg-accent hover:text-accent-foreground disabled:pointer-events-none disabled:opacity-50"
+        className="border-input bg-background hover:bg-accent hover:text-accent-foreground inline-flex h-9 items-center justify-center gap-2 rounded-md border px-3 text-sm font-medium disabled:pointer-events-none disabled:opacity-50"
         disabled={!hasData}
       >
         <Download className="h-4 w-4" />
@@ -81,15 +81,15 @@ export function CategoryExportMenu({
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuItem onClick={() => handleExport("csv")}>
-          <FileText className="h-4 w-4 mr-2" />
+          <FileText className="mr-2 h-4 w-4" />
           Export as CSV
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => handleExport("excel")}>
-          <FileSpreadsheet className="h-4 w-4 mr-2" />
+          <FileSpreadsheet className="mr-2 h-4 w-4" />
           Export as Excel
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => handleExport("json")}>
-          <Code className="h-4 w-4 mr-2" />
+          <Code className="mr-2 h-4 w-4" />
           Export as JSON
         </DropdownMenuItem>
       </DropdownMenuContent>

@@ -30,8 +30,12 @@ export function TemplateMockups() {
             <span className="h-2.5 w-2.5 rounded-full bg-green-500"></span>
           </div>
           <div className="space-y-2 p-4">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-400">Digital Agency</span>
-            <h4 className="text-xs font-bold text-white">Digital solutions that drive results</h4>
+            <span className="text-[10px] font-bold tracking-wider text-indigo-400 uppercase">
+              Digital Agency
+            </span>
+            <h4 className="text-xs font-bold text-white">
+              Digital solutions that drive results
+            </h4>
             <div className="flex h-16 items-center justify-center rounded bg-gradient-to-r from-purple-900 to-indigo-900">
               <div className="h-8 w-8 rotate-45 rounded border border-indigo-400/30 bg-indigo-500/20"></div>
             </div>
@@ -52,12 +56,22 @@ export function TemplateMockups() {
           </div>
           <div className="flex items-center gap-3 p-3">
             <div className="flex-1 space-y-1.5">
-              <h4 className="text-sm font-bold leading-tight text-slate-900">Sustainable living for a better tomorrow</h4>
-              <p className="text-[10px] text-slate-500">Eco friendly solutions tailored for eco brands.</p>
-              <span className="inline-block rounded bg-emerald-800 px-2 py-1 text-[9px] font-bold text-white">Learn More</span>
+              <h4 className="text-sm leading-tight font-bold text-slate-900">
+                Sustainable living for a better tomorrow
+              </h4>
+              <p className="text-[10px] text-slate-500">
+                Eco friendly solutions tailored for eco brands.
+              </p>
+              <span className="inline-block rounded bg-emerald-800 px-2 py-1 text-[9px] font-bold text-white">
+                Learn More
+              </span>
             </div>
             <div className="h-24 w-28 flex-shrink-0 overflow-hidden rounded-lg bg-slate-100">
-              <img src="https://images.unsplash.com/photo-1545241047-6083a3684587?auto=format&fit=crop&w=400&q=80" alt="Plant" className="h-full w-full object-cover" />
+              <img
+                src="https://images.unsplash.com/photo-1545241047-6083a3684587?auto=format&fit=crop&w=400&q=80"
+                alt="Plant"
+                className="h-full w-full object-cover"
+              />
             </div>
           </div>
         </motion.div>
@@ -67,7 +81,7 @@ export function TemplateMockups() {
           animate={{ opacity: 1, y: 0, rotate: 3 }}
           transition={{ duration: 0.6, delay: 0.5 }}
           whileHover={{ rotate: 0 }}
-          className="absolute -bottom-10 right-0 z-20 w-72 transform rounded-xl border border-slate-100 bg-white p-2.5 shadow-2xl transition-transform duration-300"
+          className="absolute right-0 -bottom-10 z-20 w-72 transform rounded-xl border border-slate-100 bg-white p-2.5 shadow-2xl transition-transform duration-300"
         >
           <div className="flex items-center gap-1.5 border-b border-slate-100 px-2 py-1">
             <span className="h-2 w-2 rounded-full bg-slate-200"></span>
@@ -75,8 +89,14 @@ export function TemplateMockups() {
           </div>
           <div className="flex items-center justify-between gap-2 p-3">
             <div>
-              <h4 className="text-xs font-bold text-slate-900">Spark Your<br />Creativity</h4>
-              <div className="mt-2 inline-block rounded bg-slate-900 px-2 py-0.5 text-[9px] text-white">Explore Features</div>
+              <h4 className="text-xs font-bold text-slate-900">
+                Spark Your
+                <br />
+                Creativity
+              </h4>
+              <div className="mt-2 inline-block rounded bg-slate-900 px-2 py-0.5 text-[9px] text-white">
+                Explore Features
+              </div>
             </div>
             <div className="h-20 w-20 rounded-lg bg-gradient-to-tr from-pink-400 via-purple-400 to-indigo-500"></div>
           </div>

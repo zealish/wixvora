@@ -11,12 +11,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-export async function sendEmail({
-  to,
-  subject,
-  html,
-  text,
-}: SendEmailOptions) {
+export async function sendEmail({ to, subject, html, text }: SendEmailOptions) {
   const mailOptions = {
     from: process.env.SMTP_FROM || process.env.SMTP_USER,
     to,

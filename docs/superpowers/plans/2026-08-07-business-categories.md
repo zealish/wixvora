@@ -25,33 +25,33 @@
 
 ### New Files to Create
 
-| File | Responsibility |
-|------|---------------|
-| `lib/db/schema/business-categories.ts` | Drizzle schema, enum, relations |
-| `features/business-categories/types.ts` | TypeScript types |
-| `features/business-categories/validation.ts` | Zod schemas |
-| `features/business-categories/queries.ts` | Data fetching |
-| `features/business-categories/service.ts` | Business logic |
-| `features/business-categories/actions.ts` | Server actions |
-| `features/business-categories/components/category-form.tsx` | Unified create/edit form |
-| `features/business-categories/components/category-data-table.tsx` | DataTable with expandable rows |
-| `features/business-categories/components/category-icon-picker.tsx` | Lucide icon selector |
-| `features/business-categories/table/category-columns.tsx` | Column definitions |
-| `features/business-categories/table/category-filters.ts` | Filter configuration |
-| `features/business-categories/table/category-bulk-actions.tsx` | Bulk operations |
-| `app/(staff)/staff/business-categories/page.tsx` | List page |
-| `app/(staff)/staff/business-categories/create/page.tsx` | Create root category page |
-| `app/(staff)/staff/business-categories/[id]/edit/page.tsx` | Edit category page |
-| `app/(staff)/staff/business-categories/[id]/create-sub/page.tsx` | Create sub-category page |
+| File                                                               | Responsibility                  |
+| ------------------------------------------------------------------ | ------------------------------- |
+| `lib/db/schema/business-categories.ts`                             | Drizzle schema, enum, relations |
+| `features/business-categories/types.ts`                            | TypeScript types                |
+| `features/business-categories/validation.ts`                       | Zod schemas                     |
+| `features/business-categories/queries.ts`                          | Data fetching                   |
+| `features/business-categories/service.ts`                          | Business logic                  |
+| `features/business-categories/actions.ts`                          | Server actions                  |
+| `features/business-categories/components/category-form.tsx`        | Unified create/edit form        |
+| `features/business-categories/components/category-data-table.tsx`  | DataTable with expandable rows  |
+| `features/business-categories/components/category-icon-picker.tsx` | Lucide icon selector            |
+| `features/business-categories/table/category-columns.tsx`          | Column definitions              |
+| `features/business-categories/table/category-filters.ts`           | Filter configuration            |
+| `features/business-categories/table/category-bulk-actions.tsx`     | Bulk operations                 |
+| `app/(staff)/staff/business-categories/page.tsx`                   | List page                       |
+| `app/(staff)/staff/business-categories/create/page.tsx`            | Create root category page       |
+| `app/(staff)/staff/business-categories/[id]/edit/page.tsx`         | Edit category page              |
+| `app/(staff)/staff/business-categories/[id]/create-sub/page.tsx`   | Create sub-category page        |
 
 ### Files to Modify
 
-| File | Change |
-|------|--------|
-| `lib/db/schema/index.ts` | Add businessCategories export |
-| `lib/auth/permissions.ts` | Add CATEGORIES_* permissions |
-| `config/navigation.ts` | Add Business Categories nav item |
-| `types/rbac.ts` | Add PermissionKey values (if needed) |
+| File                      | Change                               |
+| ------------------------- | ------------------------------------ |
+| `lib/db/schema/index.ts`  | Add businessCategories export        |
+| `lib/auth/permissions.ts` | Add CATEGORIES_* permissions         |
+| `config/navigation.ts`    | Add Business Categories nav item     |
+| `types/rbac.ts`           | Add PermissionKey values (if needed) |
 
 ---
 
@@ -60,11 +60,13 @@
 ### Task 1: Database Schema & Permissions Setup
 
 **Files:**
+
 - Create: `lib/db/schema/business-categories.ts`
 - Modify: `lib/db/schema/index.ts`
 - Modify: `lib/auth/permissions.ts`
 
 **Interfaces:**
+
 - Consumes: existing `db` from `@/lib/db`, existing `PermissionKey` type
 - Produces: `businessCategories` table, `categoryStatusEnum`, `businessCategoriesRelations`
 
@@ -163,10 +165,12 @@ git commit -m "feat(categories): add business_categories schema and permissions"
 ### Task 2: Types & Validation Schemas
 
 **Files:**
+
 - Create: `features/business-categories/types.ts`
 - Create: `features/business-categories/validation.ts`
 
 **Interfaces:**
+
 - Consumes: `businessCategories` schema from Task 1
 - Produces: `CreateCategoryInput`, `UpdateCategoryInput`, `CategoryWithChildren`
 
@@ -216,8 +220,14 @@ export interface CategoryActionResult {
 import { z } from "zod";
 
 export const createCategorySchema = z.object({
-  name: z.string().min(1, "Name is required").max(100, "Name must be 100 characters or less"),
-  slug: z.string().min(1, "Slug is required").max(120, "Slug must be 120 characters or less"),
+  name: z
+    .string()
+    .min(1, "Name is required")
+    .max(100, "Name must be 100 characters or less"),
+  slug: z
+    .string()
+    .min(1, "Slug is required")
+    .max(120, "Slug must be 120 characters or less"),
   icon: z.string().max(100).optional().nullable(),
   displayOrder: z.number().int().min(1, "Display order must be at least 1"),
   status: z.enum(["active", "inactive"]).default("active"),
@@ -246,10 +256,12 @@ git commit -m "feat(categories): add types and validation schemas"
 ### Task 3: Queries & Service Layer
 
 **Files:**
+
 - Create: `features/business-categories/queries.ts`
 - Create: `features/business-categories/service.ts`
 
 **Interfaces:**
+
 - Consumes: schema from Task 1, types from Task 2
 - Produces: `getCategoriesTree()`, `getCategoryById()`, `getNextDisplayOrder()`, `validateDisplayOrder()`, `createCategory()`, `updateCategory()`, `softDeleteCategory()`, `generateUniqueSlug()`, `validateHierarchyDepth()`
 
@@ -272,7 +284,9 @@ export async function getCategoriesTree(): Promise<CategoryWithChildren[]> {
   return buildTree(allCategories);
 }
 
-export async function getActiveCategoriesTree(): Promise<CategoryWithChildren[]> {
+export async function getActiveCategoriesTree(): Promise<
+  CategoryWithChildren[]
+> {
   const allCategories = await db
     .select()
     .from(businessCategories)
@@ -413,9 +427,7 @@ function createSlug(name: string): string {
     .replace(/^-|-$/g, "");
 }
 
-function buildTree(
-  categories: any[]
-): CategoryWithChildren[] {
+function buildTree(categories: any[]): CategoryWithChildren[] {
   const map = new Map<string, CategoryWithChildren>();
   const roots: CategoryWithChildren[] = [];
 
@@ -461,7 +473,10 @@ export async function createCategory(
   await validateHierarchyDepth(data.parentId);
 
   const slug = await generateUniqueSlug(data.name);
-  const orderValid = await validateDisplayOrder(data.parentId, data.displayOrder);
+  const orderValid = await validateDisplayOrder(
+    data.parentId,
+    data.displayOrder
+  );
   if (!orderValid) {
     throw new Error(
       `Display order ${data.displayOrder} is already used by another category at this level.`
@@ -515,7 +530,10 @@ export async function updateCategory(
     throw new Error("Category not found");
   }
 
-  if (data.displayOrder !== undefined && data.displayOrder !== existing.displayOrder) {
+  if (
+    data.displayOrder !== undefined &&
+    data.displayOrder !== existing.displayOrder
+  ) {
     const orderValid = await validateDisplayOrder(
       data.parentId ?? existing.parentId,
       data.displayOrder,
@@ -532,7 +550,9 @@ export async function updateCategory(
     if (existing.parentId === null && data.parentId !== null) {
       const childCount = await countChildren(id);
       if (childCount > 0) {
-        throw new Error("Cannot change parent: this category has children. Moving it would exceed the maximum depth of 2 levels.");
+        throw new Error(
+          "Cannot change parent: this category has children. Moving it would exceed the maximum depth of 2 levels."
+        );
       }
     }
   }
@@ -549,7 +569,8 @@ export async function updateCategory(
   if (data.name !== undefined) updateData.name = data.name;
   if (data.slug !== undefined) updateData.slug = data.slug;
   if (data.icon !== undefined) updateData.icon = data.icon;
-  if (data.displayOrder !== undefined) updateData.displayOrder = data.displayOrder;
+  if (data.displayOrder !== undefined)
+    updateData.displayOrder = data.displayOrder;
   if (data.status !== undefined) updateData.status = data.status;
   if (data.parentId !== undefined) updateData.parentId = data.parentId;
 
@@ -756,9 +777,11 @@ git commit -m "feat(categories): add queries and service layer"
 ### Task 4: Server Actions
 
 **Files:**
+
 - Create: `features/business-categories/actions.ts`
 
 **Interfaces:**
+
 - Consumes: service from Task 3, validation from Task 2
 - Produces: `createCategoryAction`, `updateCategoryAction`, `deleteCategoryAction`, `toggleStatusAction`
 
@@ -905,9 +928,11 @@ git commit -m "feat(categories): add server actions"
 ### Task 5: Icon Picker Component
 
 **Files:**
+
 - Create: `features/business-categories/components/category-icon-picker.tsx`
 
 **Interfaces:**
+
 - Consumes: Lucide React icons
 - Produces: `CategoryIconPicker` component with search, grid display, selection
 
@@ -1112,9 +1137,11 @@ git commit -m "feat(categories): add icon picker component"
 ### Task 6: Category Form Component
 
 **Files:**
+
 - Create: `features/business-categories/components/category-form.tsx`
 
 **Interfaces:**
+
 - Consumes: `CategoryIconPicker` from Task 5, `createCategorySchema`/`updateCategorySchema` from Task 2
 - Produces: `CategoryForm` component with all form fields
 
@@ -1336,10 +1363,12 @@ git commit -m "feat(categories): add category form component"
 ### Task 7: DataTable Columns & Filters
 
 **Files:**
+
 - Create: `features/business-categories/table/category-columns.tsx`
 - Create: `features/business-categories/table/category-filters.ts`
 
 **Interfaces:**
+
 - Consumes: `CategoryWithChildren` type from Task 2
 - Produces: column definitions for TanStack Table
 
@@ -1590,10 +1619,12 @@ git commit -m "feat(categories): add table columns and filters"
 ### Task 8: Category DataTable Component
 
 **Files:**
+
 - Create: `features/business-categories/components/category-data-table.tsx`
 - Create: `features/business-categories/table/category-bulk-actions.tsx`
 
 **Interfaces:**
+
 - Consumes: columns from Task 7, types from Task 2
 - Produces: `CategoryDataTable` with expandable rows
 
@@ -1960,6 +1991,7 @@ git commit -m "feat(categories): add category data table with expandable rows"
 ### Task 9: Page Components
 
 **Files:**
+
 - Create: `app/(staff)/staff/business-categories/page.tsx`
 - Create: `app/(staff)/staff/business-categories/create/page.tsx`
 - Create: `app/(staff)/staff/business-categories/[id]/edit/page.tsx`
@@ -1967,6 +1999,7 @@ git commit -m "feat(categories): add category data table with expandable rows"
 - Modify: `config/navigation.ts`
 
 **Interfaces:**
+
 - Consumes: queries from Task 3, form from Task 6, DataTable from Task 8
 - Produces: all page routes
 
@@ -2198,6 +2231,7 @@ git commit -m "feat(categories): add page components and navigation"
 ### Task 10: Final Integration & Verification
 
 **Files:**
+
 - Verify all imports and dependencies
 - Run type checks
 - Test the complete flow

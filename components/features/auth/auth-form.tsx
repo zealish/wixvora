@@ -7,7 +7,15 @@ import { registerClient } from "@/features/auth/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Mail, Lock, User, ArrowRight, Eye, EyeOff, ShieldCheck } from "lucide-react";
+import {
+  Mail,
+  Lock,
+  User,
+  ArrowRight,
+  Eye,
+  EyeOff,
+  ShieldCheck,
+} from "lucide-react";
 import { AuthHeader } from "./auth-header";
 import { AuthFooter } from "./auth-footer";
 import { AuthShowcase } from "./auth-showcase";
@@ -15,7 +23,8 @@ import { AuthShowcase } from "./auth-showcase";
 export function AuthForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const initialMode = searchParams.get("mode") === "signup" ? "signup" : "signin";
+  const initialMode =
+    searchParams.get("mode") === "signup" ? "signup" : "signin";
   const [mode, setMode] = useState<"signin" | "signup">(initialMode);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -50,10 +59,11 @@ export function AuthForm() {
         }
 
         setSuccess("Welcome back! Redirecting...");
-        
+
         const sessionResponse = await fetch("/api/auth/get-session");
         const sessionData = await sessionResponse.json();
-        const redirectPath = sessionData?.user?.accountType === "STAFF" ? "/staff" : "/client";
+        const redirectPath =
+          sessionData?.user?.accountType === "STAFF" ? "/staff" : "/client";
 
         setTimeout(() => {
           router.push(redirectPath);
@@ -80,9 +90,12 @@ export function AuthForm() {
   }
 
   const getPasswordStrength = () => {
-    if (password.length === 0) return { label: "Too Short", color: "text-slate-400", bars: 0 };
-    if (password.length < 6) return { label: "Weak", color: "text-rose-500", bars: 1 };
-    if (password.length < 10) return { label: "Medium", color: "text-amber-500", bars: 2 };
+    if (password.length === 0)
+      return { label: "Too Short", color: "text-slate-400", bars: 0 };
+    if (password.length < 6)
+      return { label: "Weak", color: "text-rose-500", bars: 1 };
+    if (password.length < 10)
+      return { label: "Medium", color: "text-amber-500", bars: 2 };
     return { label: "Strong", color: "text-emerald-600", bars: 3 };
   };
 
@@ -94,9 +107,9 @@ export function AuthForm() {
 
       <main className="relative flex flex-grow items-center justify-center overflow-hidden px-4 py-10 sm:px-6 sm:py-16 lg:px-8">
         {/* Glowing orbs */}
-        <div className="pointer-events-none absolute -left-32 -top-32 h-96 w-96 animate-pulse-glow rounded-full bg-brand-500/10 blur-3xl"></div>
+        <div className="animate-pulse-glow bg-brand-500/10 pointer-events-none absolute -top-32 -left-32 h-96 w-96 rounded-full blur-3xl"></div>
         <div
-          className="pointer-events-none absolute -bottom-32 -right-32 h-96 w-96 animate-pulse-glow rounded-full bg-purple-500/10 blur-3xl"
+          className="animate-pulse-glow pointer-events-none absolute -right-32 -bottom-32 h-96 w-96 rounded-full bg-purple-500/10 blur-3xl"
           style={{ animationDelay: "2s" }}
         ></div>
 
@@ -163,7 +176,9 @@ export function AuthForm() {
                       {success ? "✓" : "✕"}
                     </div>
                     <div>
-                      <p className="font-bold">{success ? "Success!" : "Error"}</p>
+                      <p className="font-bold">
+                        {success ? "Success!" : "Error"}
+                      </p>
                       <p className="text-slate-600">{success || error}</p>
                     </div>
                   </div>
@@ -214,7 +229,7 @@ export function AuthForm() {
                 {/* Divider */}
                 <div className="relative my-6 flex items-center">
                   <div className="flex-grow border-t border-slate-200"></div>
-                  <span className="mx-4 flex-shrink text-[11px] font-extrabold uppercase tracking-wider text-slate-400">
+                  <span className="mx-4 flex-shrink text-[11px] font-extrabold tracking-wider text-slate-400 uppercase">
                     or with email
                   </span>
                   <div className="flex-grow border-t border-slate-200"></div>
@@ -225,18 +240,18 @@ export function AuthForm() {
                   {/* Name - Sign Up Only */}
                   {!isSignIn && (
                     <div className="space-y-1.5">
-                      <label className="block text-xs font-bold uppercase tracking-wider text-slate-700">
+                      <label className="block text-xs font-bold tracking-wider text-slate-700 uppercase">
                         Full Name
                       </label>
                       <div className="relative">
-                        <User className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
+                        <User className="absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 text-slate-400" />
                         <Input
                           type="text"
                           name="name"
                           required
                           placeholder="John Doe"
                           disabled={loading}
-                          className="h-auto w-full rounded-2xl border-slate-200 bg-slate-50/50 py-3 pl-11 pr-4 text-sm font-medium text-slate-900 transition-all focus:border-brand-500 focus:bg-white focus:ring-4 focus:ring-brand-500/10"
+                          className="focus:border-brand-500 focus:ring-brand-500/10 h-auto w-full rounded-2xl border-slate-200 bg-slate-50/50 py-3 pr-4 pl-11 text-sm font-medium text-slate-900 transition-all focus:bg-white focus:ring-4"
                         />
                       </div>
                     </div>
@@ -244,18 +259,18 @@ export function AuthForm() {
 
                   {/* Email */}
                   <div className="space-y-1.5">
-                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-700">
+                    <label className="block text-xs font-bold tracking-wider text-slate-700 uppercase">
                       Email Address
                     </label>
                     <div className="relative">
-                      <Mail className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
+                      <Mail className="absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 text-slate-400" />
                       <Input
                         type="email"
                         name="email"
                         required
                         placeholder="name@company.com"
                         disabled={loading}
-                        className="h-auto w-full rounded-2xl border-slate-200 bg-slate-50/50 py-3 pl-11 pr-4 text-sm font-medium text-slate-900 transition-all focus:border-brand-500 focus:bg-white focus:ring-4 focus:ring-brand-500/10"
+                        className="focus:border-brand-500 focus:ring-brand-500/10 h-auto w-full rounded-2xl border-slate-200 bg-slate-50/50 py-3 pr-4 pl-11 text-sm font-medium text-slate-900 transition-all focus:bg-white focus:ring-4"
                       />
                     </div>
                   </div>
@@ -263,20 +278,20 @@ export function AuthForm() {
                   {/* Password */}
                   <div className="space-y-1.5">
                     <div className="flex items-center justify-between">
-                      <label className="block text-xs font-bold uppercase tracking-wider text-slate-700">
+                      <label className="block text-xs font-bold tracking-wider text-slate-700 uppercase">
                         Password
                       </label>
                       {isSignIn && (
                         <a
                           href="/forgot-password"
-                          className="text-xs font-bold text-brand-600 transition-colors hover:text-brand-700"
+                          className="text-brand-600 hover:text-brand-700 text-xs font-bold transition-colors"
                         >
                           Forgot password?
                         </a>
                       )}
                     </div>
                     <div className="relative">
-                      <Lock className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
+                      <Lock className="absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 text-slate-400" />
                       <Input
                         type={showPassword ? "text" : "password"}
                         name="password"
@@ -285,12 +300,12 @@ export function AuthForm() {
                         disabled={loading}
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        className="h-auto w-full rounded-2xl border-slate-200 bg-slate-50/50 py-3 pl-11 pr-12 text-sm font-medium text-slate-900 transition-all focus:border-brand-500 focus:bg-white focus:ring-4 focus:ring-brand-500/10"
+                        className="focus:border-brand-500 focus:ring-brand-500/10 h-auto w-full rounded-2xl border-slate-200 bg-slate-50/50 py-3 pr-12 pl-11 text-sm font-medium text-slate-900 transition-all focus:bg-white focus:ring-4"
                       />
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 transition-colors hover:text-slate-600"
+                        className="absolute top-1/2 right-4 -translate-y-1/2 text-slate-400 transition-colors hover:text-slate-600"
                       >
                         {showPassword ? (
                           <EyeOff className="h-5 w-5" />
@@ -329,7 +344,9 @@ export function AuthForm() {
                         ></div>
                         <div
                           className={`h-full w-1/3 rounded-full transition-all ${
-                            strength.bars >= 3 ? "bg-emerald-500" : "bg-slate-200"
+                            strength.bars >= 3
+                              ? "bg-emerald-500"
+                              : "bg-slate-200"
                           }`}
                         ></div>
                       </div>
@@ -338,11 +355,11 @@ export function AuthForm() {
 
                   {/* Checkbox */}
                   <div className="flex items-center justify-between pt-1">
-                    <label className="flex cursor-pointer select-none items-center gap-2">
+                    <label className="flex cursor-pointer items-center gap-2 select-none">
                       <Checkbox
                         name="remember"
                         defaultChecked
-                        className="h-4 w-4 rounded border-slate-300 text-brand-600 focus:ring-brand-500/20"
+                        className="text-brand-600 focus:ring-brand-500/20 h-4 w-4 rounded border-slate-300"
                       />
                       <span className="text-xs font-semibold text-slate-600">
                         {isSignIn
@@ -356,14 +373,14 @@ export function AuthForm() {
                   <Button
                     type="submit"
                     disabled={loading}
-                    className="mt-2 flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-indigo-600 via-brand-600 to-purple-600 px-6 py-3.5 text-sm font-bold text-white shadow-lg shadow-indigo-200 transition-all hover:scale-[1.01] hover:from-indigo-700 hover:to-purple-700 hover:shadow-indigo-300 active:scale-95"
+                    className="via-brand-600 mt-2 flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-3.5 text-sm font-bold text-white shadow-lg shadow-indigo-200 transition-all hover:scale-[1.01] hover:from-indigo-700 hover:to-purple-700 hover:shadow-indigo-300 active:scale-95"
                   >
                     <span>
                       {loading
                         ? "Authenticating..."
                         : isSignIn
-                        ? "Sign In to Dashboard"
-                        : "Create Free Account"}
+                          ? "Sign In to Dashboard"
+                          : "Create Free Account"}
                     </span>
                     <ArrowRight className="h-4 w-4" />
                   </Button>
@@ -372,7 +389,9 @@ export function AuthForm() {
                 {/* Footer Security */}
                 <div className="mt-6 flex items-center justify-center gap-1.5 text-center text-[11px] font-medium text-slate-400">
                   <ShieldCheck className="h-4 w-4 text-emerald-500" />
-                  <span>256-bit SSL Encryption • Enterprise Grade Security</span>
+                  <span>
+                    256-bit SSL Encryption • Enterprise Grade Security
+                  </span>
                 </div>
               </div>
             </div>

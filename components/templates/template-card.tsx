@@ -48,7 +48,9 @@ export function TemplateCard({
           />
 
           {badge && (
-            <span className={`absolute right-3 top-3 rounded-md px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wider ${badgeColor}`}>
+            <span
+              className={`absolute top-3 right-3 rounded-md px-2.5 py-1 text-[10px] font-extrabold tracking-wider uppercase ${badgeColor}`}
+            >
               {badge}
             </span>
           )}
@@ -70,8 +72,12 @@ export function TemplateCard({
 
         <div className="flex items-center justify-between p-4">
           <div>
-            <h4 className="text-base font-bold text-slate-900 transition-colors group-hover:text-brand-600">{name}</h4>
-            <p className="mt-0.5 text-xs font-medium text-slate-500">{categoryLabel}</p>
+            <h4 className="group-hover:text-brand-600 text-base font-bold text-slate-900 transition-colors">
+              {name}
+            </h4>
+            <p className="mt-0.5 text-xs font-medium text-slate-500">
+              {categoryLabel}
+            </p>
           </div>
           <button
             onClick={(e) => {
@@ -80,7 +86,9 @@ export function TemplateCard({
             }}
             className="rounded-full p-2 text-slate-400 transition-colors hover:bg-slate-50 hover:text-red-500"
           >
-            <Heart className={`h-4 w-4 ${isFavorite ? "fill-red-500 text-red-500" : ""}`} />
+            <Heart
+              className={`h-4 w-4 ${isFavorite ? "fill-red-500 text-red-500" : ""}`}
+            />
           </button>
         </div>
       </div>

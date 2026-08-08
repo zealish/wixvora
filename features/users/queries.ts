@@ -109,9 +109,7 @@ export async function getStaffUserById(
           department: row.department,
           position: row.position,
           employmentStatus: row.employmentStatus as
-            | "ACTIVE"
-            | "INACTIVE"
-            | "TERMINATED",
+            "ACTIVE" | "INACTIVE" | "TERMINATED",
         }
       : null,
   };

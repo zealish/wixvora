@@ -21,7 +21,10 @@ export function prepareExportData(
   const parentMap = new Map<string, string>();
   const categoryMap = new Map<string, ExportRow>();
 
-  const flatten = (cats: CategoryWithChildren[], parentName: string | null = null) => {
+  const flatten = (
+    cats: CategoryWithChildren[],
+    parentName: string | null = null
+  ) => {
     for (const cat of cats) {
       if (parentName) {
         parentMap.set(cat.id, parentName);
@@ -170,7 +173,10 @@ export function exportToExcel(data: ExportRow[], filename?: string): void {
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Categories");
 
-    const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+    const excelBuffer = XLSX.write(workbook, {
+      bookType: "xlsx",
+      type: "array",
+    });
     const blob = new Blob([excelBuffer], {
       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     });
@@ -188,7 +194,9 @@ export function exportToJSON(data: ExportRow[], filename?: string): void {
     }
 
     const jsonString = JSON.stringify(data, null, 2);
-    const blob = new Blob([jsonString], { type: "application/json;charset=utf-8;" });
+    const blob = new Blob([jsonString], {
+      type: "application/json;charset=utf-8;",
+    });
     saveAs(blob, filename || generateFilename("json"));
   } catch (error) {
     console.error("JSON export failed:", error);

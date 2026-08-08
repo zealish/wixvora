@@ -6,9 +6,9 @@ export function FooterBlock({ props }: { props: FooterProps }) {
   return (
     <footer
       style={{ backgroundColor: props.bgColor, color: props.textColor }}
-      className="py-8 px-6 border-t border-slate-800 text-center text-xs space-y-2"
+      className="space-y-2 border-t border-slate-800 px-6 py-8 text-center text-xs"
     >
-      <div className="font-bold text-sm">{props.brandName}</div>
+      <div className="text-sm font-bold">{props.brandName}</div>
       <p className="opacity-70">{props.copyright}</p>
     </footer>
   );

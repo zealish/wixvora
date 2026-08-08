@@ -16,7 +16,8 @@ const templatesData: Template[] = [
     type: "new",
     badge: "NEW",
     badgeColor: "bg-indigo-600 text-white",
-    image: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=600&q=80",
+    image:
+      "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=600&q=80",
     popularScore: 98,
   },
   {
@@ -26,7 +27,8 @@ const templatesData: Template[] = [
     categoryLabel: "Sustainability",
     type: "popular",
     badge: null,
-    image: "https://images.unsplash.com/photo-1545241047-6083a3684587?auto=format&fit=crop&w=600&q=80",
+    image:
+      "https://images.unsplash.com/photo-1545241047-6083a3684587?auto=format&fit=crop&w=600&q=80",
     popularScore: 92,
   },
   {
@@ -36,7 +38,8 @@ const templatesData: Template[] = [
     categoryLabel: "Portfolio",
     type: "popular",
     badge: null,
-    image: "https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=600&q=80",
+    image:
+      "https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&w=600&q=80",
     popularScore: 89,
   },
   {
@@ -47,7 +50,8 @@ const templatesData: Template[] = [
     type: "premium",
     badge: "PREMIUM",
     badgeColor: "bg-amber-100 text-amber-700",
-    image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80",
+    image:
+      "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80",
     popularScore: 95,
   },
   {
@@ -58,7 +62,8 @@ const templatesData: Template[] = [
     type: "new",
     badge: "NEW",
     badgeColor: "bg-indigo-600 text-white",
-    image: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=600&q=80",
+    image:
+      "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=600&q=80",
     popularScore: 87,
   },
   {
@@ -69,7 +74,8 @@ const templatesData: Template[] = [
     type: "premium",
     badge: "PREMIUM",
     badgeColor: "bg-amber-100 text-amber-700",
-    image: "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&w=600&q=80",
+    image:
+      "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&w=600&q=80",
     popularScore: 91,
   },
   {
@@ -80,7 +86,8 @@ const templatesData: Template[] = [
     type: "new",
     badge: "NEW",
     badgeColor: "bg-indigo-600 text-white",
-    image: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=600&q=80",
+    image:
+      "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=600&q=80",
     popularScore: 84,
   },
   {
@@ -91,7 +98,8 @@ const templatesData: Template[] = [
     type: "premium",
     badge: "PREMIUM",
     badgeColor: "bg-amber-100 text-amber-700",
-    image: "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=600&q=80",
+    image:
+      "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=600&q=80",
     popularScore: 94,
   },
   {
@@ -102,7 +110,8 @@ const templatesData: Template[] = [
     type: "new",
     badge: "NEW",
     badgeColor: "bg-indigo-600 text-white",
-    image: "https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?auto=format&fit=crop&w=600&q=80",
+    image:
+      "https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?auto=format&fit=crop&w=600&q=80",
     popularScore: 90,
   },
   {
@@ -113,7 +122,8 @@ const templatesData: Template[] = [
     type: "premium",
     badge: "PREMIUM",
     badgeColor: "bg-amber-100 text-amber-700",
-    image: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=600&q=80",
+    image:
+      "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=600&q=80",
     popularScore: 88,
   },
   {
@@ -124,7 +134,8 @@ const templatesData: Template[] = [
     type: "free",
     badge: "FREE",
     badgeColor: "bg-sky-100 text-sky-700",
-    image: "https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=600&q=80",
+    image:
+      "https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=600&q=80",
     popularScore: 85,
   },
   {
@@ -135,7 +146,8 @@ const templatesData: Template[] = [
     type: "premium",
     badge: "PREMIUM",
     badgeColor: "bg-amber-100 text-amber-700",
-    image: "https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?auto=format&fit=crop&w=600&q=80",
+    image:
+      "https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?auto=format&fit=crop&w=600&q=80",
     popularScore: 93,
   },
 ];
@@ -152,8 +164,10 @@ export function TemplatesContent() {
 
   const filteredTemplates = useMemo(() => {
     let filtered = templatesData.filter((template) => {
-      const matchCategory = selectedCategory === "all" || template.category === selectedCategory;
-      const matchFilter = selectedFilter === "all" || template.type === selectedFilter;
+      const matchCategory =
+        selectedCategory === "all" || template.category === selectedCategory;
+      const matchFilter =
+        selectedFilter === "all" || template.type === selectedFilter;
       return matchCategory && matchFilter;
     });
 
@@ -209,7 +223,10 @@ export function TemplatesContent() {
               onSortChange={setSortBy}
             />
 
-            <TemplateGrid templates={paginatedTemplates} onPreview={handlePreview} />
+            <TemplateGrid
+              templates={paginatedTemplates}
+              onPreview={handlePreview}
+            />
 
             {filteredTemplates.length > 0 && (
               <Pagination

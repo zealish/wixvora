@@ -4,23 +4,23 @@ import type { FormContactProps } from "../../../lib/block-types";
 
 export function FormContactBlock({ props }: { props: FormContactProps }) {
   return (
-    <div className="py-10 px-6 max-w-2xl mx-auto">
+    <div className="mx-auto max-w-2xl px-6 py-10">
       <div
         style={{ backgroundColor: props.bgColor, color: props.textColor }}
-        className="p-8 rounded-3xl border border-slate-800 text-center space-y-4 shadow-xl"
+        className="space-y-4 rounded-3xl border border-slate-800 p-8 text-center shadow-xl"
       >
         <h3 className="text-xl font-bold">{props.title}</h3>
-        <p className="text-xs opacity-80 max-w-md mx-auto">{props.subtitle}</p>
-        <div className="flex flex-col sm:flex-row gap-2 max-w-md mx-auto pt-2">
+        <p className="mx-auto max-w-md text-xs opacity-80">{props.subtitle}</p>
+        <div className="mx-auto flex max-w-md flex-col gap-2 pt-2 sm:flex-row">
           <input
             type="email"
             placeholder={props.placeholder || "Enter your email address..."}
-            className="flex-1 px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white outline-none focus:border-blue-500"
+            className="flex-1 rounded-xl border border-slate-800 bg-slate-950 px-4 py-2.5 text-xs text-white outline-none focus:border-blue-500"
           />
           <button
             type="button"
             style={{ backgroundColor: props.accentColor }}
-            className="px-5 py-2.5 rounded-xl text-white text-xs font-semibold shrink-0"
+            className="shrink-0 rounded-xl px-5 py-2.5 text-xs font-semibold text-white"
           >
             {props.buttonText}
           </button>

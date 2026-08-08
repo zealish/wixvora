@@ -108,7 +108,9 @@ export function TemplateForm({
   );
 
   const onSaveDraft = handleSubmit((values) => persist(values, "draft"));
-  const onSavePublished = handleSubmit((values) => persist(values, "published"));
+  const onSavePublished = handleSubmit((values) =>
+    persist(values, "published")
+  );
 
   const categoryOptions = categories.flatMap((cat) => [
     { value: cat.id, label: cat.name, indent: false },
@@ -121,10 +123,15 @@ export function TemplateForm({
 
   return (
     <form onSubmit={onSaveDraft} className="space-y-6">
-      <div className="grid gap-4 rounded-lg border bg-card p-4 md:grid-cols-2">
+      <div className="bg-card grid gap-4 rounded-lg border p-4 md:grid-cols-2">
         <div className="space-y-2">
           <Label htmlFor="name">Name</Label>
-          <Input id="name" required placeholder="Template name" {...register("name")} />
+          <Input
+            id="name"
+            required
+            placeholder="Template name"
+            {...register("name")}
+          />
         </div>
 
         <div className="space-y-2">
@@ -150,7 +157,7 @@ export function TemplateForm({
           <Label htmlFor="categoryId">Business Category</Label>
           <select
             id="categoryId"
-            className="block w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+            className="border-input focus-visible:ring-ring block w-full rounded-md border bg-transparent px-3 py-2 text-sm shadow-sm transition-colors focus-visible:ring-1 focus-visible:outline-none"
             {...register("categoryId")}
           >
             <option value="">No category</option>

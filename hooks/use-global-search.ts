@@ -8,9 +8,7 @@ export function useGlobalSearch(scope: string, items: SearchItem[]) {
   const context = useContext(GlobalSearchContext);
 
   if (!context) {
-    throw new Error(
-      "useGlobalSearch must be used within GlobalSearchProvider"
-    );
+    throw new Error("useGlobalSearch must be used within GlobalSearchProvider");
   }
 
   const { registerItems, unregisterItems } = context;

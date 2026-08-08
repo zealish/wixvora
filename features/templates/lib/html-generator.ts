@@ -43,8 +43,8 @@ function renderBlockHTML(block: BlockConfig): string {
             </div>
             <div class="grid grid-cols-1 ${props.columnsCount > 1 ? `md:grid-cols-${props.columnsCount}` : ""} ${props.gap}">
                 ${(props.columns || [])
-                    .map(
-                      (col) => `
+                  .map(
+                    (col) => `
                 <div style="background-color: ${col.bgColor}; color: ${col.textColor};" class="p-6 rounded-2xl border border-gray-800/80 shadow-lg flex flex-col justify-between">
                     <div>
                         <div style="color: ${col.accentColor};" class="text-2xl mb-4">★</div>
@@ -53,8 +53,8 @@ function renderBlockHTML(block: BlockConfig): string {
                     </div>
                     ${col.btnText ? `<a href="${escapeHtml(col.btnUrl || "#")}" style="background-color: ${col.accentColor};" class="inline-block py-2 px-4 rounded-xl text-xs font-semibold text-white text-center">${escapeHtml(col.btnText)}</a>` : ""}
                 </div>`
-                    )
-                    .join("")}
+                  )
+                  .join("")}
             </div>
         </section>`;
 

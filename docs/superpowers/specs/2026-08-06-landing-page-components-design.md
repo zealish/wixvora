@@ -42,6 +42,7 @@ app/(guest)/
 ### Component Breakdown
 
 #### 1. **Navbar Component** (`navbar.tsx`)
+
 - **Type:** Server Component
 - **Purpose:** Top navigation header
 - **Contents:**
@@ -53,6 +54,7 @@ app/(guest)/
 - **Responsive:** Hidden navigation on mobile (md:flex)
 
 #### 2. **Hero Section Component** (`hero-section.tsx`)
+
 - **Type:** Server Component (wrapper), contains BuilderPreview client component
 - **Purpose:** Main hero area with marketing copy and builder preview
 - **Contents:**
@@ -69,6 +71,7 @@ app/(guest)/
 - **Styling:** Grid layout (lg:grid-cols-12), animations, gradient text
 
 #### 3. **Builder Preview Component** (`builder-preview.tsx`)
+
 - **Type:** Client Component ("use client")
 - **Purpose:** Interactive website builder demo interface
 - **State Management:**
@@ -100,6 +103,7 @@ app/(guest)/
   - Editable text fields
 
 #### 4. **Demo Modal Component** (`demo-modal.tsx`)
+
 - **Type:** Client Component ("use client")
 - **Purpose:** Video demo modal overlay
 - **State Management:**
@@ -149,20 +153,32 @@ theme: {
 ```css
 /* Gradient text utility */
 .text-gradient {
-  background: linear-gradient(135deg, #4F46E5 0%, #3B82F6 100%);
+  background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 /* Animations */
 @keyframes floatSlow {
-  0%, 100% { transform: translateY(0px) rotate(0deg); }
-  50% { transform: translateY(-12px) rotate(3deg); }
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-12px) rotate(3deg);
+  }
 }
 
 @keyframes pulseSoft {
-  0%, 100% { opacity: 0.6; transform: scale(1); }
-  50% { opacity: 0.85; transform: scale(1.05); }
+  0%,
+  100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.85;
+    transform: scale(1.05);
+  }
 }
 
 .animate-float {
@@ -196,10 +212,10 @@ input[type="range"]::-webkit-slider-thumb {
   width: 14px;
   height: 14px;
   border-radius: 50%;
-  background: #4F46E5;
+  background: #4f46e5;
   cursor: pointer;
   border: 2px solid #ffffff;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 ```
 
@@ -208,13 +224,13 @@ input[type="range"]::-webkit-slider-thumb {
 Use `next/font/google` in `app/layout.tsx`:
 
 ```typescript
-import { Inter } from 'next/font/google'
+import { Inter } from "next/font/google";
 
-const inter = Inter({ 
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700', '800', '900'],
-  variable: '--font-inter'
-})
+const inter = Inter({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800", "900"],
+  variable: "--font-inter",
+});
 ```
 
 ---
@@ -222,6 +238,7 @@ const inter = Inter({
 ## Component Props & Types
 
 ### BuilderPreview Props
+
 ```typescript
 interface BuilderPreviewProps {
   onDemoClick?: () => void; // Callback to open demo modal
@@ -229,6 +246,7 @@ interface BuilderPreviewProps {
 ```
 
 ### DemoModal Props
+
 ```typescript
 interface DemoModalProps {
   isOpen: boolean;
@@ -336,6 +354,7 @@ The existing GuestLayout wrapper already provides the footer, so components only
 ## Dependencies
 
 **No new dependencies required.** All features use:
+
 - React 19 (existing)
 - Next.js 16 (existing)
 - Tailwind CSS (existing)
@@ -348,22 +367,22 @@ The existing GuestLayout wrapper already provides the footer, so components only
 
 ## Icon Mapping (FontAwesome → Lucide)
 
-| FontAwesome Icon | Lucide Replacement |
-|------------------|-------------------|
-| fa-arrow-right | ArrowRight |
-| fa-play | Play |
-| fa-check | Check |
-| fa-sparkles | Sparkles |
-| fa-chevron-down | ChevronDown |
-| fa-plus | Plus |
-| fa-file | FileText |
-| fa-wand-magic-sparkles | Wand2 |
-| fa-image | Image |
-| fa-gear | Settings |
-| fa-desktop | Monitor |
-| fa-mobile-screen-button | Smartphone |
-| fa-xmark | X |
-| fa-circle-play | PlayCircle |
+| FontAwesome Icon        | Lucide Replacement |
+| ----------------------- | ------------------ |
+| fa-arrow-right          | ArrowRight         |
+| fa-play                 | Play               |
+| fa-check                | Check              |
+| fa-sparkles             | Sparkles           |
+| fa-chevron-down         | ChevronDown        |
+| fa-plus                 | Plus               |
+| fa-file                 | FileText           |
+| fa-wand-magic-sparkles  | Wand2              |
+| fa-image                | Image              |
+| fa-gear                 | Settings           |
+| fa-desktop              | Monitor            |
+| fa-mobile-screen-button | Smartphone         |
+| fa-xmark                | X                  |
+| fa-circle-play          | PlayCircle         |
 
 ---
 

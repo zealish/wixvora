@@ -57,7 +57,7 @@ export function getResponsiveClasses(
   visibleFrom?: ResponsiveBreakpoint
 ): string {
   if (!visibleFrom || visibleFrom === "always") return "";
-  
+
   // Mobile-first: hide on mobile, show on larger screens
   // md = hide below 768px, show at 768px+
   // lg = hide below 1024px, show at 1024px+
@@ -130,7 +130,8 @@ export function getColumnClasses(
   type: "header" | "cell" = "cell"
 ): string {
   const normalized = normalizeColumnMeta(meta);
-  const customClassName = type === "header" ? meta?.cellClassName : meta?.cellClassName;
+  const customClassName =
+    type === "header" ? meta?.cellClassName : meta?.cellClassName;
 
   return cn(
     normalized.align === "center" && "text-center",

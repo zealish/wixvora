@@ -66,7 +66,10 @@ export function ForgotPasswordForm() {
           <CardContent className="space-y-5 pt-8">
             <div className="space-y-3">
               <p className="text-sm font-medium text-slate-700">
-                If an account exists with <span className="font-semibold text-indigo-600">{email}</span>, you will receive an email with instructions to reset your password.
+                If an account exists with{" "}
+                <span className="font-semibold text-indigo-600">{email}</span>,
+                you will receive an email with instructions to reset your
+                password.
               </p>
               <p className="text-sm text-slate-500">
                 If you don&apos;t see the email, check your spam folder.
@@ -76,7 +79,10 @@ export function ForgotPasswordForm() {
         </Card>
 
         <p className="text-center text-sm font-medium text-slate-600">
-          <Link href="/login" className="font-semibold text-indigo-600 transition-colors hover:text-indigo-700">
+          <Link
+            href="/login"
+            className="font-semibold text-indigo-600 transition-colors hover:text-indigo-700"
+          >
             Return to login
           </Link>
         </p>
@@ -102,7 +108,10 @@ export function ForgotPasswordForm() {
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-5 pt-8">
             <div className="space-y-2.5">
-              <Label htmlFor="email" className="text-sm font-semibold text-slate-700">
+              <Label
+                htmlFor="email"
+                className="text-sm font-semibold text-slate-700"
+              >
                 Email
               </Label>
               <Input
@@ -130,7 +139,10 @@ export function ForgotPasswordForm() {
       </Card>
 
       <p className="text-center text-sm font-medium text-slate-600">
-        <Link href="/login" className="font-semibold text-indigo-600 transition-colors hover:text-indigo-700">
+        <Link
+          href="/login"
+          className="font-semibold text-indigo-600 transition-colors hover:text-indigo-700"
+        >
           Back to login
         </Link>
       </p>

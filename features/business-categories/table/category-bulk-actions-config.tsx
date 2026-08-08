@@ -4,10 +4,7 @@ import type { DataTableBulkAction } from "@/components/shared/data-table";
 import type { CategoryWithChildren } from "../types";
 import { Trash2, ToggleLeft, ToggleRight } from "lucide-react";
 import { toast } from "@/components/ui/toast";
-import {
-  deleteCategoryAction,
-  toggleStatusAction,
-} from "../actions";
+import { deleteCategoryAction, toggleStatusAction } from "../actions";
 
 export const createCategoryBulkActions = (
   onRefresh: () => void
@@ -20,7 +17,7 @@ export const createCategoryBulkActions = (
     onAction: async ({ rows }) => {
       const promises = rows.map((row) => toggleStatusAction(row.id, "active"));
       const results = await Promise.all(promises);
-      
+
       const failures = results.filter((r) => !r.success);
       if (failures.length === 0) {
         toast.add({
@@ -44,9 +41,11 @@ export const createCategoryBulkActions = (
     icon: ToggleLeft,
     variant: "default",
     onAction: async ({ rows }) => {
-      const promises = rows.map((row) => toggleStatusAction(row.id, "inactive"));
+      const promises = rows.map((row) =>
+        toggleStatusAction(row.id, "inactive")
+      );
       const results = await Promise.all(promises);
-      
+
       const failures = results.filter((r) => !r.success);
       if (failures.length === 0) {
         toast.add({
@@ -72,7 +71,7 @@ export const createCategoryBulkActions = (
     onAction: async ({ rows }) => {
       const promises = rows.map((row) => deleteCategoryAction(row.id));
       const results = await Promise.all(promises);
-      
+
       const failures = results.filter((r) => !r.success);
       if (failures.length === 0) {
         toast.add({

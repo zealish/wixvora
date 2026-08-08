@@ -13,9 +13,15 @@ import {
 import { relations, sql } from "drizzle-orm";
 import { businessCategories } from "./business-categories";
 import { user } from "./auth";
-import type { BlockConfig, PageSettings } from "@/features/templates/lib/block-types";
+import type {
+  BlockConfig,
+  PageSettings,
+} from "@/features/templates/lib/block-types";
 
-export const templateStatusEnum = pgEnum("template_status", ["draft", "published"]);
+export const templateStatusEnum = pgEnum("template_status", [
+  "draft",
+  "published",
+]);
 
 export const templates = pgTable(
   "templates",
@@ -39,7 +45,9 @@ export const templates = pgTable(
     status: templateStatusEnum("status").notNull().default("draft"),
     usageCount: integer("usage_count").notNull().default(0),
     lastUsedAt: timestamp("last_used_at"),
-    createdBy: uuid("created_by").references(() => user.id, { onDelete: "set null" }),
+    createdBy: uuid("created_by").references(() => user.id, {
+      onDelete: "set null",
+    }),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
     deletedAt: timestamp("deleted_at"),

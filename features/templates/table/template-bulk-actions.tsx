@@ -2,12 +2,7 @@
 
 import type { DataTableBulkAction } from "@/components/shared/data-table";
 import type { TemplateListItem } from "../types";
-import {
-  Rocket,
-  EyeOff,
-  Star,
-  Trash2,
-} from "lucide-react";
+import { Rocket, EyeOff, Star, Trash2 } from "lucide-react";
 import { toast } from "@/components/ui/toast";
 import {
   setTemplateStatusAction,
@@ -26,7 +21,12 @@ export const createTemplateBulkActions = (
       const results = await Promise.all(
         rows.map((row) => setTemplateStatusAction(row.id, "published"))
       );
-      report(results.length, results.filter((r) => r.success).length, "published with success", onRefresh);
+      report(
+        results.length,
+        results.filter((r) => r.success).length,
+        "published with success",
+        onRefresh
+      );
     },
   },
   {
@@ -37,7 +37,12 @@ export const createTemplateBulkActions = (
       const results = await Promise.all(
         rows.map((row) => setTemplateStatusAction(row.id, "draft"))
       );
-      report(results.length, results.filter((r) => r.success).length, "unpublished", onRefresh);
+      report(
+        results.length,
+        results.filter((r) => r.success).length,
+        "unpublished",
+        onRefresh
+      );
     },
   },
   {
@@ -48,7 +53,12 @@ export const createTemplateBulkActions = (
       const results = await Promise.all(
         rows.map((row) => setTemplateFeaturedAction(row.id, true))
       );
-      report(results.length, results.filter((r) => r.success).length, "marked as featured", onRefresh);
+      report(
+        results.length,
+        results.filter((r) => r.success).length,
+        "marked as featured",
+        onRefresh
+      );
     },
   },
   {
@@ -60,7 +70,12 @@ export const createTemplateBulkActions = (
       const results = await Promise.all(
         rows.map((row) => deleteTemplateAction(row.id))
       );
-      report(results.length, results.filter((r) => r.success).length, "deleted", onRefresh);
+      report(
+        results.length,
+        results.filter((r) => r.success).length,
+        "deleted",
+        onRefresh
+      );
     },
   },
 ];

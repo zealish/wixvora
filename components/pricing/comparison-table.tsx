@@ -99,9 +99,9 @@ export function ComparisonTable() {
                 <th className="w-1/5 p-4 text-center font-bold text-slate-900 sm:p-5">
                   Starter
                 </th>
-                <th className="relative w-1/5 p-4 text-center font-bold text-brand-600 sm:p-5">
+                <th className="text-brand-600 relative w-1/5 p-4 text-center font-bold sm:p-5">
                   Pro
-                  <span className="mt-0.5 inline-block rounded-full bg-brand-50 px-2 py-0.5 text-[9px] font-extrabold text-brand-600">
+                  <span className="bg-brand-50 text-brand-600 mt-0.5 inline-block rounded-full px-2 py-0.5 text-[9px] font-extrabold">
                     MOST POPULAR
                   </span>
                 </th>

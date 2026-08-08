@@ -91,10 +91,12 @@ app/(staff)/staff/templates/[id]/edit/page.tsx # edit
 ### Task 1: Template database table + migration
 
 **Files:**
+
 - Create: `lib/db/schema/templates.ts`
 - Modify: `lib/db/schema/index.ts`
 
 **Interfaces:**
+
 - Produces: `templateStatusEnum`, `templates` table, `templatesRelations`. Columns: `id, name, slug, description, previewImageUrl, categoryId, blocksJson, pageSettings, htmlSnapshot, isFeatured, sortOrder, status, usageCount, lastUsedAt, createdBy, createdAt, updatedAt, deletedAt`. `blocksJson` is `jsonb.$type<BlockConfig[]>()`, `pageSettings` is `jsonb.$type<PageSettings>()`.
 
 - [ ] **Step 1: Create the schema file**
@@ -118,9 +120,15 @@ import {
 import { relations } from "drizzle-orm";
 import { businessCategories } from "./business-categories";
 import { user } from "./auth";
-import type { BlockConfig, PageSettings } from "@/features/templates/lib/block-types";
+import type {
+  BlockConfig,
+  PageSettings,
+} from "@/features/templates/lib/block-types";
 
-export const templateStatusEnum = pgEnum("template_status", ["draft", "published"]);
+export const templateStatusEnum = pgEnum("template_status", [
+  "draft",
+  "published",
+]);
 
 export const templates = pgTable(
   "templates",
@@ -144,7 +152,9 @@ export const templates = pgTable(
     status: templateStatusEnum("status").notNull().default("draft"),
     usageCount: integer("usage_count").notNull().default(0),
     lastUsedAt: timestamp("last_used_at"),
-    createdBy: uuid("created_by").references(() => user.id, { onDelete: "set null" }),
+    createdBy: uuid("created_by").references(() => user.id, {
+      onDelete: "set null",
+    }),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
     deletedAt: timestamp("deleted_at"),
@@ -205,11 +215,13 @@ git commit -m "feat: add templates database schema"
 ### Task 2: Template permissions, seed, and navigation
 
 **Files:**
+
 - Modify: `lib/auth/permissions.ts`
 - Modify: `lib/db/seed.ts`
 - Modify: `config/navigation.ts`
 
 **Interfaces:**
+
 - Produces: `PERMISSIONS.TEMPLATES_UPDATE_OWN`, `PERMISSIONS.TEMPLATES_UPDATE_ANY`, `PERMISSIONS.TEMPLATES_DELETE_OWN`, `PERMISSIONS.TEMPLATES_DELETE_ANY` (existing `TEMPLATES_VIEW/CREATE/PUBLISH` already present). DB rows for those four keys. Roles `TEMPLATE_DESIGNER`, `TEMPLATE_MANAGER` with mappings.
 - Consumes: nothing new.
 
@@ -361,11 +373,13 @@ git commit -m "feat: add template permissions, roles, and navigation"
 ### Task 3: Block domain types + catalog + icon map
 
 **Files:**
+
 - Create: `features/templates/lib/block-types.ts`
 - Create: `features/templates/lib/block-catalog.ts`
 - Create: `features/templates/lib/block-icons.ts`
 
 **Interfaces:**
+
 - Produces: types `BlockType`, `BlockProps`, `BlockConfig` (discriminated union on `type`), `PageSettings`, `NavLink`, `GridColumn`; constants `DEFAULT_PAGE_SETTINGS`, `BLOCK_CATALOG`, `PRESET_TEMPLATES`; helpers `createBlockId`, `gridColsClass`, `textAlignClass`, `justifyAlignClass`, `createBlockFromCatalog`; icon helper `getBlockIcon(name): LucideIcon`.
 - Consumes: `lucide-react` icons.
 
@@ -531,7 +545,12 @@ export type BlockConfig =
   | { id: string; type: "paragraph"; hidden: boolean; props: ParagraphProps }
   | { id: string; type: "image"; hidden: boolean; props: ImageProps }
   | { id: string; type: "pricing"; hidden: boolean; props: PricingProps }
-  | { id: string; type: "form_contact"; hidden: boolean; props: FormContactProps }
+  | {
+      id: string;
+      type: "form_contact";
+      hidden: boolean;
+      props: FormContactProps;
+    }
   | { id: string; type: "footer"; hidden: boolean; props: FooterProps };
 
 export interface PageSettings {
@@ -551,23 +570,43 @@ export function createBlockId(): string {
 }
 
 export function gridColsClass(count: number): string {
-  const classes = ["", "grid-cols-1", "md:grid-cols-2", "md:grid-cols-3", "md:grid-cols-4"];
+  const classes = [
+    "",
+    "grid-cols-1",
+    "md:grid-cols-2",
+    "md:grid-cols-3",
+    "md:grid-cols-4",
+  ];
   return classes[count] ?? "md:grid-cols-3";
 }
 
 export function textAlignClass(align: "left" | "center" | "right"): string {
-  return align === "center" ? "text-center" : align === "right" ? "text-right" : "text-left";
+  return align === "center"
+    ? "text-center"
+    : align === "right"
+      ? "text-right"
+      : "text-left";
 }
 
 export function justifyAlignClass(align: "left" | "center" | "right"): string {
-  return align === "center" ? "justify-center" : align === "right" ? "justify-end" : "justify-start";
+  return align === "center"
+    ? "justify-center"
+    : align === "right"
+      ? "justify-end"
+      : "justify-start";
 }
 ```
 
 - [ ] **Step 2: Write `lib/block-catalog.ts`**
 
 ```typescript
-import type { BlockConfig, BlockType, BlockProps, NavbarProps, HeroProps } from "./block-types";
+import type {
+  BlockConfig,
+  BlockType,
+  BlockProps,
+  NavbarProps,
+  HeroProps,
+} from "./block-types";
 import { createBlockId } from "./block-types";
 
 export interface BlockCatalogItem {
@@ -735,7 +774,8 @@ export const BLOCK_CATALOG: BlockCatalogCategory[] = [
           secondaryButtonUrl: "#",
           bgColor: "#090d16",
           textColor: "#ffffff",
-          bgGradient: "bg-gradient-to-r from-blue-950 via-slate-900 to-indigo-950",
+          bgGradient:
+            "bg-gradient-to-r from-blue-950 via-slate-900 to-indigo-950",
           align: "center",
         },
       },
@@ -774,7 +814,8 @@ export const BLOCK_CATALOG: BlockCatalogCategory[] = [
         defaultProps: {
           layerName: "Contact Form",
           title: "Subscribe to Our Newsletter",
-          subtitle: "Get design tips and feature updates straight to your email.",
+          subtitle:
+            "Get design tips and feature updates straight to your email.",
           placeholder: "Enter your email address...",
           buttonText: "Subscribe Now",
           bgColor: "#1e293b",
@@ -846,13 +887,41 @@ const saasGrid: BlockConfig = {
   props: {
     layerName: "Features Grid",
     title: "Flexible Key Features",
-    subtitle: "Each column is fully customizable to match your visual preferences",
+    subtitle:
+      "Each column is fully customizable to match your visual preferences",
     columnsCount: 3,
     gap: "gap-6",
     columns: [
-      { icon: "grid", title: "Dynamic Column Grid", desc: "Arrange 1 to 4 columns with independent background styles.", bgColor: "#1e293b", textColor: "#f8fafc", accentColor: "#3b82f6", btnText: "Details", btnUrl: "#" },
-      { icon: "palette", title: "Custom Hex Colors", desc: "Full color control for backgrounds, text, and borders per element.", bgColor: "#0f172a", textColor: "#f8fafc", accentColor: "#10b981", btnText: "Try", btnUrl: "#" },
-      { icon: "layers", title: "Clean Layer Tree", desc: "Manage layer order and names with an intuitive sidebar.", bgColor: "#18181b", textColor: "#f8fafc", accentColor: "#f59e0b", btnText: "Manage", btnUrl: "#" },
+      {
+        icon: "grid",
+        title: "Dynamic Column Grid",
+        desc: "Arrange 1 to 4 columns with independent background styles.",
+        bgColor: "#1e293b",
+        textColor: "#f8fafc",
+        accentColor: "#3b82f6",
+        btnText: "Details",
+        btnUrl: "#",
+      },
+      {
+        icon: "palette",
+        title: "Custom Hex Colors",
+        desc: "Full color control for backgrounds, text, and borders per element.",
+        bgColor: "#0f172a",
+        textColor: "#f8fafc",
+        accentColor: "#10b981",
+        btnText: "Try",
+        btnUrl: "#",
+      },
+      {
+        icon: "layers",
+        title: "Clean Layer Tree",
+        desc: "Manage layer order and names with an intuitive sidebar.",
+        bgColor: "#18181b",
+        textColor: "#f8fafc",
+        accentColor: "#f59e0b",
+        btnText: "Manage",
+        btnUrl: "#",
+      },
     ],
   },
 };
@@ -939,10 +1008,12 @@ git commit -m "feat: add template block domain types and catalog"
 ### Task 4: HTML snapshot generator + block validators
 
 **Files:**
+
 - Create: `features/templates/lib/html-generator.ts`
 - Create: `features/templates/lib/block-validator.ts`
 
 **Interfaces:**
+
 - Produces: `generateHTMLSnapshot(blocks: BlockConfig[], settings: PageSettings): string`; zod schemas `blockConfigSchema` (discriminated union) and `pageSettingsSchema`.
 - Consumes: Task 3 types.
 
@@ -994,8 +1065,8 @@ function renderBlockHTML(block: BlockConfig): string {
             </div>
             <div class="grid grid-cols-1 ${props.columnsCount > 1 ? `md:grid-cols-${props.columnsCount}` : ""} ${props.gap}">
                 ${(props.columns || [])
-                    .map(
-                      (col) => `
+                  .map(
+                    (col) => `
                 <div style="background-color: ${col.bgColor}; color: ${col.textColor};" class="p-6 rounded-2xl border border-gray-800/80 shadow-lg flex flex-col justify-between">
                     <div>
                         <div style="color: ${col.accentColor};" class="text-2xl mb-4">★</div>
@@ -1004,8 +1075,8 @@ function renderBlockHTML(block: BlockConfig): string {
                     </div>
                     ${col.btnText ? `<a href="${escapeHtml(col.btnUrl || "#")}" style="background-color: ${col.accentColor};" class="inline-block py-2 px-4 rounded-xl text-xs font-semibold text-white text-center">${escapeHtml(col.btnText)}</a>` : ""}
                 </div>`
-                    )
-                    .join("")}
+                  )
+                  .join("")}
             </div>
         </section>`;
 
@@ -1110,6 +1181,7 @@ ${renderedBlocks}
 ```
 
 Notes:
+
 - The `grid_custom` case intentionally emits a template-literal class name (`md:grid-cols-${props.columnsCount}`). This output string is rendered in the standalone snapshot HTML which loads Tailwind via CDN — the CDN scans the DOM at runtime, so the class is generated correctly there. Do NOT swap it for `gridColsClass` (that helper is only for the compiled editor).
 - The `switch` covers every member of the `BlockConfig` union, so TypeScript accepts the exhaustive switch without a default case.
 - The string uses `<\/script>` inside the template literal so the closing tag is not parsed as an actual script-closer in the generated snapshot.
@@ -1251,16 +1323,48 @@ const baseBlock = {
 };
 
 export const blockConfigSchema = z.discriminatedUnion("type", [
-  z.object({ ...baseBlock, type: z.literal("navbar"), props: navbarPropsSchema }),
+  z.object({
+    ...baseBlock,
+    type: z.literal("navbar"),
+    props: navbarPropsSchema,
+  }),
   z.object({ ...baseBlock, type: z.literal("hero"), props: heroPropsSchema }),
-  z.object({ ...baseBlock, type: z.literal("container"), props: containerPropsSchema }),
-  z.object({ ...baseBlock, type: z.literal("grid_custom"), props: gridCustomPropsSchema }),
-  z.object({ ...baseBlock, type: z.literal("heading"), props: headingPropsSchema }),
-  z.object({ ...baseBlock, type: z.literal("paragraph"), props: paragraphPropsSchema }),
+  z.object({
+    ...baseBlock,
+    type: z.literal("container"),
+    props: containerPropsSchema,
+  }),
+  z.object({
+    ...baseBlock,
+    type: z.literal("grid_custom"),
+    props: gridCustomPropsSchema,
+  }),
+  z.object({
+    ...baseBlock,
+    type: z.literal("heading"),
+    props: headingPropsSchema,
+  }),
+  z.object({
+    ...baseBlock,
+    type: z.literal("paragraph"),
+    props: paragraphPropsSchema,
+  }),
   z.object({ ...baseBlock, type: z.literal("image"), props: imagePropsSchema }),
-  z.object({ ...baseBlock, type: z.literal("pricing"), props: pricingPropsSchema }),
-  z.object({ ...baseBlock, type: z.literal("form_contact"), props: formContactPropsSchema }),
-  z.object({ ...baseBlock, type: z.literal("footer"), props: footerPropsSchema }),
+  z.object({
+    ...baseBlock,
+    type: z.literal("pricing"),
+    props: pricingPropsSchema,
+  }),
+  z.object({
+    ...baseBlock,
+    type: z.literal("form_contact"),
+    props: formContactPropsSchema,
+  }),
+  z.object({
+    ...baseBlock,
+    type: z.literal("footer"),
+    props: footerPropsSchema,
+  }),
 ]);
 
 export const pageSettingsSchema = z.object({
@@ -1285,10 +1389,12 @@ git commit -m "feat: add template html generator and block validators"
 ### Task 5: Feature-level types and zod validation
 
 **Files:**
+
 - Create: `features/templates/types.ts`
 - Create: `features/templates/validation.ts`
 
 **Interfaces:**
+
 - Produces: `Template`, `TemplateListItem`, `TemplateActionResult`, `TemplateStatus`, `CreateTemplateInput`, `UpdateTemplateInput`, `createTemplateSchema`, `updateTemplateSchema`.
 - Consumes: Task 3/4 types and schemas.
 
@@ -1340,8 +1446,7 @@ export interface TemplateListItem {
 }
 
 export type TemplateActionResult =
-  | { success: true; data?: { id: string } }
-  | { success: false; error: string };
+  { success: true; data?: { id: string } } | { success: false; error: string };
 ```
 
 The DTO field is named `blocks` (parsed model); the DB column remains `blocks_json`.
@@ -1395,9 +1500,11 @@ git commit -m "feat: add template types and validation"
 ### Task 6: Queries
 
 **Files:**
+
 - Create: `features/templates/queries.ts`
 
 **Interfaces:**
+
 - Produces: `getAllTemplates(): Promise<TemplateListItem[]>`, `getTemplateById(id): Promise<Template | null>`, `generateUniqueSlug(name, excludeId?): Promise<string>`, `incrementUsageCount(id): Promise<void>`.
 - Consumes: `@/lib/db`, schema `templates`/`businessCategories`/`user`; Task 5 types.
 
@@ -1585,9 +1692,11 @@ git commit -m "feat: add template queries"
 ### Task 7: Service layer
 
 **Files:**
+
 - Create: `features/templates/service.ts`
 
 **Interfaces:**
+
 - Produces: `createTemplate(data, userId)`, `updateTemplate(id, data, userId)`, `softDeleteTemplate(id, userId)`, `duplicateTemplate(id, userId)`, `toggleTemplateStatus(id, status, userId)`, `toggleTemplateFeatured(id, isFeatured, userId)`, `assertCanModifyTemplate(templateId, userId, mode)`.
 - Consumes: Task 5 inputs, Task 6 queries, `generateHTMLSnapshot`, `createAuditLog`, `getUserPermissions`, `PERMISSIONS`, `DEFAULT_PAGE_SETTINGS`.
 
@@ -1852,9 +1961,11 @@ git commit -m "feat: add template service layer"
 ### Task 8: Server actions
 
 **Files:**
+
 - Create: `features/templates/actions.ts`
 
 **Interfaces:**
+
 - Produces: `createTemplateAction(data): Promise<TemplateActionResult>`, `updateTemplateAction(data)`, `deleteTemplateAction(id)`, `duplicateTemplateAction(id)`, `setTemplateStatusAction(id, status)`, `setTemplateFeaturedAction(id, isFeatured)`.
 - Consumes: Task 5 schemas/types, Task 7 services.
 
@@ -2024,12 +2135,14 @@ git commit -m "feat: add template server actions"
 ### Task 9: Data-table layer (columns, filters, bulk actions, table component)
 
 **Files:**
+
 - Create: `features/templates/table/template-columns.tsx`
 - Create: `features/templates/table/template-filters.ts`
 - Create: `features/templates/table/template-bulk-actions.tsx`
 - Create: `features/templates/components/template-data-table.tsx`
 
 **Interfaces:**
+
 - Produces: `createTemplateColumns(opts)`, `templateFilters`, `createTemplateBulkActions(onRefresh)`, `TemplateDataTable({ data })`.
 - Consumes: `DataTable` from `@/components/shared/data-table`; Task 5 `TemplateListItem`.
 
@@ -2078,8 +2191,11 @@ function formatDate(date: Date | string | null): string {
   if (!date) return "-";
   const d = new Date(date);
   const now = new Date();
-  const diffDays = Math.floor((now.getTime() - d.getTime()) / (1000 * 60 * 60 * 24));
-  if (diffDays === 0) return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  const diffDays = Math.floor(
+    (now.getTime() - d.getTime()) / (1000 * 60 * 60 * 24)
+  );
+  if (diffDays === 0)
+    return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
   if (diffDays === 1) return "Yesterday";
   if (diffDays < 7) return `${diffDays} days ago`;
   return d.toLocaleDateString();
@@ -2097,7 +2213,8 @@ export function createTemplateColumns(
         <Checkbox
           checked={table.getIsAllPageRowsSelected()}
           indeterminate={
-            table.getIsSomePageRowsSelected() && !table.getIsAllPageRowsSelected()
+            table.getIsSomePageRowsSelected() &&
+            !table.getIsAllPageRowsSelected()
           }
           onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
           aria-label="Select all"
@@ -2137,8 +2254,8 @@ export function createTemplateColumns(
                 className="h-10 w-10 rounded-md border object-cover"
               />
             ) : (
-              <div className="flex h-10 w-10 items-center justify-center rounded-md border bg-muted">
-                <ImageIcon className="h-4 w-4 text-muted-foreground" />
+              <div className="bg-muted flex h-10 w-10 items-center justify-center rounded-md border">
+                <ImageIcon className="text-muted-foreground h-4 w-4" />
               </div>
             )}
             <div className="flex flex-col">
@@ -2148,7 +2265,7 @@ export function createTemplateColumns(
                   <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
                 )}
               </span>
-              <span className="text-xs text-muted-foreground">{t.slug}</span>
+              <span className="text-muted-foreground text-xs">{t.slug}</span>
             </div>
           </div>
         );
@@ -2170,7 +2287,7 @@ export function createTemplateColumns(
         <DataTableColumnHeader column={column} title="Category" />
       ),
       cell: ({ row }) => (
-        <span className="text-sm text-muted-foreground">
+        <span className="text-muted-foreground text-sm">
           {categoryText(row.original)}
         </span>
       ),
@@ -2216,7 +2333,7 @@ export function createTemplateColumns(
         <DataTableColumnHeader column={column} title="Usage" />
       ),
       cell: ({ row }) => (
-        <span className="text-sm text-muted-foreground">
+        <span className="text-muted-foreground text-sm">
           {row.original.usageCount}
         </span>
       ),
@@ -2235,7 +2352,7 @@ export function createTemplateColumns(
         <DataTableColumnHeader column={column} title="Created By" />
       ),
       cell: ({ row }) => (
-        <span className="text-sm text-muted-foreground">
+        <span className="text-muted-foreground text-sm">
           {row.original.createdByName ?? "-"}
         </span>
       ),
@@ -2254,7 +2371,7 @@ export function createTemplateColumns(
         <DataTableColumnHeader column={column} title="Updated" />
       ),
       cell: ({ row }) => (
-        <span className="text-sm text-muted-foreground">
+        <span className="text-muted-foreground text-sm">
           {formatDate(row.original.updatedAt)}
         </span>
       ),
@@ -2285,7 +2402,9 @@ export function createTemplateColumns(
               }
             />
             <DropdownMenuContent align="end">
-              <DropdownMenuItem render={<Link href={`/staff/templates/${t.id}/edit`} />}>
+              <DropdownMenuItem
+                render={<Link href={`/staff/templates/${t.id}/edit`} />}
+              >
                 <Pencil className="mr-2 size-4" />
                 Edit
               </DropdownMenuItem>
@@ -2302,7 +2421,10 @@ export function createTemplateColumns(
                 Duplicate
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem variant="destructive" onClick={() => onDelete(t)}>
+              <DropdownMenuItem
+                variant="destructive"
+                onClick={() => onDelete(t)}
+              >
                 <Trash2 className="mr-2 size-4" />
                 Delete
               </DropdownMenuItem>
@@ -2347,12 +2469,7 @@ export const templateFilters: DataTableFilter[] = [
 
 import type { DataTableBulkAction } from "@/components/shared/data-table";
 import type { TemplateListItem } from "../types";
-import {
-  Rocket,
-  EyeOff,
-  Star,
-  Trash2,
-} from "lucide-react";
+import { Rocket, EyeOff, Star, Trash2 } from "lucide-react";
 import { toast } from "@/components/ui/toast";
 import {
   setTemplateStatusAction,
@@ -2371,7 +2488,12 @@ export const createTemplateBulkActions = (
       const results = await Promise.all(
         rows.map((row) => setTemplateStatusAction(row.id, "published"))
       );
-      report(results.length, results.filter((r) => r.success).length, "published with success", onRefresh);
+      report(
+        results.length,
+        results.filter((r) => r.success).length,
+        "published with success",
+        onRefresh
+      );
     },
   },
   {
@@ -2382,7 +2504,12 @@ export const createTemplateBulkActions = (
       const results = await Promise.all(
         rows.map((row) => setTemplateStatusAction(row.id, "draft"))
       );
-      report(results.length, results.filter((r) => r.success).length, "unpublished", onRefresh);
+      report(
+        results.length,
+        results.filter((r) => r.success).length,
+        "unpublished",
+        onRefresh
+      );
     },
   },
   {
@@ -2393,7 +2520,12 @@ export const createTemplateBulkActions = (
       const results = await Promise.all(
         rows.map((row) => setTemplateFeaturedAction(row.id, true))
       );
-      report(results.length, results.filter((r) => r.success).length, "marked as featured", onRefresh);
+      report(
+        results.length,
+        results.filter((r) => r.success).length,
+        "marked as featured",
+        onRefresh
+      );
     },
   },
   {
@@ -2405,7 +2537,12 @@ export const createTemplateBulkActions = (
       const results = await Promise.all(
         rows.map((row) => deleteTemplateAction(row.id))
       );
-      report(results.length, results.filter((r) => r.success).length, "deleted", onRefresh);
+      report(
+        results.length,
+        results.filter((r) => r.success).length,
+        "deleted",
+        onRefresh
+      );
     },
   },
 ];
@@ -2600,15 +2737,12 @@ export function TemplateDataTable({ data }: TemplateDataTableProps) {
             <DialogTitle>Delete Template</DialogTitle>
             <DialogDescription>
               Are you sure you want to delete
-              {deleteTarget ? ` "${deleteTarget.name}"` : " this template"}? This
-              action cannot be undone.
+              {deleteTarget ? ` "${deleteTarget.name}"` : " this template"}?
+              This action cannot be undone.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setDeleteTarget(null)}
-            >
+            <Button variant="outline" onClick={() => setDeleteTarget(null)}>
               Cancel
             </Button>
             <Button variant="destructive" onClick={confirmDelete}>
@@ -2639,9 +2773,11 @@ git commit -m "feat: add templates data table"
 ### Task 10: Index page (DataTable)
 
 **Files:**
+
 - Create: `app/(staff)/staff/templates/page.tsx`
 
 **Interfaces:**
+
 - Consumes: `getAllTemplates`, `TemplateDataTable`, `PageHeader`, `PERMISSIONS.TEMPLATES_VIEW`, `Button`, `Plus`, `Link`.
 - Produces: the `/staff/templates` route.
 
@@ -2680,7 +2816,7 @@ export default async function TemplatesPage() {
         actions={
           <Link href="/staff/templates/create">
             <Button>
-              <Plus className="h-4 w-4 mr-2" />
+              <Plus className="mr-2 h-4 w-4" />
               Create Template
             </Button>
           </Link>
@@ -2716,6 +2852,7 @@ git commit -m "feat: add templates index page"
 ### Task 11: Block renderer components
 
 **Files:**
+
 - Create: `features/templates/components/block-editor/blocks/navbar-block.tsx`
 - Create: `features/templates/components/block-editor/blocks/hero-block.tsx`
 - Create: `features/templates/components/block-editor/blocks/container-block.tsx`
@@ -2729,6 +2866,7 @@ git commit -m "feat: add templates index page"
 - Create: `features/templates/components/block-editor/block-renderer.tsx`
 
 **Interfaces:**
+
 - Produces: one default-export component per block (each takes `{ props }`), plus `BlockRenderer({ block })`.
 - Consumes: Task 3 prop types, `gridColsClass`/`textAlignClass`/`justifyAlignClass`, `getBlockIcon`.
 
@@ -2743,12 +2881,18 @@ export function NavbarBlock({ props }: { props: NavbarProps }) {
   return (
     <nav
       style={{ backgroundColor: props.bgColor, color: props.textColor }}
-      className="py-4 px-6 border-b border-slate-800 flex items-center justify-between transition-all"
+      className="flex items-center justify-between border-b border-slate-800 px-6 py-4 transition-all"
     >
-      <div className="font-extrabold text-lg tracking-tight">{props.logoText}</div>
-      <div className="hidden md:flex items-center space-x-6 text-xs font-semibold">
+      <div className="text-lg font-extrabold tracking-tight">
+        {props.logoText}
+      </div>
+      <div className="hidden items-center space-x-6 text-xs font-semibold md:flex">
         {props.links.map((l, i) => (
-          <a key={i} href={l.url || "#"} className="hover:text-blue-400 transition">
+          <a
+            key={i}
+            href={l.url || "#"}
+            className="transition hover:text-blue-400"
+          >
             {l.label}
           </a>
         ))}
@@ -2756,7 +2900,7 @@ export function NavbarBlock({ props }: { props: NavbarProps }) {
       <a
         href={props.ctaUrl || "#"}
         style={{ backgroundColor: props.accentColor }}
-        className="px-4 py-2 rounded-xl font-bold text-xs text-white shadow-md inline-block"
+        className="inline-block rounded-xl px-4 py-2 text-xs font-bold text-white shadow-md"
       >
         {props.ctaText}
       </a>
@@ -2777,23 +2921,27 @@ export function HeroBlock({ props }: { props: HeroProps }) {
   return (
     <div
       style={{ backgroundColor: props.bgColor, color: props.textColor }}
-      className={`relative py-16 px-6 ${props.bgGradient} ${textAlignClass(props.align)} transition-all`}
+      className={`relative px-6 py-16 ${props.bgGradient} ${textAlignClass(props.align)} transition-all`}
     >
-      <div className="max-w-4xl mx-auto space-y-5">
+      <div className="mx-auto max-w-4xl space-y-5">
         {props.badge && (
-          <span className="inline-block px-4 py-1 rounded-full text-[11px] font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20">
+          <span className="inline-block rounded-full border border-blue-500/20 bg-blue-500/10 px-4 py-1 text-[11px] font-semibold text-blue-400">
             {props.badge}
           </span>
         )}
-        <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight leading-tight">
+        <h1 className="text-3xl leading-tight font-extrabold tracking-tight md:text-5xl">
           {props.title}
         </h1>
-        <p className="text-sm md:text-base opacity-80 max-w-2xl mx-auto">{props.subtitle}</p>
-        <div className={`pt-4 flex flex-wrap ${justifyAlignClass(props.align)} gap-4`}>
+        <p className="mx-auto max-w-2xl text-sm opacity-80 md:text-base">
+          {props.subtitle}
+        </p>
+        <div
+          className={`flex flex-wrap pt-4 ${justifyAlignClass(props.align)} gap-4`}
+        >
           {props.buttonText && (
             <a
               href={props.buttonUrl || "#"}
-              className="inline-block px-6 py-3 rounded-xl bg-blue-600 text-white font-semibold text-xs shadow-lg shadow-blue-500/25 transition hover:bg-blue-500"
+              className="inline-block rounded-xl bg-blue-600 px-6 py-3 text-xs font-semibold text-white shadow-lg shadow-blue-500/25 transition hover:bg-blue-500"
             >
               {props.buttonText}
             </a>
@@ -2801,7 +2949,7 @@ export function HeroBlock({ props }: { props: HeroProps }) {
           {props.secondaryButtonText && (
             <a
               href={props.secondaryButtonUrl || "#"}
-              className="inline-block px-6 py-3 rounded-xl bg-slate-800 text-slate-200 font-semibold text-xs border border-slate-700 transition hover:bg-slate-700"
+              className="inline-block rounded-xl border border-slate-700 bg-slate-800 px-6 py-3 text-xs font-semibold text-slate-200 transition hover:bg-slate-700"
             >
               {props.secondaryButtonText}
             </a>
@@ -2828,9 +2976,9 @@ export function ContainerBlock({ props }: { props: ContainerProps }) {
         color: props.textColor,
         borderColor: props.borderColor,
       }}
-      className={`${props.paddingY} ${props.paddingX} ${props.borderRadius} ${props.borderWidth} ${props.bgGradient} max-w-6xl mx-auto my-4 transition-all`}
+      className={`${props.paddingY} ${props.paddingX} ${props.borderRadius} ${props.borderWidth} ${props.bgGradient} mx-auto my-4 max-w-6xl transition-all`}
     >
-      <p className="leading-relaxed text-sm">{props.content}</p>
+      <p className="text-sm leading-relaxed">{props.content}</p>
     </div>
   );
 }
@@ -2847,35 +2995,41 @@ import { getBlockIcon } from "../../../lib/block-icons";
 
 export function GridCustomBlock({ props }: { props: GridCustomProps }) {
   return (
-    <div className="py-12 px-6 max-w-6xl mx-auto">
-      <div className="text-center mb-10 space-y-2">
-        <h2 className="text-2xl md:text-3xl font-extrabold text-white">{props.title}</h2>
+    <div className="mx-auto max-w-6xl px-6 py-12">
+      <div className="mb-10 space-y-2 text-center">
+        <h2 className="text-2xl font-extrabold text-white md:text-3xl">
+          {props.title}
+        </h2>
         <p className="text-xs text-slate-400">{props.subtitle}</p>
       </div>
-      <div className={`grid grid-cols-1 ${gridColsClass(props.columnsCount)} ${props.gap}`}>
+      <div
+        className={`grid grid-cols-1 ${gridColsClass(props.columnsCount)} ${props.gap}`}
+      >
         {props.columns.map((col, idx) => {
           const Icon = getBlockIcon(col.icon);
           return (
             <div
               key={idx}
               style={{ backgroundColor: col.bgColor, color: col.textColor }}
-              className="p-6 rounded-2xl border border-slate-800/80 shadow-lg flex flex-col justify-between transition-all"
+              className="flex flex-col justify-between rounded-2xl border border-slate-800/80 p-6 shadow-lg transition-all"
             >
               <div>
                 <div
                   style={{ color: col.accentColor }}
-                  className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center mb-4 text-lg"
+                  className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 text-lg"
                 >
-                  <Icon className="w-5 h-5" />
+                  <Icon className="h-5 w-5" />
                 </div>
-                <h3 className="text-base font-bold mb-2">{col.title}</h3>
-                <p className="text-xs opacity-80 leading-relaxed mb-6">{col.desc}</p>
+                <h3 className="mb-2 text-base font-bold">{col.title}</h3>
+                <p className="mb-6 text-xs leading-relaxed opacity-80">
+                  {col.desc}
+                </p>
               </div>
               {col.btnText && (
                 <a
                   href={col.btnUrl || "#"}
                   style={{ backgroundColor: col.accentColor }}
-                  className="w-full py-2.5 rounded-xl text-xs font-semibold text-white shadow-md text-center inline-block"
+                  className="inline-block w-full rounded-xl py-2.5 text-center text-xs font-semibold text-white shadow-md"
                 >
                   {col.btnText}
                 </a>
@@ -2900,10 +3054,10 @@ import { textAlignClass } from "../../../lib/block-types";
 export function HeadingBlock({ props }: { props: HeadingProps }) {
   const HeadingTag = props.level;
   return (
-    <div className={`py-4 px-6 ${textAlignClass(props.align)}`}>
+    <div className={`px-6 py-4 ${textAlignClass(props.align)}`}>
       <HeadingTag
         style={{ color: props.textColor }}
-        className={`${props.fontSize} ${props.weight} tracking-tight leading-snug`}
+        className={`${props.fontSize} ${props.weight} leading-snug tracking-tight`}
       >
         {props.text}
       </HeadingTag>
@@ -2922,7 +3076,7 @@ import { textAlignClass } from "../../../lib/block-types";
 
 export function ParagraphBlock({ props }: { props: ParagraphProps }) {
   return (
-    <div className="py-3 px-6">
+    <div className="px-6 py-3">
       <p
         style={{ color: props.textColor }}
         className={`${props.fontSize} ${textAlignClass(props.align)} ${props.maxWidth} mx-auto leading-relaxed`}
@@ -2943,14 +3097,16 @@ import type { ImageProps } from "../../../lib/block-types";
 
 export function ImageBlock({ props }: { props: ImageProps }) {
   return (
-    <div className="py-6 px-4 max-w-4xl mx-auto text-center">
+    <div className="mx-auto max-w-4xl px-4 py-6 text-center">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={props.url}
         alt={props.alt || "Visual"}
-        className={`w-full h-auto ${props.rounded} ${props.shadow} border border-slate-800 mx-auto max-h-[480px] object-cover`}
+        className={`h-auto w-full ${props.rounded} ${props.shadow} mx-auto max-h-[480px] border border-slate-800 object-cover`}
       />
-      {props.caption && <p className="mt-2 text-xs text-slate-400">{props.caption}</p>}
+      {props.caption && (
+        <p className="mt-2 text-xs text-slate-400">{props.caption}</p>
+      )}
     </div>
   );
 }
@@ -2966,28 +3122,30 @@ import type { PricingProps } from "../../../lib/block-types";
 
 export function PricingBlock({ props }: { props: PricingProps }) {
   return (
-    <div className="py-10 px-6 max-w-sm mx-auto">
+    <div className="mx-auto max-w-sm px-6 py-10">
       <div
         style={{ backgroundColor: props.bgColor, color: props.textColor }}
-        className="p-8 rounded-3xl border border-slate-800 shadow-2xl relative text-center"
+        className="relative rounded-3xl border border-slate-800 p-8 text-center shadow-2xl"
       >
         {props.badge && (
           <span
             style={{ backgroundColor: props.accentColor }}
-            className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full text-[10px] font-bold text-white uppercase tracking-wider"
+            className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full px-3 py-1 text-[10px] font-bold tracking-wider text-white uppercase"
           >
             {props.badge}
           </span>
         )}
-        <h3 className="text-xl font-bold mt-1">{props.planName}</h3>
+        <h3 className="mt-1 text-xl font-bold">{props.planName}</h3>
         <div className="my-4">
           <span className="text-4xl font-extrabold">{props.price}</span>
-          {props.period && <span className="text-xs opacity-70 ml-1">{props.period}</span>}
+          {props.period && (
+            <span className="ml-1 text-xs opacity-70">{props.period}</span>
+          )}
         </div>
-        <ul className="space-y-2.5 text-left my-6 border-t border-b border-slate-800/80 py-4">
+        <ul className="my-6 space-y-2.5 border-t border-b border-slate-800/80 py-4 text-left">
           {props.features.map((f, i) => (
             <li key={i} className="flex items-center text-xs opacity-90">
-              <Check className="w-3.5 h-3.5 text-blue-400 mr-2 shrink-0" />
+              <Check className="mr-2 h-3.5 w-3.5 shrink-0 text-blue-400" />
               <span>{f}</span>
             </li>
           ))}
@@ -2995,7 +3153,7 @@ export function PricingBlock({ props }: { props: PricingProps }) {
         <a
           href={props.buttonUrl || "#"}
           style={{ backgroundColor: props.accentColor }}
-          className="w-full py-3 rounded-xl text-white font-semibold text-xs shadow-lg inline-block text-center"
+          className="inline-block w-full rounded-xl py-3 text-center text-xs font-semibold text-white shadow-lg"
         >
           {props.buttonText}
         </a>
@@ -3014,23 +3172,23 @@ import type { FormContactProps } from "../../../lib/block-types";
 
 export function FormContactBlock({ props }: { props: FormContactProps }) {
   return (
-    <div className="py-10 px-6 max-w-2xl mx-auto">
+    <div className="mx-auto max-w-2xl px-6 py-10">
       <div
         style={{ backgroundColor: props.bgColor, color: props.textColor }}
-        className="p-8 rounded-3xl border border-slate-800 text-center space-y-4 shadow-xl"
+        className="space-y-4 rounded-3xl border border-slate-800 p-8 text-center shadow-xl"
       >
         <h3 className="text-xl font-bold">{props.title}</h3>
-        <p className="text-xs opacity-80 max-w-md mx-auto">{props.subtitle}</p>
-        <div className="flex flex-col sm:flex-row gap-2 max-w-md mx-auto pt-2">
+        <p className="mx-auto max-w-md text-xs opacity-80">{props.subtitle}</p>
+        <div className="mx-auto flex max-w-md flex-col gap-2 pt-2 sm:flex-row">
           <input
             type="email"
             placeholder={props.placeholder || "Enter your email address..."}
-            className="flex-1 px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white outline-none focus:border-blue-500"
+            className="flex-1 rounded-xl border border-slate-800 bg-slate-950 px-4 py-2.5 text-xs text-white outline-none focus:border-blue-500"
           />
           <button
             type="button"
             style={{ backgroundColor: props.accentColor }}
-            className="px-5 py-2.5 rounded-xl text-white text-xs font-semibold shrink-0"
+            className="shrink-0 rounded-xl px-5 py-2.5 text-xs font-semibold text-white"
           >
             {props.buttonText}
           </button>
@@ -3052,9 +3210,9 @@ export function FooterBlock({ props }: { props: FooterProps }) {
   return (
     <footer
       style={{ backgroundColor: props.bgColor, color: props.textColor }}
-      className="py-8 px-6 border-t border-slate-800 text-center text-xs space-y-2"
+      className="space-y-2 border-t border-slate-800 px-6 py-8 text-center text-xs"
     >
-      <div className="font-bold text-sm">{props.brandName}</div>
+      <div className="text-sm font-bold">{props.brandName}</div>
       <p className="opacity-70">{props.copyright}</p>
     </footer>
   );
@@ -3121,9 +3279,11 @@ git commit -m "feat: add block renderer components"
 ### Task 12: Editor state hook (undo/redo, palette, layers)
 
 **Files:**
+
 - Create: `features/templates/components/block-editor/hooks/use-block-editor.ts`
 
 **Interfaces:**
+
 - Produces: `useBlockEditor(initialBlocks, initialPageSettings?)` returning `{ blocks, selectedBlockId, viewport, activeTab, isPreviewMode, dirty, pageSettings, historyIndex, historyLength, addBlock, updateBlockProps, duplicateBlock, moveBlock, toggleBlockVisibility, deleteBlock, setPageSettings, setViewport, setActiveTab, setPreviewMode, undo, redo, loadPreset }`.
 - Consumes: Task 3 catalog/types, Task 11 renderers (not directly).
 
@@ -3136,7 +3296,10 @@ import { useCallback, useState } from "react";
 import type { BlockConfig, PageSettings } from "../../../lib/block-types";
 import { DEFAULT_PAGE_SETTINGS, createBlockId } from "../../../lib/block-types";
 import type { BlockCatalogItem } from "../../../lib/block-catalog";
-import { createBlockFromCatalog, PRESET_TEMPLATES } from "../../../lib/block-catalog";
+import {
+  createBlockFromCatalog,
+  PRESET_TEMPLATES,
+} from "../../../lib/block-catalog";
 
 export type Viewport = "desktop" | "tablet" | "mobile";
 export type EditorTab = "blocks" | "layers" | "templates" | "settings";
@@ -3337,12 +3500,14 @@ git commit -m "feat: add block editor state hook"
 ### Task 13: Editor shell + toolbar + viewport + canvas
 
 **Files:**
+
 - Create: `features/templates/components/block-editor/viewport-switcher.tsx`
 - Create: `features/templates/components/block-editor/toolbar.tsx`
 - Create: `features/templates/components/block-editor/canvas.tsx`
 - Create: `features/templates/components/block-editor/index.tsx`
 
 **Interfaces:**
+
 - Produces: `BlockEditor` (forwardRef with `BlockEditorHandle = { getData(): { blocks; pageSettings } }`), `EditorToolbar`, `EditorCanvas`.
 - Consumes: Task 11 `BlockRenderer`, Task 12 hook, Task 3 types/catalog/helpers.
 
@@ -3365,21 +3530,24 @@ const OPTIONS: { value: Viewport; label: string; Icon: typeof Monitor }[] = [
   { value: "mobile", label: "Mobile", Icon: Smartphone },
 ];
 
-export function ViewportSwitcher({ viewport, onChange }: ViewportSwitcherProps) {
+export function ViewportSwitcher({
+  viewport,
+  onChange,
+}: ViewportSwitcherProps) {
   return (
-    <div className="flex items-center bg-slate-950 p-1 rounded-xl border border-slate-800">
+    <div className="flex items-center rounded-xl border border-slate-800 bg-slate-950 p-1">
       {OPTIONS.map(({ value, label, Icon }) => (
         <button
           key={value}
           type="button"
           onClick={() => onChange(value)}
-          className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition ${
+          className={`flex items-center space-x-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition ${
             viewport === value
               ? "bg-blue-600 text-white shadow"
               : "text-slate-400 hover:text-white"
           }`}
         >
-          <Icon className="w-4 h-4" />
+          <Icon className="h-4 w-4" />
           <span>{label}</span>
         </button>
       ))}
@@ -3425,42 +3593,46 @@ export function EditorToolbar({
   onImportJSON,
 }: EditorToolbarProps) {
   return (
-    <header className="h-14 shrink-0 border-b border-slate-800/80 bg-slate-900/90 backdrop-blur-md px-4 flex items-center justify-between gap-4 select-none">
+    <header className="flex h-14 shrink-0 items-center justify-between gap-4 border-b border-slate-800/80 bg-slate-900/90 px-4 backdrop-blur-md select-none">
       <div className="flex items-center space-x-2">
-        <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center shadow-lg shadow-blue-500/25">
-          <Sparkles className="w-4 h-4 text-white" />
+        <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 shadow-lg shadow-blue-500/25">
+          <Sparkles className="h-4 w-4 text-white" />
         </div>
         <div className="hidden lg:block">
-          <h2 className="font-bold text-sm text-white leading-tight">Block Editor</h2>
-          <p className="text-[10px] text-slate-400">Wix & WordPress style builder</p>
+          <h2 className="text-sm leading-tight font-bold text-white">
+            Block Editor
+          </h2>
+          <p className="text-[10px] text-slate-400">
+            Wix & WordPress style builder
+          </p>
         </div>
       </div>
 
       <ViewportSwitcher viewport={viewport} onChange={onViewportChange} />
 
       <div className="flex items-center space-x-2">
-        <div className="flex items-center bg-slate-950 rounded-xl border border-slate-800 p-1 mr-1">
+        <div className="mr-1 flex items-center rounded-xl border border-slate-800 bg-slate-950 p-1">
           <button
             type="button"
             onClick={onUndo}
             disabled={!canUndo}
             title="Undo"
-            className="p-1.5 text-slate-400 hover:text-white disabled:opacity-30 rounded hover:bg-slate-800 transition"
+            className="rounded p-1.5 text-slate-400 transition hover:bg-slate-800 hover:text-white disabled:opacity-30"
           >
-            <Undo className="w-4 h-4" />
+            <Undo className="h-4 w-4" />
           </button>
           <button
             type="button"
             onClick={onRedo}
             disabled={!canRedo}
             title="Redo"
-            className="p-1.5 text-slate-400 hover:text-white disabled:opacity-30 rounded hover:bg-slate-800 transition"
+            className="rounded p-1.5 text-slate-400 transition hover:bg-slate-800 hover:text-white disabled:opacity-30"
           >
-            <Redo className="w-4 h-4" />
+            <Redo className="h-4 w-4" />
           </button>
         </div>
 
-        <label className="cursor-pointer px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium border border-slate-700 flex items-center space-x-1 transition">
+        <label className="flex cursor-pointer items-center space-x-1 rounded-xl border border-slate-700 bg-slate-800 px-3 py-2 text-xs font-medium text-slate-300 transition hover:bg-slate-700">
           Import JSON
           <input
             type="file"
@@ -3477,7 +3649,7 @@ export function EditorToolbar({
         <button
           type="button"
           onClick={onExportJSON}
-          className="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium border border-slate-700 flex items-center space-x-1 transition"
+          className="flex items-center space-x-1 rounded-xl border border-slate-700 bg-slate-800 px-3 py-2 text-xs font-medium text-slate-300 transition hover:bg-slate-700"
         >
           Export JSON
         </button>
@@ -3485,16 +3657,16 @@ export function EditorToolbar({
         <button
           type="button"
           onClick={onTogglePreview}
-          className={`flex items-center space-x-1.5 px-3 py-2 rounded-xl text-xs font-medium border transition ${
+          className={`flex items-center space-x-1.5 rounded-xl border px-3 py-2 text-xs font-medium transition ${
             isPreviewMode
-              ? "bg-amber-500/20 text-amber-400 border-amber-500/30"
-              : "bg-slate-800 text-slate-300 border-slate-700 hover:text-white"
+              ? "border-amber-500/30 bg-amber-500/20 text-amber-400"
+              : "border-slate-700 bg-slate-800 text-slate-300 hover:text-white"
           }`}
         >
           {isPreviewMode ? (
-            <EyeOff className="w-4 h-4" />
+            <EyeOff className="h-4 w-4" />
           ) : (
-            <Eye className="w-4 h-4" />
+            <Eye className="h-4 w-4" />
           )}
           <span className="hidden sm:inline">
             {isPreviewMode ? "Exit Preview" : "Preview"}
@@ -3504,9 +3676,9 @@ export function EditorToolbar({
         <button
           type="button"
           onClick={onExportHTML}
-          className="flex items-center space-x-1.5 px-4 py-2 rounded-xl text-xs font-semibold bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white shadow-lg shadow-blue-500/20 transition"
+          className="flex items-center space-x-1.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-2 text-xs font-semibold text-white shadow-lg shadow-blue-500/20 transition hover:from-blue-500 hover:to-indigo-500"
         >
-          <Code className="w-4 h-4" />
+          <Code className="h-4 w-4" />
           <span>Export HTML</span>
         </button>
       </div>
@@ -3556,10 +3728,10 @@ export function EditorCanvas({
         : "w-[375px]";
 
   return (
-    <main className="canvas-bg-grid flex-1 bg-slate-950 overflow-y-auto p-4 md:p-8 flex justify-center items-start">
+    <main className="canvas-bg-grid flex flex-1 items-start justify-center overflow-y-auto bg-slate-950 p-4 md:p-8">
       <div
         style={{ backgroundColor: pageSettings.bgColor }}
-        className={`shadow-2xl rounded-2xl border border-slate-800/80 transition-all duration-300 relative min-h-[85%] ${canvasWidth} ${pageSettings.fontFamily}`}
+        className={`relative min-h-[85%] rounded-2xl border border-slate-800/80 shadow-2xl transition-all duration-300 ${canvasWidth} ${pageSettings.fontFamily}`}
       >
         <div className="relative py-4">
           {blocks.map((block) => {
@@ -3570,16 +3742,16 @@ export function EditorCanvas({
               <div
                 key={block.id}
                 onClick={() => !isPreviewMode && onSelectBlock(block.id)}
-                className={`relative group transition cursor-pointer ${
+                className={`group relative cursor-pointer transition ${
                   !isPreviewMode ? "block-outline my-1 py-1" : ""
                 } ${isSelected ? "is-selected" : ""}`}
               >
                 {!isPreviewMode && isSelected && (
-                  <div className="absolute -top-3.5 right-4 bg-blue-600 text-white rounded-lg shadow-xl flex items-center space-x-1 px-2 py-1 z-30 text-xs select-none">
-                    <span className="text-[10px] font-bold uppercase tracking-wider px-1 text-blue-200">
+                  <div className="absolute -top-3.5 right-4 z-30 flex items-center space-x-1 rounded-lg bg-blue-600 px-2 py-1 text-xs text-white shadow-xl select-none">
+                    <span className="px-1 text-[10px] font-bold tracking-wider text-blue-200 uppercase">
                       {block.props.layerName || block.type}
                     </span>
-                    <div className="h-3 w-px bg-blue-400 mx-1" />
+                    <div className="mx-1 h-3 w-px bg-blue-400" />
                     <button
                       type="button"
                       onClick={(e) => {
@@ -3587,9 +3759,9 @@ export function EditorCanvas({
                         onMove(block.id, "up");
                       }}
                       title="Move Up"
-                      className="p-1 hover:bg-blue-700 rounded"
+                      className="rounded p-1 hover:bg-blue-700"
                     >
-                      <ArrowUp className="w-3.5 h-3.5" />
+                      <ArrowUp className="h-3.5 w-3.5" />
                     </button>
                     <button
                       type="button"
@@ -3598,9 +3770,9 @@ export function EditorCanvas({
                         onMove(block.id, "down");
                       }}
                       title="Move Down"
-                      className="p-1 hover:bg-blue-700 rounded"
+                      className="rounded p-1 hover:bg-blue-700"
                     >
-                      <ArrowDown className="w-3.5 h-3.5" />
+                      <ArrowDown className="h-3.5 w-3.5" />
                     </button>
                     <button
                       type="button"
@@ -3609,9 +3781,9 @@ export function EditorCanvas({
                         onDuplicate(block.id);
                       }}
                       title="Duplicate"
-                      className="p-1 hover:bg-blue-700 rounded"
+                      className="rounded p-1 hover:bg-blue-700"
                     >
-                      <Copy className="w-3.5 h-3.5" />
+                      <Copy className="h-3.5 w-3.5" />
                     </button>
                     <button
                       type="button"
@@ -3620,9 +3792,9 @@ export function EditorCanvas({
                         onDelete(block.id);
                       }}
                       title="Delete"
-                      className="p-1 hover:bg-red-600 rounded text-red-200"
+                      className="rounded p-1 text-red-200 hover:bg-red-600"
                     >
-                      <Trash2 className="w-3.5 h-3.5" />
+                      <Trash2 className="h-3.5 w-3.5" />
                     </button>
                   </div>
                 )}
@@ -3643,7 +3815,11 @@ Note: `.canvas-bg-grid`, `.block-outline`, and `.is-selected` are global CSS cla
 ```css
 .canvas-bg-grid {
   background-size: 28px 28px;
-  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.07) 1px, transparent 1px);
+  background-image: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.07) 1px,
+    transparent 1px
+  );
 }
 .block-outline {
   outline: 2px solid transparent;
@@ -3717,8 +3893,7 @@ export const BlockEditor = forwardRef<BlockEditorHandle, BlockEditorProps>(
     );
 
     const activeBlock = useMemo(
-      () =>
-        editor.blocks.find((b) => b.id === editor.selectedBlockId) ?? null,
+      () => editor.blocks.find((b) => b.id === editor.selectedBlockId) ?? null,
       [editor.blocks, editor.selectedBlockId]
     );
 
@@ -3774,20 +3949,20 @@ export const BlockEditor = forwardRef<BlockEditorHandle, BlockEditorProps>(
 
         <div className="flex flex-1 overflow-hidden">
           {!editor.isPreviewMode && (
-            <aside className="w-72 shrink-0 border-r border-slate-800/80 bg-slate-900/90 flex flex-col overflow-hidden select-none">
+            <aside className="flex w-72 shrink-0 flex-col overflow-hidden border-r border-slate-800/80 bg-slate-900/90 select-none">
               <div className="grid grid-cols-4 border-b border-slate-800 bg-slate-950 p-1 text-[11px]">
                 {TABS.map(({ value, label, Icon }) => (
                   <button
                     key={value}
                     type="button"
                     onClick={() => editor.setActiveTab(value)}
-                    className={`py-2 flex flex-col items-center justify-center space-y-1 rounded-lg font-medium transition ${
+                    className={`flex flex-col items-center justify-center space-y-1 rounded-lg py-2 font-medium transition ${
                       editor.activeTab === value
-                        ? "bg-blue-600/20 text-blue-400 border border-blue-500/30"
+                        ? "border border-blue-500/30 bg-blue-600/20 text-blue-400"
                         : "text-slate-400 hover:text-white"
                     }`}
                   >
-                    <Icon className="w-4 h-4" />
+                    <Icon className="h-4 w-4" />
                     <span>{label}</span>
                   </button>
                 ))}
@@ -3831,7 +4006,7 @@ export const BlockEditor = forwardRef<BlockEditorHandle, BlockEditorProps>(
           />
 
           {!editor.isPreviewMode && activeBlock && (
-            <aside className="w-80 shrink-0 border-l border-slate-800/80 bg-slate-900/90 flex flex-col overflow-hidden select-none">
+            <aside className="flex w-80 shrink-0 flex-col overflow-hidden border-l border-slate-800/80 bg-slate-900/90 select-none">
               <InspectorPanel
                 block={activeBlock}
                 onUpdateProps={(patch) =>
@@ -3878,12 +4053,14 @@ git commit -m "feat: add block editor shell, toolbar, and canvas"
 ### Task 14: Left sidebar panels (palette, layer tree, presets, page settings)
 
 **Files:**
+
 - Create: `features/templates/components/block-editor/block-palette.tsx`
 - Create: `features/templates/components/block-editor/layer-tree.tsx`
 - Create: `features/templates/components/block-editor/preset-templates-panel.tsx`
 - Create: `features/templates/components/block-editor/page-settings-panel.tsx`
 
 **Interfaces:**
+
 - Produces: `BlockPalette({ onAddBlock })`, `LayerTree({ blocks, selectedBlockId, onSelect, onToggleVisibility, onMove, onDelete })`, `PresetTemplatesPanel({ onLoad })`, `PageSettingsPanel({ pageSettings, onChange })`.
 - Consumes: Task 3 catalog, Task 12 types, `getBlockIcon`.
 
@@ -3902,10 +4079,10 @@ interface BlockPaletteProps {
 
 export function BlockPalette({ onAddBlock }: BlockPaletteProps) {
   return (
-    <div className="flex-1 overflow-y-auto p-4 space-y-6">
+    <div className="flex-1 space-y-6 overflow-y-auto p-4">
       {BLOCK_CATALOG.map((cat) => (
         <div key={cat.category} className="space-y-3">
-          <h3 className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+          <h3 className="text-[11px] font-bold tracking-wider text-slate-400 uppercase">
             {cat.category}
           </h3>
           <div className="grid grid-cols-1 gap-2">
@@ -3916,10 +4093,10 @@ export function BlockPalette({ onAddBlock }: BlockPaletteProps) {
                   key={item.type}
                   type="button"
                   onClick={() => onAddBlock(item)}
-                  className="flex items-center space-x-3 p-3 rounded-xl bg-slate-950/70 border border-slate-800 hover:border-blue-500/50 hover:bg-slate-800/80 text-left group transition shadow-sm"
+                  className="group flex items-center space-x-3 rounded-xl border border-slate-800 bg-slate-950/70 p-3 text-left shadow-sm transition hover:border-blue-500/50 hover:bg-slate-800/80"
                 >
-                  <div className="w-8 h-8 rounded-lg bg-slate-800 group-hover:bg-blue-600 text-slate-300 group-hover:text-white flex items-center justify-center transition shrink-0">
-                    <Icon className="w-4 h-4" />
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-slate-800 text-slate-300 transition group-hover:bg-blue-600 group-hover:text-white">
+                    <Icon className="h-4 w-4" />
                   </div>
                   <div>
                     <div className="text-xs font-semibold text-slate-200 group-hover:text-white">
@@ -3966,8 +4143,8 @@ export function LayerTree({
   onDelete,
 }: LayerTreeProps) {
   return (
-    <div className="flex-1 overflow-y-auto p-4 space-y-2">
-      <div className="text-xs font-semibold text-slate-400 mb-3 flex items-center justify-between">
+    <div className="flex-1 space-y-2 overflow-y-auto p-4">
+      <div className="mb-3 flex items-center justify-between text-xs font-semibold text-slate-400">
         <span>Layer Tree ({blocks.length})</span>
         <span className="text-[10px] text-slate-500">Click to edit</span>
       </div>
@@ -3975,20 +4152,20 @@ export function LayerTree({
         <div
           key={b.id}
           onClick={() => onSelect(b.id)}
-          className={`flex items-center justify-between p-2.5 rounded-xl border text-xs cursor-pointer transition ${
+          className={`flex cursor-pointer items-center justify-between rounded-xl border p-2.5 text-xs transition ${
             b.id === selectedBlockId
-              ? "bg-blue-600/20 border-blue-500 text-white font-medium"
-              : "bg-slate-950/50 border-slate-800 text-slate-400 hover:bg-slate-800/50 hover:text-slate-200"
+              ? "border-blue-500 bg-blue-600/20 font-medium text-white"
+              : "border-slate-800 bg-slate-950/50 text-slate-400 hover:bg-slate-800/50 hover:text-slate-200"
           }`}
         >
           <div className="flex items-center space-x-2 truncate">
-            <span className="text-slate-500 text-[10px] w-4">{idx + 1}.</span>
-            <Layers className="w-3.5 h-3.5 text-blue-400 shrink-0" />
-            <span className="capitalize truncate font-medium">
+            <span className="w-4 text-[10px] text-slate-500">{idx + 1}.</span>
+            <Layers className="h-3.5 w-3.5 shrink-0 text-blue-400" />
+            <span className="truncate font-medium capitalize">
               {b.props.layerName || b.type}
             </span>
           </div>
-          <div className="flex items-center space-x-1 shrink-0">
+          <div className="flex shrink-0 items-center space-x-1">
             <button
               type="button"
               onClick={(e) => {
@@ -3996,12 +4173,12 @@ export function LayerTree({
                 onToggleVisibility(b.id);
               }}
               title={b.hidden ? "Show" : "Hide"}
-              className="p-1 hover:text-white text-slate-500"
+              className="p-1 text-slate-500 hover:text-white"
             >
               {b.hidden ? (
-                <EyeOff className="w-3.5 h-3.5" />
+                <EyeOff className="h-3.5 w-3.5" />
               ) : (
-                <Eye className="w-3.5 h-3.5" />
+                <Eye className="h-3.5 w-3.5" />
               )}
             </button>
             <button
@@ -4011,9 +4188,9 @@ export function LayerTree({
                 onMove(b.id, "up");
               }}
               title="Move up"
-              className="p-1 hover:text-white text-slate-500"
+              className="p-1 text-slate-500 hover:text-white"
             >
-              <ArrowUp className="w-3.5 h-3.5" />
+              <ArrowUp className="h-3.5 w-3.5" />
             </button>
             <button
               type="button"
@@ -4022,9 +4199,9 @@ export function LayerTree({
                 onMove(b.id, "down");
               }}
               title="Move down"
-              className="p-1 hover:text-white text-slate-500"
+              className="p-1 text-slate-500 hover:text-white"
             >
-              <ArrowDown className="w-3.5 h-3.5" />
+              <ArrowDown className="h-3.5 w-3.5" />
             </button>
             <button
               type="button"
@@ -4033,9 +4210,9 @@ export function LayerTree({
                 onDelete(b.id);
               }}
               title="Delete"
-              className="p-1 hover:text-red-400 text-slate-500"
+              className="p-1 text-slate-500 hover:text-red-400"
             >
-              <Trash2 className="w-3.5 h-3.5" />
+              <Trash2 className="h-3.5 w-3.5" />
             </button>
           </div>
         </div>
@@ -4066,8 +4243,8 @@ const PRESETS: { name: string; title: string; description: string }[] = [
 
 export function PresetTemplatesPanel({ onLoad }: PresetTemplatesPanelProps) {
   return (
-    <div className="flex-1 overflow-y-auto p-4 space-y-4">
-      <div className="text-xs text-slate-400 mb-2">
+    <div className="flex-1 space-y-4 overflow-y-auto p-4">
+      <div className="mb-2 text-xs text-slate-400">
         Load a complete ready-to-use layout structure:
       </div>
       {PRESETS.map((preset) => (
@@ -4075,13 +4252,13 @@ export function PresetTemplatesPanel({ onLoad }: PresetTemplatesPanelProps) {
           key={preset.name}
           type="button"
           onClick={() => onLoad(preset.name)}
-          className="w-full p-4 rounded-2xl bg-gradient-to-br from-blue-900/30 to-indigo-900/20 border border-blue-500/30 hover:border-blue-500 cursor-pointer transition group text-left"
+          className="group w-full cursor-pointer rounded-2xl border border-blue-500/30 bg-gradient-to-br from-blue-900/30 to-indigo-900/20 p-4 text-left transition hover:border-blue-500"
         >
-          <h4 className="font-bold text-sm text-white group-hover:text-blue-400 flex items-center justify-between">
+          <h4 className="flex items-center justify-between text-sm font-bold text-white group-hover:text-blue-400">
             {preset.title}
-            <Sparkles className="w-4 h-4 text-blue-400" />
+            <Sparkles className="h-4 w-4 text-blue-400" />
           </h4>
-          <p className="text-xs text-slate-400 mt-1">{preset.description}</p>
+          <p className="mt-1 text-xs text-slate-400">{preset.description}</p>
         </button>
       ))}
     </div>
@@ -4101,32 +4278,37 @@ interface PageSettingsPanelProps {
   onChange: (patch: Partial<PageSettings>) => void;
 }
 
-export function PageSettingsPanel({ pageSettings, onChange }: PageSettingsPanelProps) {
+export function PageSettingsPanel({
+  pageSettings,
+  onChange,
+}: PageSettingsPanelProps) {
   return (
-    <div className="flex-1 overflow-y-auto p-4 space-y-5 text-xs">
+    <div className="flex-1 space-y-5 overflow-y-auto p-4 text-xs">
       <div className="space-y-1.5">
         <label className="font-semibold text-slate-300">Page Title</label>
         <input
           type="text"
           value={pageSettings.title}
           onChange={(e) => onChange({ title: e.target.value })}
-          className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:border-blue-500 outline-none"
+          className="w-full rounded-xl border border-slate-800 bg-slate-950 px-3 py-2 text-white outline-none focus:border-blue-500"
         />
       </div>
       <div className="space-y-1.5">
-        <label className="font-semibold text-slate-300">Canvas Background Color</label>
+        <label className="font-semibold text-slate-300">
+          Canvas Background Color
+        </label>
         <div className="flex items-center space-x-2">
           <input
             type="color"
             value={pageSettings.bgColor}
             onChange={(e) => onChange({ bgColor: e.target.value })}
-            className="w-9 h-9 rounded-lg bg-transparent cursor-pointer border border-slate-700"
+            className="h-9 w-9 cursor-pointer rounded-lg border border-slate-700 bg-transparent"
           />
           <input
             type="text"
             value={pageSettings.bgColor}
             onChange={(e) => onChange({ bgColor: e.target.value })}
-            className="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white outline-none"
+            className="flex-1 rounded-xl border border-slate-800 bg-slate-950 px-3 py-2 text-white outline-none"
           />
         </div>
       </div>
@@ -4135,7 +4317,7 @@ export function PageSettingsPanel({ pageSettings, onChange }: PageSettingsPanelP
         <select
           value={pageSettings.fontFamily}
           onChange={(e) => onChange({ fontFamily: e.target.value })}
-          className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:border-blue-500 outline-none"
+          className="w-full rounded-xl border border-slate-800 bg-slate-950 px-3 py-2 text-white outline-none focus:border-blue-500"
         >
           <option value="font-sans">Plus Jakarta Sans / Inter</option>
           <option value="font-serif">Playfair Display (Serif Classic)</option>
@@ -4159,16 +4341,17 @@ git commit -m "feat: add block editor left sidebar panels"
 
 ---
 
-
 ---
 
 ### Task 15: Inspector panel (fields + per-block editors)
 
 **Files:**
+
 - Create: `features/templates/components/block-editor/fields.tsx`
 - Create: `features/templates/components/block-editor/inspector-panel.tsx`
 
 **Interfaces:**
+
 - Produces: `FieldShell`, `TextField`, `TextAreaField`, `ColorField`, `SelectField`, `NumberField`; `InspectorPanel({ block, onUpdateProps })`.
 - Consumes: Task 3 types/icon helper; lucide-react.
 
@@ -4188,7 +4371,7 @@ interface FieldShellProps {
 export function FieldShell({ label, children, hint }: FieldShellProps) {
   return (
     <div className="space-y-1.5">
-      <label className="font-semibold text-slate-300 text-xs">{label}</label>
+      <label className="text-xs font-semibold text-slate-300">{label}</label>
       {children}
       {hint && <p className="text-[10px] text-slate-500">{hint}</p>}
     </div>
@@ -4215,7 +4398,7 @@ export function TextField({
         value={value}
         placeholder={placeholder}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:border-blue-500 outline-none text-xs"
+        className="w-full rounded-xl border border-slate-800 bg-slate-950 px-3 py-2 text-xs text-white outline-none focus:border-blue-500"
       />
     </FieldShell>
   );
@@ -4240,7 +4423,7 @@ export function TextAreaField({
         rows={rows}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:border-blue-500 outline-none text-xs"
+        className="w-full rounded-xl border border-slate-800 bg-slate-950 px-3 py-2 text-xs text-white outline-none focus:border-blue-500"
       />
     </FieldShell>
   );
@@ -4260,13 +4443,13 @@ export function ColorField({ label, value, onChange }: ColorFieldProps) {
           type="color"
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className="w-9 h-9 rounded-lg bg-transparent cursor-pointer border border-slate-700"
+          className="h-9 w-9 cursor-pointer rounded-lg border border-slate-700 bg-transparent"
         />
         <input
           type="text"
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white outline-none text-xs"
+          className="flex-1 rounded-xl border border-slate-800 bg-slate-950 px-3 py-2 text-xs text-white outline-none"
         />
       </div>
     </FieldShell>
@@ -4291,7 +4474,7 @@ export function SelectField({
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white outline-none text-xs"
+        className="w-full rounded-xl border border-slate-800 bg-slate-950 px-3 py-2 text-xs text-white outline-none"
       >
         {options.map((o) => (
           <option key={o.value} value={o.value}>
@@ -4326,7 +4509,7 @@ export function NumberField({
         min={min}
         max={max}
         onChange={(e) => onChange(Number(e.target.value))}
-        className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:border-blue-500 outline-none text-xs"
+        className="w-full rounded-xl border border-slate-800 bg-slate-950 px-3 py-2 text-xs text-white outline-none focus:border-blue-500"
       />
     </FieldShell>
   );
@@ -4366,10 +4549,22 @@ const ALIGN_OPTIONS = [
 
 const GRADIENT_OPTIONS = [
   { value: "", label: "None (Solid)" },
-  { value: "bg-gradient-to-r from-blue-950 via-slate-900 to-indigo-950", label: "Midnight Cyber" },
-  { value: "bg-gradient-to-r from-amber-600 via-orange-600 to-red-600", label: "Sunset Gold" },
-  { value: "bg-gradient-to-r from-emerald-900 via-teal-900 to-cyan-950", label: "Emerald Luxe" },
-  { value: "bg-gradient-to-r from-purple-900 via-indigo-900 to-blue-950", label: "Royal Violet" },
+  {
+    value: "bg-gradient-to-r from-blue-950 via-slate-900 to-indigo-950",
+    label: "Midnight Cyber",
+  },
+  {
+    value: "bg-gradient-to-r from-amber-600 via-orange-600 to-red-600",
+    label: "Sunset Gold",
+  },
+  {
+    value: "bg-gradient-to-r from-emerald-900 via-teal-900 to-cyan-950",
+    label: "Emerald Luxe",
+  },
+  {
+    value: "bg-gradient-to-r from-purple-900 via-indigo-900 to-blue-950",
+    label: "Royal Violet",
+  },
 ];
 
 const ICON_OPTIONS = [
@@ -4397,10 +4592,7 @@ const ICON_BY_TYPE: Record<BlockConfig["type"], string> = {
   footer: "layout",
 };
 
-export function InspectorPanel({
-  block,
-  onUpdateProps,
-}: InspectorPanelProps) {
+export function InspectorPanel({ block, onUpdateProps }: InspectorPanelProps) {
   const [tab, setTab] = useState<InspectorTab>("content");
   const Icon = getBlockIcon(ICON_BY_TYPE[block.type]);
 
@@ -4414,10 +4606,7 @@ export function InspectorPanel({
         links.map((l, i) => (i === index ? { ...l, [field]: v } : l))
       );
     const addLink = () =>
-      set("links", [
-        ...links,
-        { label: `Menu ${links.length + 1}`, url: "#" },
-      ]);
+      set("links", [...links, { label: `Menu ${links.length + 1}`, url: "#" }]);
     const removeLink = (index: number) =>
       set(
         "links",
@@ -4432,7 +4621,7 @@ export function InspectorPanel({
             className="space-y-2 rounded-xl border border-slate-800 bg-slate-950/40 p-2"
           >
             <div className="flex items-center justify-between">
-              <span className="text-[10px] uppercase tracking-wider text-slate-500">
+              <span className="text-[10px] tracking-wider text-slate-500 uppercase">
                 Link {i + 1}
               </span>
               <IconButton onClick={() => removeLink(i)} />
@@ -4476,7 +4665,7 @@ export function InspectorPanel({
               type="text"
               value={feature}
               onChange={(e) => updateFeature(i, e.target.value)}
-              className="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white outline-none text-xs"
+              className="flex-1 rounded-xl border border-slate-800 bg-slate-950 px-3 py-2 text-xs text-white outline-none"
             />
             <IconButton onClick={() => removeFeature(i)} />
           </div>
@@ -4536,7 +4725,7 @@ export function InspectorPanel({
             className="space-y-2 rounded-xl border border-slate-800 bg-slate-950/40 p-2"
           >
             <div className="flex items-center justify-between">
-              <span className="text-[10px] uppercase tracking-wider text-slate-500">
+              <span className="text-[10px] tracking-wider text-slate-500 uppercase">
                 Column {i + 1}
               </span>
               <IconButton onClick={() => removeColumn(i)} />
@@ -4597,38 +4786,92 @@ export function InspectorPanel({
       case "navbar":
         return (
           <>
-            <TextField label="Logo Text" value={block.props.logoText} onChange={(v) => set("logoText", v)} />
+            <TextField
+              label="Logo Text"
+              value={block.props.logoText}
+              onChange={(v) => set("logoText", v)}
+            />
             <div className="grid grid-cols-2 gap-2">
-              <TextField label="CTA Text" value={block.props.ctaText} onChange={(v) => set("ctaText", v)} />
-              <TextField label="CTA URL" value={block.props.ctaUrl} onChange={(v) => set("ctaUrl", v)} />
+              <TextField
+                label="CTA Text"
+                value={block.props.ctaText}
+                onChange={(v) => set("ctaText", v)}
+              />
+              <TextField
+                label="CTA URL"
+                value={block.props.ctaUrl}
+                onChange={(v) => set("ctaUrl", v)}
+              />
             </div>
           </>
         );
       case "hero":
         return (
           <>
-            <TextField label="Badge Text" value={block.props.badge} onChange={(v) => set("badge", v)} />
-            <TextField label="Title" value={block.props.title} onChange={(v) => set("title", v)} />
-            <TextAreaField label="Subtitle" value={block.props.subtitle} onChange={(v) => set("subtitle", v)} rows={3} />
+            <TextField
+              label="Badge Text"
+              value={block.props.badge}
+              onChange={(v) => set("badge", v)}
+            />
+            <TextField
+              label="Title"
+              value={block.props.title}
+              onChange={(v) => set("title", v)}
+            />
+            <TextAreaField
+              label="Subtitle"
+              value={block.props.subtitle}
+              onChange={(v) => set("subtitle", v)}
+              rows={3}
+            />
             <div className="grid grid-cols-2 gap-2">
-              <TextField label="Primary Button" value={block.props.buttonText} onChange={(v) => set("buttonText", v)} />
-              <TextField label="Primary URL" value={block.props.buttonUrl} onChange={(v) => set("buttonUrl", v)} />
+              <TextField
+                label="Primary Button"
+                value={block.props.buttonText}
+                onChange={(v) => set("buttonText", v)}
+              />
+              <TextField
+                label="Primary URL"
+                value={block.props.buttonUrl}
+                onChange={(v) => set("buttonUrl", v)}
+              />
             </div>
             <div className="grid grid-cols-2 gap-2">
-              <TextField label="Secondary Button" value={block.props.secondaryButtonText} onChange={(v) => set("secondaryButtonText", v)} />
-              <TextField label="Secondary URL" value={block.props.secondaryButtonUrl} onChange={(v) => set("secondaryButtonUrl", v)} />
+              <TextField
+                label="Secondary Button"
+                value={block.props.secondaryButtonText}
+                onChange={(v) => set("secondaryButtonText", v)}
+              />
+              <TextField
+                label="Secondary URL"
+                value={block.props.secondaryButtonUrl}
+                onChange={(v) => set("secondaryButtonUrl", v)}
+              />
             </div>
           </>
         );
       case "container":
         return (
-          <TextAreaField label="Container Content" value={block.props.content} onChange={(v) => set("content", v)} rows={4} />
+          <TextAreaField
+            label="Container Content"
+            value={block.props.content}
+            onChange={(v) => set("content", v)}
+            rows={4}
+          />
         );
       case "grid_custom":
         return (
           <>
-            <TextField label="Section Title" value={block.props.title} onChange={(v) => set("title", v)} />
-            <TextField label="Section Subtitle" value={block.props.subtitle} onChange={(v) => set("subtitle", v)} />
+            <TextField
+              label="Section Title"
+              value={block.props.title}
+              onChange={(v) => set("title", v)}
+            />
+            <TextField
+              label="Section Subtitle"
+              value={block.props.subtitle}
+              onChange={(v) => set("subtitle", v)}
+            />
           </>
         );
       case "heading":
@@ -4645,46 +4888,108 @@ export function InspectorPanel({
                 { value: "h4", label: "H4 - Sub Section" },
               ]}
             />
-            <TextAreaField label="Heading Text" value={block.props.text} onChange={(v) => set("text", v)} rows={3} />
+            <TextAreaField
+              label="Heading Text"
+              value={block.props.text}
+              onChange={(v) => set("text", v)}
+              rows={3}
+            />
           </>
         );
       case "paragraph":
         return (
-          <TextAreaField label="Paragraph Text" value={block.props.text} onChange={(v) => set("text", v)} rows={4} />
+          <TextAreaField
+            label="Paragraph Text"
+            value={block.props.text}
+            onChange={(v) => set("text", v)}
+            rows={4}
+          />
         );
       case "image":
         return (
           <>
-            <TextField label="Image URL" value={block.props.url} onChange={(v) => set("url", v)} />
-            <TextField label="Alt Text" value={block.props.alt} onChange={(v) => set("alt", v)} />
-            <TextField label="Caption" value={block.props.caption} onChange={(v) => set("caption", v)} />
+            <TextField
+              label="Image URL"
+              value={block.props.url}
+              onChange={(v) => set("url", v)}
+            />
+            <TextField
+              label="Alt Text"
+              value={block.props.alt}
+              onChange={(v) => set("alt", v)}
+            />
+            <TextField
+              label="Caption"
+              value={block.props.caption}
+              onChange={(v) => set("caption", v)}
+            />
           </>
         );
       case "pricing":
         return (
           <>
-            <TextField label="Plan Name" value={block.props.planName} onChange={(v) => set("planName", v)} />
-            <TextField label="Badge" value={block.props.badge} onChange={(v) => set("badge", v)} />
+            <TextField
+              label="Plan Name"
+              value={block.props.planName}
+              onChange={(v) => set("planName", v)}
+            />
+            <TextField
+              label="Badge"
+              value={block.props.badge}
+              onChange={(v) => set("badge", v)}
+            />
             <div className="grid grid-cols-2 gap-2">
-              <TextField label="Price" value={block.props.price} onChange={(v) => set("price", v)} />
-              <TextField label="Period" value={block.props.period} onChange={(v) => set("period", v)} />
+              <TextField
+                label="Price"
+                value={block.props.price}
+                onChange={(v) => set("price", v)}
+              />
+              <TextField
+                label="Period"
+                value={block.props.period}
+                onChange={(v) => set("period", v)}
+              />
             </div>
           </>
         );
       case "form_contact":
         return (
           <>
-            <TextField label="Title" value={block.props.title} onChange={(v) => set("title", v)} />
-            <TextField label="Subtitle" value={block.props.subtitle} onChange={(v) => set("subtitle", v)} />
-            <TextField label="Placeholder" value={block.props.placeholder} onChange={(v) => set("placeholder", v)} />
-            <TextField label="Button Text" value={block.props.buttonText} onChange={(v) => set("buttonText", v)} />
+            <TextField
+              label="Title"
+              value={block.props.title}
+              onChange={(v) => set("title", v)}
+            />
+            <TextField
+              label="Subtitle"
+              value={block.props.subtitle}
+              onChange={(v) => set("subtitle", v)}
+            />
+            <TextField
+              label="Placeholder"
+              value={block.props.placeholder}
+              onChange={(v) => set("placeholder", v)}
+            />
+            <TextField
+              label="Button Text"
+              value={block.props.buttonText}
+              onChange={(v) => set("buttonText", v)}
+            />
           </>
         );
       case "footer":
         return (
           <>
-            <TextField label="Brand Name" value={block.props.brandName} onChange={(v) => set("brandName", v)} />
-            <TextField label="Copyright" value={block.props.copyright} onChange={(v) => set("copyright", v)} />
+            <TextField
+              label="Brand Name"
+              value={block.props.brandName}
+              onChange={(v) => set("brandName", v)}
+            />
+            <TextField
+              label="Copyright"
+              value={block.props.copyright}
+              onChange={(v) => set("copyright", v)}
+            />
           </>
         );
     }
@@ -4696,23 +5001,57 @@ export function InspectorPanel({
       case "hero":
         return (
           <>
-            <ColorField label="Background" value={block.props.bgColor} onChange={(v) => set("bgColor", v)} />
-            <ColorField label="Text" value={block.props.textColor} onChange={(v) => set("textColor", v)} />
-            <ColorField label="Accent" value={block.props.accentColor} onChange={(v) => set("accentColor", v)} />
+            <ColorField
+              label="Background"
+              value={block.props.bgColor}
+              onChange={(v) => set("bgColor", v)}
+            />
+            <ColorField
+              label="Text"
+              value={block.props.textColor}
+              onChange={(v) => set("textColor", v)}
+            />
+            <ColorField
+              label="Accent"
+              value={block.props.accentColor}
+              onChange={(v) => set("accentColor", v)}
+            />
             {"bgGradient" in block.props && (
-              <SelectField label="Background Gradient" value={block.props.bgGradient} onChange={(v) => set("bgGradient", v)} options={GRADIENT_OPTIONS} />
+              <SelectField
+                label="Background Gradient"
+                value={block.props.bgGradient}
+                onChange={(v) => set("bgGradient", v)}
+                options={GRADIENT_OPTIONS}
+              />
             )}
             {"align" in block.props && (
-              <SelectField label="Alignment" value={block.props.align} onChange={(v) => set("align", v as "left" | "center" | "right")} options={ALIGN_OPTIONS} />
+              <SelectField
+                label="Alignment"
+                value={block.props.align}
+                onChange={(v) => set("align", v as "left" | "center" | "right")}
+                options={ALIGN_OPTIONS}
+              />
             )}
           </>
         );
       case "container":
         return (
           <>
-            <ColorField label="Background" value={block.props.bgColor} onChange={(v) => set("bgColor", v)} />
-            <ColorField label="Text" value={block.props.textColor} onChange={(v) => set("textColor", v)} />
-            <ColorField label="Border" value={block.props.borderColor} onChange={(v) => set("borderColor", v)} />
+            <ColorField
+              label="Background"
+              value={block.props.bgColor}
+              onChange={(v) => set("bgColor", v)}
+            />
+            <ColorField
+              label="Text"
+              value={block.props.textColor}
+              onChange={(v) => set("textColor", v)}
+            />
+            <ColorField
+              label="Border"
+              value={block.props.borderColor}
+              onChange={(v) => set("borderColor", v)}
+            />
             <SelectField
               label="Border Radius"
               value={block.props.borderRadius}
@@ -4741,7 +5080,11 @@ export function InspectorPanel({
       case "heading":
         return (
           <>
-            <ColorField label="Text" value={block.props.textColor} onChange={(v) => set("textColor", v)} />
+            <ColorField
+              label="Text"
+              value={block.props.textColor}
+              onChange={(v) => set("textColor", v)}
+            />
             <SelectField
               label="Font Size"
               value={block.props.fontSize}
@@ -4762,14 +5105,28 @@ export function InspectorPanel({
                 { value: "font-semibold", label: "Semibold" },
               ]}
             />
-            <SelectField label="Alignment" value={block.props.align} onChange={(v) => set("align", v as "left" | "center" | "right")} options={ALIGN_OPTIONS} />
+            <SelectField
+              label="Alignment"
+              value={block.props.align}
+              onChange={(v) => set("align", v as "left" | "center" | "right")}
+              options={ALIGN_OPTIONS}
+            />
           </>
         );
       case "paragraph":
         return (
           <>
-            <ColorField label="Text" value={block.props.textColor} onChange={(v) => set("textColor", v)} />
-            <SelectField label="Alignment" value={block.props.align} onChange={(v) => set("align", v as "left" | "center" | "right")} options={ALIGN_OPTIONS} />
+            <ColorField
+              label="Text"
+              value={block.props.textColor}
+              onChange={(v) => set("textColor", v)}
+            />
+            <SelectField
+              label="Alignment"
+              value={block.props.align}
+              onChange={(v) => set("align", v as "left" | "center" | "right")}
+              options={ALIGN_OPTIONS}
+            />
             <SelectField
               label="Font Size"
               value={block.props.fontSize}
@@ -4810,24 +5167,56 @@ export function InspectorPanel({
       case "pricing":
         return (
           <>
-            <ColorField label="Background" value={block.props.bgColor} onChange={(v) => set("bgColor", v)} />
-            <ColorField label="Accent" value={block.props.accentColor} onChange={(v) => set("accentColor", v)} />
-            <ColorField label="Text" value={block.props.textColor} onChange={(v) => set("textColor", v)} />
+            <ColorField
+              label="Background"
+              value={block.props.bgColor}
+              onChange={(v) => set("bgColor", v)}
+            />
+            <ColorField
+              label="Accent"
+              value={block.props.accentColor}
+              onChange={(v) => set("accentColor", v)}
+            />
+            <ColorField
+              label="Text"
+              value={block.props.textColor}
+              onChange={(v) => set("textColor", v)}
+            />
           </>
         );
       case "form_contact":
         return (
           <>
-            <ColorField label="Background" value={block.props.bgColor} onChange={(v) => set("bgColor", v)} />
-            <ColorField label="Accent" value={block.props.accentColor} onChange={(v) => set("accentColor", v)} />
-            <ColorField label="Text" value={block.props.textColor} onChange={(v) => set("textColor", v)} />
+            <ColorField
+              label="Background"
+              value={block.props.bgColor}
+              onChange={(v) => set("bgColor", v)}
+            />
+            <ColorField
+              label="Accent"
+              value={block.props.accentColor}
+              onChange={(v) => set("accentColor", v)}
+            />
+            <ColorField
+              label="Text"
+              value={block.props.textColor}
+              onChange={(v) => set("textColor", v)}
+            />
           </>
         );
       case "footer":
         return (
           <>
-            <ColorField label="Background" value={block.props.bgColor} onChange={(v) => set("bgColor", v)} />
-            <ColorField label="Text" value={block.props.textColor} onChange={(v) => set("textColor", v)} />
+            <ColorField
+              label="Background"
+              value={block.props.bgColor}
+              onChange={(v) => set("bgColor", v)}
+            />
+            <ColorField
+              label="Text"
+              value={block.props.textColor}
+              onChange={(v) => set("textColor", v)}
+            />
           </>
         );
     }
@@ -4838,7 +5227,7 @@ export function InspectorPanel({
       case "navbar":
         return (
           <div className="space-y-3">
-            <p className="text-[10px] uppercase tracking-wider text-slate-500">
+            <p className="text-[10px] tracking-wider text-slate-500 uppercase">
               Navigation Links
             </p>
             {renderLinks(block.props.links)}
@@ -4854,8 +5243,12 @@ export function InspectorPanel({
               max={4}
               onChange={(v) => set("columnsCount", Math.max(1, Math.min(4, v)))}
             />
-            <TextField label="Column Gap" value={block.props.gap} onChange={(v) => set("gap", v)} />
-            <p className="text-[10px] uppercase tracking-wider text-slate-500">
+            <TextField
+              label="Column Gap"
+              value={block.props.gap}
+              onChange={(v) => set("gap", v)}
+            />
+            <p className="text-[10px] tracking-wider text-slate-500 uppercase">
               Columns
             </p>
             {renderColumns(block.props.columns)}
@@ -4864,7 +5257,7 @@ export function InspectorPanel({
       case "pricing":
         return (
           <div className="space-y-3">
-            <p className="text-[10px] uppercase tracking-wider text-slate-500">
+            <p className="text-[10px] tracking-wider text-slate-500 uppercase">
               Features
             </p>
             {renderFeatures(block.props.features)}
@@ -4884,7 +5277,7 @@ export function InspectorPanel({
       <div className="flex shrink-0 items-center justify-between border-b border-slate-800 bg-slate-950 p-3">
         <div className="flex items-center space-x-2">
           <Icon className="h-4 w-4 text-blue-400" />
-          <h2 className="text-xs font-bold uppercase tracking-wider text-white">
+          <h2 className="text-xs font-bold tracking-wider text-white uppercase">
             Inspector
           </h2>
         </div>
@@ -4902,7 +5295,11 @@ export function InspectorPanel({
                 : "text-slate-400 hover:text-white"
             }`}
           >
-            {t === "content" ? "Content" : t === "style" ? "Style" : "Grid / List"}
+            {t === "content"
+              ? "Content"
+              : t === "style"
+                ? "Style"
+                : "Grid / List"}
           </button>
         ))}
       </div>
@@ -4915,7 +5312,7 @@ export function InspectorPanel({
                 type="text"
                 value={block.props.layerName || ""}
                 onChange={(e) => set("layerName", e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white focus:border-blue-500 outline-none text-xs"
+                className="w-full rounded-xl border border-slate-800 bg-slate-950 px-3 py-2 text-xs text-white outline-none focus:border-blue-500"
               />
             </FieldShell>
             {renderContent()}
@@ -4971,6 +5368,7 @@ function AddButton({ label, onClick }: { label: string; onClick: () => void }) {
 ```
 
 Type-check notes:
+
 - `renderStyle` uses `"bgGradient" in block.props` / `"align" in block.props` guards to narrow the union across the `navbar`/`hero` case group — valid TypeScript narrowing.
 - Each `switch` over `block.type` narrows `block.props` to the matching member.
 - The `set` helper returns `onUpdateProps` result (`void`), so assigning it as `onChange` handlers (which expect `(v) => void`) is safe.
@@ -4987,16 +5385,17 @@ git commit -m "feat: add block inspector panel"
 
 ---
 
-
 ---
 
 ### Task 16: Template form (basic info + block editor integration)
 
 **Files:**
+
 - Create: `features/templates/components/template-form.tsx`
 - Modify: `features/templates/components/index.ts`
 
 **Interfaces:**
+
 - Produces: `TemplateForm({ mode, categories, initialData? })` — client form composing a basic-info card with the `BlockEditor`, submitting via server actions.
 - Consumes: `BlockEditor`/`BlockEditorHandle` (Task 13), `PRESET_TEMPLATES`/`DEFAULT_PAGE_SETTINGS` (Task 3), `createTemplateAction`/`updateTemplateAction` (Task 8), `CategoryWithChildren` (business-categories types), shadcn UI primitives.
 
@@ -5113,7 +5512,9 @@ export function TemplateForm({
   );
 
   const onSaveDraft = handleSubmit((values) => persist(values, "draft"));
-  const onSavePublished = handleSubmit((values) => persist(values, "published"));
+  const onSavePublished = handleSubmit((values) =>
+    persist(values, "published")
+  );
 
   const categoryOptions = categories.flatMap((cat) => [
     { value: cat.id, label: cat.name, indent: false },
@@ -5126,10 +5527,15 @@ export function TemplateForm({
 
   return (
     <form onSubmit={onSaveDraft} className="space-y-6">
-      <div className="grid gap-4 rounded-lg border bg-card p-4 md:grid-cols-2">
+      <div className="bg-card grid gap-4 rounded-lg border p-4 md:grid-cols-2">
         <div className="space-y-2">
           <Label htmlFor="name">Name</Label>
-          <Input id="name" required placeholder="Template name" {...register("name")} />
+          <Input
+            id="name"
+            required
+            placeholder="Template name"
+            {...register("name")}
+          />
         </div>
 
         <div className="space-y-2">
@@ -5155,7 +5561,7 @@ export function TemplateForm({
           <Label htmlFor="categoryId">Business Category</Label>
           <select
             id="categoryId"
-            className="block w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+            className="border-input focus-visible:ring-ring block w-full rounded-md border bg-transparent px-3 py-2 text-sm shadow-sm transition-colors focus-visible:ring-1 focus-visible:outline-none"
             {...register("categoryId")}
           >
             <option value="">No category</option>
@@ -5193,9 +5599,7 @@ export function TemplateForm({
         <h3 className="mb-2 text-lg font-semibold">Block Editor</h3>
         <BlockEditor
           ref={editorRef}
-          initialBlocks={
-            initialData?.blocks ?? PRESET_TEMPLATES.saas
-          }
+          initialBlocks={initialData?.blocks ?? PRESET_TEMPLATES.saas}
           initialPageSettings={
             initialData?.pageSettings ?? DEFAULT_PAGE_SETTINGS
           }
@@ -5228,6 +5632,7 @@ export function TemplateForm({
 ```
 
 Notes:
+
 - `register("categoryId")` returns the selected value as a string; `""` is converted to `null` in the payload, which the zod schema accepts (`categoryId: z.string().uuid().optional().nullable()`).
 - `sortOrder` is stored as a string in the form and converted with `Number()` before submit.
 - `persist` guards on `editorRef.current?.getData()` — the editor must have mounted; it is always rendered below the form.
@@ -5258,10 +5663,12 @@ git commit -m "feat: add template form with block editor"
 ### Task 17: Create and Edit pages
 
 **Files:**
+
 - Create: `app/(staff)/staff/templates/create/page.tsx`
 - Create: `app/(staff)/staff/templates/[id]/edit/page.tsx`
 
 **Interfaces:**
+
 - Consumes: `TemplateForm`, `getActiveCategoriesTree`, `getTemplateById`, `assertCanModifyTemplate`, `getSession`, `authorize`, `PERMISSIONS`.
 - Produces: `/staff/templates/create` and `/staff/templates/[id]/edit` routes.
 
@@ -5302,7 +5709,7 @@ export default async function CreateTemplatePage() {
         actions={
           <Link href="/staff/templates">
             <Button variant="outline">
-              <ArrowLeft className="h-4 w-4 mr-2" />
+              <ArrowLeft className="mr-2 h-4 w-4" />
               Back
             </Button>
           </Link>
@@ -5363,7 +5770,7 @@ export default async function EditTemplatePage({
         actions={
           <Link href="/staff/templates">
             <Button variant="outline">
-              <ArrowLeft className="h-4 w-4 mr-2" />
+              <ArrowLeft className="mr-2 h-4 w-4" />
               Back
             </Button>
           </Link>
@@ -5380,6 +5787,7 @@ export default async function EditTemplatePage({
 ```
 
 Notes:
+
 - The ownership/permission gate lives in the page (via `assertCanModifyTemplate`) so managers (who hold `update.any`) and owners (who hold `update.own`) both pass, and anyone else is sent to `/staff/access-denied`. The mutation actions re-check on every save.
 - The page intentionally does not use a blanket `authorize(PERMISSIONS.TEMPLATES_UPDATE_OWN)` because a Template Manager holds `update.any` but not `update.own` — `assertCanModifyTemplate` handles both paths.
 
@@ -5398,6 +5806,7 @@ git commit -m "feat: add template create and edit pages"
 ### Task 18: Full verification and smoke test
 
 **Files:**
+
 - None new (verification pass over all Tasks 1-17).
 
 - [ ] **Step 1: Full static checks**

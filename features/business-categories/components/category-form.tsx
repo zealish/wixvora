@@ -12,10 +12,7 @@ import { toast } from "@/components/ui/toast";
 import { CategoryIconPicker } from "./category-icon-picker";
 import { createCategorySchema, updateCategorySchema } from "../validation";
 import type { CreateCategoryInput, UpdateCategoryInput } from "../validation";
-import {
-  createCategoryAction,
-  updateCategoryAction,
-} from "../actions";
+import { createCategoryAction, updateCategoryAction } from "../actions";
 
 interface CategoryFormProps {
   mode: "create" | "edit";
@@ -36,7 +33,9 @@ export function CategoryForm({
   const [loading, setLoading] = useState(false);
 
   const form = useForm<CreateCategoryInput | UpdateCategoryInput>({
-    resolver: zodResolver(mode === "create" ? createCategorySchema : updateCategorySchema) as any,
+    resolver: zodResolver(
+      mode === "create" ? createCategorySchema : updateCategorySchema
+    ) as any,
     defaultValues: {
       name: initialData?.name ?? "",
       slug: initialData?.slug ?? "",
@@ -58,7 +57,7 @@ export function CategoryForm({
         .replace(/\s+/g, "-")
         .replace(/-+/g, "-")
         .replace(/^-|-$/g, "");
-      
+
       form.setValue("slug", slug, { shouldValidate: false });
     }
   }, [watchName, mode, form]);
@@ -107,7 +106,7 @@ export function CategoryForm({
           placeholder="Category name"
         />
         {form.formState.errors.name && (
-          <p className="text-sm text-destructive">
+          <p className="text-destructive text-sm">
             {form.formState.errors.name.message}
           </p>
         )}
@@ -122,12 +121,12 @@ export function CategoryForm({
           readOnly={mode === "create"}
         />
         {watchSlug && (
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             Preview: /categories/{watchSlug}
           </p>
         )}
         {form.formState.errors.slug && (
-          <p className="text-sm text-destructive">
+          <p className="text-destructive text-sm">
             {form.formState.errors.slug.message}
           </p>
         )}
@@ -150,7 +149,7 @@ export function CategoryForm({
           {...form.register("displayOrder", { valueAsNumber: true })}
         />
         {form.formState.errors.displayOrder && (
-          <p className="text-sm text-destructive">
+          <p className="text-destructive text-sm">
             {form.formState.errors.displayOrder.message}
           </p>
         )}

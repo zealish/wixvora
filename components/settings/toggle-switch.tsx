@@ -29,7 +29,7 @@ export function ToggleSwitch({
         className="peer sr-only"
         onChange={(e) => onChange?.(e.target.checked)}
       />
-      <div className="peer h-6 w-11 rounded-full bg-muted after:absolute after:start-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-border after:bg-white after:transition-all peer-checked:bg-primary peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-ring rtl:peer-checked:after:-translate-x-full" />
+      <div className="peer bg-muted after:border-border peer-checked:bg-primary peer-focus:ring-ring h-6 w-11 rounded-full peer-focus:ring-2 peer-focus:outline-none after:absolute after:start-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:bg-white after:transition-all peer-checked:after:translate-x-full peer-checked:after:border-white rtl:peer-checked:after:-translate-x-full" />
     </label>
   );
 }

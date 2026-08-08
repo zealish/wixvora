@@ -22,19 +22,21 @@
 
 ## File Structure
 
-| Action | File | Responsibility |
-|--------|------|----------------|
-| Modify | `app/globals.css` | Add `.scrollbar-accent` styles in `@layer components` |
-| Modify | `app/(guest)/layout.tsx` | Add `scrollbar-accent` class to wrapper div |
+| Action | File                     | Responsibility                                        |
+| ------ | ------------------------ | ----------------------------------------------------- |
+| Modify | `app/globals.css`        | Add `.scrollbar-accent` styles in `@layer components` |
+| Modify | `app/(guest)/layout.tsx` | Add `scrollbar-accent` class to wrapper div           |
 
 ---
 
 ### Task 1: Add scrollbar accent styles to globals.css
 
 **Files:**
+
 - Modify: `app/globals.css:268` (after the existing `@layer components` closing brace)
 
 **Interfaces:**
+
 - Produces: `.scrollbar-accent` CSS class with Webkit and Firefox scrollbar styles
 
 - [ ] **Step 1: Add scrollbar accent styles**
@@ -44,7 +46,7 @@ Add the following CSS block inside the existing `@layer components` section in `
 ```css
 /* Guest layout scrollbar accent styling */
 .scrollbar-accent {
-  scrollbar-color: #4F46E5 transparent;
+  scrollbar-color: #4f46e5 transparent;
   scrollbar-width: thin;
 }
 
@@ -57,16 +59,16 @@ Add the following CSS block inside the existing `@layer components` section in `
 }
 
 .scrollbar-accent::-webkit-scrollbar-thumb {
-  background: #4F46E5;
+  background: #4f46e5;
   border-radius: 4px;
 }
 
 .scrollbar-accent::-webkit-scrollbar-thumb:hover {
-  background: #818CF8;
+  background: #818cf8;
 }
 
 .scrollbar-accent::-webkit-scrollbar-thumb:active {
-  background: #A5B4FC;
+  background: #a5b4fc;
 }
 ```
 
@@ -87,9 +89,11 @@ git commit -m "style(scrollbar): add accent scrollbar styles for guest layout"
 ### Task 2: Apply scrollbar accent class to guest layout
 
 **Files:**
+
 - Modify: `app/(guest)/layout.tsx:6`
 
 **Interfaces:**
+
 - Consumes: `.scrollbar-accent` CSS class from Task 1
 
 - [ ] **Step 1: Add class to guest layout wrapper**

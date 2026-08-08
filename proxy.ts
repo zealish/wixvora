@@ -18,7 +18,8 @@ export async function proxy(request: NextRequest) {
 
       if (sessionResponse.ok) {
         const session = await sessionResponse.json();
-        const redirectPath = session?.user?.accountType === "STAFF" ? "/staff" : "/client";
+        const redirectPath =
+          session?.user?.accountType === "STAFF" ? "/staff" : "/client";
         return NextResponse.redirect(new URL(redirectPath, request.url));
       }
     } catch (error) {

@@ -16,10 +16,7 @@ import { DataTable } from "@/components/shared/data-table";
 import { createCategoryColumns } from "../table/category-columns";
 import { createCategoryBulkActions } from "../table/category-bulk-actions-config";
 import { categoryFilters } from "../table/category-filters";
-import {
-  deleteCategoryAction,
-  toggleStatusAction,
-} from "../actions";
+import { deleteCategoryAction, toggleStatusAction } from "../actions";
 import type { CategoryWithChildren } from "../types";
 
 interface CategoryDataTableProps {
@@ -50,15 +47,16 @@ export function CategoryDataTable({ data }: CategoryDataTableProps) {
   const flattenData = useMemo(() => {
     const flat: (CategoryWithChildren & { depth: number })[] = [];
 
-    const traverse = (
-      cats: CategoryWithChildren[], 
-      depth: number = 0
-    ) => {
+    const traverse = (cats: CategoryWithChildren[], depth: number = 0) => {
       for (const cat of cats) {
         flat.push({ ...cat, depth });
-        
+
         // Only traverse children if current item is expanded
-        if (cat.children && cat.children.length > 0 && expandedIds.has(cat.id)) {
+        if (
+          cat.children &&
+          cat.children.length > 0 &&
+          expandedIds.has(cat.id)
+        ) {
           traverse(cat.children, depth + 1);
         }
       }
@@ -110,10 +108,11 @@ export function CategoryDataTable({ data }: CategoryDataTableProps) {
     const newStatus = currentStatus === "active" ? "inactive" : "active";
     const result = await toggleStatusAction(id, newStatus);
     if (result.success) {
-      const message = newStatus === "inactive" 
-        ? "Status changed to inactive (children also set to inactive)"
-        : `Status changed to ${newStatus}`;
-      
+      const message =
+        newStatus === "inactive"
+          ? "Status changed to inactive (children also set to inactive)"
+          : `Status changed to ${newStatus}`;
+
       toast.add({
         type: "success",
         title: "Success",
@@ -188,7 +187,10 @@ export function CategoryDataTable({ data }: CategoryDataTableProps) {
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setDeleteDialogOpen(false)}
+            >
               Cancel
             </Button>
             <Button variant="destructive" onClick={confirmDelete}>

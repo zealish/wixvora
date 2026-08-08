@@ -33,6 +33,7 @@ This specification describes the implementation of a hierarchical business categ
 ### Rationale
 
 A single `business_categories` table with `parentId` column provides the optimal balance of:
+
 - **Simplicity:** One schema, one set of queries, one form component
 - **Maintainability:** Less code duplication, single source of truth
 - **Flexibility:** Easy to extend if hierarchy depth requirements change
@@ -54,16 +55,16 @@ A single `business_categories` table with `parentId` column provides the optimal
 ```typescript
 business_categories {
   id: uuid (primary key)
-  
+
   name: varchar(100) NOT NULL
   slug: varchar(120) NOT NULL UNIQUE
   icon: varchar(100) NULL              // Lucide React icon name
-  
+
   displayOrder: integer NOT NULL
   status: enum('active', 'inactive') NOT NULL DEFAULT 'active'
-  
+
   parentId: uuid NULL                  // NULL = root category
-  
+
   createdAt: timestamp NOT NULL
   updatedAt: timestamp NOT NULL
   deletedAt: timestamp NULL            // Soft delete
@@ -121,12 +122,12 @@ features/
     service.ts                      # Business logic & soft cascade delete
     validation.ts                   # Zod schemas
     types.ts                        # TypeScript types
-    
+
     components/
       category-form.tsx             # Unified form for create/edit
       category-data-table.tsx       # DataTable wrapper with expandable rows
       category-icon-picker.tsx      # Lucide icon selector component
-    
+
     table/
       category-columns.tsx          # Column definitions with expand/collapse
       category-filters.ts           # Filter configuration
@@ -165,6 +166,7 @@ app/
 ### Drizzle Schema
 
 **Key Elements:**
+
 - `categoryStatusEnum` for status values
 - Self-referential `parentId` foreign key
 - Unique constraint on `(parentId, displayOrder)`
@@ -191,8 +193,8 @@ getNextDisplayOrder(parentId: string | null): Promise<number>
 
 // Check if display order is available
 validateDisplayOrder(
-  parentId: string | null, 
-  order: number, 
+  parentId: string | null,
+  order: number,
   excludeId?: string
 ): Promise<boolean>
 ```
@@ -242,6 +244,7 @@ generateUniqueSlug(name: string, excludeId?: string): Promise<string>
 ### DataTable with Expandable Rows
 
 **Features:**
+
 - Root categories displayed as regular rows
 - Expand icon (ChevronRight/ChevronDown) in first column for categories with children
 - Sub-categories appear as nested rows with visual indentation when expanded
@@ -250,12 +253,14 @@ generateUniqueSlug(name: string, excludeId?: string): Promise<string>
 - Filters: Status (All/Active/Inactive), Search by name
 
 **Row Actions:**
+
 - **Edit:** Opens edit page
 - **Add Sub-Category:** Available only for root categories (with depth validation)
 - **Delete:** Shows confirmation dialog, warns if has children (cascade delete)
 - **Toggle Status:** Quick status change without leaving page
 
 **Expandable Row Behavior:**
+
 - Click expand icon or anywhere on row to toggle expansion
 - Expanded state maintained during filtering/sorting
 - Sub-categories load with parent (not lazy-loaded)
@@ -297,6 +302,7 @@ generateUniqueSlug(name: string, excludeId?: string): Promise<string>
    - Pre-filled from URL param for sub-category create
 
 **Form Behavior:**
+
 - Real-time slug generation while typing name (300ms debounce)
 - Display order validation on blur with helpful error messages
 - Icon picker opens in dialog/popover
@@ -307,6 +313,7 @@ generateUniqueSlug(name: string, excludeId?: string): Promise<string>
 ### Icon Picker Component
 
 **Features:**
+
 - Search box to filter icons by name
 - Grid display of icon previews (32x32 size)
 - Selected icon highlighted with border/background
@@ -316,6 +323,7 @@ generateUniqueSlug(name: string, excludeId?: string): Promise<string>
 - Clear selection button
 
 **Popular Icons Suggested:**
+
 - Store, ShoppingCart, Package, Utensils, Coffee
 - Briefcase, Wrench, Car, Home, Heart
 - BookOpen, Laptop, Palette, Music, Camera
@@ -329,21 +337,23 @@ generateUniqueSlug(name: string, excludeId?: string): Promise<string>
 Added to `lib/auth/permissions.ts`:
 
 ```typescript
-CATEGORIES_VIEW: 'categories:view'
-CATEGORIES_CREATE: 'categories:create'
-CATEGORIES_UPDATE: 'categories:update'
-CATEGORIES_DELETE: 'categories:delete'
+CATEGORIES_VIEW: "categories:view";
+CATEGORIES_CREATE: "categories:create";
+CATEGORIES_UPDATE: "categories:update";
+CATEGORIES_DELETE: "categories:delete";
 ```
 
 ### Permission Enforcement
 
 **Page Level:**
+
 - `/business-categories` → `CATEGORIES_VIEW`
 - `/business-categories/create` → `CATEGORIES_CREATE`
 - `/business-categories/[id]/edit` → `CATEGORIES_UPDATE`
 - `/business-categories/[id]/create-sub` → `CATEGORIES_CREATE`
 
 **Action Level:**
+
 - `createCategoryAction` → `CATEGORIES_CREATE`
 - `updateCategoryAction` → `CATEGORIES_UPDATE`
 - `deleteCategoryAction` → `CATEGORIES_DELETE`
@@ -351,6 +361,7 @@ CATEGORIES_DELETE: 'categories:delete'
 - `bulkDeleteCategoriesAction` → `CATEGORIES_DELETE`
 
 **UI Level:**
+
 - "Create Category" button → `CATEGORIES_VIEW`
 - "Edit" row action → `CATEGORIES_UPDATE`
 - "Delete" row action → `CATEGORIES_DELETE`
@@ -379,6 +390,7 @@ All category operations are logged to the audit system with full context.
 ### Event Types
 
 **Category Created:**
+
 ```typescript
 {
   action: 'CATEGORY_CREATED',
@@ -396,6 +408,7 @@ All category operations are logged to the audit system with full context.
 ```
 
 **Category Updated:**
+
 ```typescript
 {
   action: 'CATEGORY_UPDATED',
@@ -409,6 +422,7 @@ All category operations are logged to the audit system with full context.
 ```
 
 **Category Deleted (with cascade):**
+
 ```typescript
 {
   action: 'CATEGORY_DELETED',
@@ -429,6 +443,7 @@ All category operations are logged to the audit system with full context.
 ```
 
 **Status Changed:**
+
 ```typescript
 {
   action: 'CATEGORY_STATUS_CHANGED',
@@ -448,26 +463,31 @@ All category operations are logged to the audit system with full context.
 ### Validation Errors (400 Bad Request)
 
 **Duplicate Display Order:**
+
 ```
 Display order 3 is already used by another category at this level.
 ```
 
 **Invalid Hierarchy Depth:**
+
 ```
 Cannot create sub-category: maximum depth of 2 levels reached.
 ```
 
 **Slug Already Exists:**
+
 ```
 Slug 'electronics' is already in use. Please choose a different name or edit the slug manually.
 ```
 
 **Invalid Display Order:**
+
 ```
 Display order must be a positive number greater than 0.
 ```
 
 **Self-Reference Attempt:**
+
 ```
 A category cannot be its own parent.
 ```
@@ -475,16 +495,19 @@ A category cannot be its own parent.
 ### Business Logic Errors (422 Unprocessable Entity)
 
 **Delete Category with Active Children:**
+
 ```
 Cannot delete category 'Electronics' because it has 5 active sub-categories. Please deactivate or delete them first, or use force delete to cascade.
 ```
 
 **Change Parent Creates Invalid Depth:**
+
 ```
 Cannot change parent: this category has children. Moving it would exceed the maximum depth of 2 levels.
 ```
 
 **Inactive Parent with Active Children:**
+
 ```
 Cannot set status to inactive while 3 sub-categories are still active. Please deactivate children first or cascade the status change.
 ```
@@ -508,6 +531,7 @@ Parent category not found. It may have been deleted.
 ### User Feedback Messages
 
 **Success Messages:**
+
 - "Category created successfully"
 - "Sub-category created under Electronics"
 - "Category updated successfully"
@@ -516,6 +540,7 @@ Parent category not found. It may have been deleted.
 - "3 categories deleted successfully"
 
 **Confirmation Dialogs:**
+
 - "Delete category?" - "This category has 5 sub-categories. All will be deleted. This action cannot be undone."
 - "Delete 3 categories?" - "Some categories have sub-categories that will also be deleted. Continue?"
 
@@ -547,13 +572,13 @@ Parent category not found. It may have been deleted.
 BEGIN TRANSACTION
   // Get all children
   children = SELECT * FROM business_categories WHERE parent_id = :id
-  
+
   // Mark parent as deleted
   UPDATE business_categories SET deleted_at = NOW() WHERE id = :id
-  
+
   // Mark all children as deleted
   UPDATE business_categories SET deleted_at = NOW() WHERE parent_id = :id
-  
+
   // Create audit log with cascade info
   INSERT INTO audit_logs (action, entity_id, metadata)
 COMMIT

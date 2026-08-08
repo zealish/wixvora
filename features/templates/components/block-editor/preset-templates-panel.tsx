@@ -16,8 +16,8 @@ const PRESETS: { name: string; title: string; description: string }[] = [
 
 export function PresetTemplatesPanel({ onLoad }: PresetTemplatesPanelProps) {
   return (
-    <div className="flex-1 overflow-y-auto p-4 space-y-4">
-      <div className="text-xs text-slate-400 mb-2">
+    <div className="flex-1 space-y-4 overflow-y-auto p-4">
+      <div className="mb-2 text-xs text-slate-400">
         Load a complete ready-to-use layout structure:
       </div>
       {PRESETS.map((preset) => (
@@ -25,13 +25,13 @@ export function PresetTemplatesPanel({ onLoad }: PresetTemplatesPanelProps) {
           key={preset.name}
           type="button"
           onClick={() => onLoad(preset.name)}
-          className="w-full p-4 rounded-2xl bg-gradient-to-br from-blue-900/30 to-indigo-900/20 border border-blue-500/30 hover:border-blue-500 cursor-pointer transition group text-left"
+          className="group w-full cursor-pointer rounded-2xl border border-blue-500/30 bg-gradient-to-br from-blue-900/30 to-indigo-900/20 p-4 text-left transition hover:border-blue-500"
         >
-          <h4 className="font-bold text-sm text-white group-hover:text-blue-400 flex items-center justify-between">
+          <h4 className="flex items-center justify-between text-sm font-bold text-white group-hover:text-blue-400">
             {preset.title}
-            <Sparkles className="w-4 h-4 text-blue-400" />
+            <Sparkles className="h-4 w-4 text-blue-400" />
           </h4>
-          <p className="text-xs text-slate-400 mt-1">{preset.description}</p>
+          <p className="mt-1 text-xs text-slate-400">{preset.description}</p>
         </button>
       ))}
     </div>

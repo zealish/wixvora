@@ -21,8 +21,8 @@ export function LayerTree({
   onDelete,
 }: LayerTreeProps) {
   return (
-    <div className="flex-1 overflow-y-auto p-4 space-y-2">
-      <div className="text-xs font-semibold text-slate-400 mb-3 flex items-center justify-between">
+    <div className="flex-1 space-y-2 overflow-y-auto p-4">
+      <div className="mb-3 flex items-center justify-between text-xs font-semibold text-slate-400">
         <span>Layer Tree ({blocks.length})</span>
         <span className="text-[10px] text-slate-500">Click to edit</span>
       </div>
@@ -30,20 +30,20 @@ export function LayerTree({
         <div
           key={b.id}
           onClick={() => onSelect(b.id)}
-          className={`flex items-center justify-between p-2.5 rounded-xl border text-xs cursor-pointer transition ${
+          className={`flex cursor-pointer items-center justify-between rounded-xl border p-2.5 text-xs transition ${
             b.id === selectedBlockId
-              ? "bg-blue-600/20 border-blue-500 text-white font-medium"
-              : "bg-slate-950/50 border-slate-800 text-slate-400 hover:bg-slate-800/50 hover:text-slate-200"
+              ? "border-blue-500 bg-blue-600/20 font-medium text-white"
+              : "border-slate-800 bg-slate-950/50 text-slate-400 hover:bg-slate-800/50 hover:text-slate-200"
           }`}
         >
           <div className="flex items-center space-x-2 truncate">
-            <span className="text-slate-500 text-[10px] w-4">{idx + 1}.</span>
-            <Layers className="w-3.5 h-3.5 text-blue-400 shrink-0" />
-            <span className="capitalize truncate font-medium">
+            <span className="w-4 text-[10px] text-slate-500">{idx + 1}.</span>
+            <Layers className="h-3.5 w-3.5 shrink-0 text-blue-400" />
+            <span className="truncate font-medium capitalize">
               {b.props.layerName || b.type}
             </span>
           </div>
-          <div className="flex items-center space-x-1 shrink-0">
+          <div className="flex shrink-0 items-center space-x-1">
             <button
               type="button"
               onClick={(e) => {
@@ -51,12 +51,12 @@ export function LayerTree({
                 onToggleVisibility(b.id);
               }}
               title={b.hidden ? "Show" : "Hide"}
-              className="p-1 hover:text-white text-slate-500"
+              className="p-1 text-slate-500 hover:text-white"
             >
               {b.hidden ? (
-                <EyeOff className="w-3.5 h-3.5" />
+                <EyeOff className="h-3.5 w-3.5" />
               ) : (
-                <Eye className="w-3.5 h-3.5" />
+                <Eye className="h-3.5 w-3.5" />
               )}
             </button>
             <button
@@ -66,9 +66,9 @@ export function LayerTree({
                 onMove(b.id, "up");
               }}
               title="Move up"
-              className="p-1 hover:text-white text-slate-500"
+              className="p-1 text-slate-500 hover:text-white"
             >
-              <ArrowUp className="w-3.5 h-3.5" />
+              <ArrowUp className="h-3.5 w-3.5" />
             </button>
             <button
               type="button"
@@ -77,9 +77,9 @@ export function LayerTree({
                 onMove(b.id, "down");
               }}
               title="Move down"
-              className="p-1 hover:text-white text-slate-500"
+              className="p-1 text-slate-500 hover:text-white"
             >
-              <ArrowDown className="w-3.5 h-3.5" />
+              <ArrowDown className="h-3.5 w-3.5" />
             </button>
             <button
               type="button"
@@ -88,9 +88,9 @@ export function LayerTree({
                 onDelete(b.id);
               }}
               title="Delete"
-              className="p-1 hover:text-red-400 text-slate-500"
+              className="p-1 text-slate-500 hover:text-red-400"
             >
-              <Trash2 className="w-3.5 h-3.5" />
+              <Trash2 className="h-3.5 w-3.5" />
             </button>
           </div>
         </div>
