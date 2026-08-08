@@ -52,19 +52,14 @@ export function CategoryDataTable({ data }: CategoryDataTableProps) {
 
     const traverse = (
       cats: CategoryWithChildren[], 
-      depth: number = 0,
-      parentId: string | null = null
+      depth: number = 0
     ) => {
       for (const cat of cats) {
-        // Always show root level (depth 0)
-        // For children, only show if parent is expanded
-        if (depth === 0 || (parentId && expandedIds.has(parentId))) {
-          flat.push({ ...cat, depth });
-          
-          // Only traverse children if current item is expanded
-          if (cat.children && cat.children.length > 0 && expandedIds.has(cat.id)) {
-            traverse(cat.children, depth + 1, cat.id);
-          }
+        flat.push({ ...cat, depth });
+        
+        // Only traverse children if current item is expanded
+        if (cat.children && cat.children.length > 0 && expandedIds.has(cat.id)) {
+          traverse(cat.children, depth + 1);
         }
       }
     };
