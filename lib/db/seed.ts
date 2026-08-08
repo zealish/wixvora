@@ -137,6 +137,34 @@ const seedPermissions = [
     description: "Publish templates",
   },
   {
+    key: "templates.update.own",
+    resource: "templates",
+    action: "update",
+    scope: "own",
+    description: "Update own templates",
+  },
+  {
+    key: "templates.update.any",
+    resource: "templates",
+    action: "update",
+    scope: "any",
+    description: "Update any template",
+  },
+  {
+    key: "templates.delete.own",
+    resource: "templates",
+    action: "delete",
+    scope: "own",
+    description: "Delete own templates",
+  },
+  {
+    key: "templates.delete.any",
+    resource: "templates",
+    action: "delete",
+    scope: "any",
+    description: "Delete any template",
+  },
+  {
     key: "sites.manage",
     resource: "sites",
     action: "manage",
@@ -177,6 +205,16 @@ const seedRoles = [
     name: "Developer",
     description: "Technical access to templates and settings",
   },
+  {
+    code: "TEMPLATE_DESIGNER",
+    name: "Template Designer",
+    description: "Create and manage own templates",
+  },
+  {
+    code: "TEMPLATE_MANAGER",
+    name: "Template Manager",
+    description: "Create, publish, and manage all templates",
+  },
 ];
 
 const rolePermissionMappings: Record<string, string[]> = {
@@ -214,6 +252,21 @@ const rolePermissionMappings: Record<string, string[]> = {
     "templates.view",
     "dashboard.view",
     "settings.update",
+  ],
+  TEMPLATE_DESIGNER: [
+    "templates.view",
+    "templates.create",
+    "templates.update.own",
+    "templates.delete.own",
+    "dashboard.view",
+  ],
+  TEMPLATE_MANAGER: [
+    "templates.view",
+    "templates.create",
+    "templates.update.any",
+    "templates.delete.any",
+    "templates.publish",
+    "dashboard.view",
   ],
 };
 

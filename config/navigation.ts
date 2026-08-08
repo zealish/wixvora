@@ -59,23 +59,29 @@ export const staffNavGroups: NavGroup[] = [
         permission: PERMISSIONS.ROLES_VIEW,
       },
       {
-        title: "Audit Logs",
-        href: "/staff/audit-logs",
-        icon: "FileText",
-        permission: PERMISSIONS.AUDIT_VIEW,
-      },
-      {
         title: "Business Categories",
         href: "/staff/business-categories",
         icon: "FolderTree",
         permission: PERMISSIONS.CATEGORIES_VIEW,
       },
+      {
+        title: "Website Templates",
+        href: "/staff/templates",
+        icon: "LayoutTemplate",
+        permission: PERMISSIONS.TEMPLATES_VIEW,
+      },
     ],
   },
   {
-    label: "Configuration",
+    label: "Systems",
     icon: "Cog",
     items: [
+      {
+        title: "Audit Logs",
+        href: "/staff/audit-logs",
+        icon: "FileText",
+        permission: PERMISSIONS.AUDIT_VIEW,
+      },
       {
         title: "Settings",
         href: "/staff/settings",
