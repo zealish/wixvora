@@ -210,40 +210,67 @@ export async function toggleCategoryStatus(
     throw new Error("Category not found");
   }
 
+  // If setting to inactive, cascade to all children
   if (status === "inactive") {
-    const activeChildren = await db
+    const children = await db
       .select({ id: businessCategories.id })
       .from(businessCategories)
       .where(
         and(
           eq(businessCategories.parentId, id),
-          eq(businessCategories.status, "active"),
           isNull(businessCategories.deletedAt)
         )
       );
 
-    if (activeChildren.length > 0) {
-      throw new Error(
-        `Cannot set status to inactive while ${activeChildren.length} sub-categories are still active.`
-      );
-    }
+    // Use transaction to ensure atomicity
+    await db.transaction(async (tx) => {
+      // Update parent
+      await tx
+        .update(businessCategories)
+        .set({ status, updatedAt: new Date() })
+        .where(eq(businessCategories.id, id));
+
+      // Update all children
+      if (children.length > 0) {
+        for (const child of children) {
+          await tx
+            .update(businessCategories)
+            .set({ status: "inactive", updatedAt: new Date() })
+            .where(eq(businessCategories.id, child.id));
+        }
+      }
+    });
+
+    await createAuditLog({
+      userId,
+      action: "CATEGORY_STATUS_CHANGED",
+      entity: "business_category",
+      entityId: id,
+      metadata: {
+        before: { status: existing.status },
+        after: { status },
+        cascadeCount: children.length,
+        cascadeIds: children.map(c => c.id),
+      },
+    });
+  } else {
+    // Setting to active - just update the category
+    await db
+      .update(businessCategories)
+      .set({ status, updatedAt: new Date() })
+      .where(eq(businessCategories.id, id));
+
+    await createAuditLog({
+      userId,
+      action: "CATEGORY_STATUS_CHANGED",
+      entity: "business_category",
+      entityId: id,
+      metadata: {
+        before: { status: existing.status },
+        after: { status },
+      },
+    });
   }
-
-  await db
-    .update(businessCategories)
-    .set({ status, updatedAt: new Date() })
-    .where(eq(businessCategories.id, id));
-
-  await createAuditLog({
-    userId,
-    action: "CATEGORY_STATUS_CHANGED",
-    entity: "business_category",
-    entityId: id,
-    metadata: {
-      before: { status: existing.status },
-      after: { status },
-    },
-  });
 }
 
 async function validateHierarchyDepth(parentId: string | null | undefined): Promise<void> {

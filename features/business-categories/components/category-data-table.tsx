@@ -110,10 +110,14 @@ export function CategoryDataTable({ data }: CategoryDataTableProps) {
     const newStatus = currentStatus === "active" ? "inactive" : "active";
     const result = await toggleStatusAction(id, newStatus);
     if (result.success) {
+      const message = newStatus === "inactive" 
+        ? "Status changed to inactive (children also set to inactive)"
+        : `Status changed to ${newStatus}`;
+      
       toast.add({
         type: "success",
         title: "Success",
-        description: `Status changed to ${newStatus}`,
+        description: message,
       });
       router.refresh();
     } else {
