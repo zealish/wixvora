@@ -12,7 +12,25 @@ import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { FileText, Clock, UserCircle } from "lucide-react";
 import type { AuditLogWithUser } from "../types";
-import { formatRelativeTime, getActionBadgeColor } from "./columns";
+
+function getActionBadgeColor(action: string): string {
+  const actionLower = action.toLowerCase();
+  if (["created"].includes(actionLower)) return "bg-green-100 text-green-800";
+  if (["updated"].includes(actionLower)) return "bg-blue-100 text-blue-800";
+  if (["deleted"].includes(actionLower)) return "bg-red-100 text-red-800";
+  if (["login"].includes(actionLower)) return "bg-purple-100 text-purple-800";
+  return "bg-gray-100 text-gray-800";
+}
+
+function formatRelativeTime(date: Date): string {
+  const now = new Date();
+  const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+
+  if (diffInSeconds < 60) return `${diffInSeconds}s ago`;
+  if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
+  if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
+  return format(date, "MMM d, yyyy h:mm a");
+}
 
 interface DetailDialogProps {
   open: boolean;
