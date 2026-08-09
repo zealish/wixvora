@@ -301,12 +301,14 @@ export const EditorCanvas = memo(function EditorCanvas() {
   }, [setIsPanning]);
   
    // Handle item selection and drag
-   const handleItemMouseDown = useCallback((e: React.MouseEvent, blockId: string) => {
-     if (e.button !== 0 || isPreviewMode) return; // Left click only
-     
-     e.stopPropagation();
-     
-     // Check for Shift key - if pressed, toggle this block in multi-selection
+  const handleItemMouseDown = useCallback((e: React.MouseEvent, blockId: string) => {
+    if (e.button !== 0 || isPreviewMode) return; // Left click only
+    
+    e.stopPropagation();
+    
+    console.log('[DEBUG] handleItemMouseDown', { blockId });
+    
+    // Check for Shift key - if pressed, toggle this block in multi-selection
      if (e.shiftKey && selectedBlockIds.length > 0) {
        // Toggle the clicked block
        toggleBlockSelection(blockId);
@@ -375,6 +377,14 @@ export const EditorCanvas = memo(function EditorCanvas() {
   // Global mouse move handler for dragging (attached to window on drag start)
   const handleGlobalMouseMove = useCallback((e: MouseEvent) => {
     if (!dragStart || !itemOffset || draggedBlockIds.length === 0) return;
+    
+    console.log('[DEBUG] handleGlobalMouseMove', { 
+      screenX: e.clientX, 
+      screenY: e.clientY,
+      dragStart,
+      itemOffset,
+      draggedBlockIds
+    });
     
     const canvasRect = canvasRef.current?.getBoundingClientRect();
     if (!canvasRect) return;
