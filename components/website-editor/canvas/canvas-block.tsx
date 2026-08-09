@@ -57,6 +57,18 @@ export const CanvasBlock = memo(function CanvasBlock({
   onMouseUp,
   children,
 }: CanvasBlockProps) {
+  
+  // Debug: Log when block gets x/y properties
+  console.log('[CanvasBlock DEBUG]', {
+    id: block.id,
+    type: block.type,
+    x: block.x,
+    y: block.y,
+    isSelected: selectedBlockIds.includes(block.id),
+  });
+  
+  // Determine if this block should use absolute positioning
+  const isPositioned = block.x !== undefined && block.y !== undefined;
   // Determine if this block is selected (prefer selectedBlockIds over isSelected for multi-selection)
   const isBlockSelected = selectedBlockIds.length > 0 ? selectedBlockIds.includes(block.id) : isSelected;
   
@@ -65,9 +77,6 @@ export const CanvasBlock = memo(function CanvasBlock({
     // Call with [id, shiftKey] format expected by selectMultipleBlocks
     onSelect?.([block.id], !!e.shiftKey);
   };
-
-  // Determine if block should use absolute positioning
-  const isPositioned = block.x !== undefined && block.y !== undefined;
 
   return (
     <div
