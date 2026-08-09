@@ -335,22 +335,25 @@ export const EditorCanvas = memo(function EditorCanvas() {
     const block = blocks.find((b: Block) => b.id === blockId);
     if (!block) return;
     
-    // Initialize block position if not set yet
-    let currentBlockX = block.x ?? 0;
-    let currentBlockY = block.y ?? 0;
-    
+    // Calculate initial position from mouse to canvas coordinates
     // If block has no x/y position, set initial position to where we first clicked
-    if (block.x === undefined || block.y === undefined) {
-      updateBlockPosition(blockId, canvasPos.x, canvasPos.y);
-      currentBlockX = canvasPos.x;
-      currentBlockY = canvasPos.y;
-    }
     
     // Store start position for delta-based dragging
     setDragStart({ screenX: e.clientX, screenY: e.clientY });
+    
+    // Initialize or update block position
+    let newX = block.x ?? canvasPos.x;
+    let newY = block.y ?? canvasPos.y;
+    
+    if (block.x === undefined || block.y === undefined) {
+      updateBlockPosition(blockId, canvasPos.x, canvasPos.y);
+    }
+    
+    // itemOffset is how far mouse is from block's top-left corner in canvas space
+    // We calculate based on where the block currently IS vs where mouse clicked
     setItemOffset({ 
-      x: canvasPos.x - currentBlockX, 
-      y: canvasPos.y - currentBlockY 
+      x: newX - canvasPos.x,  // This will be 0 for new blocks
+      y: newY - canvasPos.y   // This will be 0 for new blocks
     });
     
     // Track which block(s) are being dragged
@@ -377,9 +380,9 @@ export const EditorCanvas = memo(function EditorCanvas() {
       panY
     );
     
-    // Calculate new position using delta from dragStart
-    let newX = canvasPos.x - itemOffset.x;
-    let newY = canvasPos.y - itemOffset.y;
+    // Calculate new position (with snap if enabled)
+    let newX = canvasPos.x + itemOffset.x;
+    let newY = canvasPos.y + itemOffset.y;
     
     // Apply grid snapping if enabled
     if (gridEnabled) {
