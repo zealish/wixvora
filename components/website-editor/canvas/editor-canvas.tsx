@@ -72,6 +72,87 @@ export function EditorCanvas() {
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [zoom, setZoom, isPanning, setIsPanning, selectBlock]);
+  
+  // Keyboard shortcuts for block editing
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Don't trigger when typing inline text or interacting with input elements
+      if (isEditingInline) return;
+      
+      // Check if event target is an input/select/textarea to avoid triggering shortcuts while typing
+      const target = e.target as HTMLElement;
+      const isTextInput = 
+        target.tagName === "INPUT" || 
+        target.tagName === "SELECT" || 
+        target.tagName === "TEXTAREA" ||
+        target.isContentEditable;
+      
+      if (isTextInput) return;
+      
+      // Delete block (Delete key only, not Backspace)
+      if (selectedBlockId && e.key === "Delete") {
+        e.preventDefault();
+        try {
+          deleteBlock(selectedBlockId);
+        } catch (error) {
+          console.error("Error deleting block:", error);
+        }
+        return;
+      }
+      
+      // Duplicate block (Ctrl/Cmd + D)
+      if (
+        selectedBlockId &&
+        (e.ctrlKey || e.metaKey) &&
+        e.key.toLowerCase() === "d"
+      ) {
+        e.preventDefault();
+        try {
+          duplicateBlock(selectedBlockId);
+        } catch (error) {
+          console.error("Error duplicating block:", error);
+        }
+        return;
+      }
+      
+      // Group/Ungroup blocks (Shift + G)
+      if (
+        selectedBlockId &&
+        e.shiftKey &&
+        e.key.toLowerCase() === "g"
+      ) {
+        e.preventDefault();
+        
+        // TODO: Implement actual group/ungroup functionality
+        // For now, just log and provide visual feedback
+        try {
+          const block = blocks.find((b) => b.id === selectedBlockId);
+          if (block) {
+            const grouped = block.groupId !== undefined && block.groupId !== null;
+            console.log(
+              `Group action: ${grouped ? "Ungrouping" : "Grouping"} block "${block.type}"`
+            );
+            // Future implementation: call a groupBlocks or ungroupBlocks function
+          }
+        } catch (error) {
+          console.error("Error performing group action:", error);
+        }
+        return;
+      }
+    };
+    
+    window.addEventListener("keydown", handleKeyDown);
+    
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [
+    selectedBlockId,
+    isEditingInline,
+    deleteBlock,
+    duplicateBlock,
+    blocks,
+  ]);
 
   
   // Handle wheel zoom centered on cursor
