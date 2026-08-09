@@ -65,7 +65,8 @@ export const EditorCanvas = memo(function EditorCanvas() {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key === "+" || (e.ctrlKey || e.metaKey) && e.key === "=") {
         e.preventDefault();
-        setZoom(zoom + 0.1);
+        // Defensive clamp on keyboard zoom
+        setZoom(Math.max(0.25, Math.min(zoom + 0.1, 4)));
       } else if ((e.ctrlKey || e.metaKey) && e.key === "-") {
         e.preventDefault();
         setZoom(Math.max(0.25, zoom - 0.1));
@@ -77,60 +78,60 @@ export const EditorCanvas = memo(function EditorCanvas() {
       }
       
        // Escape to deselect
-        if (e.key === "Escape") {
-          clearSelection();
-        }
-        
-        // Center snap shortcuts (Ctrl/Cmd + E)
-        if (selectedBlockIds.length > 0 && (e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "e") {
-          e.preventDefault();
-          
-          try {
-            // Get canvas bounds for width calculation
-            const canvasRect = canvasRef.current?.getBoundingClientRect();
-            if (!canvasRect) return;
-            
-            // Calculate container dimensions based on viewport
-            let containerWidth: number;
-            let containerHeight: number;
-            
-            switch (viewport) {
-              case "mobile":
-                containerWidth = 375;
-                containerHeight = 812; // Mobile height for vertical centering
-                break;
-              case "tablet":
-                containerWidth = 768;
-                containerHeight = 1024; // Tablet height for vertical centering
-                break;
-              default:
-                containerWidth = 1920;
-                containerHeight = 1080; // Desktop height for vertical centering
-            }
-            
-            // Snap selected blocks to center
-            selectedBlockIds.forEach((blockId: string) => {
-              const block = blocks.find((b: Block) => b.id === blockId);
-              if (!block || !block.props?.width) return;
-              
-              const blockWidth = block.props.width;
-              const blockHeight = block.props.height || 0;
-              
-              // Horizontal and vertical center snap
-              const centeredX = (containerWidth - blockWidth) / 2;
-              const centerY = (containerHeight - blockHeight) / 2;
-              
-              // Update block position with snapped coordinates
-              updateProps(blockId, { 
-                x: centeredX, 
-                y: centerY 
-              });
-            });
-          } catch (error) {
-            console.error("Error snapping to center:", error);
-          }
-          return;
-        }
+         if (e.key === "Escape") {
+           clearSelection();
+         }
+         
+         // Center snap shortcuts (Ctrl/Cmd + E)
+         if (selectedBlockIds.length > 0 && (e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "e") {
+           e.preventDefault();
+           
+           try {
+             // Get canvas bounds for width calculation
+             const canvasRect = canvasRef.current?.getBoundingClientRect();
+             if (!canvasRect) return;
+             
+             // Calculate container dimensions based on viewport
+             let containerWidth: number;
+             let containerHeight: number;
+             
+             switch (viewport) {
+               case "mobile":
+                 containerWidth = 375;
+                 containerHeight = 812; // Mobile height for vertical centering
+                 break;
+               case "tablet":
+                 containerWidth = 768;
+                 containerHeight = 1024; // Tablet height for vertical centering
+                 break;
+               default:
+                 containerWidth = 1920;
+                 containerHeight = 1080; // Desktop height for vertical centering
+             }
+             
+             // Snap selected blocks to center
+             selectedBlockIds.forEach((blockId: string) => {
+               const block = blocks.find((b: Block) => b.id === blockId);
+               if (!block || !block.props?.width) return;
+               
+               const blockWidth = block.props.width;
+               const blockHeight = block.props.height || 0;
+               
+               // Horizontal and vertical center snap
+               const centeredX = (containerWidth - blockWidth) / 2;
+               const centerY = (containerHeight - blockHeight) / 2;
+               
+               // Update block position with snapped coordinates
+               updateProps(blockId, { 
+                 x: centeredX, 
+                 y: centerY 
+               });
+             });
+           } catch (error) {
+             console.error("Error snapping to center:", error);
+           }
+           return;
+         }
     };
     
     window.addEventListener("keydown", handleKeyDown);
@@ -279,7 +280,13 @@ export const EditorCanvas = memo(function EditorCanvas() {
       const dx = e.clientX - lastMousePos.current.x;
       const dy = e.clientY - lastMousePos.current.y;
       
-      setPan(panX + dx, panY + dy);
+      // Clamp pan values to prevent infinite scrolling
+      const MIN_PAN = -50000;
+      const MAX_PAN = 50000;
+      const newPanX = Math.max(MIN_PAN, Math.min(panX + dx, MAX_PAN));
+      const newPanY = Math.max(MIN_PAN, Math.min(panY + dy, MAX_PAN));
+      
+      setPan(newPanX, newPanY);
       lastMousePos.current = { x: e.clientX, y: e.clientY };
     }
   }, [setPan, panX, panY]);

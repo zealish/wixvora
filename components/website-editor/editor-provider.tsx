@@ -510,9 +510,15 @@ export function EditorProvider({ children }: { children: ReactNode }) {
     setZoom(clampedZoom);
   }, []);
 
+  // Pan bounds: prevent infinite scrolling by clamping to reasonable limits
+  const MIN_PAN = -50000;
+  const MAX_PAN = 50000;
+  
   const setPanCallback = useCallback((x: number, y: number) => {
-    setPanX(x);
-    setPanY(y);
+    const clampedX = Math.max(MIN_PAN, Math.min(x, MAX_PAN));
+    const clampedY = Math.max(MIN_PAN, Math.min(y, MAX_PAN));
+    setPanX(clampedX);
+    setPanY(clampedY);
   }, []);
 
   const setIsDraggingCanvasCallback = useCallback((v: boolean) => {
