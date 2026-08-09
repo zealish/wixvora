@@ -301,68 +301,74 @@ export const EditorCanvas = memo(function EditorCanvas() {
     }
   }, [setIsPanning]);
   
-  // Handle item selection and drag
-  const handleItemMouseDown = useCallback((e: React.MouseEvent, blockId: string) => {
-    if (e.button !== 0 || isPreviewMode) return; // Left click only
-    
-    e.stopPropagation();
-    
-    // Check for Shift key - if pressed, toggle this block in multi-selection
-    if (e.shiftKey && selectedBlockIds.length > 0) {
-      // Toggle the clicked block
-      toggleBlockSelection(blockId);
-    } else if (e.shiftKey && selectedBlockIds.length === 0) {
-      // First block with shift - just select it
-      toggleBlockSelection(blockId);
-    } else {
-      // Normal click - clear all and select just this block
-      selectMultipleBlocks([blockId], false);
-    }
-    
-    // Calculate initial position from mouse to canvas coordinates
-    const canvasRect = canvasRef.current?.getBoundingClientRect();
-    if (!canvasRect) return;
-    
-    const canvasPos = screenToCanvas(
-      e.clientX,
-      e.clientY,
-      canvasRect,
-      zoom,
-      panX,
-      panY
-    );
-    
-    const block = blocks.find((b: Block) => b.id === blockId);
-    if (!block) return;
-    
-    // Calculate initial position from mouse to canvas coordinates
-    // If block has no x/y position, set initial position to where we first clicked
-    
-    // Store start position for delta-based dragging
-    setDragStart({ screenX: e.clientX, screenY: e.clientY });
-    
-    // Initialize or update block position
-    let newX = block.x ?? canvasPos.x;
-    let newY = block.y ?? canvasPos.y;
-    
-    if (block.x === undefined || block.y === undefined) {
-      updateBlockPosition(blockId, canvasPos.x, canvasPos.y);
-    }
-    
-    // itemOffset is how far mouse is from block's top-left corner in canvas space
-    // We calculate based on where the block currently IS vs where mouse clicked
-    setItemOffset({ 
-      x: newX - canvasPos.x,  // This will be 0 for new blocks
-      y: newY - canvasPos.y   // This will be 0 for new blocks
-    });
-    
-    // Track which block(s) are being dragged
-    if (selectedBlockIds.includes(blockId)) {
-      setDraggedBlockIds(selectedBlockIds);
-    } else {
-      setDraggedBlockIds([blockId]);
-    }
-  }, [isPreviewMode, zoom, panX, panY, selectMultipleBlocks, toggleBlockSelection, selectedBlockIds, selectedBlockId, blocks, canvasRef, setDragStart, setItemOffset, setDraggedBlockIds, updateBlockPosition]);
+   // Handle item selection and drag
+   const handleItemMouseDown = useCallback((e: React.MouseEvent, blockId: string) => {
+     if (e.button !== 0 || isPreviewMode) return; // Left click only
+     
+     e.stopPropagation();
+     
+     // Check for Shift key - if pressed, toggle this block in multi-selection
+     if (e.shiftKey && selectedBlockIds.length > 0) {
+       // Toggle the clicked block
+       toggleBlockSelection(blockId);
+     } else if (e.shiftKey && selectedBlockIds.length === 0) {
+       // First block with shift - just select it
+       toggleBlockSelection(blockId);
+     } else {
+       // Normal click - clear all and select just this block
+       selectMultipleBlocks([blockId], false);
+     }
+     
+     // Calculate initial position from mouse to canvas coordinates
+     const canvasRect = canvasRef.current?.getBoundingClientRect();
+     if (!canvasRect) return;
+     
+     const canvasPos = screenToCanvas(
+       e.clientX,
+       e.clientY,
+       canvasRect,
+       zoom,
+       panX,
+       panY
+     );
+     
+     const block = blocks.find((b: Block) => b.id === blockId);
+     if (!block) return;
+     
+     // Initialize new block at click position, or use existing position
+     let initX: number;
+     let initY: number;
+     
+     if (block.x === undefined || block.y === undefined) {
+       // New block: set position where clicked
+       initX = canvasPos.x;
+       initY = canvasPos.y;
+       // Update block state immediately (async in React)
+       updateBlockPosition(blockId, initX, initY);
+     } else {
+       // Existing block: use current position
+       initX = block.x;
+       initY = block.y;
+     }
+     
+     // itemOffset: distance from mouse pointer to block's top-left corner
+     // For new blocks, offset should be 0 (block IS at click point)
+     // For existing blocks, offset is how far mouse is from block corner
+     setItemOffset({ 
+       x: canvasPos.x - initX,
+       y: canvasPos.y - initY
+     });
+     
+     // Track which block(s) are being dragged
+     if (selectedBlockIds.includes(blockId)) {
+       setDraggedBlockIds(selectedBlockIds);
+     } else {
+       setDraggedBlockIds([blockId]);
+     }
+     
+     // Store starting mouse position for delta calculation
+     setDragStart({ screenX: e.clientX, screenY: e.clientY });
+   }, [isPreviewMode, zoom, panX, panY, selectMultipleBlocks, toggleBlockSelection, selectedBlockIds, selectedBlockId, blocks, canvasRef, setDragStart, setItemOffset, setDraggedBlockIds, updateBlockPosition]);
   
   const handleItemMouseMove = useCallback((e: React.MouseEvent) => {
     if (!dragStart || !itemOffset || draggedBlockIds.length === 0) return;
