@@ -212,6 +212,11 @@ export function EditorCanvas() {
     setDragStart(null);
     setItemOffset(null);
   }, [setDragStart, setItemOffset]);
+  
+  // Deselect block when clicking on canvas background
+  const handleClick = useCallback(() => {
+    selectBlock("");
+  }, [selectBlock]);
 
 
   const getCanvasWidth = () => {
@@ -291,6 +296,7 @@ export function EditorCanvas() {
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseUp}
+        onClick={handleClick}
       >
         {/* Grid Overlay */}
         <GridOverlay
