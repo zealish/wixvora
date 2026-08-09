@@ -38,11 +38,13 @@ export const EditorCanvas = memo(function EditorCanvas() {
     gridSize,
     dragStart,
     itemOffset,
+    draggedBlockIds,
     setZoom,
     setPan,
     setIsPanning,
     setDragStart,
     setItemOffset,
+    setDraggedBlockIds,
   } = useEditor();
   
   const canvasRef = useRef<HTMLDivElement>(null);
@@ -341,10 +343,17 @@ export const EditorCanvas = memo(function EditorCanvas() {
       x: canvasPos.x - currentBlockX, 
       y: canvasPos.y - currentBlockY 
     });
-  }, [isPreviewMode, zoom, panX, panY, selectMultipleBlocks, toggleBlockSelection, selectedBlockIds, blocks, canvasRef, setDragStart, setItemOffset]);
+    
+    // Track which block(s) are being dragged
+    if (selectedBlockIds.includes(blockId)) {
+      setDraggedBlockIds(selectedBlockIds);
+    } else {
+      setDraggedBlockIds([blockId]);
+    }
+  }, [isPreviewMode, zoom, panX, panY, selectMultipleBlocks, toggleBlockSelection, selectedBlockIds, selectedBlockId, blocks, canvasRef, setDragStart, setItemOffset, setDraggedBlockIds]);
   
   const handleItemMouseMove = useCallback((e: React.MouseEvent) => {
-    if (!dragStart || !selectedBlockId || !itemOffset) return;
+    if (!dragStart || !itemOffset || draggedBlockIds.length === 0) return;
     
     // Get current mouse position in canvas coordinates
     const canvasRect = canvasRef.current?.getBoundingClientRect();
@@ -369,14 +378,17 @@ export const EditorCanvas = memo(function EditorCanvas() {
       newY = snapToGrid(newY, gridSize);
     }
     
-    // Update block position (maintains width/height, updates x/y)
-    updateProps(selectedBlockId, { x: newX, y: newY });
-  }, [dragStart, selectedBlockId, itemOffset, zoom, panX, panY, gridEnabled, gridSize, updateProps]);
+    // Update position for each dragged block
+    draggedBlockIds.forEach(id => {
+      updateProps(id, { x: newX, y: newY });
+    });
+  }, [dragStart, itemOffset, draggedBlockIds, zoom, panX, panY, gridEnabled, gridSize, updateProps]);
   
   const handleItemMouseUp = useCallback(() => {
     setDragStart(null);
     setItemOffset(null);
-  }, [setDragStart, setItemOffset]);
+    setDraggedBlockIds([]);
+  }, [setDragStart, setItemOffset, setDraggedBlockIds]);
   
   // Deselect block when clicking on canvas background
   const handleClick = useCallback(() => {

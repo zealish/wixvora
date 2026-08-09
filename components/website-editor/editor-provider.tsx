@@ -30,8 +30,10 @@ interface EditorContextValue {
   gridSize: number;
   dragStart: { screenX: number; screenY: number } | null;
   itemOffset: { x: number; y: number } | null;
+  draggedBlockIds: string[];
 
   addBlock: (type: BlockType) => void;
+  setDraggedBlockIds: (ids: string[]) => void;
   duplicateBlock: (id: string) => void;
   deleteBlock: (id: string) => void;
   moveBlockUp: (id: string) => void;
@@ -223,6 +225,8 @@ export function EditorProvider({ children }: { children: ReactNode }) {
   const [gridSize, setGridSize] = useState<number>(20);
   const [dragStart, setDragStart] = useState<{ screenX: number; screenY: number } | null>(null);
   const [itemOffset, setItemOffset] = useState<{ x: number; y: number } | null>(null);
+  // Track which block is currently being dragged (for multi-selection)
+  const [draggedBlockIds, setDraggedBlockIds] = useState<string[]>([]);
 
   const historyRef = useRef<Block[][]>([initialBlocks]);
   const historyIndexRef = useRef<number>(0);
@@ -545,6 +549,10 @@ export function EditorProvider({ children }: { children: ReactNode }) {
     setItemOffset(offset);
   }, []);
 
+  const setDraggedBlockIdsCallback = useCallback((ids: string[]) => {
+    setDraggedBlockIds(ids);
+  }, []);
+
   const value: EditorContextValue = {
     blocks,
     selectedBlockId,
@@ -570,6 +578,7 @@ export function EditorProvider({ children }: { children: ReactNode }) {
     gridSize,
     dragStart,
     itemOffset,
+    draggedBlockIds,
     addBlock,
     duplicateBlock,
     deleteBlock,
@@ -609,6 +618,7 @@ export function EditorProvider({ children }: { children: ReactNode }) {
     setGridSize: setGridSizeCallback,
     setDragStart: setDragStartCallback,
     setItemOffset: setItemOffsetCallback,
+    setDraggedBlockIds: setDraggedBlockIdsCallback,
   };
 
   return <EditorContext.Provider value={value}>{children}</EditorContext.Provider>;
