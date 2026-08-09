@@ -16,6 +16,8 @@ export function EditorTopbar() {
     isPreviewMode,
     setIsPreviewMode,
     setShowExportModal,
+    zoom,
+    setZoom,
   } = useEditor();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -63,6 +65,28 @@ export function EditorTopbar() {
 
       <div className="flex items-center gap-2">
         <ViewportSwitcher />
+        
+        <div className="mx-2 h-6 w-px bg-slate-200" />
+        
+        <button
+          onClick={() => setZoom(Math.max(0.25, zoom - 0.1))}
+          className="rounded-lg p-2 text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900"
+          title="Zoom out"
+        >
+          <Icon name="minus" size={18} />
+        </button>
+        
+        <div className="min-w-[3rem] text-center text-sm font-medium text-slate-700">
+          {Math.round(zoom * 100)}%
+        </div>
+        
+        <button
+          onClick={() => setZoom(Math.min(4, zoom + 0.1))}
+          className="rounded-lg p-2 text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900"
+          title="Zoom in"
+        >
+          <Icon name="plus" size={18} />
+        </button>
       </div>
 
       <div className="flex items-center gap-1">
