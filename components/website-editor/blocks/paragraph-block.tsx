@@ -22,8 +22,8 @@ export function ParagraphBlock({
     <div className="py-3 px-6">
       <InlineText
         tagName="p"
-        style={{ color: props.textColor }}
-        className={`${props.fontSize || 'text-base'} text-${props.align || 'center'} ${props.maxWidth || 'max-w-2xl'} mx-auto leading-relaxed block`}
+        style={{ color: props.textColor, textAlign: props.align || 'center' }}
+        className={`${props.fontSize || 'text-base'} ${props.maxWidth || 'max-w-2xl'} mx-auto leading-relaxed block`}
         value={props.text || ''}
         onChange={(value) => updateProps({ text: value })}
         isPreviewMode={isPreviewMode}

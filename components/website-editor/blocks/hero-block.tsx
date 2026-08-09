@@ -20,8 +20,8 @@ export function HeroBlock({
 
   return (
     <div
-      style={{ backgroundColor: props.bgColor, color: props.textColor }}
-      className={`relative py-16 px-6 ${props.bgGradient || ''} text-${props.align || 'center'} transition-all`}
+      style={{ backgroundColor: props.bgColor, color: props.textColor, textAlign: props.align || 'center' }}
+      className={`relative py-16 px-6 ${props.bgGradient || ''} transition-all`}
     >
       <div className="max-w-4xl mx-auto space-y-5">
         {props.badge && (

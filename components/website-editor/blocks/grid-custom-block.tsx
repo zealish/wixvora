@@ -2,6 +2,9 @@
 
 import { Block } from '../lib/block-types';
 import { InlineText } from '../canvas/inline-text-editor';
+import { CanvasBlock } from '../canvas/canvas-block';
+import { BlockRenderer } from './block-renderer';
+import { useEditor } from '../editor-provider';
 import { Icon } from '../ui/icon-library';
 import type { IconName } from '../ui/icon-library';
 
@@ -19,6 +22,17 @@ export function GridCustomBlock({
   setIsEditingInline,
 }: GridCustomBlockProps) {
   const props = block.props;
+  const {
+    selectedBlockId,
+    selectBlock,
+    updateProps: updateBlockProps,
+    moveBlockUp,
+    moveBlockDown,
+    duplicateBlock,
+    deleteBlock,
+  } = useEditor();
+
+  const children = block.children || [];
 
   const handleColumnChange = (index: number, field: string, value: any) => {
     const newCols = [...(props.columns || [])];
@@ -46,7 +60,13 @@ export function GridCustomBlock({
           setIsEditingInline={setIsEditingInline}
         />
       </div>
-      <div className={`grid grid-cols-1 md:grid-cols-${props.columnsCount || 3} ${props.gap || 'gap-6'}`}>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: `repeat(${props.columnsCount || 3}, minmax(0, 1fr))`,
+        }}
+        className={`${props.gap || 'gap-6'}`}
+      >
         {props.columns && props.columns.map((col: any, idx: number) => (
           <div
             key={idx}
@@ -93,6 +113,31 @@ export function GridCustomBlock({
           </div>
         ))}
       </div>
+
+      {children.length > 0 && (
+        <div className="mt-8 space-y-4">
+          {children.map((child: Block) => (
+            <CanvasBlock
+              key={child.id}
+              block={child}
+              isSelected={selectedBlockId === child.id}
+              isPreviewMode={isPreviewMode}
+              onSelect={selectBlock}
+              onMoveUp={moveBlockUp}
+              onMoveDown={moveBlockDown}
+              onDuplicate={duplicateBlock}
+              onDelete={deleteBlock}
+            >
+              <BlockRenderer
+                block={child}
+                updateProps={updateBlockProps}
+                isPreviewMode={isPreviewMode}
+                setIsEditingInline={setIsEditingInline}
+              />
+            </CanvasBlock>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

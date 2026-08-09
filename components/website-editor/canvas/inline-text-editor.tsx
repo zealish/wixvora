@@ -28,16 +28,20 @@ export function InlineText({
   setIsEditingInline,
 }: InlineTextProps) {
   const ref = useRef<HTMLElement>(null);
-  const isInternalUpdate = useRef(false);
+  const isUserTyping = useRef(false);
 
   useEffect(() => {
-    if (ref.current && isInternalUpdate.current === false) {
-      if (ref.current.innerHTML !== value) {
-        ref.current.innerHTML = value;
-      }
+    if (ref.current && !isUserTyping.current) {
+      ref.current.innerHTML = value;
     }
-    isInternalUpdate.current = false;
-  }, [value]);
+    isUserTyping.current = false;
+  }, [value, isPreviewMode]);
+
+  useEffect(() => {
+    if (ref.current && style) {
+      Object.assign(ref.current.style, style);
+    }
+  }, [style]);
 
   if (isPreviewMode) {
     return createElement(Tag, { className, style }, value || placeholder);
@@ -45,7 +49,7 @@ export function InlineText({
 
   const handleInput = () => {
     if (ref.current) {
-      isInternalUpdate.current = true;
+      isUserTyping.current = true;
       onChange?.(ref.current.innerHTML);
     }
   };
@@ -75,6 +79,5 @@ export function InlineText({
     onBlur: handleBlur,
     onFocus: handleFocus,
     onKeyDown: handleKeyDown,
-    dangerouslySetInnerHTML: { __html: value || placeholder },
   });
 }

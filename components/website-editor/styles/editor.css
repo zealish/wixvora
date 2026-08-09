@@ -47,6 +47,8 @@ input[type="color"]::-webkit-color-swatch {
 .editable-text-field {
   cursor: text;
   transition: background-color 0.15s ease, box-shadow 0.15s ease;
+  direction: ltr;
+  unicode-bidi: plaintext;
 }
 
 .editable-text-field:hover {

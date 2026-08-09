@@ -19,10 +19,10 @@ export function HeadingBlock({
   const props = block.props;
 
   return (
-    <div className={`py-4 px-6 text-${props.align || 'center'}`}>
+    <div className="py-4 px-6">
       <InlineText
         tagName={props.level || 'h1'}
-        style={{ color: props.textColor }}
+        style={{ color: props.textColor, textAlign: props.align || 'center' }}
         className={`${props.fontSize || 'text-4xl'} ${props.weight || 'font-extrabold'} tracking-tight leading-snug block`}
         value={props.text || ''}
         onChange={(value) => updateProps({ text: value })}

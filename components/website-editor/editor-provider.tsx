@@ -70,7 +70,7 @@ function getDefaultProps(type: BlockType): any {
 }
 
 function isContainerType(type: BlockType): boolean {
-  return type === "container";
+  return type === "container" || type === "grid_custom";
 }
 
 function findBlockInTree(blocks: Block[], id: string): Block | undefined {

@@ -36,7 +36,7 @@ export function EditorCanvas() {
   };
 
   return (
-    <div className="flex-1 overflow-auto bg-gray-100 flex flex-col items-center py-8">
+    <div className="flex-1 overflow-auto bg-gray-100 flex flex-col items-center py-8 px-4">
       {isEditingInline && !isPreviewMode && (
         <div className="fixed top-4 left-1/2 -translate-x-1/2 z-[100] flex items-center gap-1 bg-white border border-gray-200 rounded-lg px-2 py-1 shadow-lg">
           <button
@@ -86,10 +86,11 @@ export function EditorCanvas() {
       )}
 
       <div
-        className={`${getCanvasWidth()} min-h-[600px] bg-white shadow-lg rounded-lg device-transition canvas-bg-grid`}
+        className={`${getCanvasWidth()} bg-white shadow-lg rounded-lg device-transition canvas-bg-grid`}
         style={{
           backgroundColor: pageSettings.bgColor || "#ffffff",
           fontFamily: pageSettings.fontFamily || "Inter, sans-serif",
+          minHeight: blocks.length === 0 ? '300px' : 'auto',
         }}
       >
         {blocks
