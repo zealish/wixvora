@@ -77,9 +77,60 @@ export const EditorCanvas = memo(function EditorCanvas() {
       }
       
        // Escape to deselect
-       if (e.key === "Escape") {
-         clearSelection();
-       }
+        if (e.key === "Escape") {
+          clearSelection();
+        }
+        
+        // Center snap shortcuts (Ctrl/Cmd + E)
+        if (selectedBlockIds.length > 0 && (e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "e") {
+          e.preventDefault();
+          
+          try {
+            // Get canvas bounds for width calculation
+            const canvasRect = canvasRef.current?.getBoundingClientRect();
+            if (!canvasRect) return;
+            
+            // Calculate container dimensions based on viewport
+            let containerWidth: number;
+            let containerHeight: number;
+            
+            switch (viewport) {
+              case "mobile":
+                containerWidth = 375;
+                containerHeight = 812; // Mobile height for vertical centering
+                break;
+              case "tablet":
+                containerWidth = 768;
+                containerHeight = 1024; // Tablet height for vertical centering
+                break;
+              default:
+                containerWidth = 1920;
+                containerHeight = 1080; // Desktop height for vertical centering
+            }
+            
+            // Snap selected blocks to center
+            selectedBlockIds.forEach((blockId: string) => {
+              const block = blocks.find((b: Block) => b.id === blockId);
+              if (!block || !block.props?.width) return;
+              
+              const blockWidth = block.props.width;
+              const blockHeight = block.props.height || 0;
+              
+              // Horizontal and vertical center snap
+              const centeredX = (containerWidth - blockWidth) / 2;
+              const centerY = (containerHeight - blockHeight) / 2;
+              
+              // Update block position with snapped coordinates
+              updateProps(blockId, { 
+                x: centeredX, 
+                y: centerY 
+              });
+            });
+          } catch (error) {
+            console.error("Error snapping to center:", error);
+          }
+          return;
+        }
     };
     
     window.addEventListener("keydown", handleKeyDown);
@@ -87,7 +138,7 @@ export const EditorCanvas = memo(function EditorCanvas() {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [zoom, setZoom, isPanning, setIsPanning, selectBlock]);
+  }, [zoom, setZoom, isPanning, setIsPanning, selectBlock, canvasRef, blocks, selectedBlockIds, viewport, updateProps]);
   
   // Keyboard shortcuts for block editing
   useEffect(() => {
