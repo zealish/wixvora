@@ -1,7 +1,7 @@
 'use client'
 
 import { Plus_Jakarta_Sans, Poppins, Playfair_Display, Fira_Code } from 'next/font/google'
-import { JSX } from 'react'
+import { JSX, useRef, useEffect } from 'react'
 
 const plusJakarta = Plus_Jakarta_Sans({
   subsets: ['latin'],
@@ -313,6 +313,71 @@ function Icon({ name, className = 'w-5 h-5' }: { name: string; className?: strin
       {icons[name] || icons.sparkles}
     </svg>
   )
+}
+
+// @ts-expect-error - InlineText will be used in later tasks
+function InlineText({
+  value,
+  onChange,
+  tagName = 'span',
+  className = '',
+  style = {},
+  placeholder = 'Ketik di sini...',
+  isPreviewMode = false,
+  multiline = false,
+  onFocusState
+}: {
+  value: string
+  onChange: (v: string) => void
+  tagName?: string
+  className?: string
+  style?: React.CSSProperties
+  placeholder?: string
+  isPreviewMode?: boolean
+  multiline?: boolean
+  onFocusState?: (v: boolean) => void
+}) {
+  const contentRef = useRef<HTMLElement>(null)
+  // @ts-expect-error - placeholder will be used in later enhancements
+  const _placeholder = placeholder
+
+  useEffect(() => {
+    if (contentRef.current && contentRef.current.innerText !== (value || '')) {
+      contentRef.current.innerText = value || ''
+    }
+  }, [value])
+
+  if (isPreviewMode) {
+    const Tag = tagName as keyof JSX.IntrinsicElements
+    return <Tag className={className} style={style}>{value}</Tag>
+  }
+
+  const props = {
+    ref: contentRef as any,
+    contentEditable: !isPreviewMode,
+    suppressContentEditableWarning: true,
+    onFocus: () => onFocusState && onFocusState(true),
+    onBlur: (e: any) => {
+      if (onFocusState) onFocusState(false)
+      const newText = e.currentTarget.innerText
+      if (newText !== value) {
+        onChange(newText)
+      }
+    },
+    onKeyDown: (e: any) => {
+      if (!multiline && e.key === 'Enter') {
+        e.preventDefault()
+        e.currentTarget.blur()
+      }
+    },
+    className: `editable-text-field ${className}`,
+    style,
+    title: "Klik untuk mengedit teks langsung di canvas",
+    children: value
+  }
+
+  const Tag = tagName as any
+  return <Tag {...props} />
 }
 
 export default function WebsiteEditorPage() {
