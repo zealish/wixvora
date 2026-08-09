@@ -69,6 +69,109 @@ function getDefaultProps(type: BlockType): any {
   return {};
 }
 
+function isContainerType(type: BlockType): boolean {
+  return type === "container";
+}
+
+function findBlockInTree(blocks: Block[], id: string): Block | undefined {
+  for (const b of blocks) {
+    if (b.id === id) return b;
+    if (b.children) {
+      const found = findBlockInTree(b.children, id);
+      if (found) return found;
+    }
+  }
+  return undefined;
+}
+
+function removeBlockFromTree(blocks: Block[], id: string): Block[] {
+  return blocks
+    .filter((b) => b.id !== id)
+    .map((b) =>
+      b.children ? { ...b, children: removeBlockFromTree(b.children, id) } : b
+    );
+}
+
+function insertBlockIntoContainer(
+  blocks: Block[],
+  containerId: string,
+  newBlock: Block
+): Block[] {
+  return blocks.map((b) => {
+    if (b.id === containerId && isContainerType(b.type)) {
+      return { ...b, children: [...(b.children || []), newBlock] };
+    }
+    if (b.children) {
+      return { ...b, children: insertBlockIntoContainer(b.children, containerId, newBlock) };
+    }
+    return b;
+  });
+}
+
+function duplicateChildren(children: Block[]): Block[] {
+  return children.map((c) => ({
+    ...c,
+    id: generateId(),
+    props: { ...c.props },
+    children: c.children ? duplicateChildren(c.children) : undefined,
+  }));
+}
+
+function moveBlockInTree(blocks: Block[], id: string, direction: "up" | "down"): Block[] {
+  for (let i = 0; i < blocks.length; i++) {
+    const b = blocks[i]!;
+    if (b.id === id) {
+      const swapIdx = direction === "up" ? i - 1 : i + 1;
+      if (swapIdx < 0 || swapIdx >= blocks.length) {
+        // Try moving in children
+        if (b.children) {
+          const newChildren = moveBlockInTree(b.children, id, direction);
+          if (newChildren !== b.children) {
+            return blocks.map((blk) => (blk.id === id ? { ...blk, children: newChildren } : blk));
+          }
+        }
+        return blocks;
+      }
+      const newBlocks = [...blocks];
+      const temp = newBlocks[i]!;
+      newBlocks[i] = newBlocks[swapIdx]!;
+      newBlocks[swapIdx] = temp;
+      return newBlocks;
+    }
+    if (b.children) {
+      const newChildren = moveBlockInTree(b.children, id, direction);
+      if (newChildren !== b.children) {
+        return blocks.map((blk) => (blk.id === b.id ? { ...blk, children: newChildren } : blk));
+      }
+    }
+  }
+  return blocks;
+}
+
+function updateBlockInTree(blocks: Block[], id: string, newProps: any): Block[] {
+  return blocks.map((b) => {
+    if (b.id === id) {
+      return { ...b, props: { ...b.props, ...newProps } };
+    }
+    if (b.children) {
+      return { ...b, children: updateBlockInTree(b.children, id, newProps) };
+    }
+    return b;
+  });
+}
+
+function toggleVisibilityInTree(blocks: Block[], id: string): Block[] {
+  return blocks.map((b) => {
+    if (b.id === id) {
+      return { ...b, hidden: !b.hidden };
+    }
+    if (b.children) {
+      return { ...b, children: toggleVisibilityInTree(b.children, id) };
+    }
+    return b;
+  });
+}
+
 const initialBlocks = (PRESET_TEMPLATES.saas?.blocks ?? []).map((b) => ({ ...b }));
 
 export function EditorProvider({ children }: { children: ReactNode }) {
@@ -105,7 +208,7 @@ export function EditorProvider({ children }: { children: ReactNode }) {
   const setBlocks = useCallback(
     (newBlocks: Block[]) => {
       setBlocksState(newBlocks);
-      if (newBlocks.length > 0 && !newBlocks.find((b) => b.id === selectedBlockId)) {
+      if (newBlocks.length > 0 && !findBlockInTree(newBlocks, selectedBlockId)) {
         setSelectedBlockId(newBlocks[0]!.id);
       }
       pushHistory(newBlocks);
@@ -113,7 +216,7 @@ export function EditorProvider({ children }: { children: ReactNode }) {
     [selectedBlockId, pushHistory]
   );
 
-  const activeBlock = blocks.find((b) => b.id === selectedBlockId);
+  const activeBlock = findBlockInTree(blocks, selectedBlockId);
 
   const addBlock = useCallback(
     (type: BlockType) => {
@@ -123,27 +226,51 @@ export function EditorProvider({ children }: { children: ReactNode }) {
         hidden: false,
         props: getDefaultProps(type),
       };
-      const newBlocks = [...blocks, newBlock];
+
+      let newBlocks: Block[];
+      if (selectedBlockId && activeBlock && isContainerType(activeBlock.type)) {
+        newBlocks = insertBlockIntoContainer(blocks, selectedBlockId, newBlock);
+      } else {
+        newBlocks = [...blocks, newBlock];
+      }
+
       setBlocksState(newBlocks);
       setSelectedBlockId(newBlock.id);
       pushHistory(newBlocks);
     },
-    [blocks, pushHistory]
+    [blocks, selectedBlockId, activeBlock, pushHistory]
   );
 
   const duplicateBlock = useCallback(
     (id: string) => {
-      const idx = blocks.findIndex((b) => b.id === id);
-      if (idx === -1) return;
-      const original = blocks[idx]!;
+      const target = findBlockInTree(blocks, id);
+      if (!target) return;
       const clone: Block = {
         id: generateId(),
-        type: original.type,
-        hidden: original.hidden,
-        props: { ...original.props, layerName: (original.props.layerName || original.type) + " (Salinan)" },
+        type: target.type,
+        hidden: target.hidden,
+        props: { ...target.props, layerName: (target.props.layerName || target.type) + " (Salinan)" },
+        children: target.children ? duplicateChildren(target.children) : undefined,
       };
+
       const newBlocks = [...blocks];
-      newBlocks.splice(idx + 1, 0, clone);
+      const idx = newBlocks.findIndex((b) => b.id === id);
+      if (idx !== -1) {
+        newBlocks.splice(idx + 1, 0, clone);
+      } else {
+        // Found in a container's children
+        for (const b of newBlocks) {
+          if (b.children) {
+            const childIdx = b.children.findIndex((c) => c.id === id);
+            if (childIdx !== -1) {
+              b.children = [...b.children];
+              b.children.splice(childIdx + 1, 0, clone);
+              break;
+            }
+          }
+        }
+      }
+
       setBlocksState(newBlocks);
       setSelectedBlockId(clone.id);
       pushHistory(newBlocks);
@@ -153,8 +280,9 @@ export function EditorProvider({ children }: { children: ReactNode }) {
 
   const deleteBlock = useCallback(
     (id: string) => {
-      if (blocks.length <= 1) return;
-      const newBlocks = blocks.filter((b) => b.id !== id);
+      const target = findBlockInTree(blocks, id);
+      if (!target) return;
+      const newBlocks = removeBlockFromTree(blocks, id);
       setBlocksState(newBlocks);
       if (selectedBlockId === id) {
         setSelectedBlockId(newBlocks[0]?.id ?? "");
@@ -166,68 +294,52 @@ export function EditorProvider({ children }: { children: ReactNode }) {
 
   const moveBlockUp = useCallback(
     (id: string) => {
-      const idx = blocks.findIndex((b) => b.id === id);
-      if (idx <= 0) return;
-      const newBlocks = [...blocks];
-      const temp = newBlocks[idx - 1]!;
-      newBlocks[idx - 1] = newBlocks[idx]!;
-      newBlocks[idx] = temp;
-      setBlocksState(newBlocks);
-      pushHistory(newBlocks);
+      const newBlocks = moveBlockInTree(blocks, id, "up");
+      if (newBlocks !== blocks) {
+        setBlocksState(newBlocks);
+        pushHistory(newBlocks);
+      }
     },
     [blocks, pushHistory]
   );
 
   const moveBlockDown = useCallback(
     (id: string) => {
-      const idx = blocks.findIndex((b) => b.id === id);
-      if (idx === -1 || idx >= blocks.length - 1) return;
-      const newBlocks = [...blocks];
-      const temp = newBlocks[idx]!;
-      newBlocks[idx] = newBlocks[idx + 1]!;
-      newBlocks[idx + 1] = temp;
-      setBlocksState(newBlocks);
-      pushHistory(newBlocks);
+      const newBlocks = moveBlockInTree(blocks, id, "down");
+      if (newBlocks !== blocks) {
+        setBlocksState(newBlocks);
+        pushHistory(newBlocks);
+      }
     },
     [blocks, pushHistory]
   );
 
   const toggleBlockVisibility = useCallback(
     (id: string) => {
-      setBlocksState((prev) => {
-        const newBlocks = prev.map((b) => (b.id === id ? { ...b, hidden: !b.hidden } : b));
-        pushHistory(newBlocks);
-        return newBlocks;
-      });
+      const newBlocks = toggleVisibilityInTree(blocks, id);
+      setBlocksState(newBlocks);
+      pushHistory(newBlocks);
     },
-    [pushHistory]
+    [blocks, pushHistory]
   );
 
   const updateBlockProps = useCallback(
     (newProps: any) => {
       if (!selectedBlockId) return;
-      setBlocksState((prev) => {
-        const newBlocks = prev.map((b) =>
-          b.id === selectedBlockId ? { ...b, props: { ...b.props, ...newProps } } : b
-        );
-        pushHistory(newBlocks);
-        return newBlocks;
-      });
+      const newBlocks = updateBlockInTree(blocks, selectedBlockId, newProps);
+      setBlocksState(newBlocks);
+      pushHistory(newBlocks);
     },
-    [selectedBlockId, pushHistory]
+    [blocks, selectedBlockId, pushHistory]
   );
 
   const updateProps = useCallback(
     (id: string, newProps: any) => {
-      setBlocksState((prev) => {
-        const newBlocks = prev.map((b) =>
-          b.id === id ? { ...b, props: { ...b.props, ...newProps } } : b
-        );
-        pushHistory(newBlocks);
-        return newBlocks;
-      });
+      const newBlocks = updateBlockInTree(blocks, id, newProps);
+      setBlocksState(newBlocks);
+      pushHistory(newBlocks);
     },
-    [pushHistory]
+    [blocks, pushHistory]
   );
 
   const selectBlock = useCallback((id: string) => {

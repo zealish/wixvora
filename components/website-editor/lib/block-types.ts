@@ -15,6 +15,7 @@ export interface Block {
   type: BlockType;
   hidden: boolean;
   props: any;
+  children?: Block[] | undefined;
 }
 
 export interface PageSettings {
