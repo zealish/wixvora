@@ -126,12 +126,9 @@ export function EditorCanvas() {
         // TODO: Implement actual group/ungroup functionality
         // For now, just log and provide visual feedback
         try {
-          const block = blocks.find((b) => b.id === selectedBlockId);
+          const block = blocks.find((b: Block) => b.id === selectedBlockId);
           if (block) {
-            const grouped = block.groupId !== undefined && block.groupId !== null;
-            console.log(
-              `Group action: ${grouped ? "Ungrouping" : "Grouping"} block "${block.type}"`
-            );
+            console.log(`Group action: Grouping block "${block.type}"`);
             // Future implementation: call a groupBlocks or ungroupBlocks function
           }
         } catch (error) {
