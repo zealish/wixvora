@@ -40,9 +40,19 @@ export function CanvasBlock({
     onSelect?.(block.id);
   };
 
+  // Determine if block should use absolute positioning
+  const isPositioned = block.x !== undefined && block.y !== undefined;
+
   return (
     <div
-      className={`relative group ${!isPreviewMode ? "block-outline" : ""} ${isSelected && !isPreviewMode ? "ring-2 ring-blue-500" : ""}`}
+      className={`group ${!isPreviewMode ? "block-outline" : ""} ${isSelected && !isPreviewMode ? "ring-2 ring-blue-500" : ""}`}
+      style={{
+        position: isPositioned ? 'absolute' : 'relative',
+        ...(isPositioned && {
+          left: `${block.x}px`,
+          top: `${block.y}px`,
+        }),
+      }}
       onClick={handleClick}
       onMouseDown={(e) => onMouseDown?.(e)}
       onMouseMove={(e: React.MouseEvent) => onMouseMove?.(e)}
@@ -52,49 +62,100 @@ export function CanvasBlock({
       }}
     >
       {isSelected && !isPreviewMode && (
-        <div className="absolute -top-10 left-1/2 -translate-x-1/2 z-50 flex items-center gap-1 bg-blue-600 text-white text-xs rounded-lg px-2 py-1 shadow-lg whitespace-nowrap">
-          <span className="font-medium px-1">{layerName || block.type}</span>
-          <button
-            className="p-0.5 hover:bg-blue-700 rounded"
-            title="Move up"
-            onClick={(e) => {
-              e.stopPropagation();
-              onMoveUp?.(block.id);
-            }}
-          >
-            <Icon name="arrowUp" size={14} />
-          </button>
-          <button
-            className="p-0.5 hover:bg-blue-700 rounded"
-            title="Move down"
-            onClick={(e) => {
-              e.stopPropagation();
-              onMoveDown?.(block.id);
-            }}
-          >
-            <Icon name="arrowDown" size={14} />
-          </button>
-          <button
-            className="p-0.5 hover:bg-blue-700 rounded"
-            title="Duplicate"
-            onClick={(e) => {
-              e.stopPropagation();
-              onDuplicate?.(block.id);
-            }}
-          >
-            <Icon name="copy" size={14} />
-          </button>
-          <button
-            className="p-0.5 hover:bg-red-600 rounded"
-            title="Delete"
-            onClick={(e) => {
-              e.stopPropagation();
-              onDelete?.(block.id);
-            }}
-          >
-            <Icon name="trash" size={14} />
-          </button>
-        </div>
+        <>
+          {/* Traditional toolbar for flow-based blocks */}
+          {!isPositioned && (
+            <div className="absolute -top-10 left-1/2 -translate-x-1/2 z-50 flex items-center gap-1 bg-blue-600 text-white text-xs rounded-lg px-2 py-1 shadow-lg whitespace-nowrap">
+              <span className="font-medium px-1">{layerName || block.type}</span>
+              <button
+                className="p-0.5 hover:bg-blue-700 rounded"
+                title="Move up"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onMoveUp?.(block.id);
+                }}
+              >
+                <Icon name="arrowUp" size={14} />
+              </button>
+              <button
+                className="p-0.5 hover:bg-blue-700 rounded"
+                title="Move down"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onMoveDown?.(block.id);
+                }}
+              >
+                <Icon name="arrowDown" size={14} />
+              </button>
+              <button
+                className="p-0.5 hover:bg-blue-700 rounded"
+                title="Duplicate"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDuplicate?.(block.id);
+                }}
+              >
+                <Icon name="copy" size={14} />
+              </button>
+              <button
+                className="p-0.5 hover:bg-red-600 rounded"
+                title="Delete"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDelete?.(block.id);
+                }}
+              >
+                <Icon name="trash" size={14} />
+              </button>
+            </div>
+          )}
+          
+          {/* Position-mode toolbar below the block */}
+          {isPositioned && (
+            <div className="mt-2 flex justify-center gap-1">
+              <button
+                className="p-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700"
+                title="Move up"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onMoveUp?.(block.id);
+                }}
+              >
+                <Icon name="arrowUp" size={14} />
+              </button>
+              <button
+                className="p-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700"
+                title="Move down"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onMoveDown?.(block.id);
+                }}
+              >
+                <Icon name="arrowDown" size={14} />
+              </button>
+              <button
+                className="p-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700"
+                title="Duplicate"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDuplicate?.(block.id);
+                }}
+              >
+                <Icon name="copy" size={14} />
+              </button>
+              <button
+                className="p-1 bg-red-600 text-white text-xs rounded hover:bg-red-700"
+                title="Delete"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDelete?.(block.id);
+                }}
+              >
+                <Icon name="trash" size={14} />
+              </button>
+            </div>
+          )}
+        </>
       )}
       {children}
     </div>
