@@ -1,0 +1,31 @@
+export const COLOR_PALETTES: string[] = [
+  '#FFFFFF',
+  '#F8FAFC',
+  '#E2E8F0',
+  '#CBD5E1',
+  '#94A3B8',
+  '#64748B',
+  '#3B82F6',
+  '#2563EB',
+  '#1D4ED8',
+  '#1E40AF',
+  '#10B981',
+  '#059669',
+  '#047857',
+  '#F59E0B',
+  '#EF4444',
+  '#DC2626',
+  '#111827',
+  '#1F2937',
+  '#0F172A',
+  '#000000',
+];
+
+export const GRADIENT_PRESETS: { name: string; value: string }[] = [
+  { name: 'Default', value: 'from-slate-900 to-slate-800' },
+  { name: 'Ocean', value: 'from-blue-600 to-cyan-500' },
+  { name: 'Sunset', value: 'from-orange-500 to-red-600' },
+  { name: 'Forest', value: 'from-green-500 to-emerald-700' },
+  { name: 'Purple', value: 'from-purple-600 to-indigo-700' },
+  { name: 'Warm', value: 'from-amber-500 to-rose-500' },
+];

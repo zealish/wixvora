@@ -1,0 +1,61 @@
+.editor-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.editor-scrollbar::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+.editor-scrollbar::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+.canvas-bg-grid {
+  background-size: 28px 28px;
+  background-image: radial-gradient(circle, #e2e8f0 1px, transparent 1px);
+}
+
+.block-outline {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  transition: outline-color 0.15s ease;
+}
+
+.block-outline:hover {
+  outline-color: #3b82f6;
+}
+
+.block-outline.is-selected {
+  outline-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+}
+
+.device-transition {
+  transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+input[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 2px;
+}
+
+input[type="color"]::-webkit-color-swatch {
+  border: none;
+  border-radius: 6px;
+}
+
+.editable-text-field {
+  cursor: text;
+  transition: background-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.editable-text-field:hover {
+  background-color: rgba(59, 130, 246, 0.05);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+.editable-text-field:focus {
+  background-color: rgba(59, 130, 246, 0.05);
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+  outline: none;
+}

@@ -21,6 +21,7 @@ export const clientNavGroups: NavGroup[] = [
     items: [
       { title: "Dashboard", href: "/client", icon: "LayoutDashboard" },
       { title: "Sites", href: "/client/sites", icon: "Globe" },
+      { title: "Website Editor", href: "/website-editor", icon: "Sparkles" },
     ],
   },
   {
@@ -69,6 +70,11 @@ export const staffNavGroups: NavGroup[] = [
         href: "/staff/templates",
         icon: "LayoutTemplate",
         permission: PERMISSIONS.TEMPLATES_VIEW,
+      },
+      {
+        title: "Website Editor",
+        href: "/website-editor",
+        icon: "Sparkles",
       },
     ],
   },
