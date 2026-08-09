@@ -44,7 +44,6 @@ export const EditorCanvas = memo(function EditorCanvas() {
     toggleBlockSelection,
     clearSelection,
     updateProps,
-    updateBlockPosition,
     setDraggedBlockIds,
   } = useEditor();
   
@@ -335,28 +334,18 @@ export const EditorCanvas = memo(function EditorCanvas() {
      const block = blocks.find((b: Block) => b.id === blockId);
      if (!block) return;
      
-     // Initialize new block at click position, or use existing position
-     let initX: number;
-     let initY: number;
+     // For NEW blocks (no x/y), DON'T update position yet. 
+     // Just track the offset so subsequent drags work correctly.
+     // The first actual movement will set the initial position.
      
-     if (block.x === undefined || block.y === undefined) {
-       // New block: set position where clicked
-       initX = canvasPos.x;
-       initY = canvasPos.y;
-       // Update block state immediately (async in React)
-       updateBlockPosition(blockId, initX, initY);
-     } else {
-       // Existing block: use current position
-       initX = block.x;
-       initY = block.y;
-     }
+     let currentX = block.x ?? 0;
+     let currentY = block.y ?? 0;
      
-     // itemOffset: distance from mouse pointer to block's top-left corner
-     // For new blocks, offset should be 0 (block IS at click point)
-     // For existing blocks, offset is how far mouse is from block corner
+     // itemOffset: how far mouse pointer is from block's position
+     // For new blocks that haven't been positioned yet, calculate from click position
      setItemOffset({ 
-       x: canvasPos.x - initX,
-       y: canvasPos.y - initY
+       x: canvasPos.x - currentX,  
+       y: canvasPos.y - currentY   
      });
      
      // Track which block(s) are being dragged
@@ -368,7 +357,7 @@ export const EditorCanvas = memo(function EditorCanvas() {
      
      // Store starting mouse position for delta calculation
      setDragStart({ screenX: e.clientX, screenY: e.clientY });
-   }, [isPreviewMode, zoom, panX, panY, selectMultipleBlocks, toggleBlockSelection, selectedBlockIds, selectedBlockId, blocks, canvasRef, setDragStart, setItemOffset, setDraggedBlockIds, updateBlockPosition]);
+   }, [isPreviewMode, zoom, panX, panY, selectMultipleBlocks, toggleBlockSelection, selectedBlockIds, selectedBlockId, blocks, canvasRef, setDragStart, setItemOffset, setDraggedBlockIds]);
   
   const handleItemMouseMove = useCallback((e: React.MouseEvent) => {
     if (!dragStart || !itemOffset || draggedBlockIds.length === 0) return;
