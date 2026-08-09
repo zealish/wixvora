@@ -1,10 +1,12 @@
 "use client";
 
+import { useEffect, useRef, useCallback } from "react";
 import { useEditor } from "../editor-provider";
 import { BlockRenderer } from "../blocks/block-renderer";
 import { CanvasBlock } from "./canvas-block";
 import { Icon } from "../ui/icon-library";
 import type { Block } from "../lib/block-types";
+import { screenToCanvas, snapToGrid } from "../lib/coordinate-utils";
 
 export function EditorCanvas() {
   const {
@@ -22,7 +24,194 @@ export function EditorCanvas() {
     duplicateBlock,
     deleteBlock,
     execFormatCommand,
+    // Canvas state & controls
+    zoom,
+    panX,
+    panY,
+    isPanning,
+    gridEnabled,
+    gridSize,
+    dragStart,
+    itemOffset,
+    setZoom,
+    setPan,
+    setIsPanning,
+    setDragStart,
+    setItemOffset,
   } = useEditor();
+  
+  const canvasRef = useRef<HTMLDivElement>(null);
+  const lastMousePos = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
+  
+  // Keyboard shortcuts for navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === "+" || (e.ctrlKey || e.metaKey) && e.key === "=") {
+        e.preventDefault();
+        setZoom(zoom + 0.1);
+      } else if ((e.ctrlKey || e.metaKey) && e.key === "-") {
+        e.preventDefault();
+        setZoom(Math.max(0.25, zoom - 0.1));
+      }
+      
+      // Hand tool shortcut 'h' key
+      if (e.key.toLowerCase() === "h" && !isPanning) {
+        setIsPanning(true);
+      }
+      
+      // Escape to deselect
+      if (e.key === "Escape") {
+        selectBlock("");
+      }
+    };
+    
+    window.addEventListener("keydown", handleKeyDown);
+    
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [zoom, setZoom, isPanning, setIsPanning, selectBlock]);
+
+  
+  // Handle wheel zoom centered on cursor
+  const handleWheel = useCallback((e: React.WheelEvent) => {
+    if (e.ctrlKey || e.metaKey) {
+      e.preventDefault();
+      
+      const zoomSensitivity = 0.001;
+      const delta = -e.deltaY * zoomSensitivity;
+      const newZoom = Math.max(0.25, Math.min(zoom + delta, 4));
+      
+      // Zoom toward cursor position
+      setZoom(newZoom);
+    } else if (!isPanning) {
+      // Normal scrolling behavior
+      return;
+    }
+  }, [zoom, isPanning, setZoom]);
+  
+  // Handle canvas pan with spacebar or middle mouse
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.code === "Space") {
+        e.preventDefault();
+        setIsPanning(true);
+        document.body.style.cursor = "grab";
+      }
+    };
+    
+    const handleKeyUp = (e: KeyboardEvent) => {
+      if (e.code === "Space") {
+        setIsPanning(false);
+        document.body.style.cursor = "default";
+      }
+    };
+    
+    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("keyup", handleKeyUp);
+    
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("keyup", handleKeyUp);
+    };
+  }, [setIsPanning]);
+  
+  // Handle middle mouse button panning
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    if (e.button === 1 && !lastMousePos.current) { // Middle mouse button
+      e.preventDefault();
+      lastMousePos.current = { x: e.clientX, y: e.clientY };
+      setIsPanning(true);
+    }
+  }, [setIsPanning]);
+  
+  const handleMouseMove = useCallback((e: React.MouseEvent) => {
+    // Pan canvas when dragging with middle mouse
+    if (lastMousePos.current && e.buttons === 4) {
+      const dx = e.clientX - lastMousePos.current.x;
+      const dy = e.clientY - lastMousePos.current.y;
+      
+      setPan(panX + dx, panY + dy);
+      lastMousePos.current = { x: e.clientX, y: e.clientY };
+    }
+  }, [setPan, panX, panY]);
+  
+  const handleMouseUp = useCallback(() => {
+    if (lastMousePos.current) {
+      setIsPanning(false);
+      lastMousePos.current = { x: 0, y: 0 };
+    }
+  }, [setIsPanning]);
+  
+  // Handle item selection and drag
+  const handleItemMouseDown = useCallback((e: React.MouseEvent, blockId: string) => {
+    if (e.button !== 0 || isPreviewMode) return; // Left click only
+    
+    e.stopPropagation();
+    selectBlock(blockId);
+    
+    // Calculate initial offset from mouse to block top-left corner
+    const canvasRect = canvasRef.current?.getBoundingClientRect();
+    if (!canvasRect) return;
+    
+    const canvasPos = screenToCanvas(
+      e.clientX,
+      e.clientY,
+      canvasRect,
+      zoom,
+      panX,
+      panY
+    );
+    
+    const block = blocks.find((b: Block) => b.id === blockId);
+    if (!block) return;
+    
+    const currentBlockX = block.x ?? 0;
+    const currentBlockY = block.y ?? 0;
+    
+    // Store start position for delta-based dragging
+    setDragStart({ screenX: e.clientX, screenY: e.clientY });
+    setItemOffset({ 
+      x: canvasPos.x - currentBlockX, 
+      y: canvasPos.y - currentBlockY 
+    });
+  }, [isPreviewMode, zoom, panX, panY, selectBlock, blocks, canvasRef, setDragStart, setItemOffset]);
+  
+  const handleItemMouseMove = useCallback((e: React.MouseEvent) => {
+    if (!dragStart || !selectedBlockId || !itemOffset) return;
+    
+    // Get current mouse position in canvas coordinates
+    const canvasRect = canvasRef.current?.getBoundingClientRect();
+    if (!canvasRect) return;
+    
+    const canvasPos = screenToCanvas(
+      e.clientX,
+      e.clientY,
+      canvasRect,
+      zoom,
+      panX,
+      panY
+    );
+    
+    // Calculate new position using delta from dragStart
+    let newX = canvasPos.x - itemOffset.x;
+    let newY = canvasPos.y - itemOffset.y;
+    
+    // Apply grid snapping if enabled
+    if (gridEnabled) {
+      newX = snapToGrid(newX, gridSize);
+      newY = snapToGrid(newY, gridSize);
+    }
+    
+    // Update block position (maintains width/height, updates x/y)
+    updateProps(selectedBlockId, { x: newX, y: newY });
+  }, [dragStart, selectedBlockId, itemOffset, zoom, panX, panY, gridEnabled, gridSize, updateProps]);
+  
+  const handleItemMouseUp = useCallback(() => {
+    setDragStart(null);
+    setItemOffset(null);
+  }, [setDragStart, setItemOffset]);
+
 
   const getCanvasWidth = () => {
     switch (viewport) {
@@ -86,13 +275,34 @@ export function EditorCanvas() {
       )}
 
       <div
-        className={`${getCanvasWidth()} bg-white shadow-lg rounded-lg device-transition canvas-bg-grid`}
+        className={`${getCanvasWidth()} bg-white shadow-lg rounded-lg device-transition overflow-hidden relative`}
         style={{
           backgroundColor: pageSettings.bgColor || "#ffffff",
           fontFamily: pageSettings.fontFamily || "Inter, sans-serif",
           minHeight: blocks.length === 0 ? '300px' : 'auto',
+          // Apply zoom and pan transform (visual only, doesn't change data)
+          transform: `scale(${zoom}) translate(${panX}px, ${panY}px)`,
+          transformOrigin: 'top left',
         }}
+        ref={canvasRef}
+        onWheel={handleWheel}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseUp}
       >
+        {/* Grid Overlay - drawn in canvas space */}
+        {gridEnabled && (
+          <div
+            className="pointer-events-none absolute inset-0 opacity-10"
+            style={{
+              backgroundImage: `linear-gradient(to right, #000 1px, transparent 1px), linear-gradient(to bottom, #000 1px, transparent 1px)`,
+              backgroundSize: `${gridSize}px ${gridSize}px`,
+              backgroundPosition: `${panX}px ${panY}px`,
+            }}
+          />
+        )}
+        
         {blocks
           .filter((b: Block) => !b.hidden)
           .map((block: Block) => (
@@ -106,6 +316,9 @@ export function EditorCanvas() {
               onMoveDown={moveBlockDown}
               onDuplicate={duplicateBlock}
               onDelete={deleteBlock}
+              onMouseDown={(e) => handleItemMouseDown(e, block.id)}
+              onMouseMove={(e: React.MouseEvent) => handleItemMouseMove(e)}
+              onMouseUp={handleItemMouseUp}
             >
               <BlockRenderer
                 block={block}

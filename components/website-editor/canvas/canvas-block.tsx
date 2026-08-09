@@ -14,6 +14,9 @@ interface CanvasBlockProps {
   onDuplicate?: (blockId: string) => void;
   onDelete?: (blockId: string) => void;
   layerName?: string;
+  onMouseDown?: (e: React.MouseEvent) => void;
+  onMouseMove?: (e: React.MouseEvent) => void;
+  onMouseUp?: () => void;
   children: ReactNode;
 }
 
@@ -27,6 +30,9 @@ export function CanvasBlock({
   onDuplicate,
   onDelete,
   layerName,
+  onMouseDown,
+  onMouseMove,
+  onMouseUp,
   children,
 }: CanvasBlockProps) {
   const handleClick = (e: React.MouseEvent) => {
@@ -38,6 +44,12 @@ export function CanvasBlock({
     <div
       className={`relative group ${!isPreviewMode ? "block-outline" : ""} ${isSelected && !isPreviewMode ? "ring-2 ring-blue-500" : ""}`}
       onClick={handleClick}
+      onMouseDown={(e) => onMouseDown?.(e)}
+      onMouseMove={(e: React.MouseEvent) => onMouseMove?.(e)}
+      onMouseUp={(e) => {
+        e.stopPropagation();
+        onMouseUp?.();
+      }}
     >
       {isSelected && !isPreviewMode && (
         <div className="absolute -top-10 left-1/2 -translate-x-1/2 z-50 flex items-center gap-1 bg-blue-600 text-white text-xs rounded-lg px-2 py-1 shadow-lg whitespace-nowrap">
