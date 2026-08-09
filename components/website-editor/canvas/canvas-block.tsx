@@ -9,6 +9,7 @@ interface CanvasBlockProps {
   block: Block;
   isSelected?: boolean;
   isPreviewMode?: boolean;
+  isDragging?: boolean; // New prop for tracking drag state
   onSelect?: (blockId: string) => void;
   onMoveUp?: (blockId: string) => void;
   onMoveDown?: (blockId: string) => void;
@@ -29,6 +30,8 @@ function areEqual(prevProps: CanvasBlockProps, nextProps: CanvasBlockProps) {
   if (prevProps.isSelected !== nextProps.isSelected) return false;
   // Preview mode toggled
   if (prevProps.isPreviewMode !== nextProps.isPreviewMode) return false;
+  // Drag state changed
+  if (prevProps.isDragging !== nextProps.isDragging) return false;
   
   // If we reach here, props haven't changed enough to warrant re-render
   return true;
@@ -38,6 +41,7 @@ export const CanvasBlock = memo(function CanvasBlock({
   block,
   isSelected = false,
   isPreviewMode = false,
+  isDragging = false, // Add new prop
   onSelect,
   onMoveUp,
   onMoveDown,
@@ -66,6 +70,9 @@ export const CanvasBlock = memo(function CanvasBlock({
           left: `${block.x}px`,
           top: `${block.y}px`,
         }),
+        // Apply reduced opacity when dragging
+        opacity: isDragging ? 0.5 : 1,
+        transition: 'opacity 0.1s ease-in-out',
       }}
       onClick={handleClick}
       onMouseDown={(e) => onMouseDown?.(e)}

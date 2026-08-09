@@ -392,6 +392,7 @@ export const EditorCanvas = memo(function EditorCanvas() {
               key={block.id}
               block={block}
               isSelected={selectedBlockId === block.id}
+              isDragging={selectedBlockId === block.id && !!dragStart} // Show drag feedback when this block is being dragged
               isPreviewMode={isPreviewMode}
               onSelect={selectBlock}
               onMoveUp={moveBlockUp}
