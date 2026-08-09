@@ -19,6 +19,16 @@ interface EditorContextValue {
   canUndo: boolean;
   canRedo: boolean;
   activeBlock: Block | undefined;
+  // Canvas positioning & zoom/pan
+  zoom: number;
+  panX: number;
+  panY: number;
+  isDraggingCanvas: boolean;
+  isPanning: boolean;
+  gridEnabled: boolean;
+  gridSize: number;
+  dragStart: { screenX: number; screenY: number } | null;
+  itemOffset: { x: number; y: number } | null;
 
   addBlock: (type: BlockType) => void;
   duplicateBlock: (id: string) => void;
@@ -47,6 +57,15 @@ interface EditorContextValue {
   importJSON: (json: any) => void;
   exportJSON: () => string;
   execFormatCommand: (command: string) => void;
+  // Canvas zoom & pan control
+  setZoom: (z: number) => void;
+  setPan: (x: number, y: number) => void;
+  setIsDraggingCanvas: (v: boolean) => void;
+  setIsPanning: (v: boolean) => void;
+  setGridEnabled: (v: boolean) => void;
+  setGridSize: (size: number) => void;
+  setDragStart: (d: { screenX: number; screenY: number } | null) => void;
+  setItemOffset: (offset: { x: number; y: number } | null) => void;
 }
 
 const EditorContext = createContext<EditorContextValue | null>(null);
@@ -189,6 +208,16 @@ export function EditorProvider({ children }: { children: ReactNode }) {
     bgColor: "#ffffff",
     fontFamily: "Inter, sans-serif",
   });
+  // Canvas positioning & zoom/pan
+  const [zoom, setZoom] = useState<number>(1);
+  const [panX, setPanX] = useState<number>(0);
+  const [panY, setPanY] = useState<number>(0);
+  const [isDraggingCanvas, setIsDraggingCanvas] = useState<boolean>(false);
+  const [isPanning, setIsPanning] = useState<boolean>(false);
+  const [gridEnabled, setGridEnabled] = useState<boolean>(true);
+  const [gridSize, setGridSize] = useState<number>(20);
+  const [dragStart, setDragStart] = useState<{ screenX: number; screenY: number } | null>(null);
+  const [itemOffset, setItemOffset] = useState<{ x: number; y: number } | null>(null);
 
   const historyRef = useRef<Block[][]>([initialBlocks]);
   const historyIndexRef = useRef<number>(0);
@@ -425,6 +454,41 @@ export function EditorProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
+  // Canvas zoom & pan control
+  const setZoomCallback = useCallback((z: number) => {
+    const clampedZoom = Math.max(0.25, Math.min(z, 4));
+    setZoom(clampedZoom);
+  }, []);
+
+  const setPanCallback = useCallback((x: number, y: number) => {
+    setPanX(x);
+    setPanY(y);
+  }, []);
+
+  const setIsDraggingCanvasCallback = useCallback((v: boolean) => {
+    setIsDraggingCanvas(v);
+  }, []);
+
+  const setIsPanningCallback = useCallback((v: boolean) => {
+    setIsPanning(v);
+  }, []);
+
+  const setGridEnabledCallback = useCallback((v: boolean) => {
+    setGridEnabled(v);
+  }, []);
+
+  const setGridSizeCallback = useCallback((size: number) => {
+    setGridSize(size);
+  }, []);
+
+  const setDragStartCallback = useCallback((d: { screenX: number; screenY: number } | null) => {
+    setDragStart(d);
+  }, []);
+
+  const setItemOffsetCallback = useCallback((offset: { x: number; y: number } | null) => {
+    setItemOffset(offset);
+  }, []);
+
   const value: EditorContextValue = {
     blocks,
     selectedBlockId,
@@ -439,6 +503,16 @@ export function EditorProvider({ children }: { children: ReactNode }) {
     canUndo,
     canRedo,
     activeBlock,
+    // Canvas positioning & zoom/pan
+    zoom,
+    panX,
+    panY,
+    isDraggingCanvas,
+    isPanning,
+    gridEnabled,
+    gridSize,
+    dragStart,
+    itemOffset,
     addBlock,
     duplicateBlock,
     deleteBlock,
@@ -466,6 +540,15 @@ export function EditorProvider({ children }: { children: ReactNode }) {
     importJSON,
     exportJSON,
     execFormatCommand,
+    // Canvas zoom & pan control
+    setZoom: setZoomCallback,
+    setPan: setPanCallback,
+    setIsDraggingCanvas: setIsDraggingCanvasCallback,
+    setIsPanning: setIsPanningCallback,
+    setGridEnabled: setGridEnabledCallback,
+    setGridSize: setGridSizeCallback,
+    setDragStart: setDragStartCallback,
+    setItemOffset: setItemOffsetCallback,
   };
 
   return <EditorContext.Provider value={value}>{children}</EditorContext.Provider>;
