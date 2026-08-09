@@ -7,10 +7,11 @@ import { Icon } from "../ui/icon-library";
 
 interface CanvasBlockProps {
   block: Block;
-  isSelected?: boolean;
+  selectedBlockIds?: string[]; // Array of selected block IDs for multi-selection
+  isSelected?: boolean; // Backward compatible, can be derived from selectedBlockIds
   isPreviewMode?: boolean;
   isDragging?: boolean; // New prop for tracking drag state
-  onSelect?: (blockId: string) => void;
+  onSelect?: (ids: string[], shiftClick?: boolean) => void;
   onMoveUp?: (blockId: string) => void;
   onMoveDown?: (blockId: string) => void;
   onDuplicate?: (blockId: string) => void;
@@ -27,6 +28,8 @@ function areEqual(prevProps: CanvasBlockProps, nextProps: CanvasBlockProps) {
   // Block reference changed - need to re-render
   if (prevProps.block !== nextProps.block) return false;
   // Selection state changed
+  if (prevProps.selectedBlockIds !== nextProps.selectedBlockIds) return false;
+  // Legacy isSelected still checked for backward compatibility
   if (prevProps.isSelected !== nextProps.isSelected) return false;
   // Preview mode toggled
   if (prevProps.isPreviewMode !== nextProps.isPreviewMode) return false;
@@ -39,7 +42,8 @@ function areEqual(prevProps: CanvasBlockProps, nextProps: CanvasBlockProps) {
 
 export const CanvasBlock = memo(function CanvasBlock({
   block,
-  isSelected = false,
+  selectedBlockIds = [], // Array of selected IDs
+  isSelected = false, // Backward compatible fallback
   isPreviewMode = false,
   isDragging = false, // Add new prop
   onSelect,
@@ -53,9 +57,12 @@ export const CanvasBlock = memo(function CanvasBlock({
   onMouseUp,
   children,
 }: CanvasBlockProps) {
+  // Determine if this block is selected (prefer selectedBlockIds over isSelected for multi-selection)
+  const isBlockSelected = selectedBlockIds.length > 0 ? selectedBlockIds.includes(block.id) : isSelected;
+  
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    onSelect?.(block.id);
+    onSelect?.([block.id], e.shiftKey);
   };
 
   // Determine if block should use absolute positioning
@@ -63,7 +70,7 @@ export const CanvasBlock = memo(function CanvasBlock({
 
   return (
     <div
-      className={`group ${!isPreviewMode ? "block-outline" : ""} ${isSelected && !isPreviewMode ? "ring-2 ring-blue-500" : ""}`}
+      className={`group ${!isPreviewMode ? "block-outline" : ""} ${isBlockSelected && !isPreviewMode ? "ring-2 ring-blue-500" : ""}`}
       style={{
         position: isPositioned ? 'absolute' : 'relative',
         ...(isPositioned && {
@@ -82,7 +89,7 @@ export const CanvasBlock = memo(function CanvasBlock({
         onMouseUp?.();
       }}
     >
-      {isSelected && !isPreviewMode && (
+      {isBlockSelected && !isPreviewMode && (
         <>
           {/* Traditional toolbar for flow-based blocks */}
           {!isPositioned && (

@@ -8,6 +8,7 @@ import { PRESET_TEMPLATES } from "./lib/template-presets";
 interface EditorContextValue {
   blocks: Block[];
   selectedBlockId: string;
+  selectedBlockIds: string[];
   viewport: "desktop" | "tablet" | "mobile";
   activeTab: "blocks" | "layers" | "templates" | "settings";
   inspectorTab: "content" | "style" | "advanced";
@@ -41,6 +42,9 @@ interface EditorContextValue {
   setBlocks: (blocks: Block[]) => void;
   selectBlock: (id: string) => void;
   setSelectedBlockId: (id: string) => void;
+  selectMultipleBlocks: (ids: string[], shiftClick?: boolean) => void;
+  toggleBlockSelection: (id: string) => void;
+  clearSelection: () => void;
   setViewport: (v: "desktop" | "tablet" | "mobile") => void;
   setActiveTab: (tab: "blocks" | "layers" | "templates" | "settings") => void;
   setInspectorTab: (tab: "content" | "style" | "advanced") => void;
@@ -196,6 +200,7 @@ const initialBlocks = (PRESET_TEMPLATES.saas?.blocks ?? []).map((b) => ({ ...b }
 export function EditorProvider({ children }: { children: ReactNode }) {
   const [blocks, setBlocksState] = useState<Block[]>(initialBlocks);
   const [selectedBlockId, setSelectedBlockId] = useState<string>(initialBlocks[0]?.id ?? "");
+  const [selectedBlockIds, setSelectedBlockIds] = useState<string[]>([]);
   const [viewport, setViewport] = useState<"desktop" | "tablet" | "mobile">("desktop");
   const [activeTab, setActiveTab] = useState<"blocks" | "layers" | "templates" | "settings">("blocks");
   const [inspectorTab, setInspectorTab] = useState<"content" | "style" | "advanced">("content");
@@ -375,6 +380,38 @@ export function EditorProvider({ children }: { children: ReactNode }) {
     setSelectedBlockId(id);
   }, []);
 
+  // Select multiple blocks - clear others if shiftClick is false
+  const selectMultipleBlocks = useCallback((ids: string[], shiftClick = false) => {
+    setSelectedBlockIds(shiftClick ? (prev: any) => [...new Set([...prev, ...ids])] : ids);
+    // Keep selectedBlockId as the last selected block for backward compatibility
+    if (ids.length > 0) {
+      const lastId = ids[ids.length - 1] as string;
+      setSelectedBlockId(lastId);
+    } else {
+      setSelectedBlockId("");
+    }
+  }, []);
+
+  // Toggle a block in multi-selection
+  const toggleBlockSelection = useCallback((id: string) => {
+    setSelectedBlockIds((prev: any) => {
+      const isSelected = prev.includes(id);
+      if (isSelected) {
+        // Remove from selection
+        return prev.filter((i: string) => i !== id);
+      } else {
+        // Add to selection
+        return [...prev, id];
+      }
+    });
+  }, []);
+
+  // Clear all selections
+  const clearSelection = useCallback(() => {
+    setSelectedBlockIds([]);
+    setSelectedBlockId("");
+  }, []);
+
   const setPageSettings = useCallback((settings: Partial<PageSettings>) => {
     setPageSettingsState((prev) => ({ ...prev, ...settings }));
   }, []);
@@ -505,6 +542,7 @@ export function EditorProvider({ children }: { children: ReactNode }) {
   const value: EditorContextValue = {
     blocks,
     selectedBlockId,
+    selectedBlockIds,
     viewport,
     activeTab,
     inspectorTab,
@@ -537,6 +575,9 @@ export function EditorProvider({ children }: { children: ReactNode }) {
     setBlocks,
     selectBlock,
     setSelectedBlockId,
+    selectMultipleBlocks,
+    toggleBlockSelection,
+    clearSelection,
     setViewport,
     setActiveTab,
     setInspectorTab,

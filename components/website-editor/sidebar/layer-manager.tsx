@@ -12,21 +12,27 @@ function LayerItem({
   depth?: number;
 }) {
   const {
-    selectedBlockId,
-    selectBlock,
+    selectedBlockIds,
+    toggleBlockSelection,
     toggleBlockVisibility,
     moveBlockUp,
     moveBlockDown,
     deleteBlock,
   } = useEditor();
 
-  const isSelected = selectedBlockId === block.id;
+  // Use selectedBlockIds for multi-selection, fallback to selectedBlockId if empty
+  const isSelected = selectedBlockIds.length > 0 
+    ? selectedBlockIds.includes(block.id)
+    : false;
   const hasChildren = block.children && block.children.length > 0;
 
   return (
     <div>
       <div
-        onClick={() => selectBlock(block.id)}
+        onClick={(e) => {
+          e.stopPropagation();
+          toggleBlockSelection(block.id);
+        }}
         className={`group flex items-center gap-2 rounded-lg px-3 py-2 text-sm cursor-pointer transition-colors ${
           isSelected
             ? "bg-blue-50 text-blue-700"

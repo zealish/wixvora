@@ -23,8 +23,7 @@ export function GridCustomBlock({
 }: GridCustomBlockProps) {
   const props = block.props;
   const {
-    selectedBlockId,
-    selectBlock,
+    selectMultipleBlocks,
     updateProps: updateBlockProps,
     moveBlockUp,
     moveBlockDown,
@@ -120,9 +119,8 @@ export function GridCustomBlock({
             <CanvasBlock
               key={child.id}
               block={child}
-              isSelected={selectedBlockId === child.id}
               isPreviewMode={isPreviewMode}
-              onSelect={selectBlock}
+              onSelect={(ids) => selectMultipleBlocks(ids, false)}
               onMoveUp={moveBlockUp}
               onMoveDown={moveBlockDown}
               onDuplicate={duplicateBlock}

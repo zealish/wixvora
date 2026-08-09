@@ -13,12 +13,16 @@ export const EditorCanvas = memo(function EditorCanvas() {
   const {
     blocks,
     selectedBlockId,
+    selectedBlockIds,
     isPreviewMode,
     isEditingInline,
     setIsEditingInline,
     viewport,
     pageSettings,
     selectBlock,
+    selectMultipleBlocks,
+    toggleBlockSelection,
+    clearSelection,
     updateProps,
     moveBlockUp,
     moveBlockDown,
@@ -72,10 +76,10 @@ export const EditorCanvas = memo(function EditorCanvas() {
         setIsPanning(true);
       }
       
-      // Escape to deselect
-      if (e.key === "Escape") {
-        selectBlock("");
-      }
+       // Escape to deselect
+       if (e.key === "Escape") {
+         clearSelection();
+       }
     };
     
     window.addEventListener("keydown", handleKeyDown);
@@ -101,35 +105,36 @@ export const EditorCanvas = memo(function EditorCanvas() {
       
       if (isTextInput) return;
       
-      // Delete block (Delete key only, not Backspace)
-      if (selectedBlockId && e.key === "Delete") {
+      // Delete all selected blocks (Delete key only, not Backspace)
+      if (selectedBlockIds.length > 0 && e.key === "Delete") {
         e.preventDefault();
         try {
-          deleteBlock(selectedBlockId);
+          selectedBlockIds.forEach((id: string) => deleteBlock(id));
         } catch (error) {
-          console.error("Error deleting block:", error);
+          console.error("Error deleting blocks:", error);
         }
+        clearSelection();
         return;
       }
       
-      // Duplicate block (Ctrl/Cmd + D)
+      // Duplicate all selected blocks (Ctrl/Cmd + D)
       if (
-        selectedBlockId &&
+        selectedBlockIds.length > 0 &&
         (e.ctrlKey || e.metaKey) &&
         e.key.toLowerCase() === "d"
       ) {
         e.preventDefault();
         try {
-          duplicateBlock(selectedBlockId);
+          selectedBlockIds.forEach((id: string) => duplicateBlock(id));
         } catch (error) {
-          console.error("Error duplicating block:", error);
+          console.error("Error duplicating blocks:", error);
         }
         return;
       }
       
-      // Group/Ungroup blocks (Shift + G)
+      // Group/Ungroup blocks (Shift + G) - apply to all selected
       if (
-        selectedBlockId &&
+        selectedBlockIds.length > 0 &&
         e.shiftKey &&
         e.key.toLowerCase() === "g"
       ) {
@@ -138,9 +143,9 @@ export const EditorCanvas = memo(function EditorCanvas() {
         // TODO: Implement actual group/ungroup functionality
         // For now, just log and provide visual feedback
         try {
-          const block = blocks.find((b: Block) => b.id === selectedBlockId);
-          if (block) {
-            console.log(`Group action: Grouping block "${block.type}"`);
+          const selectedBlocks = blocks.filter((b: Block) => selectedBlockIds.includes(b.id));
+          if (selectedBlocks.length > 0) {
+            console.log(`Group action: Grouping ${selectedBlocks.length} block(s)`);
             // Future implementation: call a groupBlocks or ungroupBlocks function
           }
         } catch (error) {
@@ -156,11 +161,12 @@ export const EditorCanvas = memo(function EditorCanvas() {
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [
-    selectedBlockId,
+    selectedBlockIds,
     isEditingInline,
     deleteBlock,
     duplicateBlock,
     blocks,
+    clearSelection,
   ]);
 
   
@@ -239,7 +245,18 @@ export const EditorCanvas = memo(function EditorCanvas() {
     if (e.button !== 0 || isPreviewMode) return; // Left click only
     
     e.stopPropagation();
-    selectBlock(blockId);
+    
+    // Check for Shift key - if pressed, toggle this block in multi-selection
+    if (e.shiftKey && selectedBlockIds.length > 0) {
+      // Toggle the clicked block
+      toggleBlockSelection(blockId);
+    } else if (e.shiftKey && selectedBlockIds.length === 0) {
+      // First block with shift - just select it
+      toggleBlockSelection(blockId);
+    } else {
+      // Normal click - clear all and select just this block
+      selectMultipleBlocks([blockId], false);
+    }
     
     // Calculate initial offset from mouse to block top-left corner
     const canvasRect = canvasRef.current?.getBoundingClientRect();
@@ -266,7 +283,7 @@ export const EditorCanvas = memo(function EditorCanvas() {
       x: canvasPos.x - currentBlockX, 
       y: canvasPos.y - currentBlockY 
     });
-  }, [isPreviewMode, zoom, panX, panY, selectBlock, blocks, canvasRef, setDragStart, setItemOffset]);
+  }, [isPreviewMode, zoom, panX, panY, selectMultipleBlocks, toggleBlockSelection, selectedBlockIds, blocks, canvasRef, setDragStart, setItemOffset]);
   
   const handleItemMouseMove = useCallback((e: React.MouseEvent) => {
     if (!dragStart || !selectedBlockId || !itemOffset) return;
@@ -305,8 +322,8 @@ export const EditorCanvas = memo(function EditorCanvas() {
   
   // Deselect block when clicking on canvas background
   const handleClick = useCallback(() => {
-    selectBlock("");
-  }, [selectBlock]);
+    clearSelection();
+  }, [clearSelection]);
 
   return (
     <div className="flex-1 overflow-auto bg-gray-100 flex flex-col items-center py-8 px-4">
@@ -391,10 +408,10 @@ export const EditorCanvas = memo(function EditorCanvas() {
             <CanvasBlock
               key={block.id}
               block={block}
-              isSelected={selectedBlockId === block.id}
-              isDragging={selectedBlockId === block.id && !!dragStart} // Show drag feedback when this block is being dragged
+              isSelected={selectedBlockIds.includes(block.id)}
+              isDragging={selectedBlockIds.includes(block.id) && !!dragStart} // Show drag feedback when this block is being dragged
               isPreviewMode={isPreviewMode}
-              onSelect={selectBlock}
+              onSelect={selectMultipleBlocks}
               onMoveUp={moveBlockUp}
               onMoveDown={moveBlockDown}
               onDuplicate={duplicateBlock}
