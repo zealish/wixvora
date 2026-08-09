@@ -63,6 +63,8 @@ interface EditorContextValue {
   importJSON: (json: any) => void;
   exportJSON: () => string;
   execFormatCommand: (command: string) => void;
+  // Block position updates for drag functionality
+  updateBlockPosition: (id: string, x: number, y: number) => void;
   // Canvas zoom & pan control
   setZoom: (z: number) => void;
   setPan: (x: number, y: number) => void;
@@ -185,6 +187,22 @@ function updateBlockInTree(blocks: Block[], id: string, newProps: any): Block[] 
   });
 }
 
+/**
+ * Update block position (x/y coordinates in canvas space)
+ * If block doesn't have x/y yet, set them to the new values
+ */
+function updateBlockPositionInTree(blocks: Block[], id: string, newX: number, newY: number): Block[] {
+  return blocks.map((b) => {
+    if (b.id === id) {
+      return { ...b, x: newX, y: newY };
+    }
+    if (b.children) {
+      return { ...b, children: updateBlockPositionInTree(b.children, id, newX, newY) };
+    }
+    return b;
+  });
+}
+
 function toggleVisibilityInTree(blocks: Block[], id: string): Block[] {
   return blocks.map((b) => {
     if (b.id === id) {
@@ -253,6 +271,16 @@ export function EditorProvider({ children }: { children: ReactNode }) {
     },
     [selectedBlockId, pushHistory]
   );
+
+  /**
+   * Update block position (x/y) - for drag functionality
+   * Sets position directly on the block object
+   */
+  const updateBlockPosition = useCallback((id: string, x: number, y: number) => {
+    const newBlocks = updateBlockPositionInTree(blocks, id, x, y);
+    setBlocksState(newBlocks);
+    pushHistory(newBlocks);
+  }, [blocks, pushHistory]);
 
   const activeBlock = findBlockInTree(blocks, selectedBlockId);
 
@@ -593,6 +621,8 @@ export function EditorProvider({ children }: { children: ReactNode }) {
     selectMultipleBlocks,
     toggleBlockSelection,
     clearSelection,
+    // Position updates for drag
+    updateBlockPosition,
     setViewport,
     setActiveTab,
     setInspectorTab,

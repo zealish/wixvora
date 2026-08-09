@@ -7,11 +7,11 @@ import { Icon } from "../ui/icon-library";
 
 interface CanvasBlockProps {
   block: Block;
-  selectedBlockIds?: string[]; // Array of selected block IDs for multi-selection
-  isSelected?: boolean; // Backward compatible, can be derived from selectedBlockIds
+  isSelected?: boolean;
   isPreviewMode?: boolean;
-  isDragging?: boolean; // New prop for tracking drag state
-  onSelect?: (ids: string[], shiftClick?: boolean) => void;
+  isDragging?: boolean;
+  selectedBlockIds?: string[]; // For multi-selection support
+  onSelect?: (ids: string[], shiftClick?: boolean) => void; // Changed to match selectMultipleBlocks signature
   onMoveUp?: (blockId: string) => void;
   onMoveDown?: (blockId: string) => void;
   onDuplicate?: (blockId: string) => void;
@@ -62,7 +62,8 @@ export const CanvasBlock = memo(function CanvasBlock({
   
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    onSelect?.([block.id], e.shiftKey);
+    // Call with [id, shiftKey] format expected by selectMultipleBlocks
+    onSelect?.([block.id], !!e.shiftKey);
   };
 
   // Determine if block should use absolute positioning
