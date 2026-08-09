@@ -378,16 +378,14 @@ export const EditorCanvas = memo(function EditorCanvas() {
   const handleGlobalMouseMove = useCallback((e: MouseEvent) => {
     if (!dragStart || !itemOffset || draggedBlockIds.length === 0) return;
     
-    console.log('[DEBUG] handleGlobalMouseMove', { 
-      screenX: e.clientX, 
-      screenY: e.clientY,
-      dragStart,
-      itemOffset,
-      draggedBlockIds
-    });
-    
     const canvasRect = canvasRef.current?.getBoundingClientRect();
-    if (!canvasRect) return;
+    if (!canvasRect) {
+      console.warn('No canvas rect');
+      return;
+    }
+    
+    console.log('[DEBUG] Canvas rect:', canvasRect);
+    console.log('[DEBUG] Screen position:', e.clientX, e.clientY);
     
     const canvasPos = screenToCanvas(
       e.clientX,
@@ -398,9 +396,13 @@ export const EditorCanvas = memo(function EditorCanvas() {
       panY
     );
     
+    console.log('[DEBUG] canvasPos after conversion:', canvasPos);
+    
     // Calculate new position (with snap if enabled)
     let newX = canvasPos.x + itemOffset.x;
     let newY = canvasPos.y + itemOffset.y;
+    
+    console.log('[DEBUG] Final pos before snap - x:', newX, 'y:', newY);
     
     // Apply grid snapping if enabled
     if (gridEnabled) {
@@ -408,9 +410,13 @@ export const EditorCanvas = memo(function EditorCanvas() {
       newY = snapToGrid(newY, gridSize);
     }
     
+    console.log('[DEBUG] Final pos after snap - x:', newX, 'y:', newY);
+    
     // Update position for each dragged block
     draggedBlockIds.forEach(id => {
+      console.log('[DEBUG] About to update block', id);
       updateProps(id, { x: newX, y: newY });
+      console.log('[DEBUG] Block updated');
     });
   }, [dragStart, itemOffset, draggedBlockIds, zoom, panX, panY, gridEnabled, gridSize, updateProps]);
   
