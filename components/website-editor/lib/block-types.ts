@@ -16,6 +16,9 @@ export interface Block {
   hidden: boolean;
   props: any;
   children?: Block[] | undefined;
+  // Canvas positioning (optional, default is flow-based layout)
+  x?: number;
+  y?: number;
 }
 
 export interface PageSettings {
