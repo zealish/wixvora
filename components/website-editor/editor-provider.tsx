@@ -421,10 +421,17 @@ export function EditorProvider({ children }: { children: ReactNode }) {
     setIsPreviewMode(v);
   }, []);
 
+  /**
+   * Import blocks from JSON data.
+   * Preserves all block properties including optional x/y positioning coordinates.
+   * The Block type includes x?: number and y?: number, which are automatically
+   * preserved when restoring from JSON without any filtering or transformation.
+   */
   const importJSON = useCallback(
     (json: any) => {
       try {
         if (json.blocks && Array.isArray(json.blocks)) {
+          // Blocks (including x/y positions) are restored as-is - no filtering
           setBlocksState(json.blocks);
           if (json.pageSettings) setPageSettingsState(json.pageSettings);
           if (json.blocks.length > 0) setSelectedBlockId(json.blocks[0].id);
@@ -438,6 +445,12 @@ export function EditorProvider({ children }: { children: ReactNode }) {
     [pushHistory, showToast]
   );
 
+  /**
+   * Export current editor state to JSON string.
+   * Includes all blocks with their properties and optional x/y positioning coordinates,
+   * plus page settings. The Block interface's x?: number and y?: number properties
+   * are automatically serialized by JSON.stringify when present.
+   */
   const exportJSON = useCallback(() => {
     try {
       return JSON.stringify({ blocks, pageSettings }, null, 2);
