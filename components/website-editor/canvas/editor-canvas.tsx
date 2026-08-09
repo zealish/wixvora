@@ -7,6 +7,7 @@ import { CanvasBlock } from "./canvas-block";
 import { Icon } from "../ui/icon-library";
 import type { Block } from "../lib/block-types";
 import { screenToCanvas, snapToGrid } from "../lib/coordinate-utils";
+import { GridOverlay } from "./grid-overlay";
 
 export function EditorCanvas() {
   const {
@@ -291,17 +292,14 @@ export function EditorCanvas() {
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseUp}
       >
-        {/* Grid Overlay - drawn in canvas space */}
-        {gridEnabled && (
-          <div
-            className="pointer-events-none absolute inset-0 opacity-10"
-            style={{
-              backgroundImage: `linear-gradient(to right, #000 1px, transparent 1px), linear-gradient(to bottom, #000 1px, transparent 1px)`,
-              backgroundSize: `${gridSize}px ${gridSize}px`,
-              backgroundPosition: `${panX}px ${panY}px`,
-            }}
-          />
-        )}
+        {/* Grid Overlay */}
+        <GridOverlay
+          showGrid={gridEnabled}
+          gridSize={gridSize}
+          zoom={zoom}
+          panX={panX}
+          panY={panY}
+        />
         
         {blocks
           .filter((b: Block) => !b.hidden)
