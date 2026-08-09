@@ -355,47 +355,55 @@ export const EditorCanvas = memo(function EditorCanvas() {
        setDraggedBlockIds([blockId]);
      }
      
-     // Store starting mouse position for delta calculation
-     setDragStart({ screenX: e.clientX, screenY: e.clientY });
+      // Store starting mouse position for delta calculation
+      setDragStart({ screenX: e.clientX, screenY: e.clientY });
    }, [isPreviewMode, zoom, panX, panY, selectMultipleBlocks, toggleBlockSelection, selectedBlockIds, selectedBlockId, blocks, canvasRef, setDragStart, setItemOffset, setDraggedBlockIds]);
-  
-  const handleItemMouseMove = useCallback((e: React.MouseEvent) => {
+   
+   const handleItemMouseUp = useCallback(() => {
+     setDragStart(null);
+     setItemOffset(null);
+     setDraggedBlockIds([]);
+   }, [setDragStart, setItemOffset, setDraggedBlockIds]);
+
+  // Global mouse move handler for dragging (attached to window)
+  useEffect(() => {
     if (!dragStart || !itemOffset || draggedBlockIds.length === 0) return;
     
-    // Get current mouse position in canvas coordinates
-    const canvasRect = canvasRef.current?.getBoundingClientRect();
-    if (!canvasRect) return;
+    const handleGlobalMouseMove = (e: MouseEvent) => {
+      const canvasRect = canvasRef.current?.getBoundingClientRect();
+      if (!canvasRect) return;
+      
+      const canvasPos = screenToCanvas(
+        e.clientX,
+        e.clientY,
+        canvasRect,
+        zoom,
+        panX,
+        panY
+      );
+      
+      // Calculate new position (with snap if enabled)
+      let newX = canvasPos.x + itemOffset.x;
+      let newY = canvasPos.y + itemOffset.y;
+      
+      // Apply grid snapping if enabled
+      if (gridEnabled) {
+        newX = snapToGrid(newX, gridSize);
+        newY = snapToGrid(newY, gridSize);
+      }
+      
+      // Update position for each dragged block
+      draggedBlockIds.forEach(id => {
+        updateProps(id, { x: newX, y: newY });
+      });
+    };
     
-    const canvasPos = screenToCanvas(
-      e.clientX,
-      e.clientY,
-      canvasRect,
-      zoom,
-      panX,
-      panY
-    );
+    document.addEventListener('mousemove', handleGlobalMouseMove);
     
-    // Calculate new position (with snap if enabled)
-    let newX = canvasPos.x + itemOffset.x;
-    let newY = canvasPos.y + itemOffset.y;
-    
-    // Apply grid snapping if enabled
-    if (gridEnabled) {
-      newX = snapToGrid(newX, gridSize);
-      newY = snapToGrid(newY, gridSize);
-    }
-    
-    // Update position for each dragged block
-    draggedBlockIds.forEach(id => {
-      updateProps(id, { x: newX, y: newY });
-    });
+    return () => {
+      document.removeEventListener('mousemove', handleGlobalMouseMove);
+    };
   }, [dragStart, itemOffset, draggedBlockIds, zoom, panX, panY, gridEnabled, gridSize, updateProps]);
-  
-  const handleItemMouseUp = useCallback(() => {
-    setDragStart(null);
-    setItemOffset(null);
-    setDraggedBlockIds([]);
-  }, [setDragStart, setItemOffset, setDraggedBlockIds]);
   
   // Deselect block when clicking on canvas background
   const handleClick = useCallback(() => {
@@ -517,7 +525,6 @@ export const EditorCanvas = memo(function EditorCanvas() {
                    onDuplicate={duplicateBlock}
                    onDelete={deleteBlock}
                    onMouseDown={(e) => handleItemMouseDown(e, block.id)}
-                   onMouseMove={(e: React.MouseEvent) => handleItemMouseMove(e)}
                    onMouseUp={handleItemMouseUp}
                  >
                    <BlockRenderer
