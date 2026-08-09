@@ -407,110 +407,125 @@ export const EditorCanvas = memo(function EditorCanvas() {
     clearSelection();
   }, [clearSelection]);
 
-  return (
-    <div className="flex-1 overflow-auto bg-gray-100 flex flex-col items-center py-8 px-4">
-      {isEditingInline && !isPreviewMode && (
-        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-[100] flex items-center gap-1 bg-white border border-gray-200 rounded-lg px-2 py-1 shadow-lg">
-          <button
-            className="p-1.5 hover:bg-gray-100 rounded text-gray-700"
-            title="Bold"
-            onClick={() => execFormatCommand("bold")}
-          >
-            <Icon name="bold" size={16} />
-          </button>
-          <button
-            className="p-1.5 hover:bg-gray-100 rounded text-gray-700"
-            title="Italic"
-            onClick={() => execFormatCommand("italic")}
-          >
-            <Icon name="italic" size={16} />
-          </button>
-          <button
-            className="p-1.5 hover:bg-gray-100 rounded text-gray-700"
-            title="Underline"
-            onClick={() => execFormatCommand("underline")}
-          >
-            <Icon name="underline" size={16} />
-          </button>
-          <div className="w-px h-5 bg-gray-200 mx-1" />
-          <button
-            className="p-1.5 hover:bg-gray-100 rounded text-gray-700"
-            title="Align left"
-            onClick={() => execFormatCommand("justifyLeft")}
-          >
-            <Icon name="alignLeft" size={16} />
-          </button>
-          <button
-            className="p-1.5 hover:bg-gray-100 rounded text-gray-700"
-            title="Align center"
-            onClick={() => execFormatCommand("justifyCenter")}
-          >
-            <Icon name="alignCenter" size={16} />
-          </button>
-          <button
-            className="p-1.5 hover:bg-gray-100 rounded text-gray-700"
-            title="Align right"
-            onClick={() => execFormatCommand("justifyRight")}
-          >
-            <Icon name="alignRight" size={16} />
-          </button>
-        </div>
-      )}
+   return (
+     <div className="flex-1 overflow-hidden bg-gray-100">
+       {/* Scrollable wrapper for the entire editor */}
+       <div className="h-full overflow-auto flex flex-col items-center py-8 px-4">
+         {isEditingInline && !isPreviewMode && (
+           <div className="fixed top-4 left-1/2 -translate-x-1/2 z-[100] flex items-center gap-1 bg-white border border-gray-200 rounded-lg px-2 py-1 shadow-lg">
+             <button
+               className="p-1.5 hover:bg-gray-100 rounded text-gray-700"
+               title="Bold"
+               onClick={() => execFormatCommand("bold")}
+             >
+               <Icon name="bold" size={16} />
+             </button>
+             <button
+               className="p-1.5 hover:bg-gray-100 rounded text-gray-700"
+               title="Italic"
+               onClick={() => execFormatCommand("italic")}
+             >
+               <Icon name="italic" size={16} />
+             </button>
+             <button
+               className="p-1.5 hover:bg-gray-100 rounded text-gray-700"
+               title="Underline"
+               onClick={() => execFormatCommand("underline")}
+             >
+               <Icon name="underline" size={16} />
+             </button>
+             <div className="w-px h-5 bg-gray-200 mx-1" />
+             <button
+               className="p-1.5 hover:bg-gray-100 rounded text-gray-700"
+               title="Align left"
+               onClick={() => execFormatCommand("justifyLeft")}
+             >
+               <Icon name="alignLeft" size={16} />
+             </button>
+             <button
+               className="p-1.5 hover:bg-gray-100 rounded text-gray-700"
+               title="Align center"
+               onClick={() => execFormatCommand("justifyCenter")}
+             >
+               <Icon name="alignCenter" size={16} />
+             </button>
+             <button
+               className="p-1.5 hover:bg-gray-100 rounded text-gray-700"
+               title="Align right"
+               onClick={() => execFormatCommand("justifyRight")}
+             >
+               <Icon name="alignRight" size={16} />
+             </button>
+           </div>
+         )}
 
-       <div
-         className={`${getCanvasWidth} bg-white shadow-lg rounded-lg device-transition overflow-hidden relative`}
-        style={{
-          backgroundColor: pageSettings.bgColor || "#ffffff",
-          fontFamily: pageSettings.fontFamily || "Inter, sans-serif",
-          minHeight: blocks.length === 0 ? '300px' : 'auto',
-          // Apply zoom and pan transform (visual only, doesn't change data)
-          transform: `scale(${zoom}) translate(${panX}px, ${panY}px)`,
-          transformOrigin: 'top left',
-        }}
-        ref={canvasRef}
-        onWheel={handleWheel}
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
-        onMouseLeave={handleMouseUp}
-        onClick={handleClick}
-      >
-        {/* Grid Overlay */}
-        <GridOverlay
-          showGrid={gridEnabled}
-          gridSize={gridSize}
-          zoom={zoom}
-          panX={panX}
-          panY={panY}
-        />
-        
-        {blocks
-          .filter((b: Block) => !b.hidden)
-          .map((block: Block) => (
-            <CanvasBlock
-              key={block.id}
-              block={block}
-              isSelected={selectedBlockIds.includes(block.id)}
-              isDragging={selectedBlockIds.includes(block.id) && !!dragStart} // Show drag feedback when this block is being dragged
-              isPreviewMode={isPreviewMode}
-              onSelect={selectMultipleBlocks}
-              onMoveUp={moveBlockUp}
-              onMoveDown={moveBlockDown}
-              onDuplicate={duplicateBlock}
-              onDelete={deleteBlock}
-              onMouseDown={(e) => handleItemMouseDown(e, block.id)}
-              onMouseMove={(e: React.MouseEvent) => handleItemMouseMove(e)}
-              onMouseUp={handleItemMouseUp}
-            >
-              <BlockRenderer
-                block={block}
-                updateProps={updateProps}
-                isPreviewMode={isPreviewMode}
-                setIsEditingInline={setIsEditingInline}
-              />
-            </CanvasBlock>
-          ))}
-      </div>
-    </div>
-  );
+         {/* Canvas Container with scroll */}
+         <div className={`${getCanvasWidth} relative`}>
+           {/* Actual Canvas Content */}
+           <div
+              className={`bg-white shadow-lg rounded-lg device-transition overflow-hidden relative`}
+             style={{
+               backgroundColor: pageSettings.bgColor || "#ffffff",
+               fontFamily: pageSettings.fontFamily || "Inter, sans-serif",
+               minHeight: blocks.length === 0 ? '300px' : 'auto',
+               // Apply ZOOM ONLY (not pan). Pan is handled separately.
+               transform: `scale(${zoom})`,
+               transformOrigin: 'top left',
+             }}
+             ref={canvasRef}
+             onWheel={handleWheel}
+             onMouseDown={handleMouseDown}
+             onMouseMove={handleMouseMove}
+             onMouseUp={handleMouseUp}
+             onMouseLeave={handleMouseUp}
+             onClick={handleClick}
+           >
+             {/* Grid Overlay - positioned absolutely inside scaled canvas */}
+             <GridOverlay
+               showGrid={gridEnabled}
+               gridSize={gridSize}
+               zoom={zoom}
+               panX={panX}
+               panY={panY}
+             />
+             
+             {/* Wrapper div that handles pan translation */}
+             <div
+               className="absolute inset-0 origin-top-left will-change-transform"
+               style={{
+                 transform: `translate(${panX}px, ${panY}px)`,
+               }}
+             >
+               {blocks
+                 .filter((b: Block) => !b.hidden)
+                 .map((block: Block) => (
+                   <CanvasBlock
+                     key={block.id}
+                     block={block}
+                     isSelected={selectedBlockIds.includes(block.id)}
+                     isDragging={selectedBlockIds.includes(block.id) && !!dragStart}
+                     isPreviewMode={isPreviewMode}
+                     onSelect={selectMultipleBlocks}
+                     onMoveUp={moveBlockUp}
+                     onMoveDown={moveBlockDown}
+                     onDuplicate={duplicateBlock}
+                     onDelete={deleteBlock}
+                     onMouseDown={(e) => handleItemMouseDown(e, block.id)}
+                     onMouseMove={(e: React.MouseEvent) => handleItemMouseMove(e)}
+                     onMouseUp={handleItemMouseUp}
+                   >
+                     <BlockRenderer
+                       block={block}
+                       updateProps={updateProps}
+                       isPreviewMode={isPreviewMode}
+                       setIsEditingInline={setIsEditingInline}
+                     />
+                   </CanvasBlock>
+                 ))}
+             </div>
+           </div>
+         </div>
+       </div>
+     </div>
+   );
 }); // EditorCanvas wrapped in memo - children handle their own re-render optimization
