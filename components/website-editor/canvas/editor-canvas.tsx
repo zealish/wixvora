@@ -481,19 +481,27 @@ export const EditorCanvas = memo(function EditorCanvas() {
              onClick={handleClick}
            >
              {/* Grid Overlay - positioned absolutely inside scaled canvas */}
-             <GridOverlay
-               showGrid={gridEnabled}
-               gridSize={gridSize}
-               zoom={zoom}
-               panX={panX}
-               panY={panY}
-             />
+             <div
+               className="pointer-events-none absolute inset-0"
+               style={{
+                 zIndex: 0,
+               }}
+             >
+               <GridOverlay
+                 showGrid={gridEnabled}
+                 gridSize={gridSize}
+                 zoom={zoom}
+                 panX={panX}
+                 panY={panY}
+               />
+             </div>
              
              {/* Wrapper div that handles pan translation */}
              <div
-               className="absolute inset-0 origin-top-left will-change-transform"
+               className="absolute inset-0 origin-top-left will-change-transform overflow-hidden"
                style={{
                  transform: `translate(${panX}px, ${panY}px)`,
+                 minHeight: '100%',
                }}
              >
                {blocks
