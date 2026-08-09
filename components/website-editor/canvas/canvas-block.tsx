@@ -1,6 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
+import { memo } from "react";
 import { Block } from "../lib/block-types";
 import { Icon } from "../ui/icon-library";
 
@@ -20,7 +21,20 @@ interface CanvasBlockProps {
   children: ReactNode;
 }
 
-export function CanvasBlock({
+// Custom equality function to prevent unnecessary re-renders
+function areEqual(prevProps: CanvasBlockProps, nextProps: CanvasBlockProps) {
+  // Block reference changed - need to re-render
+  if (prevProps.block !== nextProps.block) return false;
+  // Selection state changed
+  if (prevProps.isSelected !== nextProps.isSelected) return false;
+  // Preview mode toggled
+  if (prevProps.isPreviewMode !== nextProps.isPreviewMode) return false;
+  
+  // If we reach here, props haven't changed enough to warrant re-render
+  return true;
+}
+
+export const CanvasBlock = memo(function CanvasBlock({
   block,
   isSelected = false,
   isPreviewMode = false,
@@ -160,4 +174,4 @@ export function CanvasBlock({
       {children}
     </div>
   );
-}
+}, areEqual);

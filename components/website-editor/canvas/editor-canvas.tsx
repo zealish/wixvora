@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useCallback } from "react";
+import { useEffect, useRef, useCallback, useMemo, memo } from "react";
 import { useEditor } from "../editor-provider";
 import { BlockRenderer } from "../blocks/block-renderer";
 import { CanvasBlock } from "./canvas-block";
@@ -9,7 +9,7 @@ import type { Block } from "../lib/block-types";
 import { screenToCanvas, snapToGrid } from "../lib/coordinate-utils";
 import { GridOverlay } from "./grid-overlay";
 
-export function EditorCanvas() {
+export const EditorCanvas = memo(function EditorCanvas() {
   const {
     blocks,
     selectedBlockId,
@@ -43,6 +43,18 @@ export function EditorCanvas() {
   
   const canvasRef = useRef<HTMLDivElement>(null);
   const lastMousePos = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
+  
+  // Memoize viewport width classes to prevent recreating on every render
+  const getCanvasWidth = useMemo(() => {
+    switch (viewport) {
+      case "mobile":
+        return "w-[375px]";
+      case "tablet":
+        return "w-[768px]";
+      default:
+        return "w-full max-w-6xl";
+    }
+  }, [viewport]);
   
   // Keyboard shortcuts for navigation
   useEffect(() => {
@@ -296,18 +308,6 @@ export function EditorCanvas() {
     selectBlock("");
   }, [selectBlock]);
 
-
-  const getCanvasWidth = () => {
-    switch (viewport) {
-      case "mobile":
-        return "w-[375px]";
-      case "tablet":
-        return "w-[768px]";
-      default:
-        return "w-full max-w-6xl";
-    }
-  };
-
   return (
     <div className="flex-1 overflow-auto bg-gray-100 flex flex-col items-center py-8 px-4">
       {isEditingInline && !isPreviewMode && (
@@ -358,8 +358,8 @@ export function EditorCanvas() {
         </div>
       )}
 
-      <div
-        className={`${getCanvasWidth()} bg-white shadow-lg rounded-lg device-transition overflow-hidden relative`}
+       <div
+         className={`${getCanvasWidth} bg-white shadow-lg rounded-lg device-transition overflow-hidden relative`}
         style={{
           backgroundColor: pageSettings.bgColor || "#ffffff",
           fontFamily: pageSettings.fontFamily || "Inter, sans-serif",
@@ -413,4 +413,4 @@ export function EditorCanvas() {
       </div>
     </div>
   );
-}
+}); // EditorCanvas wrapped in memo - children handle their own re-render optimization
