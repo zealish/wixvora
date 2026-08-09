@@ -461,77 +461,80 @@ export const EditorCanvas = memo(function EditorCanvas() {
 
          {/* Canvas Container with scroll */}
          <div className={`${getCanvasWidth} relative`}>
-           {/* Actual Canvas Content */}
+         {/* Actual Canvas Content */}
+         <div
+            className={`bg-white shadow-lg rounded-lg device-transition overflow-hidden relative`}
+           style={{
+             backgroundColor: pageSettings.bgColor || "#ffffff",
+             fontFamily: pageSettings.fontFamily || "Inter, sans-serif",
+             minHeight: blocks.length === 0 ? '300px' : 'auto',
+             // Apply ZOOM ONLY (not pan). Pan is handled separately.
+             transform: `scale(${zoom})`,
+             transformOrigin: 'top left',
+             width: '100%',
+           }}
+           ref={canvasRef}
+           onWheel={handleWheel}
+           onMouseDown={handleMouseDown}
+           onMouseMove={handleMouseMove}
+           onMouseUp={handleMouseUp}
+           onMouseLeave={handleMouseUp}
+           onClick={handleClick}
+         >
+           {/* Grid Overlay - positioned absolutely inside scaled canvas */}
            <div
-              className={`bg-white shadow-lg rounded-lg device-transition overflow-hidden relative`}
+             className="pointer-events-none absolute inset-0"
              style={{
-               backgroundColor: pageSettings.bgColor || "#ffffff",
-               fontFamily: pageSettings.fontFamily || "Inter, sans-serif",
-               minHeight: blocks.length === 0 ? '300px' : 'auto',
-               // Apply ZOOM ONLY (not pan). Pan is handled separately.
-               transform: `scale(${zoom})`,
-               transformOrigin: 'top left',
+               zIndex: 0,
              }}
-             ref={canvasRef}
-             onWheel={handleWheel}
-             onMouseDown={handleMouseDown}
-             onMouseMove={handleMouseMove}
-             onMouseUp={handleMouseUp}
-             onMouseLeave={handleMouseUp}
-             onClick={handleClick}
            >
-             {/* Grid Overlay - positioned absolutely inside scaled canvas */}
-             <div
-               className="pointer-events-none absolute inset-0"
-               style={{
-                 zIndex: 0,
-               }}
-             >
-               <GridOverlay
-                 showGrid={gridEnabled}
-                 gridSize={gridSize}
-                 zoom={zoom}
-                 panX={panX}
-                 panY={panY}
-               />
-             </div>
-             
-             {/* Wrapper div that handles pan translation */}
-             <div
-               className="absolute inset-0 origin-top-left will-change-transform overflow-hidden"
-               style={{
-                 transform: `translate(${panX}px, ${panY}px)`,
-                 minHeight: '100%',
-               }}
-             >
-               {blocks
-                 .filter((b: Block) => !b.hidden)
-                 .map((block: Block) => (
-                   <CanvasBlock
-                     key={block.id}
-                     block={block}
-                     isSelected={selectedBlockIds.includes(block.id)}
-                     isDragging={selectedBlockIds.includes(block.id) && !!dragStart}
-                     isPreviewMode={isPreviewMode}
-                     onSelect={selectMultipleBlocks}
-                     onMoveUp={moveBlockUp}
-                     onMoveDown={moveBlockDown}
-                     onDuplicate={duplicateBlock}
-                     onDelete={deleteBlock}
-                     onMouseDown={(e) => handleItemMouseDown(e, block.id)}
-                     onMouseMove={(e: React.MouseEvent) => handleItemMouseMove(e)}
-                     onMouseUp={handleItemMouseUp}
-                   >
-                     <BlockRenderer
-                       block={block}
-                       updateProps={updateProps}
-                       isPreviewMode={isPreviewMode}
-                       setIsEditingInline={setIsEditingInline}
-                     />
-                   </CanvasBlock>
-                 ))}
-             </div>
+             <GridOverlay
+               showGrid={gridEnabled}
+               gridSize={gridSize}
+               zoom={zoom}
+               panX={panX}
+               panY={panY}
+             />
            </div>
+           
+           {/* Wrapper div that handles pan translation and contains all blocks */}
+           <div
+             className="relative overflow-hidden"
+             style={{
+               minHeight: blocks.length === 0 ? '300px' : 'auto',
+               transform: `translate(${panX}px, ${panY}px)`,
+               transformOrigin: 'top left',
+               willChange: 'transform',
+             }}
+           >
+             {blocks
+               .filter((b: Block) => !b.hidden)
+               .map((block: Block) => (
+                 <CanvasBlock
+                   key={block.id}
+                   block={block}
+                   isSelected={selectedBlockIds.includes(block.id)}
+                   isDragging={selectedBlockIds.includes(block.id) && !!dragStart}
+                   isPreviewMode={isPreviewMode}
+                   onSelect={selectMultipleBlocks}
+                   onMoveUp={moveBlockUp}
+                   onMoveDown={moveBlockDown}
+                   onDuplicate={duplicateBlock}
+                   onDelete={deleteBlock}
+                   onMouseDown={(e) => handleItemMouseDown(e, block.id)}
+                   onMouseMove={(e: React.MouseEvent) => handleItemMouseMove(e)}
+                   onMouseUp={handleItemMouseUp}
+                 >
+                   <BlockRenderer
+                     block={block}
+                     updateProps={updateProps}
+                     isPreviewMode={isPreviewMode}
+                     setIsEditingInline={setIsEditingInline}
+                   />
+                 </CanvasBlock>
+               ))}
+           </div>
+         </div>
          </div>
        </div>
      </div>
