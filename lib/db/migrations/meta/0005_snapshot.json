@@ -1,5 +1,5 @@
 {
-  "id": "a7b3c4d5-e6f7-4890-abcd-ef1234567890",
+  "id": "5a7400c9-6755-4c53-8068-cabeea4f3eac",
   "prevId": "6c97479f-9a5e-4a6b-a44e-e0e19efe0e7f",
   "version": "7",
   "dialect": "postgresql",
@@ -1324,6 +1324,13 @@
           "notNull": true,
           "default": "'{}'::jsonb"
         },
+        "pages": {
+          "name": "pages",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'[]'::jsonb"
+        },
         "html_snapshot": {
           "name": "html_snapshot",
           "type": "text",
@@ -1390,13 +1397,6 @@
           "type": "timestamp",
           "primaryKey": false,
           "notNull": false
-        },
-        "pages": {
-          "name": "pages",
-          "type": "jsonb",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "'[]'::jsonb"
         }
       },
       "indexes": {
@@ -1646,6 +1646,13 @@
           "notNull": true,
           "default": "''"
         },
+        "pages": {
+          "name": "pages",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'[]'::jsonb"
+        },
         "seo_title": {
           "name": "seo_title",
           "type": "varchar(255)",
@@ -1707,13 +1714,6 @@
           "type": "timestamp",
           "primaryKey": false,
           "notNull": false
-        },
-        "pages": {
-          "name": "pages",
-          "type": "jsonb",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "'[]'::jsonb"
         }
       },
       "indexes": {},

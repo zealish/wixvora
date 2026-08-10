@@ -13,7 +13,11 @@ import {
 import { relations, sql } from "drizzle-orm";
 import { businessCategories } from "./business-categories";
 import { user } from "./auth";
-import type { Section, PageSettings, Page } from "@/components/website-editor/lib/block-types";
+import type {
+  BlockConfig,
+  PageSettings,
+} from "@/features/templates/lib/block-types";
+import type { Page } from "@/components/website-editor/lib/block-types";
 
 export const templateStatusEnum = pgEnum("template_status", [
   "draft",
@@ -31,13 +35,13 @@ export const templates = pgTable(
     categoryId: uuid("category_id").references(() => businessCategories.id, {
       onDelete: "set null",
     }),
-    sections: jsonb("sections").$type<Section[]>().notNull().default(sql`'[]'::jsonb`),
+    blocksJson: jsonb("blocks_json").$type<BlockConfig[]>().notNull(),
     pageSettings: jsonb("page_settings")
       .$type<PageSettings>()
       .notNull()
       .default(sql`'{}'::jsonb`),
-    pages: jsonb("pages").$type<Page[]>().default(sql`'[]'::jsonb`),
-    htmlSnapshot: text("html_snapshot").notNull().default(""),
+    pages: jsonb("pages").$type<Page[]>().notNull().default(sql`'[]'::jsonb`),
+    htmlSnapshot: text("html_snapshot").notNull(),
     isFeatured: boolean("is_featured").notNull().default(false),
     sortOrder: integer("sort_order").notNull().default(0),
     status: templateStatusEnum("status").notNull().default("draft"),
