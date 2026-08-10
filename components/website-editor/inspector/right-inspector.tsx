@@ -8,20 +8,20 @@ import { StyleTab } from "./style-tab";
 import { GridTab } from "./grid-tab";
 import { getLayout } from "../lib/viewport-utils";
 
-const TABS = ["Konten", "Tampilan", "Kolom / Grid", "Posisi"] as const;
+const TABS = ["Posisi & Ukuran", "Gaya & Konten"] as const;
 
 type Tab = (typeof TABS)[number];
 
 export function RightInspector() {
   const { activeBlock, isPreviewMode, selectedBlockId, viewport, findBlock, updateBlockLayout } = useEditor();
-  const [activeTab, setActiveTab] = useState<Tab>("Konten");
+  const [activeTab, setActiveTab] = useState<Tab>("Gaya & Konten");
 
   if (!activeBlock || isPreviewMode) return null;
 
   return (
     <div className="flex h-full w-80 flex-col border-l border-slate-200 bg-white">
       <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3">
-        <h3 className="text-sm font-semibold text-slate-900">Inspector Layer</h3>
+        <h3 className="text-sm font-semibold text-slate-900">Inspector</h3>
         <Icon name="edit" size={16} className="text-slate-400" />
       </div>
 
@@ -42,10 +42,7 @@ export function RightInspector() {
       </div>
 
       <div className="flex-1 overflow-y-auto">
-        {activeTab === "Konten" && <ContentTab />}
-        {activeTab === "Tampilan" && <StyleTab />}
-        {activeTab === "Kolom / Grid" && <GridTab />}
-        {activeTab === "Posisi" && selectedBlockId && (() => {
+        {activeTab === "Posisi & Ukuran" && selectedBlockId && (() => {
           const result = findBlock(selectedBlockId);
           if (!result) return null;
           
@@ -55,12 +52,12 @@ export function RightInspector() {
           return (
             <div className="space-y-4 p-4">
               <div className="p-2.5 bg-blue-50 border border-blue-200 rounded-xl text-[10px] text-blue-700 leading-relaxed">
-                Position changes only apply to <strong>{viewport.toUpperCase()}</strong> viewport.
+                Perubahan posisi hanya berlaku untuk viewport <strong>{viewport.toUpperCase()}</strong>.
               </div>
 
               <div className="grid grid-cols-2 gap-2">
                 <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-slate-500">X Position</label>
+                  <label className="text-[10px] font-bold text-slate-500">X</label>
                   <input
                     type="number"
                     value={layout.x}
@@ -71,7 +68,7 @@ export function RightInspector() {
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-slate-500">Y Position</label>
+                  <label className="text-[10px] font-bold text-slate-500">Y</label>
                   <input
                     type="number"
                     value={layout.y}
@@ -85,7 +82,7 @@ export function RightInspector() {
 
               <div className="grid grid-cols-2 gap-2">
                 <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-slate-500">Width</label>
+                  <label className="text-[10px] font-bold text-slate-500">Lebar</label>
                   <input
                     type="number"
                     value={layout.width}
@@ -96,7 +93,7 @@ export function RightInspector() {
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-slate-500">Height</label>
+                  <label className="text-[10px] font-bold text-slate-500">Tinggi</label>
                   <input
                     type="number"
                     value={layout.height}
@@ -109,7 +106,7 @@ export function RightInspector() {
               </div>
 
               <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
-                <span className="text-[11px] font-semibold text-slate-600">Hide on {viewport.toUpperCase()}</span>
+                <span className="text-[11px] font-semibold text-slate-600">Sembunyikan di {viewport.toUpperCase()}</span>
                 <input
                   type="checkbox"
                   checked={layout.hidden}
@@ -122,6 +119,20 @@ export function RightInspector() {
             </div>
           );
         })()}
+
+        {activeTab === "Gaya & Konten" && (
+          <div className="space-y-0">
+            <ContentTab />
+            <div className="border-t border-slate-100">
+              <StyleTab />
+            </div>
+            {activeBlock.type === "grid_custom" && (
+              <div className="border-t border-slate-100">
+                <GridTab />
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
