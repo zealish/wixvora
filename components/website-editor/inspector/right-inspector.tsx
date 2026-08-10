@@ -12,6 +12,7 @@ export function RightInspector() {
     isPreviewMode,
     selectedBlockId,
     viewport,
+    sections,
     findBlock,
     updateBlockLayout,
     updateBlockProps,
@@ -21,11 +22,28 @@ export function RightInspector() {
   if (!activeBlock || isPreviewMode || !selectedBlockId) return null;
 
   const result = findBlock(selectedBlockId);
-  if (!result) return null;
-
-  const { section, block } = result;
+  const block = activeBlock;
   const layout = getLayout(block, viewport);
   const props = block.props || {};
+
+  // Find the section containing this block (search recursively)
+  const findSectionForBlock = (blockId: string) => {
+    for (const sec of sections) {
+      if (sec.blocks.some(b => b.id === blockId)) return sec;
+      // Also search nested blocks
+      for (const b of sec.blocks) {
+        if (b.children) {
+          const found = b.children.some(child => child.id === blockId);
+          if (found) return sec;
+        }
+      }
+    }
+    return null;
+  };
+
+  const section = result?.section || findSectionForBlock(selectedBlockId);
+
+  if (!section) return null;
 
   return (
     <div className="flex h-full w-80 flex-col border-l border-slate-200 bg-white">
