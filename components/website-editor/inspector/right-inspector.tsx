@@ -1,134 +1,204 @@
 "use client";
 
 import { useState } from "react";
-import { Icon } from "../ui/icon-library";
 import { useEditor } from "../editor-provider";
-import { ContentTab } from "./content-tab";
-import { StyleTab } from "./style-tab";
-import { GridTab } from "./grid-tab";
 import { getLayout } from "../lib/viewport-utils";
 
-const TABS = ["Posisi & Ukuran", "Gaya & Konten"] as const;
-
-type Tab = (typeof TABS)[number];
+type Tab = "position" | "style";
 
 export function RightInspector() {
-  const { activeBlock, isPreviewMode, selectedBlockId, viewport, findBlock, updateBlockLayout } = useEditor();
-  const [activeTab, setActiveTab] = useState<Tab>("Gaya & Konten");
+  const {
+    activeBlock,
+    isPreviewMode,
+    selectedBlockId,
+    viewport,
+    findBlock,
+    updateBlockLayout,
+    updateBlockProps,
+  } = useEditor();
+  const [activeTab, setActiveTab] = useState<Tab>("position");
 
-  if (!activeBlock || isPreviewMode) return null;
+  if (!activeBlock || isPreviewMode || !selectedBlockId) return null;
+
+  const result = findBlock(selectedBlockId);
+  if (!result) return null;
+
+  const { section, block } = result;
+  const layout = getLayout(block, viewport);
+  const props = block.props || {};
 
   return (
     <div className="flex h-full w-80 flex-col border-l border-slate-200 bg-white">
-      <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3">
-        <h3 className="text-sm font-semibold text-slate-900">Inspector</h3>
-        <Icon name="edit" size={16} className="text-slate-400" />
+      <div className="grid grid-cols-2 border-b border-slate-200 text-[11px] bg-slate-50">
+        <button
+          onClick={() => setActiveTab("position")}
+          className={`py-2 font-semibold transition ${
+            activeTab === "position"
+              ? "bg-white text-blue-600 border-b-2 border-blue-600 shadow-sm"
+              : "text-slate-600 hover:text-slate-900"
+          }`}
+        >
+          Posisi [{viewport.toUpperCase()}]
+        </button>
+        <button
+          onClick={() => setActiveTab("style")}
+          className={`py-2 font-semibold transition ${
+            activeTab === "style"
+              ? "bg-white text-blue-600 border-b-2 border-blue-600 shadow-sm"
+              : "text-slate-600 hover:text-slate-900"
+          }`}
+        >
+          Style & Konten
+        </button>
       </div>
 
-      <div className="flex border-b border-slate-200">
-        {TABS.map((tab) => (
-          <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
-            className={`flex-1 px-3 py-2.5 text-xs font-medium transition-colors ${
-              activeTab === tab
-                ? "border-b-2 border-blue-600 text-blue-600"
-                : "text-slate-500 hover:text-slate-700"
-            }`}
-          >
-            {tab}
-          </button>
-        ))}
-      </div>
+      <div className="flex-1 overflow-y-auto p-4 space-y-4 text-xs text-slate-700">
+        {activeTab === "position" && (
+          <div className="space-y-4">
+            <div className="p-2.5 bg-blue-50 border border-blue-200 rounded-xl text-[10px] text-blue-700 leading-relaxed">
+              📌 Perubahan posisi X, Y & ukuran <strong>hanya berlaku untuk mode {viewport.toUpperCase()}</strong>.
+            </div>
 
-      <div className="flex-1 overflow-y-auto">
-        {activeTab === "Posisi & Ukuran" && selectedBlockId && (() => {
-          const result = findBlock(selectedBlockId);
-          if (!result) return null;
-          
-          const { section, block } = result;
-          const layout = getLayout(block, viewport);
-          
-          return (
-            <div className="space-y-4 p-4">
-              <div className="p-2.5 bg-blue-50 border border-blue-200 rounded-xl text-[10px] text-blue-700 leading-relaxed">
-                Perubahan posisi hanya berlaku untuk viewport <strong>{viewport.toUpperCase()}</strong>.
-              </div>
-
-              <div className="grid grid-cols-2 gap-2">
-                <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-slate-500">X</label>
-                  <input
-                    type="number"
-                    value={layout.x}
-                    onChange={(e) => {
-                      updateBlockLayout(section.id, block.id, viewport, { x: parseInt(e.target.value) || 0 });
-                    }}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-800 outline-none focus:border-blue-500 font-mono"
-                  />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-slate-500">Y</label>
-                  <input
-                    type="number"
-                    value={layout.y}
-                    onChange={(e) => {
-                      updateBlockLayout(section.id, block.id, viewport, { y: parseInt(e.target.value) || 0 });
-                    }}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-800 outline-none focus:border-blue-500 font-mono"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-2">
-                <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-slate-500">Lebar</label>
-                  <input
-                    type="number"
-                    value={layout.width}
-                    onChange={(e) => {
-                      updateBlockLayout(section.id, block.id, viewport, { width: Math.max(30, parseInt(e.target.value) || 30) });
-                    }}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-800 outline-none focus:border-blue-500 font-mono"
-                  />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-slate-500">Tinggi</label>
-                  <input
-                    type="number"
-                    value={layout.height}
-                    onChange={(e) => {
-                      updateBlockLayout(section.id, block.id, viewport, { height: Math.max(20, parseInt(e.target.value) || 20) });
-                    }}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-800 outline-none focus:border-blue-500 font-mono"
-                  />
-                </div>
-              </div>
-
-              <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
-                <span className="text-[11px] font-semibold text-slate-600">Sembunyikan di {viewport.toUpperCase()}</span>
+            <div className="grid grid-cols-2 gap-2">
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-slate-500">Posisi X (Kiri)</label>
                 <input
-                  type="checkbox"
-                  checked={layout.hidden}
+                  type="number"
+                  value={layout.x}
                   onChange={(e) => {
-                    updateBlockLayout(section.id, block.id, viewport, { hidden: e.target.checked });
+                    updateBlockLayout(section.id, block.id, viewport, { x: parseInt(e.target.value) || 0 });
                   }}
-                  className="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-800 outline-none focus:border-blue-500 font-mono"
+                />
+              </div>
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-slate-500">Posisi Y (Atas)</label>
+                <input
+                  type="number"
+                  value={layout.y}
+                  onChange={(e) => {
+                    updateBlockLayout(section.id, block.id, viewport, { y: parseInt(e.target.value) || 0 });
+                  }}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-800 outline-none focus:border-blue-500 font-mono"
                 />
               </div>
             </div>
-          );
-        })()}
 
-        {activeTab === "Gaya & Konten" && (
-          <div className="space-y-0">
-            <ContentTab />
-            <div className="border-t border-slate-100">
-              <StyleTab />
+            <div className="grid grid-cols-2 gap-2">
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-slate-500">Lebar (Width)</label>
+                <input
+                  type="number"
+                  value={layout.width}
+                  onChange={(e) => {
+                    updateBlockLayout(section.id, block.id, viewport, { width: Math.max(30, parseInt(e.target.value) || 30) });
+                  }}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-800 outline-none focus:border-blue-500 font-mono"
+                />
+              </div>
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-slate-500">Tinggi (Height)</label>
+                <input
+                  type="number"
+                  value={layout.height}
+                  onChange={(e) => {
+                    updateBlockLayout(section.id, block.id, viewport, { height: Math.max(20, parseInt(e.target.value) || 20) });
+                  }}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-800 outline-none focus:border-blue-500 font-mono"
+                />
+              </div>
             </div>
-            {activeBlock.type === "grid_custom" && (
-              <div className="border-t border-slate-100">
-                <GridTab />
+
+            <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
+              <span className="text-[11px] font-semibold text-slate-600">Sembunyikan di {viewport.toUpperCase()}</span>
+              <input
+                type="checkbox"
+                checked={!!layout.hidden}
+                onChange={(e) => {
+                  updateBlockLayout(section.id, block.id, viewport, { hidden: e.target.checked });
+                }}
+                className="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500"
+              />
+            </div>
+          </div>
+        )}
+
+        {activeTab === "style" && (
+          <div className="space-y-4">
+            {(block.type === "heading" || block.type === "paragraph" || block.type === "button" || block.type === "badge") && (
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-slate-500">Teks Konten</label>
+                <textarea
+                  rows={3}
+                  value={props.text || ""}
+                  onChange={(e) => updateBlockProps({ text: e.target.value })}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-slate-800 outline-none focus:border-blue-500"
+                />
+              </div>
+            )}
+
+            {block.type === "card" && (
+              <div className="space-y-3">
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold text-slate-500">Judul Kartu</label>
+                  <input
+                    type="text"
+                    value={props.title || ""}
+                    onChange={(e) => updateBlockProps({ title: e.target.value })}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-800 outline-none focus:border-blue-500"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold text-slate-500">Sub-deskripsi Kartu</label>
+                  <textarea
+                    rows={3}
+                    value={props.subtitle || ""}
+                    onChange={(e) => updateBlockProps({ subtitle: e.target.value })}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-slate-800 outline-none focus:border-blue-500"
+                  />
+                </div>
+              </div>
+            )}
+
+            {block.type === "image" && (
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-slate-500">URL Gambar (URL)</label>
+                <input
+                  type="text"
+                  value={props.src || ""}
+                  onChange={(e) => updateBlockProps({ src: e.target.value })}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-800 outline-none focus:border-blue-500 font-mono text-[11px]"
+                />
+              </div>
+            )}
+
+            {props.textColor !== undefined && (
+              <div className="flex items-center justify-between">
+                <label className="text-[10px] font-bold text-slate-500">Warna Teks</label>
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="color"
+                    value={props.textColor || "#000000"}
+                    onChange={(e) => updateBlockProps({ textColor: e.target.value })}
+                    className="w-8 h-8 rounded-lg border border-slate-200 cursor-pointer bg-transparent"
+                  />
+                  <span className="font-mono text-[11px] text-slate-600">{props.textColor}</span>
+                </div>
+              </div>
+            )}
+
+            {props.bgColor !== undefined && (
+              <div className="flex items-center justify-between">
+                <label className="text-[10px] font-bold text-slate-500">Warna Background</label>
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="color"
+                    value={props.bgColor || "#ffffff"}
+                    onChange={(e) => updateBlockProps({ bgColor: e.target.value })}
+                    className="w-8 h-8 rounded-lg border border-slate-200 cursor-pointer bg-transparent"
+                  />
+                  <span className="font-mono text-[11px] text-slate-600">{props.bgColor}</span>
+                </div>
               </div>
             )}
           </div>
