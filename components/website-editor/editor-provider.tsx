@@ -1,9 +1,11 @@
 "use client";
 
 import { createContext, useContext, useState, useCallback, useRef, type ReactNode } from "react";
-import type { Block, BlockType, PageSettings } from "./lib/block-types";
+import type { Block, BlockType, PageSettings, Section, Viewport } from "./lib/block-types";
 import { BLOCK_CATALOG } from "./lib/block-definitions";
 import { PRESET_TEMPLATES } from "./lib/template-presets";
+import { loadEditorState, createDefaultState } from "./lib/section-migration";
+import { SECTION_TEMPLATES } from "./lib/section-templates";
 
 interface EditorContextValue {
   blocks: Block[];
@@ -74,6 +76,23 @@ interface EditorContextValue {
   setGridSize: (size: number) => void;
   setDragStart: (d: { screenX: number; screenY: number } | null) => void;
   setItemOffset: (offset: { x: number; y: number } | null) => void;
+
+  // New section-based state
+  sections: Section[];
+  selectedSectionId: string | null;
+
+  // Section operations
+  addSection: (templateId: string) => void;
+  deleteSection: (sectionId: string) => void;
+  moveSectionUp: (sectionId: string) => void;
+  moveSectionDown: (sectionId: string) => void;
+  updateSectionHeight: (sectionId: string, height: number) => void;
+  selectSection: (sectionId: string) => void;
+
+  // Viewport-aware block operations
+  addBlockToSection: (type: BlockType, sectionId: string) => void;
+  updateBlockLayout: (sectionId: string, blockId: string, viewport: Viewport, layout: Partial<import("./lib/block-types").ViewportLayout>) => void;
+  findBlock: (blockId: string) => { section: Section; block: Block } | null;
 }
 
 const EditorContext = createContext<EditorContextValue | null>(null);
@@ -245,6 +264,24 @@ export function EditorProvider({ children }: { children: ReactNode }) {
   const [itemOffset, setItemOffset] = useState<{ x: number; y: number } | null>(null);
   // Track which block is currently being dragged (for multi-selection)
   const [draggedBlockIds, setDraggedBlockIds] = useState<string[]>([]);
+
+  // Section-based state (new)
+  const [sections, setSections] = useState<Section[]>(() => {
+    const saved = typeof window !== 'undefined' ? localStorage.getItem('editor-sections') : null;
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        return loadEditorState(parsed).sections;
+      } catch {
+        return createDefaultState().sections;
+      }
+    }
+    return createDefaultState().sections;
+  });
+
+  const [selectedSectionId, setSelectedSectionId] = useState<string | null>(
+    sections[0]?.id || null
+  );
 
   const historyRef = useRef<Block[][]>([initialBlocks]);
   const historyIndexRef = useRef<number>(0);
@@ -581,6 +618,123 @@ export function EditorProvider({ children }: { children: ReactNode }) {
     setDraggedBlockIds(ids);
   }, []);
 
+  // Section CRUD operations
+  const addSection = useCallback((templateId: string) => {
+    const template = SECTION_TEMPLATES.find(t => t.id === templateId);
+    if (!template) return;
+
+    const newSection = template.factory();
+    setSections(prev => [...prev, newSection]);
+    setSelectedSectionId(newSection.id);
+    showToast(`Section "${template.title}" added`);
+  }, [showToast]);
+
+  const deleteSection = useCallback((sectionId: string) => {
+    setSections(prev => {
+      if (prev.length <= 1) {
+        showToast("Must have at least 1 section");
+        return prev;
+      }
+      const filtered = prev.filter(s => s.id !== sectionId);
+      if (selectedSectionId === sectionId) {
+        setSelectedSectionId(filtered[0]?.id || null);
+      }
+      return filtered;
+    });
+  }, [selectedSectionId, showToast]);
+
+  const moveSectionUp = useCallback((sectionId: string) => {
+    setSections(prev => {
+      const idx = prev.findIndex(s => s.id === sectionId);
+      if (idx <= 0) return prev;
+      const newSections = [...prev];
+      const temp = newSections[idx - 1]!;
+      newSections[idx - 1] = newSections[idx]!;
+      newSections[idx] = temp;
+      return newSections;
+    });
+  }, []);
+
+  const moveSectionDown = useCallback((sectionId: string) => {
+    setSections(prev => {
+      const idx = prev.findIndex(s => s.id === sectionId);
+      if (idx === -1 || idx >= prev.length - 1) return prev;
+      const newSections = [...prev];
+      const temp = newSections[idx]!;
+      newSections[idx] = newSections[idx + 1]!;
+      newSections[idx + 1] = temp;
+      return newSections;
+    });
+  }, []);
+
+  const updateSectionHeight = useCallback((sectionId: string, height: number) => {
+    setSections(prev => prev.map(s =>
+      s.id === sectionId
+        ? { ...s, heights: { ...s.heights, [viewport]: Math.max(150, height) } }
+        : s
+    ));
+  }, [viewport]);
+
+  const selectSection = useCallback((sectionId: string) => {
+    setSelectedSectionId(sectionId);
+  }, []);
+
+  const addBlockToSection = useCallback((type: BlockType, sectionId: string) => {
+    const defaultProps = getDefaultProps(type);
+    const newBlock: Block = {
+      id: generateId(),
+      type,
+      hidden: false,
+      props: { ...defaultProps },
+      zIndex: 10,
+      layouts: {
+        desktop: { x: 60, y: 60, width: 200, height: 100, hidden: false },
+        tablet: { x: 40, y: 60, width: 200, height: 100, hidden: false },
+        mobile: { x: 20, y: 60, width: Math.min(200, 335), height: 100, hidden: false }
+      }
+    };
+
+    setSections(prev => prev.map(s =>
+      s.id === sectionId
+        ? { ...s, blocks: [...s.blocks, newBlock] }
+        : s
+    ));
+    setSelectedBlockId(newBlock.id);
+  }, [setSelectedBlockId]);
+
+  const updateBlockLayout = useCallback((
+    sectionId: string,
+    blockId: string,
+    vp: Viewport,
+    layoutUpdate: Partial<import("./lib/block-types").ViewportLayout>
+  ) => {
+    setSections(prev => prev.map(s => {
+      if (s.id !== sectionId) return s;
+      return {
+        ...s,
+        blocks: s.blocks.map(b => {
+          if (b.id !== blockId) return b;
+          if (!b.layouts) return b;
+          return {
+            ...b,
+            layouts: {
+              ...b.layouts,
+              [vp]: { ...b.layouts[vp], ...layoutUpdate }
+            }
+          };
+        })
+      };
+    }));
+  }, []);
+
+  const findBlock = useCallback((blockId: string): { section: Section; block: Block } | null => {
+    for (const section of sections) {
+      const block = section.blocks.find(b => b.id === blockId);
+      if (block) return { section, block };
+    }
+    return null;
+  }, [sections]);
+
   const value: EditorContextValue = {
     blocks,
     selectedBlockId,
@@ -649,6 +803,18 @@ export function EditorProvider({ children }: { children: ReactNode }) {
     setDragStart: setDragStartCallback,
     setItemOffset: setItemOffsetCallback,
     setDraggedBlockIds: setDraggedBlockIdsCallback,
+    // Section-based state
+    sections,
+    selectedSectionId,
+    addSection,
+    deleteSection,
+    moveSectionUp,
+    moveSectionDown,
+    updateSectionHeight,
+    selectSection,
+    addBlockToSection,
+    updateBlockLayout,
+    findBlock,
   };
 
   return <EditorContext.Provider value={value}>{children}</EditorContext.Provider>;
