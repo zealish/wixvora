@@ -31,14 +31,26 @@ export const SECTION_TEMPLATES: SectionTemplate[] = [
       blocks: [
         {
           id: createId('el'),
+          type: 'badge',
+          hidden: false,
+          props: { text: '🚀 Versi 3.0 Light Rilis', bgColor: '#dbeafe', textColor: '#1d4ed8', size: 'sm', rounded: 'rounded-full' },
+          zIndex: 11,
+          layouts: {
+            desktop: { x: 60, y: 60, width: 180, height: 30, hidden: false },
+            tablet: { x: 40, y: 50, width: 170, height: 28, hidden: false },
+            mobile: { x: 20, y: 40, width: 160, height: 26, hidden: false }
+          }
+        },
+        {
+          id: createId('el'),
           type: 'heading',
           hidden: false,
           props: { text: 'Tata Letak Persisten Untuk Desktop, Tablet & Mobile' },
           zIndex: 10,
           layouts: {
-            desktop: { x: 60, y: 90, width: 580, height: 100, hidden: false },
-            tablet: { x: 40, y: 75, width: 440, height: 100, hidden: false },
-            mobile: { x: 20, y: 65, width: 335, height: 110, hidden: false }
+            desktop: { x: 60, y: 100, width: 580, height: 100, hidden: false },
+            tablet: { x: 40, y: 85, width: 440, height: 100, hidden: false },
+            mobile: { x: 20, y: 75, width: 335, height: 110, hidden: false }
           }
         },
         {
@@ -48,9 +60,9 @@ export const SECTION_TEMPLATES: SectionTemplate[] = [
           props: { text: 'Geser posisi item pada mode Desktop tidak akan mengubah layout di Mobile!' },
           zIndex: 10,
           layouts: {
-            desktop: { x: 60, y: 200, width: 520, height: 70, hidden: false },
-            tablet: { x: 40, y: 185, width: 430, height: 80, hidden: false },
-            mobile: { x: 20, y: 185, width: 335, height: 110, hidden: false }
+            desktop: { x: 60, y: 210, width: 520, height: 70, hidden: false },
+            tablet: { x: 40, y: 195, width: 430, height: 80, hidden: false },
+            mobile: { x: 20, y: 195, width: 335, height: 110, hidden: false }
           }
         },
         {
@@ -60,9 +72,9 @@ export const SECTION_TEMPLATES: SectionTemplate[] = [
           props: { text: 'Mulai Sekarang', bgColor: '#2563eb', textColor: '#ffffff' },
           zIndex: 12,
           layouts: {
-            desktop: { x: 60, y: 290, width: 190, height: 48, hidden: false },
-            tablet: { x: 40, y: 280, width: 180, height: 46, hidden: false },
-            mobile: { x: 20, y: 305, width: 335, height: 48, hidden: false }
+            desktop: { x: 60, y: 300, width: 190, height: 48, hidden: false },
+            tablet: { x: 40, y: 290, width: 180, height: 46, hidden: false },
+            mobile: { x: 20, y: 315, width: 335, height: 48, hidden: false }
           }
         },
         {
@@ -74,7 +86,7 @@ export const SECTION_TEMPLATES: SectionTemplate[] = [
           layouts: {
             desktop: { x: 670, y: 50, width: 320, height: 320, hidden: false },
             tablet: { x: 480, y: 75, width: 250, height: 250, hidden: false },
-            mobile: { x: 20, y: 375, width: 335, height: 220, hidden: false }
+            mobile: { x: 20, y: 385, width: 335, height: 220, hidden: false }
           }
         }
       ]
@@ -107,9 +119,9 @@ export const SECTION_TEMPLATES: SectionTemplate[] = [
         },
         {
           id: createId('el'),
-          type: 'container',
+          type: 'card',
           hidden: false,
-          props: { title: 'Desktop Persistence', bgColor: '#ffffff' },
+          props: { title: 'Desktop Persistence', description: 'Tata letak desktop tetap konsisten di semua perangkat.', bgColor: '#ffffff', textColor: '#0f172a', accentColor: '#2563eb', rounded: 'rounded-2xl', shadow: 'shadow-md', borderWidth: 'border', borderColor: '#e2e8f0' },
           zIndex: 5,
           layouts: {
             desktop: { x: 60, y: 120, width: 280, height: 220, hidden: false },
@@ -119,9 +131,9 @@ export const SECTION_TEMPLATES: SectionTemplate[] = [
         },
         {
           id: createId('el'),
-          type: 'container',
+          type: 'card',
           hidden: false,
-          props: { title: 'Tablet Adaption', bgColor: '#ffffff' },
+          props: { title: 'Tablet Adaption', description: 'Penyesuaian otomatis untuk ukuran layar tablet.', bgColor: '#ffffff', textColor: '#0f172a', accentColor: '#059669', rounded: 'rounded-2xl', shadow: 'shadow-md', borderWidth: 'border', borderColor: '#e2e8f0' },
           zIndex: 5,
           layouts: {
             desktop: { x: 360, y: 120, width: 280, height: 220, hidden: false },
@@ -131,9 +143,9 @@ export const SECTION_TEMPLATES: SectionTemplate[] = [
         },
         {
           id: createId('el'),
-          type: 'container',
+          type: 'card',
           hidden: false,
-          props: { title: 'Mobile Optimization', bgColor: '#ffffff' },
+          props: { title: 'Mobile Optimization', description: 'Optimasi penuh untuk tampilan mobile responsif.', bgColor: '#ffffff', textColor: '#0f172a', accentColor: '#d97706', rounded: 'rounded-2xl', shadow: 'shadow-md', borderWidth: 'border', borderColor: '#e2e8f0' },
           zIndex: 5,
           layouts: {
             desktop: { x: 660, y: 120, width: 280, height: 220, hidden: false },
@@ -183,14 +195,142 @@ export const SECTION_TEMPLATES: SectionTemplate[] = [
         },
         {
           id: createId('el'),
-          type: 'hero',
+          type: 'button',
           hidden: false,
-          props: { text: 'Coba Gratis Sekarang', bgColor: '#ffffff', textColor: '#1d4ed8' },
+          props: { text: 'Coba Gratis Sekarang', url: '#', bgColor: '#ffffff', textColor: '#1d4ed8', size: 'md', rounded: 'rounded-lg', fullWidth: false },
           zIndex: 12,
           layouts: {
             desktop: { x: 412, y: 200, width: 200, height: 50, hidden: false },
             tablet: { x: 284, y: 190, width: 200, height: 50, hidden: false },
             mobile: { x: 20, y: 220, width: 335, height: 50, hidden: false }
+          }
+        }
+      ]
+    })
+  },
+  {
+    id: 'testimonials',
+    title: 'Testimonials',
+    category: 'Social Proof',
+    desc: 'Testimoni pelanggan dengan kartu testimonial dan info profil.',
+    previewBg: 'bg-violet-600',
+    factory: () => ({
+      id: createId('sec'),
+      title: 'Testimoni Pelanggan',
+      heights: { desktop: 500, tablet: 500, mobile: 780 },
+      bgColor: '#f8fafc',
+      bgGradient: '',
+      blocks: [
+        {
+          id: createId('el'),
+          type: 'heading',
+          hidden: false,
+          props: { text: 'Apa Kata Mereka Tentang Kami' },
+          zIndex: 10,
+          layouts: {
+            desktop: { x: 60, y: 40, width: 880, height: 50, hidden: false },
+            tablet: { x: 40, y: 30, width: 688, height: 50, hidden: false },
+            mobile: { x: 20, y: 20, width: 335, height: 60, hidden: false }
+          }
+        },
+        {
+          id: createId('el'),
+          type: 'card',
+          hidden: false,
+          props: { title: 'Andi Prasetyo', description: '"Platform ini mengubah cara kami membangun website. Sangat intuitif dan cepat."', bgColor: '#ffffff', textColor: '#0f172a', accentColor: '#2563eb', rounded: 'rounded-2xl', shadow: 'shadow-md', borderWidth: 'border', borderColor: '#e2e8f0' },
+          zIndex: 5,
+          layouts: {
+            desktop: { x: 60, y: 120, width: 280, height: 200, hidden: false },
+            tablet: { x: 40, y: 110, width: 220, height: 200, hidden: false },
+            mobile: { x: 20, y: 90, width: 335, height: 200, hidden: false }
+          }
+        },
+        {
+          id: createId('el'),
+          type: 'card',
+          hidden: false,
+          props: { title: 'Sari Dewi', description: '"Sangat mudah digunakan bahkan untuk pemula. Hasilnya profesional."', bgColor: '#ffffff', textColor: '#0f172a', accentColor: '#059669', rounded: 'rounded-2xl', shadow: 'shadow-md', borderWidth: 'border', borderColor: '#e2e8f0' },
+          zIndex: 5,
+          layouts: {
+            desktop: { x: 360, y: 120, width: 280, height: 200, hidden: false },
+            tablet: { x: 274, y: 110, width: 220, height: 200, hidden: false },
+            mobile: { x: 20, y: 310, width: 335, height: 200, hidden: false }
+          }
+        },
+        {
+          id: createId('el'),
+          type: 'card',
+          hidden: false,
+          props: { title: 'Budi Hartono', description: '"Fitur responsifnya luar biasa. Website kami kini sempurna di semua perangkat."', bgColor: '#ffffff', textColor: '#0f172a', accentColor: '#d97706', rounded: 'rounded-2xl', shadow: 'shadow-md', borderWidth: 'border', borderColor: '#e2e8f0' },
+          zIndex: 5,
+          layouts: {
+            desktop: { x: 660, y: 120, width: 280, height: 200, hidden: false },
+            tablet: { x: 508, y: 110, width: 220, height: 200, hidden: false },
+            mobile: { x: 20, y: 530, width: 335, height: 200, hidden: false }
+          }
+        }
+      ]
+    })
+  },
+  {
+    id: 'contact_info',
+    title: 'Contact Info',
+    category: 'Contact',
+    desc: 'Informasi kontak dengan kartu detail dan formulir singkat.',
+    previewBg: 'bg-cyan-600',
+    factory: () => ({
+      id: createId('sec'),
+      title: 'Hubungi Kami',
+      heights: { desktop: 380, tablet: 380, mobile: 520 },
+      bgColor: '#ffffff',
+      bgGradient: '',
+      blocks: [
+        {
+          id: createId('el'),
+          type: 'heading',
+          hidden: false,
+          props: { text: 'Hubungi Tim Kami' },
+          zIndex: 10,
+          layouts: {
+            desktop: { x: 60, y: 40, width: 880, height: 50, hidden: false },
+            tablet: { x: 40, y: 30, width: 688, height: 50, hidden: false },
+            mobile: { x: 20, y: 20, width: 335, height: 60, hidden: false }
+          }
+        },
+        {
+          id: createId('el'),
+          type: 'card',
+          hidden: false,
+          props: { title: 'Email', description: 'hello@webcraftstudio.com', bgColor: '#f0f9ff', textColor: '#0f172a', accentColor: '#2563eb', rounded: 'rounded-2xl', shadow: 'shadow-md', borderWidth: 'border', borderColor: '#bae6fd' },
+          zIndex: 5,
+          layouts: {
+            desktop: { x: 60, y: 120, width: 280, height: 160, hidden: false },
+            tablet: { x: 40, y: 110, width: 220, height: 160, hidden: false },
+            mobile: { x: 20, y: 90, width: 335, height: 140, hidden: false }
+          }
+        },
+        {
+          id: createId('el'),
+          type: 'card',
+          hidden: false,
+          props: { title: 'Telepon', description: '+62 21 555 0123', bgColor: '#f0fdf4', textColor: '#0f172a', accentColor: '#059669', rounded: 'rounded-2xl', shadow: 'shadow-md', borderWidth: 'border', borderColor: '#bbf7d0' },
+          zIndex: 5,
+          layouts: {
+            desktop: { x: 360, y: 120, width: 280, height: 160, hidden: false },
+            tablet: { x: 274, y: 110, width: 220, height: 160, hidden: false },
+            mobile: { x: 20, y: 250, width: 335, height: 140, hidden: false }
+          }
+        },
+        {
+          id: createId('el'),
+          type: 'card',
+          hidden: false,
+          props: { title: 'Alamat', description: 'Jl. Sudirman No. 123, Jakarta', bgColor: '#fffbeb', textColor: '#0f172a', accentColor: '#d97706', rounded: 'rounded-2xl', shadow: 'shadow-md', borderWidth: 'border', borderColor: '#fde68a' },
+          zIndex: 5,
+          layouts: {
+            desktop: { x: 660, y: 120, width: 280, height: 160, hidden: false },
+            tablet: { x: 508, y: 110, width: 220, height: 160, hidden: false },
+            mobile: { x: 20, y: 410, width: 335, height: 140, hidden: false }
           }
         }
       ]
