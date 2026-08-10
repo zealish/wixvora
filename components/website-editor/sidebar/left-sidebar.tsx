@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { useEditor } from "../editor-provider";
 import { Icon } from "../ui/icon-library";
 import { ELEMENT_PRESETS } from "../lib/element-presets";
+import { SECTION_TEMPLATES } from "../lib/section-templates";
 import { getSectionHeight } from "../lib/viewport-utils";
 
 type FlyoutPanel = "elements" | "sections" | "pages" | null;
@@ -19,10 +20,12 @@ export function LeftSidebar() {
     deleteSection,
     viewport,
     addElementFromPreset,
+    addSection,
   } = useEditor();
 
   const [activeFlyout, setActiveFlyout] = useState<FlyoutPanel>(null);
   const [showAddMenu, setShowAddMenu] = useState(false);
+  const [showSectionModal, setShowSectionModal] = useState(false);
   const flyoutRef = useRef<HTMLDivElement>(null);
   const addMenuRef = useRef<HTMLDivElement>(null);
 
@@ -74,7 +77,7 @@ export function LeftSidebar() {
                 </button>
                 <button
                   onClick={() => {
-                    setActiveFlyout("sections");
+                    setShowSectionModal(true);
                     setShowAddMenu(false);
                   }}
                   className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-slate-700 hover:bg-slate-50"
@@ -239,9 +242,7 @@ export function LeftSidebar() {
                 <button
                   onClick={() => {
                     setActiveFlyout(null);
-                    // Trigger section template modal
-                    const event = new CustomEvent("open-section-templates");
-                    window.dispatchEvent(event);
+                    setShowSectionModal(true);
                   }}
                   className="w-full rounded-xl bg-emerald-600 px-3 py-2.5 text-xs font-bold text-white transition hover:bg-emerald-500 flex items-center justify-center gap-2"
                 >
@@ -279,6 +280,46 @@ export function LeftSidebar() {
               </div>
             </>
           )}
+        </div>
+      )}
+
+      {/* Section Template Modal */}
+      {showSectionModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          <div className="w-[640px] max-h-[80vh] rounded-2xl bg-white shadow-2xl overflow-hidden flex flex-col">
+            <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
+              <h2 className="text-lg font-bold text-slate-900">Pilih Template Seksi</h2>
+              <button
+                onClick={() => setShowSectionModal(false)}
+                className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+              >
+                <Icon name="trash" size={18} />
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto p-6">
+              <div className="grid grid-cols-2 gap-4">
+                {SECTION_TEMPLATES.map((tpl) => (
+                  <button
+                    key={tpl.id}
+                    onClick={() => {
+                      addSection(tpl.id);
+                      setShowSectionModal(false);
+                    }}
+                    className="group rounded-xl border border-slate-200 bg-white text-left transition hover:border-blue-300 hover:shadow-md overflow-hidden"
+                  >
+                    <div className={`h-24 ${tpl.previewBg}`} />
+                    <div className="px-4 py-3">
+                      <div className="text-sm font-bold text-slate-900">{tpl.title}</div>
+                      <div className="text-[11px] text-slate-500 mt-0.5">{tpl.desc}</div>
+                      <div className="mt-2 text-[10px] font-medium text-blue-600 opacity-0 group-hover:opacity-100 transition">
+                        + Tambah Template
+                      </div>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </div>
