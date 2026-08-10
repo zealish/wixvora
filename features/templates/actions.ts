@@ -144,3 +144,37 @@ export async function setTemplateFeaturedAction(
     return { success: false, error: "An unexpected error occurred" };
   }
 }
+
+export async function updateTemplateSectionsAction(
+  id: string,
+  data: { sections?: any[]; pageSettings?: any; pages?: any[] }
+): Promise<TemplateActionResult> {
+  try {
+    const session = await getSession();
+    if (!session) return { success: false, error: "Unauthorized" };
+    if (session.user.accountType !== "STAFF")
+      return { success: false, error: "Forbidden: Staff access required" };
+
+    await assertCanModifyTemplate(id, session.user.id, "update");
+
+    const { sections, pageSettings, pages } = data;
+    const updateData: any = { id };
+    
+    if (pages && pages.length > 0) {
+      updateData.pages = pages;
+    } else if (sections) {
+      updateData.sections = sections;
+    }
+    
+    if (pageSettings) updateData.pageSettings = pageSettings;
+    
+    await updateTemplate(id, updateData, session.user.id);
+
+    revalidatePath(TEMPLATES_PATH);
+    revalidatePath(`/templates-editor/${id}`);
+    return { success: true };
+  } catch (error) {
+    if (error instanceof Error) return { success: false, error: error.message };
+    return { success: false, error: "An unexpected error occurred" };
+  }
+}
