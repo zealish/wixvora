@@ -150,16 +150,12 @@ export async function updateTemplateSectionsAction(
     
     if (pageSettings) updateData.pageSettings = JSON.stringify(pageSettings);
     
-    console.log("📥 [ACTION] Update template with:", { hasPages: !!pages, pagesCount: pages?.length || 0 });
-    
     await updateTemplate(id, updateData, session.user.id);
 
-    console.log("✅ [ACTION] Template updated successfully");
     revalidatePath(TEMPLATES_PATH);
     revalidatePath(`/templates-editor/${id}`);
     return { success: true };
   } catch (error) {
-    console.error("❌ [ACTION] Failed to update template:", error);
     if (error instanceof Error) return { success: false, error: error.message };
     return { success: false, error: "An unexpected error occurred" };
   }

@@ -71,11 +71,6 @@ export const staffNavGroups: NavGroup[] = [
         icon: "LayoutTemplate",
         permission: PERMISSIONS.TEMPLATES_VIEW,
       },
-      {
-        title: "Website Editor",
-        href: "/website-editor",
-        icon: "Sparkles",
-      },
     ],
   },
   {

@@ -153,26 +153,15 @@ export async function updateTemplate(
   
   // Save both pages (multi-page) and sections (legacy compatibility)
   if (pagesData && pagesData.length > 0) {
-    console.log("💾 [SERVICE] Saving pages:", JSON.stringify(pagesData, null, 2));
     // Stringify pages array for database storage
     patch.pages = JSON.stringify(pagesData);
     // Also flatten to sections for backward compatibility
     const flattenedSections = pagesData.flatMap((p: any) => p.sections);
     patch.sections = JSON.stringify(flattenedSections);
-    console.log("💾 [SERVICE] Flattened sections:", flattenedSections.length);
   } else if (data.sections !== undefined) {
     // Stringify sections for database storage  
-    const sectionsArray = Array.isArray(data.sections) ? data.sections : [];
-    console.log("💾 [SERVICE] Saving sections:", `${sectionsArray.length} sections`);
     patch.sections = JSON.stringify(data.sections);
   }
-  
-  console.log("📝 [SERVICE] Final patch:", {
-    hasPages: !!patch.pages,
-    pagesLength: typeof patch.pages === 'string' ? patch.pages.length : 0,
-    hasSections: !!patch.sections,
-    sectionsLength: typeof patch.sections === 'string' ? patch.sections.length : 0
-  });
   
   if (data.pageSettings !== undefined) patch.pageSettings = pageSettings;
   if (data.isFeatured !== undefined) patch.isFeatured = data.isFeatured;

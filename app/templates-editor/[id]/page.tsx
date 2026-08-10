@@ -68,8 +68,6 @@ export default async function TemplateEditorPage({
         sortOrder: 0,
       }];
 
-  console.log("📋 [TEMPLATE] Initial pages:", initialPages);
-
   return (
     <TemplateEditorWrapper
       templateId={template.id}

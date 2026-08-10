@@ -17,7 +17,6 @@ function parseNestedSections(rawSections: any): any[] {
       try {
         parsedSection.elements = JSON.parse(section.elements);
       } catch (e) {
-        console.error("Failed to parse elements:", e);
         parsedSection.elements = [];
       }
     } else if (!Array.isArray(section.elements)) {
@@ -29,7 +28,6 @@ function parseNestedSections(rawSections: any): any[] {
       try {
         parsedSection.sections = parseNestedSections(JSON.parse(section.sections));
       } catch (e) {
-        console.error("Failed to parse nested sections:", e);
         parsedSection.sections = [];
       }
     } else if (!Array.isArray(section.sections)) {
@@ -128,13 +126,6 @@ export async function getTemplateById(id: string): Promise<Template | null> {
   // Cast row to any to access all fields including new ones
   const anyRow = row as any;
   
-  console.log("📋 [QUERY] Template loaded from DB:", {
-    id: anyRow.id,
-    hasPages: !!anyRow.pages,
-    pagesLength: Array.isArray(anyRow.pages) ? anyRow.pages.length : (typeof anyRow.pages === 'string' ? 'JSON string' : 'N/A'),
-    sectionsCount: Array.isArray(anyRow.sections) ? anyRow.sections.length : (typeof anyRow.sections === 'string' ? 'JSON string' : 'N/A')
-  });
-
   // Parse JSON strings back to arrays with deep nesting
   let parsedPages: any[] = [];
   
@@ -150,7 +141,6 @@ export async function getTemplateById(id: string): Promise<Template | null> {
           : page.pageSettings || {},
       })) : [];
     } catch (e) {
-      console.error("Failed to parse pages:", e);
       parsedPages = [];
     }
   } else if (Array.isArray(anyRow.pages)) {
@@ -162,14 +152,9 @@ export async function getTemplateById(id: string): Promise<Template | null> {
     try {
       parsedPageSettings = JSON.parse(anyRow.pageSettings);
     } catch (e) {
-      console.error("Failed to parse pageSettings:", e);
+      // Ignore parse errors
     }
   }
-
-  console.log("✅ [QUERY] Parsed data:", {
-    pagesLength: parsedPages.length,
-    pageSettingsType: typeof parsedPageSettings
-  });
 
   // Flatten pages to sections for backward compatibility
   const flattenedSections = parsedPages.flatMap((p: any) => (Array.isArray(p.sections) ? p.sections : []));
