@@ -1,6 +1,4 @@
-// components/website-editor/lib/viewport-utils.ts
-
-import type { Block, Section, Viewport, ViewportLayout } from './block-types';
+import type { Element, Section, Viewport, ViewportLayout } from './block-types';
 
 export const VIEWPORT_WIDTHS: Record<Viewport, number> = {
   desktop: 1024,
@@ -8,62 +6,49 @@ export const VIEWPORT_WIDTHS: Record<Viewport, number> = {
   mobile: 375
 };
 
-const DEFAULT_LAYOUT: ViewportLayout = {
-  x: 40,
-  y: 40,
-  width: 200,
-  height: 100,
-  hidden: false
-};
-
-/**
- * Get the layout for a block in a specific viewport.
- * Falls back to auto-scaling from desktop if viewport layout is missing.
- */
-export function getLayout(block: Block, viewport: Viewport): ViewportLayout {
-  // If block has explicit layouts, use them
-  if (block.layouts && block.layouts[viewport]) {
-    return block.layouts[viewport];
+export function getLayout(element: Element, viewport: Viewport): ViewportLayout {
+  if (element.layouts && element.layouts[viewport]) {
+    return element.layouts[viewport];
   }
 
-  // Fallback: use desktop as base
-  const baseLayout: ViewportLayout = block.layouts?.desktop || {
-    x: block.x ?? DEFAULT_LAYOUT.x,
-    y: block.y ?? DEFAULT_LAYOUT.y,
-    width: block.width ?? DEFAULT_LAYOUT.width,
-    height: block.height ?? DEFAULT_LAYOUT.height,
-    hidden: block.hidden ?? DEFAULT_LAYOUT.hidden
+  const desk = element.layouts?.desktop || {
+    x: 40,
+    y: 40,
+    width: 200,
+    height: 50,
+    hidden: false
   };
 
-  if (viewport === 'desktop') return baseLayout;
+  if (viewport === 'desktop') return desk;
 
-  // Auto-scale for tablet/mobile
-  const targetWidth = VIEWPORT_WIDTHS[viewport];
-  const desktopWidth = VIEWPORT_WIDTHS.desktop;
-  const ratio = targetWidth / desktopWidth;
+  const targetCanvasWidth = VIEWPORT_WIDTHS[viewport];
+  const deskCanvasWidth = VIEWPORT_WIDTHS.desktop;
+  const ratio = targetCanvasWidth / deskCanvasWidth;
+
+  const scaledWidth = Math.min(desk.width, targetCanvasWidth - 40);
+  let scaledX = Math.round(desk.x * ratio);
+  if (scaledX + scaledWidth > targetCanvasWidth - 20) {
+    scaledX = Math.max(20, targetCanvasWidth - scaledWidth - 20);
+  }
 
   return {
-    x: Math.max(20, Math.round(baseLayout.x * ratio)),
-    y: baseLayout.y,
-    width: Math.min(baseLayout.width, targetWidth - 40),
-    height: baseLayout.height,
-    hidden: baseLayout.hidden
+    x: Math.max(10, scaledX),
+    y: desk.y,
+    width: scaledWidth,
+    height: desk.height,
+    hidden: desk.hidden || false
   };
 }
 
-/**
- * Get the height for a section in a specific viewport.
- */
 export function getSectionHeight(section: Section, viewport: Viewport): number {
   if (section.heights && section.heights[viewport] !== undefined) {
     return section.heights[viewport];
   }
-  return 600;
+  if (viewport === 'mobile') return Math.max(section.heights?.desktop || 400, 520);
+  if (viewport === 'tablet') return Math.max(section.heights?.desktop || 400, 460);
+  return section.heights?.desktop || 480;
 }
 
-/**
- * Constrain a position within section boundaries.
- */
 export function constrainToSection(
   x: number,
   y: number,

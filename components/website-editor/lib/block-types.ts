@@ -1,17 +1,4 @@
-export type BlockType =
-  | 'navbar'
-  | 'hero'
-  | 'container'
-  | 'grid_custom'
-  | 'heading'
-  | 'paragraph'
-  | 'image'
-  | 'pricing'
-  | 'form_contact'
-  | 'footer'
-  | 'button'
-  | 'badge'
-  | 'card';
+export type ElementType = 'heading' | 'paragraph' | 'button' | 'badge' | 'image' | 'card';
 
 export type Viewport = 'desktop' | 'tablet' | 'mobile';
 
@@ -23,32 +10,38 @@ export interface ViewportLayout {
   hidden: boolean;
 }
 
-export interface Block {
+export interface Element {
   id: string;
-  type: BlockType;
-  hidden: boolean;
-  props: any;
-  children?: Block[] | undefined;
-
-  // New: per-viewport layouts
-  layouts?: {
+  type: ElementType;
+  name: string;
+  layouts: {
     desktop: ViewportLayout;
     tablet: ViewportLayout;
     mobile: ViewportLayout;
   };
-  zIndex?: number;
+  zIndex: number;
 
-  // Legacy positioning (deprecated, used for migration)
-  x?: number;
-  y?: number;
-  width?: number;
-  height?: number;
+  // Content props (flat on element)
+  text?: string;
+  title?: string;
+  subtitle?: string;
+  url?: string;
+  alt?: string;
+  fontSize?: string;
+  fontWeight?: string;
+  textColor?: string;
+  bgColor?: string;
+  borderColor?: string;
+  borderRadius?: string;
+  accentColor?: string;
+  textAlign?: string;
+  objectFit?: string;
 }
 
 export interface Section {
   id: string;
   title: string;
-  blocks: Block[];
+  elements: Element[];
   heights: {
     desktop: number;
     tablet: number;

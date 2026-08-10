@@ -479,3 +479,63 @@
   background-size: 28px 28px;
   background-image: radial-gradient(circle, rgba(15, 23, 42, 0.08) 1px, transparent 1px);
 }
+
+/* Website Editor Canvas */
+.canvas-grid-pattern {
+  background-color: #f8fafc;
+  background-size: 20px 20px;
+  background-image: 
+    linear-gradient(to right, rgba(226, 232, 240, 0.8) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(226, 232, 240, 0.8) 1px, transparent 1px);
+}
+
+.wix-section-container {
+  position: relative;
+  user-select: none;
+  transition: border-color 0.15s ease, height 0.2s ease;
+}
+
+.wix-element-item {
+  position: absolute !important;
+  user-select: none;
+  touch-action: none;
+}
+
+.element-outline {
+  outline: 1.5px dashed rgba(37, 99, 235, 0.4);
+  transition: outline-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.element-outline:hover {
+  outline: 2px solid #2563eb;
+}
+
+.element-outline.is-selected {
+  outline: 2px solid #2563eb !important;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15);
+}
+
+.resize-handle {
+  width: 10px;
+  height: 10px;
+  background-color: #2563eb;
+  border: 2px solid #ffffff;
+  border-radius: 2px;
+  position: absolute;
+  z-index: 50;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.resize-handle-br { bottom: -5px; right: -5px; cursor: se-resize; }
+.resize-handle-r { top: calc(50% - 5px); right: -5px; cursor: e-resize; }
+.resize-handle-b { bottom: -5px; left: calc(50% - 5px); cursor: s-resize; }
+
+.snap-guide-line-x {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  border-left: 1px dashed #ef4444;
+  pointer-events: none;
+  z-index: 99;
+}
