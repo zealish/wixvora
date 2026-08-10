@@ -58,6 +58,7 @@ interface EditorContextValue {
   addPage: (title: string) => void;
   removePage: (pageId: string) => void;
   updatePage: (pageId: string, updates: Partial<Pick<Page, 'title' | 'slug' | 'pageSettings' | 'navigationSettings'>>) => void;
+  renamePage: (pageId: string, newTitle: string) => void;
   setCurrentPage: (pageId: string) => void;
   reorderPages: (fromIndex: number, toIndex: number) => void;
   duplicatePage: (pageId: string) => void;
@@ -432,13 +433,28 @@ export function EditorProvider({
   }, [pages, currentPageId, pushHistory, showToast]);
 
   const updatePage = useCallback((pageId: string, updates: Partial<Pick<Page, 'title' | 'slug' | 'pageSettings' | 'navigationSettings'>>) => {
-    const updatedPages = pages.map(p =>
-      p.id === pageId ? { ...p, ...updates } : p
-    );
+    const updatedPages = pages.map(p => {
+      if (p.id !== pageId) return p;
+      
+      const newUpdates: any = { ...updates };
+      
+      // Auto-generate slug from title if title is being updated and slug wasn't provided
+      if (updates.title && !updates.slug) {
+        newUpdates.slug = updates.title.toLowerCase().replace(/\s+/g, '-').replace(/[^\w\-]+/g, '');
+      }
+      
+      return { ...p, ...newUpdates };
+    });
+    
     pushHistory(updatedPages);
     setPages(updatedPages);
     showToast("Halaman diperbarui");
   }, [pages, pushHistory, showToast]);
+
+  const renamePage = useCallback((pageId: string, newTitle: string) => {
+    updatePage(pageId, { title: newTitle });
+    showToast(`Halaman "${newTitle}" berhasil diubah namanya`);
+  }, [updatePage, showToast]);
 
   const setCurrentPage = useCallback((pageId: string) => {
     setCurrentPageId(pageId);
@@ -531,6 +547,7 @@ export function EditorProvider({
     addPage,
     removePage,
     updatePage,
+    renamePage,
     setCurrentPage,
     reorderPages,
     duplicatePage,
