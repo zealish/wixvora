@@ -38,7 +38,8 @@ export type IconName =
   | "underline"
   | "alignLeft"
   | "alignCenter"
-  | "alignRight";
+  | "alignRight"
+  | "chevronRight";
 
 const icons: Record<IconName, React.ReactElement> = {
   plus: (
@@ -276,6 +277,11 @@ const icons: Record<IconName, React.ReactElement> = {
       <line x1="21" y1="6" x2="3" y2="6" />
       <line x1="21" y1="14" x2="3" y2="14" />
       <line x1="21" y1="18" x2="7" y2="18" />
+    </>
+  ),
+  chevronRight: (
+    <>
+      <polyline points="9,18 15,12 9,6" />
     </>
   ),
 };
