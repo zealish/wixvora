@@ -3,7 +3,6 @@
 import { useRef } from "react";
 import { useEditor } from "../editor-provider";
 import { Icon } from "../ui/icon-library";
-import { ViewportSwitcher } from "./viewport-switcher";
 
 export function EditorTopbar() {
   const {
@@ -18,6 +17,8 @@ export function EditorTopbar() {
     setShowExportModal,
     zoom,
     setZoom,
+    viewport,
+    setViewport,
   } = useEditor();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -50,53 +51,64 @@ export function EditorTopbar() {
   };
 
   return (
-    <header className="flex h-16 items-center justify-between border-b border-slate-200 bg-white/90 px-4 backdrop-blur-md">
-      <div className="flex items-center gap-3">
-        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-blue-600">
-          <Icon name="sparkles" size={18} className="text-white" />
+    <header className="flex h-14 items-center justify-between border-b border-slate-200 bg-white/90 px-4 backdrop-blur-md">
+      {/* Left group: Brand + Viewport */}
+      <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-blue-600">
+            <Icon name="sparkles" size={18} className="text-white" />
+          </div>
+          <h1 className="text-base font-bold text-slate-900">WixVora</h1>
         </div>
-        <h1 className="hidden text-lg font-bold text-slate-900 sm:block">
-          Wixvora Studio
-        </h1>
-        {/* <span className="hidden rounded-md bg-blue-100 px-2 py-0.5 text-xs font-bold text-blue-700 sm:block">
-          LIGHT PRO
-        </span> */}
+
+        <div className="mx-1 h-6 w-px bg-slate-200" />
+
+        <div className="flex items-center gap-1 rounded-lg bg-slate-100 p-1">
+          <button
+            onClick={() => setViewport("desktop")}
+            className={`rounded-md p-1.5 transition-colors ${
+              viewport === "desktop"
+                ? "bg-white text-blue-600 shadow-sm"
+                : "text-slate-500 hover:text-slate-700"
+            }`}
+            title="Desktop"
+          >
+            <Icon name="desktop" size={16} />
+          </button>
+          <button
+            onClick={() => setViewport("tablet")}
+            className={`rounded-md p-1.5 transition-colors ${
+              viewport === "tablet"
+                ? "bg-white text-blue-600 shadow-sm"
+                : "text-slate-500 hover:text-slate-700"
+            }`}
+            title="Tablet"
+          >
+            <Icon name="tablet" size={16} />
+          </button>
+          <button
+            onClick={() => setViewport("mobile")}
+            className={`rounded-md p-1.5 transition-colors ${
+              viewport === "mobile"
+                ? "bg-white text-blue-600 shadow-sm"
+                : "text-slate-500 hover:text-slate-700"
+            }`}
+            title="Mobile"
+          >
+            <Icon name="mobile" size={16} />
+          </button>
+        </div>
       </div>
 
+      {/* Center group: Undo/Redo + Zoom + Preview */}
       <div className="flex items-center gap-2">
-        <ViewportSwitcher />
-        
-        <div className="mx-2 h-6 w-px bg-slate-200" />
-        
-        <button
-          onClick={() => setZoom(Math.max(0.25, zoom - 0.1))}
-          className="rounded-lg p-2 text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900"
-          title="Zoom out"
-        >
-          <Icon name="minus" size={18} />
-        </button>
-        
-        <div className="min-w-[3rem] text-center text-sm font-medium text-slate-700">
-          {Math.round(zoom * 100)}%
-        </div>
-        
-        <button
-          onClick={() => setZoom(Math.min(4, zoom + 0.1))}
-          className="rounded-lg p-2 text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900"
-          title="Zoom in"
-        >
-          <Icon name="plus" size={18} />
-        </button>
-      </div>
-
-      <div className="flex items-center gap-1">
         <button
           onClick={undo}
           disabled={!canUndo}
           className="rounded-lg p-2 text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900 disabled:cursor-not-allowed disabled:opacity-30"
           title="Undo"
         >
-          <Icon name="undo" size={18} />
+          <Icon name="undo" size={16} />
         </button>
         <button
           onClick={redo}
@@ -104,31 +116,27 @@ export function EditorTopbar() {
           className="rounded-lg p-2 text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900 disabled:cursor-not-allowed disabled:opacity-30"
           title="Redo"
         >
-          <Icon name="redo" size={18} />
+          <Icon name="redo" size={16} />
         </button>
 
         <div className="mx-1 h-6 w-px bg-slate-200" />
 
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept=".json"
-          onChange={handleImport}
-          className="hidden"
-        />
         <button
-          onClick={() => fileInputRef.current?.click()}
-          className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100"
+          onClick={() => setZoom(Math.max(0.25, zoom - 0.1))}
+          className="rounded-lg p-2 text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900"
+          title="Zoom out"
         >
-          <Icon name="upload" size={16} />
-          <span className="hidden md:inline">Import JSON</span>
+          <Icon name="minus" size={16} />
         </button>
+        <div className="min-w-[3rem] text-center text-xs font-medium text-slate-700">
+          {Math.round(zoom * 100)}%
+        </div>
         <button
-          onClick={handleExportJSON}
-          className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100"
+          onClick={() => setZoom(Math.min(4, zoom + 0.1))}
+          className="rounded-lg p-2 text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900"
+          title="Zoom in"
         >
-          <Icon name="download" size={16} />
-          <span className="hidden md:inline">Export JSON</span>
+          <Icon name="plus" size={16} />
         </button>
 
         <div className="mx-1 h-6 w-px bg-slate-200" />
@@ -144,12 +152,46 @@ export function EditorTopbar() {
           <Icon name={isPreviewMode ? "eyeOff" : "eye"} size={16} />
           <span className="hidden md:inline">Preview</span>
         </button>
+      </div>
+
+      {/* Right group: Publish + Export */}
+      <div className="flex items-center gap-2">
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".json"
+          onChange={handleImport}
+          className="hidden"
+        />
+        <button
+          onClick={() => fileInputRef.current?.click()}
+          className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100"
+        >
+          <Icon name="upload" size={16} />
+          <span className="hidden md:inline">Import</span>
+        </button>
+        <button
+          onClick={handleExportJSON}
+          className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100"
+        >
+          <Icon name="download" size={16} />
+          <span className="hidden md:inline">Export</span>
+        </button>
+
+        <div className="mx-1 h-6 w-px bg-slate-200" />
+
         <button
           onClick={() => setShowExportModal(true)}
-          className="flex items-center gap-1.5 rounded-lg bg-blue-600 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-blue-700"
+          className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100"
         >
           <Icon name="code" size={16} />
           <span className="hidden md:inline">Export HTML</span>
+        </button>
+        <button
+          className="flex items-center gap-1.5 rounded-lg bg-blue-600 px-4 py-1.5 text-sm font-medium text-white transition-colors hover:bg-blue-700"
+        >
+          <Icon name="publish" size={16} />
+          <span className="hidden md:inline">Publish</span>
         </button>
       </div>
     </header>
