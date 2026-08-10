@@ -43,7 +43,9 @@ export type IconName =
   | "publish"
   | "page"
   | "move"
-  | "resize";
+  | "resize"
+  | "arrowLeft"
+  | "save";
 
 const icons: Record<IconName, React.ReactElement> = {
   plus: (
@@ -320,6 +322,19 @@ const icons: Record<IconName, React.ReactElement> = {
       <polyline points="9 21 3 21 3 15" />
       <line x1="21" y1="3" x2="14" y2="10" />
       <line x1="3" y1="21" x2="10" y2="14" />
+    </>
+  ),
+  arrowLeft: (
+    <>
+      <line x1="19" y1="12" x2="5" y2="12" />
+      <polyline points="12,19 5,12 12,5" />
+    </>
+  ),
+  save: (
+    <>
+      <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+      <polyline points="17 21 17 13 7 13 7 21" />
+      <polyline points="7 3 7 8 15 8" />
     </>
   ),
 };

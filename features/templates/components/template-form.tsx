@@ -10,7 +10,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import type { CategoryWithChildren } from "@/features/business-categories/types";
-import { DEFAULT_PAGE_SETTINGS } from "../lib/block-types";
 import type { Template } from "../types";
 import { createTemplateAction, updateTemplateAction } from "../actions";
 
@@ -55,8 +54,8 @@ export function TemplateForm({
         description: values.description.trim() || null,
         previewImageUrl: values.previewImageUrl.trim() || null,
         categoryId: values.categoryId ? values.categoryId : null,
-        blocks: [], // Empty blocks - use full-page editor for block editing
-        pageSettings: DEFAULT_PAGE_SETTINGS,
+        sections: [], // Empty sections - use full-page editor for block editing
+        pageSettings: { title: 'My Website', bgColor: '#ffffff', fontFamily: 'font-sans' },
         isFeatured: values.isFeatured,
         sortOrder: Number(values.sortOrder) || 0,
         status,

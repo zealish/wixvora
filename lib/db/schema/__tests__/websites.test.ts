@@ -20,7 +20,7 @@ function assertEqual<T>(actual: T, expected: T, message: string): void {
 }
 
 let passedTests = 0;
-let failedTests = 0;
+const failedTests = 0;
 
 console.log("Running Websites Schema Tests...\n");
 
@@ -30,7 +30,6 @@ try {
   // ============================================================================
   console.log("Testing Table Definition...");
   
-  // We can't access table name directly from pgTable, but we can verify structure
   assert(
     websites.id.primary === true,
     "id column should be primary key"
@@ -54,7 +53,7 @@ try {
     "name", "slug", "description", "ownerId", "templateId", 
     "status", "isPublished", "publishedAt", "mainDomain", "subdomain",
     "customDomain", "customDomainVerified", "sslEnabled", "analyticsId", 
-    "analyticsEnabled", "htmlContent", "cssStyles", "jsScripts",
+    "analyticsEnabled", "sections", "pageSettings",
     "seoTitle", "seoDescription", "seoKeywords", "seoImage", 
     "seoCanonicalUrl", "themeSettings", "layoutSettings",
     "createdAt", "updatedAt", "deletedAt"
@@ -156,45 +155,6 @@ try {
   passedTests++;
   
   assert(
-    websites.htmlContent.notNull === true,
-    "htmlContent should be notNull"
-  );
-  passedTests++;
-  
-  assertEqual(
-    websites.htmlContent.default,
-    "",
-    "htmlContent default should be empty string"
-  );
-  passedTests++;
-  
-  assert(
-    websites.cssStyles.notNull === true,
-    "cssStyles should be notNull"
-  );
-  passedTests++;
-  
-  assertEqual(
-    websites.cssStyles.default,
-    "",
-    "cssStyles default should be empty string"
-  );
-  passedTests++;
-  
-  assert(
-    websites.jsScripts.notNull === true,
-    "jsScripts should be notNull"
-  );
-  passedTests++;
-  
-  assertEqual(
-    websites.jsScripts.default,
-    "",
-    "jsScripts default should be empty string"
-  );
-  passedTests++;
-  
-  assert(
     websites.createdAt.notNull === true,
     "createdAt should be notNull"
   );
@@ -248,27 +208,6 @@ try {
   );
   passedTests++;
   
-  assertEqual(
-    websites.htmlContent.default,
-    "",
-    "htmlContent default"
-  );
-  passedTests++;
-  
-  assertEqual(
-    websites.cssStyles.default,
-    "",
-    "cssStyles default"
-  );
-  passedTests++;
-  
-  assertEqual(
-    websites.jsScripts.default,
-    "",
-    "jsScripts default"
-  );
-  passedTests++;
-  
   console.log("✓ Default value tests passed\n");
 
   // ============================================================================
@@ -306,9 +245,6 @@ try {
     name: "Test Site",
     slug: "test-site",
     ownerId: "123e4567-e89b-12d3-a456-426614174000",
-    htmlContent: "<div></div>",
-    cssStyles: "",
-    jsScripts: "",
   };
   
   assertEqual(

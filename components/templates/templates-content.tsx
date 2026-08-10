@@ -163,7 +163,7 @@ export function TemplatesContent() {
   const itemsPerPage = 9;
 
   const filteredTemplates = useMemo(() => {
-    let filtered = templatesData.filter((template) => {
+    const filtered = templatesData.filter((template) => {
       const matchCategory =
         selectedCategory === "all" || template.category === selectedCategory;
       const matchFilter =

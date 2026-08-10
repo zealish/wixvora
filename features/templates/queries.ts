@@ -93,7 +93,7 @@ export async function getTemplateById(id: string): Promise<Template | null> {
     description: row.description,
     previewImageUrl: row.previewImageUrl,
     categoryId: row.categoryId,
-    blocks: row.blocksJson,
+    sections: row.sections,
     pageSettings: row.pageSettings,
     htmlSnapshot: row.htmlSnapshot,
     isFeatured: row.isFeatured,

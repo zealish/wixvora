@@ -1,4 +1,4 @@
-import type { BlockConfig, PageSettings } from "./lib/block-types";
+import type { Section, PageSettings } from "@/components/website-editor/lib/block-types";
 
 export type TemplateStatus = "draft" | "published";
 
@@ -9,7 +9,7 @@ export interface Template {
   description: string | null;
   previewImageUrl: string | null;
   categoryId: string | null;
-  blocks: BlockConfig[];
+  sections: Section[];
   pageSettings: PageSettings;
   htmlSnapshot: string;
   isFeatured: boolean;

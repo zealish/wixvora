@@ -1,11 +1,12 @@
 "use client";
 
 import { createContext, useContext, useState, useCallback, type ReactNode } from "react";
-import type { Element, Section, Viewport, ViewportLayout, PageSettings, Page } from "./lib/block-types";
+import type { Element, Section, Viewport, LayoutSettings, PageSettings, Page } from "./lib/block-types";
 import { SECTION_TEMPLATES } from "./lib/section-templates";
 import { ELEMENT_PRESETS } from "./lib/element-presets";
 import { getLayout, VIEWPORT_WIDTHS } from "./lib/viewport-utils";
 import { generateFullHTML } from "./lib/html-generator";
+import { migrateLegacyToPages } from "@/features/multipage/migration";
 
 interface EditorContextValue {
   sections: Section[];
