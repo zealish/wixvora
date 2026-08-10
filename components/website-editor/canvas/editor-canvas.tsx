@@ -28,6 +28,8 @@ export const EditorCanvas = memo(function EditorCanvas() {
     selectSection,
     updateBlockLayout,
     updateSectionHeight,
+    // Snap guide
+    snapGuideX,
   } = useEditor();
   
   // Keyboard shortcuts for block editing
@@ -143,7 +145,7 @@ export const EditorCanvas = memo(function EditorCanvas() {
          </div>
        )}
 
-       <div className="flex-1 overflow-y-auto p-4 md:p-8 flex flex-col items-center relative">
+        <div className="flex-1 overflow-y-auto p-4 md:p-8 flex flex-col items-center relative canvas-grid-pattern">
          {/* Viewport indicator */}
          {!isPreviewMode && (
            <div className="mb-3 px-3 py-1 rounded-full bg-white border border-slate-200 text-slate-700 text-[11px] font-semibold shadow-sm flex items-center space-x-2">
@@ -171,14 +173,20 @@ export const EditorCanvas = memo(function EditorCanvas() {
                    backgroundColor: section.bgColor
                  }}
                >
-                 {/* Section label */}
-                 {!isPreviewMode && isSectionSelected && (
-                   <div className="absolute top-2 left-2 z-30 flex items-center space-x-2">
-                     <span className="px-2.5 py-1 rounded-lg bg-white/95 text-slate-800 text-[10px] font-bold tracking-wider border border-slate-200 shadow-sm">
-                       SECTION: {section.title} ({sectionHeight}px)
-                     </span>
-                   </div>
-                 )}
+                  {/* Section label */}
+                  {!isPreviewMode && isSectionSelected && (
+                    <div className="absolute top-2 left-2 z-30 flex items-center space-x-2">
+                      <span className="px-2.5 py-1 rounded-lg bg-white/95 text-slate-800 text-[10px] font-bold tracking-wider border border-slate-200 shadow-sm">
+                        SEKSI: {section.title} ({sectionHeight}px)
+                      </span>
+                      <button
+                        onClick={(e) => { e.stopPropagation(); /* TODO: open element flyout */ }}
+                        className="px-2 py-1 rounded-lg bg-blue-600 text-white text-[10px] font-bold shadow-sm hover:bg-blue-500 transition"
+                      >
+                        + Elemen
+                      </button>
+                    </div>
+                  )}
 
                  {/* Section resize handle */}
                  {!isPreviewMode && isSectionSelected && (
@@ -208,8 +216,16 @@ export const EditorCanvas = memo(function EditorCanvas() {
                    >
                      <div className="text-[9px] font-extrabold uppercase tracking-widest">
                        Height ({viewport.toUpperCase()}): {sectionHeight}px
-                     </div>
-                   </div>
+          </div>
+
+          {/* Snap guide line */}
+          {!isPreviewMode && snapGuideX !== null && (
+            <div
+              className="absolute top-0 bottom-0 w-px bg-red-500 border-l border-dashed border-red-400 pointer-events-none z-50"
+              style={{ left: `calc(50% + ${snapGuideX}px)` }}
+            />
+          )}
+        </div>
                  )}
 
                  {/* Blocks within section */}
@@ -284,39 +300,59 @@ export const EditorCanvas = memo(function EditorCanvas() {
                            setIsEditingInline={setIsEditingInline}
                          />
 
-                         {/* Resize handles */}
-                         {!isPreviewMode && isSelected && (
-                           <>
-                             <div
-                               onMouseDown={(e) => {
-                                 e.stopPropagation();
-                                 const startX = e.clientX;
-                                 const startY = e.clientY;
-                                 const startW = layout.width;
-                                 const startH = layout.height;
+                          {/* Resize handles */}
+                          {!isPreviewMode && isSelected && (
+                            <>
+                              <div
+                                onMouseDown={(e) => {
+                                  e.stopPropagation();
+                                  const startX = e.clientX;
+                                  const startY = e.clientY;
+                                  const startW = layout.width;
+                                  const startH = layout.height;
 
-                                 const handleMove = (moveE: MouseEvent) => {
-                                   let newW = Math.max(30, startW + (moveE.clientX - startX));
-                                   let newH = Math.max(20, startH + (moveE.clientY - startY));
-                                   if (gridEnabled) {
-                                     newW = Math.round(newW / 10) * 10;
-                                     newH = Math.round(newH / 10) * 10;
-                                   }
-                                   updateBlockLayout(section.id, block.id, viewport, { width: newW, height: newH });
-                                 };
+                                  const handleMove = (moveE: MouseEvent) => {
+                                    let newW = Math.max(30, startW + (moveE.clientX - startX));
+                                    let newH = Math.max(20, startH + (moveE.clientY - startY));
+                                    if (gridEnabled) {
+                                      newW = Math.round(newW / 10) * 10;
+                                      newH = Math.round(newH / 10) * 10;
+                                    }
+                                    updateBlockLayout(section.id, block.id, viewport, { width: newW, height: newH });
+                                  };
 
-                                 const handleUp = () => {
-                                   window.removeEventListener('mousemove', handleMove);
-                                   window.removeEventListener('mouseup', handleUp);
-                                 };
+                                  const handleUp = () => {
+                                    window.removeEventListener('mousemove', handleMove);
+                                    window.removeEventListener('mouseup', handleUp);
+                                  };
 
-                                 window.addEventListener('mousemove', handleMove);
-                                 window.addEventListener('mouseup', handleUp);
-                               }}
-                               className="absolute bottom-0 right-0 w-3 h-3 bg-blue-600 border-2 border-white rounded-sm cursor-se-resize z-50 shadow"
-                             />
-                           </>
-                         )}
+                                  window.addEventListener('mousemove', handleMove);
+                                  window.addEventListener('mouseup', handleUp);
+                                }}
+                                className="absolute bottom-0 right-0 w-3 h-3 bg-blue-600 border-2 border-white rounded-sm cursor-se-resize z-50 shadow"
+                              />
+                            </>
+                          )}
+
+                          {/* Element action bar */}
+                          {!isPreviewMode && isSelected && (
+                            <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-1 bg-white border border-slate-200 rounded-lg px-1.5 py-1 shadow-lg z-40">
+                              <button
+                                onClick={(e) => { e.stopPropagation(); duplicateBlock(block.id); }}
+                                className="p-1 text-slate-500 hover:text-blue-600 hover:bg-blue-50 rounded transition"
+                                title="Duplicate"
+                              >
+                                <Icon name="copy" size={14} />
+                              </button>
+                              <button
+                                onClick={(e) => { e.stopPropagation(); deleteBlock(block.id); }}
+                                className="p-1 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded transition"
+                                title="Delete"
+                              >
+                                <Icon name="trash" size={14} />
+                              </button>
+                            </div>
+                          )}
                        </div>
                      );
                    })}
