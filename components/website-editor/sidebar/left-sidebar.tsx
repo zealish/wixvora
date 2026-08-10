@@ -7,6 +7,7 @@ import { TemplateSelector } from "./template-selector";
 import { PageSettings } from "./page-settings";
 import { Icon } from "../ui/icon-library";
 import { getSectionHeight } from "../lib/viewport-utils";
+import { SECTION_TEMPLATES } from "../lib/section-templates";
 
 const tabs = [
   { id: "blocks" as const, label: "Tambah", icon: "plus" as const },
@@ -26,12 +27,11 @@ export function LeftSidebar() {
     moveSectionUp,
     moveSectionDown,
     deleteSection,
-    viewport
+    viewport,
+    addSection
   } = useEditor();
   
   const [showSectionModal, setShowSectionModal] = useState(false);
-  // Modal will be implemented in Task 10
-  void showSectionModal;
 
   if (isPreviewMode) return null;
 
@@ -107,6 +107,45 @@ export function LeftSidebar() {
         {activeTab === "templates" && <TemplateSelector />}
         {activeTab === "settings" && <PageSettings />}
       </div>
+
+      {/* Section Template Modal */}
+      {showSectionModal && (
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-3xl overflow-hidden flex flex-col max-h-[85vh]">
+            <div className="p-4 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+              <div>
+                <h2 className="text-base font-extrabold text-slate-900">Choose Section Template</h2>
+                <p className="text-xs text-slate-500">Add a pre-built section to your page.</p>
+              </div>
+              <button onClick={() => setShowSectionModal(false)} className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700">
+                <Icon name="minus" className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+              {SECTION_TEMPLATES.map((tmpl) => (
+                <div key={tmpl.id} className="border border-slate-200 rounded-2xl overflow-hidden hover:border-blue-500 hover:shadow-lg transition flex flex-col group bg-white">
+                  <div className={`h-24 ${tmpl.previewBg} p-4 flex items-end`}>
+                    <span className="px-2.5 py-1 rounded-md bg-white/90 text-slate-800 text-[10px] font-bold shadow-sm">{tmpl.category}</span>
+                  </div>
+                  <div className="p-4 flex-1 flex flex-col justify-between space-y-3">
+                    <div>
+                      <h3 className="font-extrabold text-sm text-slate-900 mb-1">{tmpl.title}</h3>
+                      <p className="text-xs text-slate-500 leading-relaxed">{tmpl.desc}</p>
+                    </div>
+                    <button
+                      onClick={() => { addSection(tmpl.id); setShowSectionModal(false); }}
+                      className="w-full py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold transition shadow-sm"
+                    >
+                      + Add This Section
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
