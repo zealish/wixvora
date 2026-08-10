@@ -218,5 +218,56 @@ export const BLOCK_CATALOG: { category: string; items: BlockCatalogItem[] }[] = 
         }
       }
     ]
+  },
+  {
+    category: 'Elemen UI',
+    items: [
+      {
+        type: 'button',
+        label: 'Tombol Aksi (Button)',
+        icon: 'mouse-pointer-click',
+        defaultProps: {
+          layerName: 'Tombol',
+          text: 'Klik Di Sini',
+          url: '#',
+          bgColor: '#2563eb',
+          textColor: '#ffffff',
+          size: 'md',
+          rounded: 'rounded-lg',
+          fullWidth: false
+        }
+      },
+      {
+        type: 'badge',
+        label: 'Lencana Status (Badge)',
+        icon: 'tag',
+        defaultProps: {
+          layerName: 'Badge',
+          text: 'Baru',
+          bgColor: '#dbeafe',
+          textColor: '#1d4ed8',
+          size: 'sm',
+          rounded: 'rounded-full'
+        }
+      },
+      {
+        type: 'card',
+        label: 'Kartu Konten (Card)',
+        icon: 'square',
+        defaultProps: {
+          layerName: 'Kartu',
+          title: 'Judul Kartu',
+          description: 'Deskripsi singkat tentang isi kartu ini.',
+          imageUrl: '',
+          bgColor: '#ffffff',
+          textColor: '#0f172a',
+          accentColor: '#2563eb',
+          rounded: 'rounded-2xl',
+          shadow: 'shadow-md',
+          borderWidth: 'border',
+          borderColor: '#e2e8f0'
+        }
+      }
+    ]
   }
 ];
