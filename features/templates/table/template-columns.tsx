@@ -176,6 +176,25 @@ export function createTemplateColumns(
       },
     },
     {
+      id: "pages",
+      accessorKey: "totalPages",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Pages" />
+      ),
+      cell: ({ row }) => (
+        <span className="text-muted-foreground text-sm">
+          {row.original.totalPages}
+        </span>
+      ),
+      enableSorting: true,
+      meta: {
+        exportable: true,
+        visibleFrom: "md",
+        minWidth: 80,
+        align: "center",
+      },
+    },
+    {
       id: "usage",
       accessorKey: "usageCount",
       header: ({ column }) => (

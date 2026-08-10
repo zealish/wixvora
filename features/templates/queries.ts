@@ -60,6 +60,7 @@ export async function getAllTemplates(): Promise<TemplateListItem[]> {
       createdByName: user.name,
       createdAt: templates.createdAt,
       updatedAt: templates.updatedAt,
+      pages: templates.pages,
     })
     .from(templates)
     .leftJoin(
@@ -111,6 +112,7 @@ export async function getAllTemplates(): Promise<TemplateListItem[]> {
     createdByName: row.createdByName,
     createdAt: row.createdAt,
     updatedAt: row.updatedAt,
+    totalPages: Array.isArray(row.pages) ? row.pages.length : 0,
   }));
 }
 

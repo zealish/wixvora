@@ -43,6 +43,7 @@ export interface TemplateListItem {
   createdByName: string | null;
   createdAt: Date;
   updatedAt: Date;
+  totalPages: number;
 }
 
 export type TemplateActionResult =
