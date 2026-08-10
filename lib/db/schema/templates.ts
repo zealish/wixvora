@@ -14,9 +14,9 @@ import { relations, sql } from "drizzle-orm";
 import { businessCategories } from "./business-categories";
 import { user } from "./auth";
 import type {
-  BlockConfig,
+  Section,
   PageSettings,
-} from "@/features/templates/lib/block-types";
+} from "@/components/website-editor/lib/block-types";
 import type { Page } from "@/components/website-editor/lib/block-types";
 
 export const templateStatusEnum = pgEnum("template_status", [
@@ -35,7 +35,7 @@ export const templates = pgTable(
     categoryId: uuid("category_id").references(() => businessCategories.id, {
       onDelete: "set null",
     }),
-    blocksJson: jsonb("blocks_json").$type<BlockConfig[]>().notNull(),
+    sections: jsonb("sections").$type<Section[]>().notNull(),
     pageSettings: jsonb("page_settings")
       .$type<PageSettings>()
       .notNull()
