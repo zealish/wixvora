@@ -7,6 +7,8 @@ import { PRESET_TEMPLATES } from "./lib/template-presets";
 import { loadEditorState, createDefaultState } from "./lib/section-migration";
 import { SECTION_TEMPLATES } from "./lib/section-templates";
 
+const ENABLE_MULTI_VIEWPORT = process.env.NEXT_PUBLIC_ENABLE_MULTI_VIEWPORT === 'true' || true;
+
 interface EditorContextValue {
   blocks: Block[];
   selectedBlockId: string;

@@ -118,7 +118,7 @@ export function LeftSidebar() {
                 <p className="text-xs text-slate-500">Add a pre-built section to your page.</p>
               </div>
               <button onClick={() => setShowSectionModal(false)} className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700">
-                <Icon name="minus" className="w-5 h-5" />
+                <Icon name="x" className="w-5 h-5" />
               </button>
             </div>
 

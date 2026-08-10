@@ -58,16 +58,7 @@ export const CanvasBlock = memo(function CanvasBlock({
   children,
 }: CanvasBlockProps) {
   
-  // Debug: Log when block gets x/y properties
-  console.log('[CanvasBlock DEBUG]', {
-    id: block.id,
-    type: block.type,
-    x: block.x,
-    y: block.y,
-    isSelected: selectedBlockIds.includes(block.id),
-  });
-  
-  // Determine if this block should use absolute positioning
+  // Determine if this block has been positioned (has x/y coordinates)
   const isPositioned = block.x !== undefined && block.y !== undefined;
   // Determine if this block is selected (prefer selectedBlockIds over isSelected for multi-selection)
   const isBlockSelected = selectedBlockIds.length > 0 ? selectedBlockIds.includes(block.id) : isSelected;
@@ -89,7 +80,7 @@ export const CanvasBlock = memo(function CanvasBlock({
         }),
         // Apply reduced opacity when dragging
         opacity: isDragging ? 0.5 : 1,
-        transition: 'opacity 0.1s ease-in-out',
+        transition: isDragging ? 'none' : 'opacity 0.1s ease-in-out',
       }}
       onClick={handleClick}
       onMouseDown={(e) => onMouseDown?.(e)}
