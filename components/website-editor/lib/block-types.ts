@@ -8,7 +8,10 @@ export type BlockType =
   | 'image'
   | 'pricing'
   | 'form_contact'
-  | 'footer';
+  | 'footer'
+  | 'button'
+  | 'badge'
+  | 'card';
 
 export type Viewport = 'desktop' | 'tablet' | 'mobile';
 
