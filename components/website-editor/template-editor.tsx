@@ -3,20 +3,18 @@
 import { useCallback } from "react";
 import WebsiteEditor from ".";
 import { updateTemplateSectionsAction } from "@/features/templates/actions";
-import type { Page, Section, PageSettings } from "./lib/block-types";
+import type { Page, PageSettings } from "./lib/block-types";
 
 interface TemplateEditorWrapperProps {
   templateId: string;
   templateName: string;
-  initialSections: Section[];
-  initialPageSettings: PageSettings;
+  initialPages: Page[];
 }
 
 export default function TemplateEditorWrapper({
   templateId,
   templateName,
-  initialSections,
-  initialPageSettings,
+  initialPages,
 }: TemplateEditorWrapperProps) {
   const handleSave = useCallback(
     async (pages: Page[], pageSettings: PageSettings) => {
@@ -33,8 +31,7 @@ export default function TemplateEditorWrapper({
 
   return (
     <WebsiteEditor
-      initialSections={initialSections}
-      initialPageSettings={initialPageSettings}
+      initialPages={initialPages}
       onSave={handleSave}
       backUrl="/staff/templates"
       title={`Edit Template: ${templateName}`}

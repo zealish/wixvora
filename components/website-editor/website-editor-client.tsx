@@ -3,18 +3,16 @@
 import { useCallback } from "react";
 import WebsiteEditor from ".";
 import { updateWebsiteSectionsAction } from "@/features/websites/actions";
-import type { Page, Section, PageSettings } from "./lib/block-types";
+import type { Page, PageSettings } from "./lib/block-types";
 
 interface WebsiteEditorWrapperProps {
   websiteId: string;
-  initialSections: Section[];
-  initialPageSettings: PageSettings;
+  initialPages: Page[];
 }
 
 export default function WebsiteEditorWrapper({
   websiteId,
-  initialSections,
-  initialPageSettings,
+  initialPages,
 }: WebsiteEditorWrapperProps) {
   const handleSave = useCallback(
     async (pages: Page[], pageSettings: PageSettings) => {
@@ -31,8 +29,7 @@ export default function WebsiteEditorWrapper({
 
   return (
     <WebsiteEditor
-      initialSections={initialSections}
-      initialPageSettings={initialPageSettings}
+      initialPages={initialPages}
       onSave={handleSave}
     />
   );
