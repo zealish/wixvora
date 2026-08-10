@@ -113,8 +113,9 @@ export function EditorProvider({
   const [currentPageId, setCurrentPageId] = useState<string>(
     resolvedInitialPages.find(p => p.isHomePage)?.id || resolvedInitialPages[0]?.id || ''
   );
-  const [selectedSectionId, setSelectedSectionId] = useState<string | null>(initialSections[0]?.id || null);
-  const [selectedElementId, setSelectedElementId] = useState<string | null>(initialSections[0]?.elements[0]?.id || null);
+  const initialHomeSections = resolvedInitialPages.find(p => p.isHomePage)?.sections || resolvedInitialPages[0]?.sections || [];
+  const [selectedSectionId, setSelectedSectionId] = useState<string | null>(initialHomeSections[0]?.id || null);
+  const [selectedElementId, setSelectedElementId] = useState<string | null>(initialHomeSections[0]?.elements[0]?.id || null);
   const [viewport, setViewport] = useState<Viewport>('desktop');
   const [inspectorTab, setInspectorTab] = useState<'position' | 'style'>('position');
   const [isPreviewMode, setIsPreviewMode] = useState(false);
