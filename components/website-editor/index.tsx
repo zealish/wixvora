@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { EditorProvider, useEditor } from "./editor-provider";
 import { Icon } from "./ui/icon-library";
 import { getLayout, getSectionHeight, VIEWPORT_WIDTHS } from "./lib/viewport-utils";
 import { ELEMENT_PRESETS } from "./lib/element-presets";
-import type { Element, Viewport } from "./lib/block-types";
+import type { Element, Section, PageSettings, Viewport } from "./lib/block-types";
 
 function RenderElementContent({ element, updateProps, isPreviewMode }: { element: Element; updateProps: (p: Partial<Element>) => void; isPreviewMode: boolean }) {
   if (element.type === 'heading') {
@@ -194,16 +194,19 @@ function InlineText({
   );
 }
 
-function EditorLayout() {
+function EditorLayout({ backUrl, title }: { backUrl?: string | undefined; title?: string | undefined }) {
   const {
     sections, selectedSectionId, selectedElementId, viewport, inspectorTab,
-    isPreviewMode, showExportModal, toast, snapToGrid, snapGuideX,
+    isPreviewMode, toast, snapToGrid, snapGuideX,
     addMenuOpen, activeFlyout, isSectionModalOpen, pages, canUndo, canRedo,
-    showToast, setViewport, setInspectorTab, setIsPreviewMode, setShowExportModal,
+    isSaving, pageSettings,
+    showToast, setViewport, setInspectorTab, setIsPreviewMode,
     setSnapToGrid, setSnapGuideX, setAddMenuOpen, setActiveFlyout, setIsSectionModalOpen,
+    setPageSettings,
     selectSection, selectElement, addSectionFromTemplate, deleteSection, moveSection,
     addElement, duplicateElement, deleteElement, updateElementViewportLayout,
-    updateElementProps, updateSectionHeight, undo, redo, generateFullHTML
+    updateElementProps, updateSectionHeight, undo, redo,
+    saveWebsite
   } = useEditor();
 
   const canvasContainerRef = useRef<HTMLDivElement>(null);
@@ -327,38 +330,23 @@ function EditorLayout() {
     window.addEventListener('mouseup', handleMouseUp);
   };
 
-  const [copiedHtml, setCopiedHtml] = useState(false);
-  const handleCopyHtml = () => {
-    const code = generateFullHTML();
-    navigator.clipboard.writeText(code).then(() => {
-      setCopiedHtml(true);
-      showToast("Kode HTML berhasil disalin!");
-      setTimeout(() => setCopiedHtml(false), 2000);
-    }).catch(() => {
-      const ta = document.createElement('textarea');
-      ta.value = code;
-      document.body.appendChild(ta);
-      ta.select();
-      document.execCommand('copy');
-      document.body.removeChild(ta);
-      setCopiedHtml(true);
-      showToast("Kode HTML berhasil disalin!");
-      setTimeout(() => setCopiedHtml(false), 2000);
-    });
-  };
-
   return (
     <div className="flex h-screen w-screen flex-col overflow-hidden bg-slate-100 text-slate-800 font-sans antialiased selection:bg-blue-500 selection:text-white">
 
       {/* HEADER / TOPBAR */}
       <header className="h-14 border-b border-slate-200 bg-white/90 backdrop-blur-md px-4 flex items-center justify-between z-30 shrink-0 select-none shadow-sm">
         <div className="flex items-center space-x-3">
+          {backUrl && (
+            <a href={backUrl} className="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 flex items-center justify-center transition" title="Kembali">
+              <Icon name="arrowLeft" className="w-4 h-4 text-slate-600" />
+            </a>
+          )}
           <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center shadow-md shadow-blue-500/20">
             <Icon name="sparkles" className="w-4 h-4 text-white" />
           </div>
           <div className="hidden sm:block">
             <h1 className="font-extrabold text-sm text-slate-900 tracking-tight flex items-center gap-2">
-              WebCraft Studio
+              {title || 'WebCraft Studio'}
               <span className="px-2 py-0.5 rounded text-[9px] font-extrabold bg-blue-100 text-blue-700 border border-blue-200 uppercase tracking-widest">WIX-STYLE DnD</span>
             </h1>
           </div>
@@ -391,9 +379,13 @@ function EditorLayout() {
             <span className="hidden sm:inline">{isPreviewMode ? 'Keluar Pratinjau' : 'Pratinjau'}</span>
           </button>
 
-          <button onClick={() => setShowExportModal(true)} className="flex items-center space-x-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold bg-blue-600 hover:bg-blue-500 text-white shadow-md shadow-blue-600/20 transition">
-            <Icon name="code" className="w-3.5 h-3.5" />
-            <span>Ekspor HTML</span>
+          <button
+            onClick={saveWebsite}
+            disabled={isSaving}
+            className="flex items-center space-x-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold bg-blue-600 hover:bg-blue-500 text-white shadow-md shadow-blue-600/20 transition disabled:opacity-50"
+          >
+            <Icon name="download" className="w-3.5 h-3.5" />
+            <span>{isSaving ? 'Menyimpan...' : 'Simpan'}</span>
           </button>
         </div>
       </header>
@@ -405,6 +397,15 @@ function EditorLayout() {
         {!isPreviewMode && (
           <aside className="w-16 bg-white border-r border-slate-200 flex flex-col items-center py-3 z-30 shrink-0 select-none justify-between relative shadow-sm">
             <div className="flex flex-col items-center space-y-4 w-full px-2" ref={addMenuRef}>
+
+              {/* Back Button */}
+              <a
+                href="/staff/templates"
+                className="w-11 h-11 rounded-xl flex items-center justify-center text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition border border-slate-200"
+                title="Kembali ke Daftar Template"
+              >
+                <Icon name="arrowUp" className="w-4 h-4 rotate-[-90deg]" />
+              </a>
 
               {/* Add Button */}
               <div className="relative w-full flex justify-center">
@@ -585,7 +586,7 @@ function EditorLayout() {
                         <Icon name="page" className="w-4 h-4 text-amber-600" />
                         <span>{page.title}</span>
                       </span>
-                      {page.isMain && <span className="text-[9px] bg-amber-100 text-amber-800 border border-amber-200 px-1.5 py-0.5 rounded font-extrabold">UTAMA</span>}
+                      {page.isHomePage && <span className="text-[9px] bg-amber-100 text-amber-800 border border-amber-200 px-1.5 py-0.5 rounded font-extrabold">UTAMA</span>}
                     </div>
                   ))}
                   <button onClick={() => showToast("Fitur Tambah Halaman telah siap di WebCraft Studio Pro!")} className="w-full py-2 border border-dashed border-slate-300 hover:border-slate-400 rounded-xl text-xs text-slate-600 flex items-center justify-center space-x-1">
@@ -876,6 +877,56 @@ function EditorLayout() {
             </div>
           </aside>
         )}
+
+        {/* PAGE SETTINGS INSPECTOR (when no element selected) */}
+        {!isPreviewMode && !selectedElement && (
+          <aside className="w-80 border-l border-slate-200 bg-white flex flex-col z-20 shrink-0 select-none shadow-lg">
+            <div className="p-3 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
+              <h2 className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2">
+                <Icon name="settings" className="w-4 h-4 text-blue-600" />
+                <span>Pengaturan Halaman</span>
+              </h2>
+            </div>
+
+            <div className="flex-1 overflow-y-auto p-4 space-y-4 text-xs text-slate-700">
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-slate-500">Judul Halaman</label>
+                <input
+                  type="text"
+                  value={pageSettings.title}
+                  onChange={(e) => setPageSettings({ ...pageSettings, title: e.target.value })}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-800 outline-none focus:border-blue-500"
+                />
+              </div>
+
+              <div className="flex items-center justify-between">
+                <label className="text-[10px] font-bold text-slate-500">Warna Background</label>
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="color"
+                    value={pageSettings.bgColor}
+                    onChange={(e) => setPageSettings({ ...pageSettings, bgColor: e.target.value })}
+                    className="w-8 h-8 rounded-lg border border-slate-200 cursor-pointer bg-transparent"
+                  />
+                  <span className="font-mono text-[11px] text-slate-600">{pageSettings.bgColor}</span>
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-slate-500">Font Family</label>
+                <select
+                  value={pageSettings.fontFamily}
+                  onChange={(e) => setPageSettings({ ...pageSettings, fontFamily: e.target.value })}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-800 outline-none focus:border-blue-500"
+                >
+                  <option value="font-sans">Sans Serif</option>
+                  <option value="font-serif">Serif</option>
+                  <option value="font-mono">Monospace</option>
+                </select>
+              </div>
+            </div>
+          </aside>
+        )}
       </div>
 
       {/* SECTION TEMPLATES MODAL */}
@@ -915,37 +966,6 @@ function EditorLayout() {
         </div>
       )}
 
-      {/* EXPORT HTML MODAL */}
-      {showExportModal && (
-        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-2xl overflow-hidden flex flex-col max-h-[85vh]">
-            <div className="p-4 border-b border-slate-100 flex items-center justify-between bg-slate-50">
-              <div>
-                <h2 className="text-base font-extrabold text-slate-900">Kode HTML & CSS Responsif</h2>
-                <p className="text-xs text-slate-500">Salin kode lengkap untuk di-deploy ke hosting Anda.</p>
-              </div>
-              <button onClick={() => setShowExportModal(false)} className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-200 transition"><Icon name="x" className="w-5 h-5" /></button>
-            </div>
-
-            <div className="p-4 flex-1 overflow-y-auto">
-              <textarea
-                readOnly
-                value={generateFullHTML()}
-                className="w-full h-80 bg-slate-900 text-slate-100 font-mono text-xs p-4 rounded-xl outline-none select-all"
-              />
-            </div>
-
-            <div className="p-4 border-t border-slate-100 bg-slate-50 flex justify-end space-x-3">
-              <button onClick={() => setShowExportModal(false)} className="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-200 transition">Tutup</button>
-              <button onClick={handleCopyHtml} className="px-5 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold shadow transition flex items-center space-x-1.5">
-                <Icon name="copy" className="w-4 h-4" />
-                <span>{copiedHtml ? 'Tersalin!' : 'Salin Kode HTML'}</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* TOAST NOTIFICATION */}
       {toast && (
         <div className="fixed bottom-6 right-6 z-50 bg-slate-900 text-white px-4 py-3 rounded-2xl shadow-2xl text-xs font-bold flex items-center space-x-2">
@@ -957,10 +977,27 @@ function EditorLayout() {
   );
 }
 
-export default function WebsiteEditor() {
+export default function WebsiteEditor({
+  initialSections,
+  initialPageSettings,
+  onSave,
+  backUrl,
+  title,
+}: {
+  initialSections?: Section[];
+  initialPageSettings?: PageSettings;
+  onSave?: (sections: Section[], pageSettings: PageSettings) => Promise<void>;
+  backUrl?: string;
+  title?: string;
+}) {
+  const props: Record<string, unknown> = {};
+  if (initialSections !== undefined) props.initialSections = initialSections;
+  if (initialPageSettings !== undefined) props.initialPageSettings = initialPageSettings;
+  if (onSave !== undefined) props.onSave = onSave;
+
   return (
-    <EditorProvider>
-      <EditorLayout />
+    <EditorProvider {...props as any}>
+      <EditorLayout backUrl={backUrl} title={title} />
     </EditorProvider>
   );
 }
