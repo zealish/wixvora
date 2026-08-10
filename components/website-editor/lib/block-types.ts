@@ -56,3 +56,27 @@ export interface PageSettings {
   bgColor: string;
   fontFamily: string;
 }
+
+export interface NavigationSettings {
+  layout: 'horizontal' | 'vertical' | 'hamburger';
+  position: 'top' | 'left' | 'right';
+  bgColor: string;
+  textColor: string;
+  activeColor: string;
+  logo?: string;
+  showLogo: boolean;
+  showCTAButton: boolean;
+  ctaText: string;
+  ctaUrl: string;
+}
+
+export interface Page {
+  id: string;
+  title: string;
+  slug: string;
+  sections: Section[];
+  pageSettings: PageSettings;
+  isHomePage: boolean;
+  sortOrder: number;
+  navigationSettings?: NavigationSettings;
+}
