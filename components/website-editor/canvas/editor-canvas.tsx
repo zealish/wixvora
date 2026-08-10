@@ -1,13 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useCallback, useMemo, memo } from "react";
+import { useEffect, memo } from "react";
 import { useEditor } from "../editor-provider";
 import { BlockRenderer } from "../blocks/block-renderer";
-import { CanvasBlock } from "./canvas-block";
 import { Icon } from "../ui/icon-library";
-import type { Block } from "../lib/block-types";
-import { screenToCanvas, snapToGrid } from "../lib/coordinate-utils";
-import { GridOverlay } from "./grid-overlay";
+import { getLayout, getSectionHeight, VIEWPORT_WIDTHS } from "../lib/viewport-utils";
 
 export const EditorCanvas = memo(function EditorCanvas() {
   const {
@@ -18,130 +15,20 @@ export const EditorCanvas = memo(function EditorCanvas() {
     isEditingInline,
     setIsEditingInline,
     viewport,
-    pageSettings,
     selectBlock,
-    moveBlockUp,
-    moveBlockDown,
     duplicateBlock,
     deleteBlock,
     execFormatCommand,
-    // Canvas state & controls
-    zoom,
-    panX,
-    panY,
-    isPanning,
     gridEnabled,
-    gridSize,
-    dragStart,
-    itemOffset,
-    draggedBlockIds,
-    setZoom,
-    setPan,
-    setIsPanning,
-    setDragStart,
-    setItemOffset,
-    selectMultipleBlocks,
-    toggleBlockSelection,
     clearSelection,
     updateProps,
-    setDraggedBlockIds,
+    // Section state
+    sections,
+    selectedSectionId,
+    selectSection,
+    updateBlockLayout,
+    updateSectionHeight,
   } = useEditor();
-  
-  const canvasRef = useRef<HTMLDivElement>(null);
-  const lastMousePos = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
-  
-  // Memoize viewport width classes to prevent recreating on every render
-  const getCanvasWidth = useMemo(() => {
-    switch (viewport) {
-      case "mobile":
-        return "w-[375px]";
-      case "tablet":
-        return "w-[768px]";
-      default:
-        return "w-full max-w-6xl";
-    }
-  }, [viewport]);
-  
-  // Keyboard shortcuts for navigation
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.key === "+" || (e.ctrlKey || e.metaKey) && e.key === "=") {
-        e.preventDefault();
-        // Defensive clamp on keyboard zoom
-        setZoom(Math.max(0.25, Math.min(zoom + 0.1, 4)));
-      } else if ((e.ctrlKey || e.metaKey) && e.key === "-") {
-        e.preventDefault();
-        setZoom(Math.max(0.25, zoom - 0.1));
-      }
-      
-      // Hand tool shortcut 'h' key
-      if (e.key.toLowerCase() === "h" && !isPanning) {
-        setIsPanning(true);
-      }
-      
-       // Escape to deselect
-         if (e.key === "Escape") {
-           clearSelection();
-         }
-         
-         // Center snap shortcuts (Ctrl/Cmd + E)
-         if (selectedBlockIds.length > 0 && (e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "e") {
-           e.preventDefault();
-           
-           try {
-             // Get canvas bounds for width calculation
-             const canvasRect = canvasRef.current?.getBoundingClientRect();
-             if (!canvasRect) return;
-             
-             // Calculate container dimensions based on viewport
-             let containerWidth: number;
-             let containerHeight: number;
-             
-             switch (viewport) {
-               case "mobile":
-                 containerWidth = 375;
-                 containerHeight = 812; // Mobile height for vertical centering
-                 break;
-               case "tablet":
-                 containerWidth = 768;
-                 containerHeight = 1024; // Tablet height for vertical centering
-                 break;
-               default:
-                 containerWidth = 1920;
-                 containerHeight = 1080; // Desktop height for vertical centering
-             }
-             
-             // Snap selected blocks to center
-             selectedBlockIds.forEach((blockId: string) => {
-               const block = blocks.find((b: Block) => b.id === blockId);
-               if (!block || !block.props?.width) return;
-               
-               const blockWidth = block.props.width;
-               const blockHeight = block.props.height || 0;
-               
-               // Horizontal and vertical center snap
-               const centeredX = (containerWidth - blockWidth) / 2;
-               const centerY = (containerHeight - blockHeight) / 2;
-               
-               // Update block position with snapped coordinates
-               updateProps(blockId, { 
-                 x: centeredX, 
-                 y: centerY 
-               });
-             });
-           } catch (error) {
-             console.error("Error snapping to center:", error);
-           }
-           return;
-         }
-    };
-    
-    window.addEventListener("keydown", handleKeyDown);
-    
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [zoom, setZoom, isPanning, setIsPanning, selectBlock, canvasRef, blocks, selectedBlockIds, viewport, updateProps]);
   
   // Keyboard shortcuts for block editing
   useEffect(() => {
@@ -158,6 +45,11 @@ export const EditorCanvas = memo(function EditorCanvas() {
         target.isContentEditable;
       
       if (isTextInput) return;
+      
+      // Escape to deselect
+      if (e.key === "Escape") {
+        clearSelection();
+      }
       
       // Delete all selected blocks (Delete key only, not Backspace)
       if (selectedBlockIds.length > 0 && e.key === "Delete") {
@@ -185,28 +77,6 @@ export const EditorCanvas = memo(function EditorCanvas() {
         }
         return;
       }
-      
-      // Group/Ungroup blocks (Shift + G) - apply to all selected
-      if (
-        selectedBlockIds.length > 0 &&
-        e.shiftKey &&
-        e.key.toLowerCase() === "g"
-      ) {
-        e.preventDefault();
-        
-        // TODO: Implement actual group/ungroup functionality
-        // For now, just log and provide visual feedback
-        try {
-          const selectedBlocks = blocks.filter((b: Block) => selectedBlockIds.includes(b.id));
-          if (selectedBlocks.length > 0) {
-            console.log(`Group action: Grouping ${selectedBlocks.length} block(s)`);
-            // Future implementation: call a groupBlocks or ungroupBlocks function
-          }
-        } catch (error) {
-          console.error("Error performing group action:", error);
-        }
-        return;
-      }
     };
     
     window.addEventListener("keydown", handleKeyDown);
@@ -223,339 +93,237 @@ export const EditorCanvas = memo(function EditorCanvas() {
     clearSelection,
   ]);
 
-  
-  // Handle wheel zoom centered on cursor
-  const handleWheel = useCallback((e: React.WheelEvent) => {
-    if (e.ctrlKey || e.metaKey) {
-      e.preventDefault();
-      
-      const zoomSensitivity = 0.001;
-      const delta = -e.deltaY * zoomSensitivity;
-      const newZoom = Math.max(0.25, Math.min(zoom + delta, 4));
-      
-      // Zoom toward cursor position
-      setZoom(newZoom);
-    } else if (!isPanning) {
-      // Normal scrolling behavior
-      return;
-    }
-  }, [zoom, isPanning, setZoom]);
-  
-  // Handle canvas pan with spacebar or middle mouse
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.code === "Space") {
-        e.preventDefault();
-        setIsPanning(true);
-        document.body.style.cursor = "grab";
-      }
-    };
-    
-    const handleKeyUp = (e: KeyboardEvent) => {
-      if (e.code === "Space") {
-        setIsPanning(false);
-        document.body.style.cursor = "default";
-      }
-    };
-    
-    window.addEventListener("keydown", handleKeyDown);
-    window.addEventListener("keyup", handleKeyUp);
-    
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-      window.removeEventListener("keyup", handleKeyUp);
-    };
-  }, [setIsPanning]);
-  
-  // Handle middle mouse button panning
-  const handleMouseDown = useCallback((e: React.MouseEvent) => {
-    if (e.button === 1 && !lastMousePos.current) { // Middle mouse button
-      e.preventDefault();
-      lastMousePos.current = { x: e.clientX, y: e.clientY };
-      setIsPanning(true);
-    }
-  }, [setIsPanning]);
-  
-  const handleMouseMove = useCallback((e: React.MouseEvent) => {
-    // Pan canvas when dragging with middle mouse
-    if (lastMousePos.current && e.buttons === 4) {
-      const dx = e.clientX - lastMousePos.current.x;
-      const dy = e.clientY - lastMousePos.current.y;
-      
-      // Clamp pan values to prevent infinite scrolling
-      const MIN_PAN = -50000;
-      const MAX_PAN = 50000;
-      const newPanX = Math.max(MIN_PAN, Math.min(panX + dx, MAX_PAN));
-      const newPanY = Math.max(MIN_PAN, Math.min(panY + dy, MAX_PAN));
-      
-      setPan(newPanX, newPanY);
-      lastMousePos.current = { x: e.clientX, y: e.clientY };
-    }
-  }, [setPan, panX, panY]);
-  
-  const handleMouseUp = useCallback(() => {
-    if (lastMousePos.current) {
-      setIsPanning(false);
-      lastMousePos.current = { x: 0, y: 0 };
-    }
-  }, [setIsPanning]);
-  
-   // Handle item selection and drag
-  const handleItemMouseDown = useCallback((e: React.MouseEvent, blockId: string) => {
-    if (e.button !== 0 || isPreviewMode) return; // Left click only
-    
-    e.stopPropagation();
-    
-    console.log('[DEBUG] handleItemMouseDown', { blockId });
-    
-    // Check for Shift key - if pressed, toggle this block in multi-selection
-     if (e.shiftKey && selectedBlockIds.length > 0) {
-       // Toggle the clicked block
-       toggleBlockSelection(blockId);
-     } else if (e.shiftKey && selectedBlockIds.length === 0) {
-       // First block with shift - just select it
-       toggleBlockSelection(blockId);
-     } else {
-       // Normal click - clear all and select just this block
-       selectMultipleBlocks([blockId], false);
-     }
-     
-     // Calculate initial position from mouse to canvas coordinates
-     const canvasRect = canvasRef.current?.getBoundingClientRect();
-     if (!canvasRect) return;
-     
-     const canvasPos = screenToCanvas(
-       e.clientX,
-       e.clientY,
-       canvasRect,
-       zoom,
-       panX,
-       panY
-     );
-     
-     const block = blocks.find((b: Block) => b.id === blockId);
-     if (!block) return;
-     
-     // For NEW blocks (no x/y), DON'T update position yet. 
-     // Just track the offset so subsequent drags work correctly.
-     // The first actual movement will set the initial position.
-     
-     let currentX = block.x ?? 0;
-     let currentY = block.y ?? 0;
-     
-     // itemOffset: how far mouse pointer is from block's position
-     // For new blocks that haven't been positioned yet, calculate from click position
-     setItemOffset({ 
-       x: canvasPos.x - currentX,  
-       y: canvasPos.y - currentY   
-     });
-     
-     // Track which block(s) are being dragged
-     if (selectedBlockIds.includes(blockId)) {
-       setDraggedBlockIds(selectedBlockIds);
-     } else {
-       setDraggedBlockIds([blockId]);
-     }
-     
-      // Store starting mouse position for delta calculation
-      setDragStart({ screenX: e.clientX, screenY: e.clientY });
-      
-      // Attach global mouse move/up listeners for dragging
-      document.addEventListener('mousemove', handleGlobalMouseMove);
-      document.addEventListener('mouseup', handleGlobalMouseUp);
-   }, [isPreviewMode, zoom, panX, panY, selectMultipleBlocks, toggleBlockSelection, selectedBlockIds, selectedBlockId, blocks, canvasRef, setDragStart, setItemOffset, setDraggedBlockIds]);
-   
-  const handleItemMouseUp = useCallback(() => {
-    document.removeEventListener('mousemove', handleGlobalMouseMove);
-    document.removeEventListener('mouseup', handleGlobalMouseUp);
-    
-    setDragStart(null);
-    setItemOffset(null);
-    setDraggedBlockIds([]);
-  }, [setDragStart, setItemOffset, setDraggedBlockIds]);
-  
-  // Global mouse move handler for dragging (attached to window on drag start)
-  const handleGlobalMouseMove = useCallback((e: MouseEvent) => {
-    if (!dragStart || !itemOffset || draggedBlockIds.length === 0) return;
-    
-    const canvasRect = canvasRef.current?.getBoundingClientRect();
-    if (!canvasRect) {
-      console.warn('No canvas rect');
-      return;
-    }
-    
-    console.log('[DEBUG] Canvas rect:', canvasRect);
-    console.log('[DEBUG] Screen position:', e.clientX, e.clientY);
-    
-    const canvasPos = screenToCanvas(
-      e.clientX,
-      e.clientY,
-      canvasRect,
-      zoom,
-      panX,
-      panY
-    );
-    
-    console.log('[DEBUG] canvasPos after conversion:', canvasPos);
-    
-    // Calculate new position (with snap if enabled)
-    let newX = canvasPos.x + itemOffset.x;
-    let newY = canvasPos.y + itemOffset.y;
-    
-    console.log('[DEBUG] Final pos before snap - x:', newX, 'y:', newY);
-    
-    // Apply grid snapping if enabled
-    if (gridEnabled) {
-      newX = snapToGrid(newX, gridSize);
-      newY = snapToGrid(newY, gridSize);
-    }
-    
-    console.log('[DEBUG] Final pos after snap - x:', newX, 'y:', newY);
-    
-    // Update position for each dragged block
-    draggedBlockIds.forEach(id => {
-      console.log('[DEBUG] About to update block', id);
-      updateProps(id, { x: newX, y: newY });
-      console.log('[DEBUG] Block updated');
-    });
-  }, [dragStart, itemOffset, draggedBlockIds, zoom, panX, panY, gridEnabled, gridSize, updateProps]);
-  
-  const handleGlobalMouseUp = useCallback(() => {
-    handleItemMouseUp();
-  }, [handleItemMouseUp]);
-
-  // Deselect block when clicking on canvas background
-  const handleClick = useCallback(() => {
-    clearSelection();
-  }, [clearSelection]);
-
    return (
      <div className="flex-1 overflow-hidden bg-gray-100">
-       {/* Scrollable wrapper for the entire editor */}
-       <div className="h-full overflow-auto flex flex-col items-center py-8 px-4">
-         {isEditingInline && !isPreviewMode && (
-           <div className="fixed top-4 left-1/2 -translate-x-1/2 z-[100] flex items-center gap-1 bg-white border border-gray-200 rounded-lg px-2 py-1 shadow-lg">
-             <button
-               className="p-1.5 hover:bg-gray-100 rounded text-gray-700"
-               title="Bold"
-               onClick={() => execFormatCommand("bold")}
-             >
-               <Icon name="bold" size={16} />
-             </button>
-             <button
-               className="p-1.5 hover:bg-gray-100 rounded text-gray-700"
-               title="Italic"
-               onClick={() => execFormatCommand("italic")}
-             >
-               <Icon name="italic" size={16} />
-             </button>
-             <button
-               className="p-1.5 hover:bg-gray-100 rounded text-gray-700"
-               title="Underline"
-               onClick={() => execFormatCommand("underline")}
-             >
-               <Icon name="underline" size={16} />
-             </button>
-             <div className="w-px h-5 bg-gray-200 mx-1" />
-             <button
-               className="p-1.5 hover:bg-gray-100 rounded text-gray-700"
-               title="Align left"
-               onClick={() => execFormatCommand("justifyLeft")}
-             >
-               <Icon name="alignLeft" size={16} />
-             </button>
-             <button
-               className="p-1.5 hover:bg-gray-100 rounded text-gray-700"
-               title="Align center"
-               onClick={() => execFormatCommand("justifyCenter")}
-             >
-               <Icon name="alignCenter" size={16} />
-             </button>
-             <button
-               className="p-1.5 hover:bg-gray-100 rounded text-gray-700"
-               title="Align right"
-               onClick={() => execFormatCommand("justifyRight")}
-             >
-               <Icon name="alignRight" size={16} />
-             </button>
+       {isEditingInline && !isPreviewMode && (
+         <div className="fixed top-4 left-1/2 -translate-x-1/2 z-[100] flex items-center gap-1 bg-white border border-gray-200 rounded-lg px-2 py-1 shadow-lg">
+           <button
+             className="p-1.5 hover:bg-gray-100 rounded text-gray-700"
+             title="Bold"
+             onClick={() => execFormatCommand("bold")}
+           >
+             <Icon name="bold" size={16} />
+           </button>
+           <button
+             className="p-1.5 hover:bg-gray-100 rounded text-gray-700"
+             title="Italic"
+             onClick={() => execFormatCommand("italic")}
+           >
+             <Icon name="italic" size={16} />
+           </button>
+           <button
+             className="p-1.5 hover:bg-gray-100 rounded text-gray-700"
+             title="Underline"
+             onClick={() => execFormatCommand("underline")}
+           >
+             <Icon name="underline" size={16} />
+           </button>
+           <div className="w-px h-5 bg-gray-200 mx-1" />
+           <button
+             className="p-1.5 hover:bg-gray-100 rounded text-gray-700"
+             title="Align left"
+             onClick={() => execFormatCommand("justifyLeft")}
+           >
+             <Icon name="alignLeft" size={16} />
+           </button>
+           <button
+             className="p-1.5 hover:bg-gray-100 rounded text-gray-700"
+             title="Align center"
+             onClick={() => execFormatCommand("justifyCenter")}
+           >
+             <Icon name="alignCenter" size={16} />
+           </button>
+           <button
+             className="p-1.5 hover:bg-gray-100 rounded text-gray-700"
+             title="Align right"
+             onClick={() => execFormatCommand("justifyRight")}
+           >
+             <Icon name="alignRight" size={16} />
+           </button>
+         </div>
+       )}
+
+       <div className="flex-1 overflow-y-auto p-4 md:p-8 flex flex-col items-center relative">
+         {/* Viewport indicator */}
+         {!isPreviewMode && (
+           <div className="mb-3 px-3 py-1 rounded-full bg-white border border-slate-200 text-slate-700 text-[11px] font-semibold shadow-sm flex items-center space-x-2">
+             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+             <span>Viewport: <strong className="text-blue-600 uppercase">{viewport}</strong> ({VIEWPORT_WIDTHS[viewport]}px)</span>
            </div>
          )}
 
-         {/* Canvas Container with scroll */}
-         <div className={`${getCanvasWidth} relative`}>
-         {/* Actual Canvas Content */}
+         {/* Sections container */}
          <div
-            className={`bg-white shadow-lg rounded-lg device-transition overflow-hidden relative`}
-           style={{
-             backgroundColor: pageSettings.bgColor || "#ffffff",
-             fontFamily: pageSettings.fontFamily || "Inter, sans-serif",
-             minHeight: blocks.length === 0 ? '300px' : 'auto',
-             // Apply ZOOM ONLY (not pan). Pan is handled separately.
-             transform: `scale(${zoom})`,
-             transformOrigin: 'top left',
-             width: '100%',
-           }}
-           ref={canvasRef}
-           onWheel={handleWheel}
-           onMouseDown={handleMouseDown}
-           onMouseMove={handleMouseMove}
-           onMouseUp={handleMouseUp}
-           onMouseLeave={handleMouseUp}
-           onClick={handleClick}
+           className="bg-white shadow-xl rounded-2xl overflow-hidden mb-16 shrink-0 relative border border-slate-200"
+           style={{ width: VIEWPORT_WIDTHS[viewport] }}
          >
-           {/* Grid Overlay - positioned absolutely inside scaled canvas */}
-           <div
-             className="pointer-events-none absolute inset-0"
-             style={{
-               zIndex: 0,
-             }}
-           >
-             <GridOverlay
-               showGrid={gridEnabled}
-               gridSize={gridSize}
-               zoom={zoom}
-               panX={panX}
-               panY={panY}
-             />
-           </div>
-           
-           {/* Wrapper div that handles pan translation and contains all blocks */}
-           <div
-             className="relative overflow-hidden"
-             style={{
-               minHeight: blocks.length === 0 ? '300px' : 'auto',
-               transform: `translate(${panX}px, ${panY}px)`,
-               transformOrigin: 'top left',
-               willChange: 'transform',
-             }}
-           >
-             {blocks
-               .filter((b: Block) => !b.hidden)
-               .map((block: Block) => (
-                 <CanvasBlock
-                   key={block.id}
-                   block={block}
-                   isSelected={selectedBlockIds.includes(block.id)}
-                   isDragging={selectedBlockIds.includes(block.id) && !!dragStart}
-                   isPreviewMode={isPreviewMode}
-                   onSelect={selectMultipleBlocks}
-                   onMoveUp={moveBlockUp}
-                   onMoveDown={moveBlockDown}
-                   onDuplicate={duplicateBlock}
-                   onDelete={deleteBlock}
-                   onMouseDown={(e) => handleItemMouseDown(e, block.id)}
-                   onMouseUp={handleItemMouseUp}
-                 >
-                   <BlockRenderer
-                     block={block}
-                     updateProps={updateProps}
-                     isPreviewMode={isPreviewMode}
-                     setIsEditingInline={setIsEditingInline}
-                   />
-                 </CanvasBlock>
-               ))}
-           </div>
-         </div>
+           {sections.map((section) => {
+             const sectionHeight = getSectionHeight(section, viewport);
+             const isSectionSelected = selectedSectionId === section.id && !isPreviewMode;
+
+             return (
+               <section
+                 key={section.id}
+                 onClick={() => !isPreviewMode && selectSection(section.id)}
+                 className={`relative w-full ${section.bgGradient || ''} ${isSectionSelected ? 'ring-2 ring-blue-500 ring-offset-2' : ''}`}
+                 style={{
+                   height: sectionHeight,
+                   backgroundColor: section.bgColor
+                 }}
+               >
+                 {/* Section label */}
+                 {!isPreviewMode && isSectionSelected && (
+                   <div className="absolute top-2 left-2 z-30 flex items-center space-x-2">
+                     <span className="px-2.5 py-1 rounded-lg bg-white/95 text-slate-800 text-[10px] font-bold tracking-wider border border-slate-200 shadow-sm">
+                       SECTION: {section.title} ({sectionHeight}px)
+                     </span>
+                   </div>
+                 )}
+
+                 {/* Section resize handle */}
+                 {!isPreviewMode && isSectionSelected && (
+                   <div
+                     onMouseDown={(e) => {
+                       e.stopPropagation();
+                       const startY = e.clientY;
+                       const startHeight = sectionHeight;
+
+                       const handleMove = (moveE: MouseEvent) => {
+                         const delta = moveE.clientY - startY;
+                         let newH = Math.max(150, startHeight + delta);
+                         if (gridEnabled) newH = Math.round(newH / 20) * 20;
+                         updateSectionHeight(section.id, newH);
+                       };
+
+                       const handleUp = () => {
+                         window.removeEventListener('mousemove', handleMove);
+                         window.removeEventListener('mouseup', handleUp);
+                       };
+
+                       window.addEventListener('mousemove', handleMove);
+                       window.addEventListener('mouseup', handleUp);
+                     }}
+                     className="absolute bottom-0 left-0 right-0 h-4 bg-blue-600 hover:bg-blue-500 text-white flex items-center justify-center cursor-s-resize z-30 transition"
+                     title="Drag to resize section height"
+                   >
+                     <div className="text-[9px] font-extrabold uppercase tracking-widest">
+                       Height ({viewport.toUpperCase()}): {sectionHeight}px
+                     </div>
+                   </div>
+                 )}
+
+                 {/* Blocks within section */}
+                 <div className="relative h-full w-full">
+                   {section.blocks.map((block) => {
+                     const layout = getLayout(block, viewport);
+                     const isSelected = selectedBlockId === block.id && !isPreviewMode;
+
+                     return (
+                       <div
+                         key={block.id}
+                         onMouseDown={(e) => {
+                           e.stopPropagation();
+                           selectBlock(block.id);
+                           selectSection(section.id);
+                           
+                           const startX = e.clientX;
+                           const startY = e.clientY;
+                           const startLayout = { ...layout };
+
+                           const handleMove = (moveE: MouseEvent) => {
+                             const deltaX = moveE.clientX - startX;
+                             const deltaY = moveE.clientY - startY;
+                             let newX = startLayout.x + deltaX;
+                             let newY = startLayout.y + deltaY;
+                             
+                             if (gridEnabled) {
+                               newX = Math.round(newX / 10) * 10;
+                               newY = Math.round(newY / 10) * 10;
+                             }
+                             
+                             updateBlockLayout(section.id, block.id, viewport, { x: newX, y: newY });
+                           };
+
+                           const handleUp = () => {
+                             window.removeEventListener('mousemove', handleMove);
+                             window.removeEventListener('mouseup', handleUp);
+                           };
+
+                           window.addEventListener('mousemove', handleMove);
+                           window.addEventListener('mouseup', handleUp);
+                         }}
+                         className={`absolute ${!isPreviewMode ? 'element-outline' : ''} ${isSelected ? 'is-selected' : ''}`}
+                         style={{
+                           left: layout.x,
+                           top: layout.y,
+                           width: layout.width,
+                           height: layout.height,
+                           zIndex: block.zIndex || 10,
+                           opacity: layout.hidden ? 0.35 : 1,
+                           display: layout.hidden && isPreviewMode ? 'none' : 'block'
+                         }}
+                       >
+                         {/* Position indicator */}
+                         {!isPreviewMode && isSelected && (
+                           <div className="absolute -top-6 left-0 bg-blue-600 text-white text-[9px] font-bold px-2 py-0.5 rounded-t-md shadow-sm pointer-events-none z-40 whitespace-nowrap">
+                             [{viewport.toUpperCase()}] X:{layout.x}, Y:{layout.y}
+                           </div>
+                         )}
+
+                         {/* Hidden badge */}
+                         {!isPreviewMode && layout.hidden && (
+                           <div className="absolute top-1 right-1 bg-amber-500 text-white text-[8px] font-extrabold px-1.5 py-0.5 rounded shadow z-40 pointer-events-none uppercase">
+                             Hidden ({viewport})
+                           </div>
+                         )}
+
+                         <BlockRenderer 
+                           block={block}
+                           updateProps={updateProps}
+                           isPreviewMode={isPreviewMode}
+                           setIsEditingInline={setIsEditingInline}
+                         />
+
+                         {/* Resize handles */}
+                         {!isPreviewMode && isSelected && (
+                           <>
+                             <div
+                               onMouseDown={(e) => {
+                                 e.stopPropagation();
+                                 const startX = e.clientX;
+                                 const startY = e.clientY;
+                                 const startW = layout.width;
+                                 const startH = layout.height;
+
+                                 const handleMove = (moveE: MouseEvent) => {
+                                   let newW = Math.max(30, startW + (moveE.clientX - startX));
+                                   let newH = Math.max(20, startH + (moveE.clientY - startY));
+                                   if (gridEnabled) {
+                                     newW = Math.round(newW / 10) * 10;
+                                     newH = Math.round(newH / 10) * 10;
+                                   }
+                                   updateBlockLayout(section.id, block.id, viewport, { width: newW, height: newH });
+                                 };
+
+                                 const handleUp = () => {
+                                   window.removeEventListener('mousemove', handleMove);
+                                   window.removeEventListener('mouseup', handleUp);
+                                 };
+
+                                 window.addEventListener('mousemove', handleMove);
+                                 window.addEventListener('mouseup', handleUp);
+                               }}
+                               className="absolute bottom-0 right-0 w-3 h-3 bg-blue-600 border-2 border-white rounded-sm cursor-se-resize z-50 shadow"
+                             />
+                           </>
+                         )}
+                       </div>
+                     );
+                   })}
+                 </div>
+               </section>
+             );
+           })}
          </div>
        </div>
      </div>
