@@ -421,5 +421,127 @@ export const SECTION_TEMPLATES: SectionTemplate[] = [
       bgGradient: '',
       elements: []
     })
+  },
+  {
+    id: 'navigation',
+    title: 'Navigation Bar',
+    category: 'Header / Banner',
+    desc: 'Navigasi responsif dengan logo, tautan menu, dan tombol CTA.',
+    previewBg: 'bg-sky-600',
+    factory: () => ({
+      id: createId('sec'),
+      title: 'Navigation Bar',
+      heights: { desktop: 72, tablet: 64, mobile: 56 },
+      bgColor: '#ffffff',
+      bgGradient: '',
+      elements: [
+        {
+          id: createId('el'),
+          type: 'heading',
+          name: 'Logo',
+          layouts: {
+            desktop: { x: 40, y: 18, width: 160, height: 36, hidden: false },
+            tablet: { x: 24, y: 14, width: 140, height: 36, hidden: false },
+            mobile: { x: 16, y: 10, width: 120, height: 36, hidden: false }
+          },
+          zIndex: 10,
+          text: 'YourBrand',
+          fontSize: '22px',
+          fontWeight: '700',
+          textColor: '#0f172a',
+          textAlign: 'left'
+        },
+        {
+          id: createId('el'),
+          type: 'button',
+          name: 'Nav Link Home',
+          layouts: {
+            desktop: { x: 360, y: 20, width: 70, height: 32, hidden: false },
+            tablet: { x: 220, y: 16, width: 60, height: 30, hidden: false },
+            mobile: { x: 16, y: 60, width: 80, height: 30, hidden: false }
+          },
+          zIndex: 10,
+          text: 'Home',
+          url: '#',
+          bgColor: 'transparent',
+          textColor: '#334155',
+          borderRadius: '6px',
+          fontSize: '14px',
+          fontWeight: '500'
+        },
+        {
+          id: createId('el'),
+          type: 'button',
+          name: 'Nav Link About',
+          layouts: {
+            desktop: { x: 440, y: 20, width: 70, height: 32, hidden: false },
+            tablet: { x: 290, y: 16, width: 60, height: 30, hidden: false },
+            mobile: { x: 110, y: 60, width: 80, height: 30, hidden: false }
+          },
+          zIndex: 10,
+          text: 'About',
+          url: '#',
+          bgColor: 'transparent',
+          textColor: '#334155',
+          borderRadius: '6px',
+          fontSize: '14px',
+          fontWeight: '500'
+        },
+        {
+          id: createId('el'),
+          type: 'button',
+          name: 'Nav Link Services',
+          layouts: {
+            desktop: { x: 520, y: 20, width: 80, height: 32, hidden: false },
+            tablet: { x: 360, y: 16, width: 72, height: 30, hidden: false },
+            mobile: { x: 16, y: 100, width: 80, height: 30, hidden: false }
+          },
+          zIndex: 10,
+          text: 'Services',
+          url: '#',
+          bgColor: 'transparent',
+          textColor: '#334155',
+          borderRadius: '6px',
+          fontSize: '14px',
+          fontWeight: '500'
+        },
+        {
+          id: createId('el'),
+          type: 'button',
+          name: 'Nav Link Contact',
+          layouts: {
+            desktop: { x: 610, y: 20, width: 80, height: 32, hidden: false },
+            tablet: { x: 442, y: 16, width: 72, height: 30, hidden: false },
+            mobile: { x: 110, y: 100, width: 80, height: 30, hidden: false }
+          },
+          zIndex: 10,
+          text: 'Contact',
+          url: '#',
+          bgColor: 'transparent',
+          textColor: '#334155',
+          borderRadius: '6px',
+          fontSize: '14px',
+          fontWeight: '500'
+        },
+        {
+          id: createId('el'),
+          type: 'button',
+          name: 'CTA Button',
+          layouts: {
+            desktop: { x: 820, y: 16, width: 140, height: 40, hidden: false },
+            tablet: { x: 568, y: 12, width: 120, height: 40, hidden: false },
+            mobile: { x: 16, y: 140, width: 160, height: 40, hidden: false }
+          },
+          zIndex: 12,
+          text: 'Get Started',
+          url: '#',
+          bgColor: '#2563eb',
+          textColor: '#ffffff',
+          borderRadius: '8px',
+          fontSize: '14px',
+          fontWeight: '600'
+        }
+      ]
+    })
   }
 ];
