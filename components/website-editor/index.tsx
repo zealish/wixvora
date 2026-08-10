@@ -5,7 +5,7 @@ import { EditorProvider, useEditor } from "./editor-provider";
 import { Icon } from "./ui/icon-library";
 import { getLayout, getSectionHeight, VIEWPORT_WIDTHS } from "./lib/viewport-utils";
 import { ELEMENT_PRESETS } from "./lib/element-presets";
-import type { Element, Section, PageSettings, Viewport } from "./lib/block-types";
+import type { Element, Page, Section, PageSettings, Viewport } from "./lib/block-types";
 
 function RenderElementContent({ element, updateProps, isPreviewMode }: { element: Element; updateProps: (p: Partial<Element>) => void; isPreviewMode: boolean }) {
   if (element.type === 'heading') {
@@ -986,7 +986,7 @@ export default function WebsiteEditor({
 }: {
   initialSections?: Section[];
   initialPageSettings?: PageSettings;
-  onSave?: (sections: Section[], pageSettings: PageSettings) => Promise<void>;
+  onSave?: (pages: Page[], pageSettings: PageSettings) => Promise<void>;
   backUrl?: string;
   title?: string;
 }) {
@@ -996,7 +996,7 @@ export default function WebsiteEditor({
   if (onSave !== undefined) props.onSave = onSave;
 
   return (
-    <EditorProvider {...props as any}>
+    <EditorProvider {...props}>
       <EditorLayout backUrl={backUrl} title={title} />
     </EditorProvider>
   );
