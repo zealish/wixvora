@@ -11,6 +11,9 @@ import { ImageBlock } from './image-block';
 import { PricingBlock } from './pricing-block';
 import { FormContactBlock } from './form-contact-block';
 import { FooterBlock } from './footer-block';
+import { ButtonBlock } from './button-block';
+import { BadgeBlock } from './badge-block';
+import { CardBlock } from './card-block';
 
 interface BlockRendererProps {
   block: Block;
@@ -114,6 +117,33 @@ export function BlockRenderer({
     case 'footer':
       return (
         <FooterBlock
+          block={block}
+          updateProps={handleUpdateProps}
+          isPreviewMode={isPreviewMode}
+          setIsEditingInline={setIsEditingInline}
+        />
+      );
+    case 'button':
+      return (
+        <ButtonBlock
+          block={block}
+          updateProps={handleUpdateProps}
+          isPreviewMode={isPreviewMode}
+          setIsEditingInline={setIsEditingInline}
+        />
+      );
+    case 'badge':
+      return (
+        <BadgeBlock
+          block={block}
+          updateProps={handleUpdateProps}
+          isPreviewMode={isPreviewMode}
+          setIsEditingInline={setIsEditingInline}
+        />
+      );
+    case 'card':
+      return (
+        <CardBlock
           block={block}
           updateProps={handleUpdateProps}
           isPreviewMode={isPreviewMode}
