@@ -6,13 +6,13 @@ import { Icon } from "../ui/icon-library";
 import { generateFullHTML } from "../lib/html-generator";
 
 export function ExportModal() {
-  const { showExportModal, setShowExportModal, blocks, pageSettings } =
+  const { showExportModal, setShowExportModal, sections } =
     useEditor();
   const [copied, setCopied] = useState(false);
 
   if (!showExportModal) return null;
 
-  const html = generateFullHTML(blocks, pageSettings);
+  const html = generateFullHTML(sections);
 
   const handleCopy = async () => {
     try {

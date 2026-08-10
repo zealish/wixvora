@@ -64,6 +64,15 @@ export function generateFullHTML(sections: Section[]): string {
       if (block.type === 'image') {
         return `      <img ${idAttr} src="${block.props?.src || ''}" alt="${block.props?.alt || ''}" style="${style} object-fit:cover;" />`;
       }
+      if (block.type === 'button') {
+        return `      <button ${idAttr} style="${style} background-color:#2563eb;color:#ffffff;border:none;padding:10px 20px;border-radius:8px;font-weight:600;cursor:pointer;">${block.props?.text || 'Click me'}</button>`;
+      }
+      if (block.type === 'badge') {
+        return `      <span ${idAttr} style="${style} background-color:#e0e7ff;color:#3730a3;padding:4px 12px;border-radius:9999px;font-size:12px;font-weight:600;">${block.props?.text || 'Badge'}</span>`;
+      }
+      if (block.type === 'card') {
+        return `      <div ${idAttr} style="${style} background-color:#ffffff;border-radius:12px;padding:20px;box-shadow:0 1px 3px rgba(0,0,0,0.1);">${block.props?.text || 'Card content'}</div>`;
+      }
       return `      <div ${idAttr} style="${style}">${block.props?.text || block.type}</div>`;
     }).join('\n');
 
