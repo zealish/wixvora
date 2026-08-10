@@ -6,6 +6,7 @@ import { BLOCK_CATALOG } from "./lib/block-definitions";
 import { PRESET_TEMPLATES } from "./lib/template-presets";
 import { loadEditorState, createDefaultState } from "./lib/section-migration";
 import { SECTION_TEMPLATES } from "./lib/section-templates";
+import { ELEMENT_PRESETS } from "./lib/element-presets";
 
 const ENABLE_MULTI_VIEWPORT = process.env.NEXT_PUBLIC_ENABLE_MULTI_VIEWPORT === 'true' || true;
 
@@ -95,6 +96,13 @@ interface EditorContextValue {
   addBlockToSection: (type: BlockType, sectionId: string) => void;
   updateBlockLayout: (sectionId: string, blockId: string, viewport: Viewport, layout: Partial<import("./lib/block-types").ViewportLayout>) => void;
   findBlock: (blockId: string) => { section: Section; block: Block } | null;
+
+  // Snap grid & presets
+  snapGrid: boolean;
+  setSnapGrid: (v: boolean) => void;
+  snapGuideX: number | null;
+  setSnapGuideX: (v: number | null) => void;
+  addElementFromPreset: (presetIndex: number) => void;
 }
 
 const EditorContext = createContext<EditorContextValue | null>(null);
@@ -266,6 +274,10 @@ export function EditorProvider({ children }: { children: ReactNode }) {
   const [itemOffset, setItemOffset] = useState<{ x: number; y: number } | null>(null);
   // Track which block is currently being dragged (for multi-selection)
   const [draggedBlockIds, setDraggedBlockIds] = useState<string[]>([]);
+
+  // Snap grid state
+  const [snapGrid, setSnapGrid] = useState<boolean>(true);
+  const [snapGuideX, setSnapGuideX] = useState<number | null>(null);
 
   // Section-based state (new)
   const [sections, setSections] = useState<Section[]>(() => {
@@ -737,6 +749,28 @@ export function EditorProvider({ children }: { children: ReactNode }) {
     return null;
   }, [sections]);
 
+  const addElementFromPreset = useCallback((presetIndex: number) => {
+    const preset = ELEMENT_PRESETS[presetIndex];
+    if (!preset || !selectedSectionId) return;
+
+    const newBlock: Block = {
+      id: generateId(),
+      type: preset.type,
+      hidden: false,
+      props: { ...preset.defaultProps },
+      zIndex: 10,
+      layouts: { ...preset.defaultLayouts },
+    };
+
+    setSections(prev => prev.map(s =>
+      s.id === selectedSectionId
+        ? { ...s, blocks: [...s.blocks, newBlock] }
+        : s
+    ));
+    setSelectedBlockId(newBlock.id);
+    showToast(`"${preset.label}" added`);
+  }, [selectedSectionId, showToast]);
+
   const value: EditorContextValue = {
     blocks,
     selectedBlockId,
@@ -817,6 +851,12 @@ export function EditorProvider({ children }: { children: ReactNode }) {
     addBlockToSection,
     updateBlockLayout,
     findBlock,
+    // Snap grid & presets
+    snapGrid,
+    setSnapGrid,
+    snapGuideX,
+    setSnapGuideX,
+    addElementFromPreset,
   };
 
   return <EditorContext.Provider value={value}>{children}</EditorContext.Provider>;
