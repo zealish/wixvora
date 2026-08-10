@@ -4,24 +4,18 @@ import { templates } from "@/lib/db/schema";
 import { createAuditLog } from "@/features/audit/service";
 import { getUserPermissions } from "@/lib/auth/authorize";
 import { PERMISSIONS } from "@/lib/auth/permissions";
-import type { PageSettings } from "./lib/block-types";
-import { DEFAULT_PAGE_SETTINGS } from "./lib/block-types";
-import { generateHTMLSnapshot } from "./lib/html-generator";
+import { generateMultiPageHTML, generateFullHTML } from "@/components/website-editor/lib/html-generator";
 import { generateUniqueSlug, getTemplateById } from "./queries";
 import type { CreateTemplateInput, UpdateTemplateInput } from "./validation";
 
 type TemplateStatus = "draft" | "published";
 
-function resolvePageSettings(settings?: PageSettings): PageSettings {
-  return { ...DEFAULT_PAGE_SETTINGS, ...settings };
-}
-
 export async function createTemplate(
   data: CreateTemplateInput,
   userId: string
 ): Promise<{ id: string }> {
-  const pageSettings = resolvePageSettings(data.pageSettings);
-  const htmlSnapshot = generateHTMLSnapshot(data.blocks, pageSettings);
+  const pageSettings = data.pageSettings ?? { title: "My Website", bgColor: "#ffffff", fontFamily: "font-sans" };
+  const htmlSnapshot = generateFullHTML(data.sections as any);
   const slug = await generateUniqueSlug(data.name);
 
   const [created] = await db
@@ -32,7 +26,7 @@ export async function createTemplate(
       description: data.description ?? null,
       previewImageUrl: data.previewImageUrl ?? null,
       categoryId: data.categoryId ?? null,
-      blocksJson: data.blocks,
+      sections: data.sections as any,
       pageSettings,
       htmlSnapshot,
       isFeatured: data.isFeatured ?? false,
@@ -69,12 +63,17 @@ export async function updateTemplate(
   }
 
   const effectiveSettings = data.pageSettings
-    ? resolvePageSettings(data.pageSettings)
+    ? { title: data.pageSettings.title, bgColor: data.pageSettings.bgColor, fontFamily: data.pageSettings.fontFamily }
     : existing.pageSettings;
 
   let htmlSnapshot = existing.htmlSnapshot;
-  if (data.blocks) {
-    htmlSnapshot = generateHTMLSnapshot(data.blocks, effectiveSettings);
+  
+  // If pages are provided, use multi-page HTML generation
+  if (data.pages && data.pages.length > 0) {
+    const pages = data.pages as any[];
+    htmlSnapshot = generateMultiPageHTML(pages);
+  } else if (data.sections) {
+    htmlSnapshot = generateFullHTML(data.sections as any);
   }
 
   const patch: Record<string, unknown> = { updatedAt: new Date() };
@@ -84,10 +83,16 @@ export async function updateTemplate(
   if (data.previewImageUrl !== undefined)
     patch.previewImageUrl = data.previewImageUrl;
   if (data.categoryId !== undefined) patch.categoryId = data.categoryId;
-  if (data.blocks !== undefined) {
-    patch.blocksJson = data.blocks;
-    patch.htmlSnapshot = htmlSnapshot;
+  
+  // Handle both old sections format and new pages format
+  if (data.pages && data.pages.length > 0) {
+    patch.pages = data.pages;
+    // Flatten pages to sections for backward compatibility with existing queries
+    patch.sections = data.pages.flatMap((p: any) => p.sections);
+  } else if (data.sections !== undefined) {
+    patch.sections = data.sections;
   }
+  
   if (data.pageSettings !== undefined) patch.pageSettings = effectiveSettings;
   if (data.isFeatured !== undefined) patch.isFeatured = data.isFeatured;
   if (data.sortOrder !== undefined) patch.sortOrder = data.sortOrder;
@@ -145,7 +150,7 @@ export async function duplicateTemplate(
       description: existing.description,
       previewImageUrl: existing.previewImageUrl,
       categoryId: existing.categoryId,
-      blocksJson: existing.blocks,
+      sections: existing.sections as any,
       pageSettings: existing.pageSettings,
       htmlSnapshot: existing.htmlSnapshot,
       isFeatured: false,
