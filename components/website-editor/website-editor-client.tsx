@@ -17,7 +17,7 @@ export default function WebsiteEditorWrapper({
   const handleSave = useCallback(
     async (pages: Page[], pageSettings: PageSettings) => {
       const result = await updateWebsiteSectionsAction(websiteId, {
-        sections: pages.flatMap(p => p.sections),
+        pages,  // Save full page structure instead of flattened sections
         pageSettings,
       });
       if (!result.success) {

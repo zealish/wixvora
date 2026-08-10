@@ -1,7 +1,44 @@
+"use server";
+
 import { db } from "@/lib/db";
 import { templates, businessCategories, user } from "@/lib/db/schema";
 import { eq, and, isNull, inArray } from "drizzle-orm";
 import type { Template, TemplateListItem, TemplateStatus } from "./types";
+
+// Helper function to deep parse sections array with elements
+function parseNestedSections(rawSections: any): any[] {
+  if (!Array.isArray(rawSections)) return [];
+  
+  return rawSections.map((section: any) => {
+    let parsedSection = { ...section };
+    
+    // Parse elements if it's a string
+    if (typeof section.elements === 'string') {
+      try {
+        parsedSection.elements = JSON.parse(section.elements);
+      } catch (e) {
+        console.error("Failed to parse elements:", e);
+        parsedSection.elements = [];
+      }
+    } else if (!Array.isArray(section.elements)) {
+      parsedSection.elements = [];
+    }
+    
+    // Parse nested sections if needed (for deeply nested structures)
+    if (typeof section.sections === 'string') {
+      try {
+        parsedSection.sections = parseNestedSections(JSON.parse(section.sections));
+      } catch (e) {
+        console.error("Failed to parse nested sections:", e);
+        parsedSection.sections = [];
+      }
+    } else if (!Array.isArray(section.sections)) {
+      parsedSection.sections = [];
+    }
+    
+    return parsedSection as any;
+  });
+}
 
 export async function getAllTemplates(): Promise<TemplateListItem[]> {
   const rows = await db
@@ -86,25 +123,76 @@ export async function getTemplateById(id: string): Promise<Template | null> {
 
   if (!row) return null;
 
+  // Cast row to any to access all fields including new ones
+  const anyRow = row as any;
+  
+  console.log("📋 [QUERY] Template loaded from DB:", {
+    id: anyRow.id,
+    hasPages: !!anyRow.pages,
+    pagesLength: Array.isArray(anyRow.pages) ? anyRow.pages.length : (typeof anyRow.pages === 'string' ? 'JSON string' : 'N/A'),
+    sectionsCount: Array.isArray(anyRow.sections) ? anyRow.sections.length : (typeof anyRow.sections === 'string' ? 'JSON string' : 'N/A')
+  });
+
+  // Parse JSON strings back to arrays with deep nesting
+  let parsedPages: any[] = [];
+  
+  if (typeof anyRow.pages === 'string') {
+    try {
+      const rawParsed = JSON.parse(anyRow.pages);
+      // Deep parse all nested sections and pageSettings
+      parsedPages = Array.isArray(rawParsed) ? rawParsed.map((page: any) => ({
+        ...page,
+        sections: parseNestedSections(page.sections),
+        pageSettings: typeof page.pageSettings === 'string' 
+          ? JSON.parse(page.pageSettings) 
+          : page.pageSettings || {},
+      })) : [];
+    } catch (e) {
+      console.error("Failed to parse pages:", e);
+      parsedPages = [];
+    }
+  } else if (Array.isArray(anyRow.pages)) {
+    parsedPages = anyRow.pages;
+  }
+
+  let parsedPageSettings: any = {};
+  if (typeof anyRow.pageSettings === 'string') {
+    try {
+      parsedPageSettings = JSON.parse(anyRow.pageSettings);
+    } catch (e) {
+      console.error("Failed to parse pageSettings:", e);
+    }
+  }
+
+  console.log("✅ [QUERY] Parsed data:", {
+    pagesLength: parsedPages.length,
+    pageSettingsType: typeof parsedPageSettings
+  });
+
+  // Flatten pages to sections for backward compatibility
+  const flattenedSections = parsedPages.flatMap((p: any) => (Array.isArray(p.sections) ? p.sections : []));
+
   return {
-    id: row.id,
-    name: row.name,
-    slug: row.slug,
-    description: row.description,
-    previewImageUrl: row.previewImageUrl,
-    categoryId: row.categoryId,
-    sections: row.sections,
-    pageSettings: row.pageSettings,
-    htmlSnapshot: row.htmlSnapshot,
-    isFeatured: row.isFeatured,
-    sortOrder: row.sortOrder,
-    status: row.status as TemplateStatus,
-    usageCount: row.usageCount,
-    lastUsedAt: row.lastUsedAt,
-    createdBy: row.createdBy,
-    createdAt: row.createdAt,
-    updatedAt: row.updatedAt,
-  };
+    id: anyRow.id,
+    name: anyRow.name,
+    slug: anyRow.slug,
+    description: anyRow.description,
+    previewImageUrl: anyRow.previewImageUrl,
+    categoryId: anyRow.categoryId,
+    sections: Array.isArray(flattenedSections) ? flattenedSections : [],
+    pageSettings: parsedPageSettings || { title: anyRow.name, bgColor: '#ffffff', fontFamily: 'font-sans' },
+    pages: Array.isArray(parsedPages) ? parsedPages : [],
+    htmlSnapshot: anyRow.htmlSnapshot,
+    isFeatured: anyRow.isFeatured,
+    sortOrder: anyRow.sortOrder,
+    status: anyRow.status as TemplateStatus,
+    usageCount: anyRow.usageCount,
+    lastUsedAt: anyRow.lastUsedAt,
+    createdBy: anyRow.createdBy,
+    createdAt: anyRow.createdAt,
+    updatedAt: anyRow.updatedAt,
+    deletedAt: anyRow.deletedAt,
+  } as Template;
 }
 
 export async function generateUniqueSlug(

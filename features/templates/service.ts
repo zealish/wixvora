@@ -6,7 +6,7 @@ import { getUserPermissions } from "@/lib/auth/authorize";
 import { PERMISSIONS } from "@/lib/auth/permissions";
 import { generateMultiPageHTML, generateFullHTML } from "@/components/website-editor/lib/html-generator";
 import { generateUniqueSlug, getTemplateById } from "./queries";
-import type { CreateTemplateInput, UpdateTemplateInput } from "./validation";
+import type { CreateTemplateInput } from "./validation";
 
 type TemplateStatus = "draft" | "published";
 
@@ -15,8 +15,30 @@ export async function createTemplate(
   userId: string
 ): Promise<{ id: string }> {
   const pageSettings = data.pageSettings ?? { title: "My Website", bgColor: "#ffffff", fontFamily: "font-sans" };
-  const htmlSnapshot = generateFullHTML(data.sections as any);
-  const slug = await generateUniqueSlug(data.name);
+  
+  // Generate minimal HTML snapshot for empty sections
+  let htmlSnapshot = '<!DOCTYPE html><html><head><title>' + data.name + '</title></head><body></body></html>';
+  if (data.sections && data.sections.length > 0) {
+    htmlSnapshot = generateFullHTML(data.sections as any);
+  }
+  
+  // Truncate to prevent TEXT field overflow
+  if (htmlSnapshot.length > 10000) {
+    htmlSnapshot = htmlSnapshot.substring(0, 10000) + '\n\n<!-- HTML truncated for storage -->';
+  }
+
+  // Generate unique slug with counter if duplicate
+  let slug = await generateUniqueSlug(data.name);
+  let counter = 1;
+  
+  while (await isSlugTaken(slug)) {
+    const newSlug = `${slug}-${counter}`;
+    if (!(await isSlugTaken(newSlug))) {
+      slug = newSlug;
+      break;
+    }
+    counter++;
+  }
 
   const [created] = await db
     .insert(templates)
@@ -26,8 +48,19 @@ export async function createTemplate(
       description: data.description ?? null,
       previewImageUrl: data.previewImageUrl ?? null,
       categoryId: data.categoryId ?? null,
-      sections: data.sections as any,
-      pageSettings,
+      // Stringify JSON columns for Postgres jsonb type (auto-parsed by Postgres)
+      sections: JSON.stringify(data.sections) as any,
+      pageSettings: JSON.stringify(pageSettings) as any,
+      // Provide empty pages array (required field)
+      pages: JSON.stringify([{ 
+        id: 'home',
+        title: data.name,
+        slug: slug,
+        sections: [],
+        pageSettings: pageSettings,
+        isHomePage: true,
+        sortOrder: 0,
+      }]) as any,
       htmlSnapshot,
       isFeatured: data.isFeatured ?? false,
       sortOrder: data.sortOrder ?? 0,
@@ -49,9 +82,19 @@ export async function createTemplate(
   return { id: created.id };
 }
 
+// Helper function to check if slug is taken
+async function isSlugTaken(slug: string): Promise<boolean> {
+  const [existing] = await db
+    .select({ slug: templates.slug })
+    .from(templates)
+    .where(eq(templates.slug, slug))
+    .limit(1);
+  return !!existing;
+}
+
 export async function updateTemplate(
   id: string,
-  data: UpdateTemplateInput,
+  data: any, // UpdateTemplateInput but using any for flexibility with JSON strings
   userId: string
 ): Promise<void> {
   const existing = await getTemplateById(id);
@@ -62,21 +105,45 @@ export async function updateTemplate(
     slug = await generateUniqueSlug(data.name, id);
   }
 
-  const effectiveSettings = data.pageSettings
-    ? { title: data.pageSettings.title, bgColor: data.pageSettings.bgColor, fontFamily: data.pageSettings.fontFamily }
-    : existing.pageSettings;
+  // Parse JSON strings if needed
+  let pageSettings = existing.pageSettings;
+  if (data.pageSettings) {
+    try {
+      pageSettings = typeof data.pageSettings === 'string' 
+        ? JSON.parse(data.pageSettings) 
+        : data.pageSettings;
+    } catch (e) {
+      console.error("Failed to parse pageSettings:", e);
+    }
+  }
 
   let htmlSnapshot = existing.htmlSnapshot;
   
-  // If pages are provided, use multi-page HTML generation
-  if (data.pages && data.pages.length > 0) {
-    const pages = data.pages as any[];
-    htmlSnapshot = generateMultiPageHTML(pages);
+  // Handle pages - can be object array or JSON string
+  let pagesData = [];
+  if (data.pages) {
+    try {
+      pagesData = Array.isArray(data.pages) 
+        ? data.pages
+        : JSON.parse(data.pages);
+      
+      // Generate HTML from pages structure
+      htmlSnapshot = generateMultiPageHTML(pagesData);
+    } catch (e) {
+      console.error("Failed to parse pages:", e);
+      // Fallback to sections if pages parsing fails
+      if (data.sections) {
+        htmlSnapshot = generateFullHTML(data.sections as any[]);
+      }
+    }
   } else if (data.sections) {
-    htmlSnapshot = generateFullHTML(data.sections as any);
+    htmlSnapshot = generateFullHTML(data.sections as any[]);
   }
 
-  const patch: Record<string, unknown> = { updatedAt: new Date() };
+  const patch: Record<string, unknown> = { 
+    updatedAt: new Date(),
+    htmlSnapshot,
+  };
   if (data.name !== undefined) patch.name = data.name;
   if (data.name && data.name !== existing.name) patch.slug = slug;
   if (data.description !== undefined) patch.description = data.description;
@@ -84,16 +151,30 @@ export async function updateTemplate(
     patch.previewImageUrl = data.previewImageUrl;
   if (data.categoryId !== undefined) patch.categoryId = data.categoryId;
   
-  // Handle both old sections format and new pages format
-  if (data.pages && data.pages.length > 0) {
-    patch.pages = data.pages;
-    // Flatten pages to sections for backward compatibility with existing queries
-    patch.sections = data.pages.flatMap((p: any) => p.sections);
+  // Save both pages (multi-page) and sections (legacy compatibility)
+  if (pagesData && pagesData.length > 0) {
+    console.log("💾 [SERVICE] Saving pages:", JSON.stringify(pagesData, null, 2));
+    // Stringify pages array for database storage
+    patch.pages = JSON.stringify(pagesData);
+    // Also flatten to sections for backward compatibility
+    const flattenedSections = pagesData.flatMap((p: any) => p.sections);
+    patch.sections = JSON.stringify(flattenedSections);
+    console.log("💾 [SERVICE] Flattened sections:", flattenedSections.length);
   } else if (data.sections !== undefined) {
-    patch.sections = data.sections;
+    // Stringify sections for database storage  
+    const sectionsArray = Array.isArray(data.sections) ? data.sections : [];
+    console.log("💾 [SERVICE] Saving sections:", `${sectionsArray.length} sections`);
+    patch.sections = JSON.stringify(data.sections);
   }
   
-  if (data.pageSettings !== undefined) patch.pageSettings = effectiveSettings;
+  console.log("📝 [SERVICE] Final patch:", {
+    hasPages: !!patch.pages,
+    pagesLength: typeof patch.pages === 'string' ? patch.pages.length : 0,
+    hasSections: !!patch.sections,
+    sectionsLength: typeof patch.sections === 'string' ? patch.sections.length : 0
+  });
+  
+  if (data.pageSettings !== undefined) patch.pageSettings = pageSettings;
   if (data.isFeatured !== undefined) patch.isFeatured = data.isFeatured;
   if (data.sortOrder !== undefined) patch.sortOrder = data.sortOrder;
   if (data.status !== undefined) patch.status = data.status;

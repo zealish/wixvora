@@ -18,9 +18,10 @@ export default function TemplateEditorWrapper({
 }: TemplateEditorWrapperProps) {
   const handleSave = useCallback(
     async (pages: Page[], pageSettings: PageSettings) => {
+      // Save pages array - each section is already an object from editor state
       const result = await updateTemplateSectionsAction(templateId, {
-        sections: pages.flatMap(p => p.sections),
-        pageSettings,
+        pages,  // Send raw pages array without double-stringifying
+        pageSettings: JSON.stringify(pageSettings),
       });
       if (!result.success) {
         throw new Error(result.error);

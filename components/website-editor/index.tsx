@@ -1106,17 +1106,19 @@ function EditorLayout({ backUrl, title }: { backUrl?: string | undefined; title?
               {(() => {
                 const { SECTION_TEMPLATES } = require('./lib/section-templates');
                 return SECTION_TEMPLATES.map((tmpl: any) => (
-                  <div key={tmpl.id} className="border border-slate-200 rounded-2xl overflow-hidden hover:border-blue-500 hover:shadow-lg transition flex flex-col group bg-white">
-                    <div className={`h-24 ${tmpl.previewBg} p-4 flex items-end justify-between`}>
-                      <span className="px-2.5 py-1 rounded-md bg-white/90 text-slate-800 text-[10px] font-bold shadow-sm">{tmpl.category}</span>
-                    </div>
-                    <div className="p-4 flex-1 flex flex-col justify-between space-y-3">
-                      <div>
+                  <div key={tmpl.id} className="border border-slate-200 rounded-2xl overflow-hidden hover:border-blue-500 hover:shadow-lg transition bg-white group" style={{ minHeight: '200px' }}>
+                    <div className="p-4 flex flex-col">
+                      <div className="mb-3">
+                        <span className="inline-block px-2 py-1 mb-2 rounded-md bg-slate-100 text-slate-600 text-[10px] font-bold">{tmpl.category}</span>
                         <h3 className="font-extrabold text-sm text-slate-900 mb-1">{tmpl.title}</h3>
-                        <p className="text-xs text-slate-500 leading-relaxed">{tmpl.desc}</p>
+                        <p className="text-xs text-slate-500 leading-relaxed max-h-16 overflow-hidden">{tmpl.desc}</p>
                       </div>
-                      <button onClick={() => addSectionFromTemplate(tmpl.id)} className="w-full py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold transition shadow-sm">
-                        + Tambahkan Seksi Ini
+                      <button 
+                        onClick={() => addSectionFromTemplate(tmpl.id)} 
+                        className="w-full py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold transition shadow-sm flex items-center justify-center gap-2 flex-shrink-0 mt-auto"
+                      >
+                        <span>+</span>
+                        <span>Tambahkan Seksi Ini</span>
                       </button>
                     </div>
                   </div>

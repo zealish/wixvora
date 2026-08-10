@@ -51,11 +51,16 @@ export const createTemplateSchema = z.object({
   description: z.string().optional().nullable(),
   previewImageUrl: z.string().max(500).optional().nullable(),
   categoryId: z.string().uuid().optional().nullable(),
-  sections: z.array(sectionSchema),
-  pageSettings: pageSettingsSchema.optional(),
-  isFeatured: z.boolean().optional(),
-  sortOrder: z.number().int().min(0).optional(),
-  status: z.enum(["draft", "published"]).optional(),
+  // Use z.literal to handle empty arrays as valid
+  sections: z.array(sectionSchema).default([]),
+  pageSettings: pageSettingsSchema.optional().default({
+    title: 'My Website',
+    bgColor: '#ffffff',
+    fontFamily: 'font-sans'
+  }),
+  isFeatured: z.boolean().optional().default(false),
+  sortOrder: z.number().int().min(0).optional().default(0),
+  status: z.enum(["draft", "published"]).optional().default("draft"),
 });
 
 export type CreateTemplateInput = z.infer<typeof createTemplateSchema>;

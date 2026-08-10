@@ -4,10 +4,9 @@ import { revalidatePath } from "next/cache";
 import { getSession } from "@/lib/auth/session";
 import { authorize } from "@/lib/auth/authorize";
 import { PERMISSIONS } from "@/lib/auth/permissions";
-import { createTemplateSchema, updateTemplateSchema } from "./validation";
+import { updateTemplateSchema } from "./validation";
 import type { TemplateActionResult, TemplateStatus } from "./types";
 import {
-  createTemplate,
   updateTemplate,
   softDeleteTemplate,
   duplicateTemplate,
@@ -18,26 +17,8 @@ import {
 
 const TEMPLATES_PATH = "/staff/templates";
 
-export async function createTemplateAction(
-  data: unknown
-): Promise<TemplateActionResult> {
-  try {
-    const session = await getSession();
-    if (!session) return { success: false, error: "Unauthorized" };
-    if (session.user.accountType !== "STAFF")
-      return { success: false, error: "Forbidden: Staff access required" };
-
-    await authorize(PERMISSIONS.TEMPLATES_CREATE);
-    const validated = createTemplateSchema.parse(data);
-    const { id } = await createTemplate(validated, session.user.id);
-
-    revalidatePath(TEMPLATES_PATH);
-    return { success: true, data: { id } };
-  } catch (error) {
-    if (error instanceof Error) return { success: false, error: error.message };
-    return { success: false, error: "An unexpected error occurred" };
-  }
-}
+// Note: createTemplate now uses API Route at /api/templates/create
+// for better serialization handling with complex objects
 
 export async function updateTemplateAction(
   data: unknown
@@ -158,22 +139,27 @@ export async function updateTemplateSectionsAction(
     await assertCanModifyTemplate(id, session.user.id, "update");
 
     const { sections, pageSettings, pages } = data;
-    const updateData: any = { id };
+    const updateData: any = {};
     
+    // Handle both pages format and legacy sections format
     if (pages && pages.length > 0) {
-      updateData.pages = pages;
+      updateData.pages = JSON.stringify(pages);
     } else if (sections) {
-      updateData.sections = sections;
+      updateData.sections = JSON.stringify(sections);
     }
     
-    if (pageSettings) updateData.pageSettings = pageSettings;
+    if (pageSettings) updateData.pageSettings = JSON.stringify(pageSettings);
+    
+    console.log("📥 [ACTION] Update template with:", { hasPages: !!pages, pagesCount: pages?.length || 0 });
     
     await updateTemplate(id, updateData, session.user.id);
 
+    console.log("✅ [ACTION] Template updated successfully");
     revalidatePath(TEMPLATES_PATH);
     revalidatePath(`/templates-editor/${id}`);
     return { success: true };
   } catch (error) {
+    console.error("❌ [ACTION] Failed to update template:", error);
     if (error instanceof Error) return { success: false, error: error.message };
     return { success: false, error: "An unexpected error occurred" };
   }

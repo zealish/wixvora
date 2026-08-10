@@ -1,4 +1,4 @@
-import type { Section, PageSettings } from "@/components/website-editor/lib/block-types";
+import type { Section, PageSettings, Page } from "@/components/website-editor/lib/block-types";
 
 export type WebsiteStatus = "draft" | "published" | "archived";
 
@@ -12,8 +12,9 @@ export interface Website {
   status: WebsiteStatus;
   isPublished: boolean;
   publishedAt: Date | null;
-  sections: Section[];
-  pageSettings: PageSettings;
+  sections: Section[]; // Legacy format (homepage only) for backwards compatibility
+  pageSettings: PageSettings; // Legacy format (homepage settings)
+  pages?: Page[]; // NEW: Full multi-page array structure
   createdAt: Date;
   updatedAt: Date;
 }

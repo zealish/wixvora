@@ -44,12 +44,19 @@ export async function updateWebsiteSectionsAction(
     if (!session) return { success: false, error: "Unauthorized" };
 
     const validated = updateWebsiteSectionsSchema.parse(data);
-    await updateWebsiteSections(
-      id,
-      validated.sections,
-      validated.pageSettings,
-      session.user.id
-    );
+    
+    // Use pages if available, else fallback to sections (flattened)
+    const pagesData = validated.pages || [{ 
+      id: 'home', 
+      title: 'Home', 
+      slug: '/',
+      sections: validated.sections || [], 
+      pageSettings: validated.pageSettings || {},
+      isHomePage: true,
+      sortOrder: 0,
+    }];
+    
+    await updateWebsiteSections(id, pagesData, validated.pageSettings, session.user.id);
 
     revalidatePath(`/website-editor/${id}`);
     return { success: true };

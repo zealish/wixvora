@@ -1,4 +1,5 @@
 import type { Section, PageSettings } from "@/components/website-editor/lib/block-types";
+import type { Page } from "@/components/website-editor/lib/block-types";
 
 export type TemplateStatus = "draft" | "published";
 
@@ -11,6 +12,7 @@ export interface Template {
   categoryId: string | null;
   sections: Section[];
   pageSettings: PageSettings;
+  pages?: Page[]; // NEW: Multi-page support
   htmlSnapshot: string;
   isFeatured: boolean;
   sortOrder: number;
@@ -20,6 +22,7 @@ export interface Template {
   createdBy: string | null;
   createdAt: Date;
   updatedAt: Date;
+  deletedAt: Date | null;
 }
 
 export interface TemplateListItem {

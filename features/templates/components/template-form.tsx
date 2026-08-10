@@ -11,8 +11,6 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import type { CategoryWithChildren } from "@/features/business-categories/types";
 import type { Template } from "../types";
-import { createTemplateAction, updateTemplateAction } from "../actions";
-
 interface TemplateFormProps {
   mode: "create" | "edit";
   categories: CategoryWithChildren[];
@@ -53,9 +51,13 @@ export function TemplateForm({
         name: values.name,
         description: values.description.trim() || null,
         previewImageUrl: values.previewImageUrl.trim() || null,
-        categoryId: values.categoryId ? values.categoryId : null,
-        sections: [], // Empty sections - use full-page editor for block editing
-        pageSettings: { title: 'My Website', bgColor: '#ffffff', fontFamily: 'font-sans' },
+        categoryId: values.categoryId || null,
+        sections: [], // Simple empty array - Zod default([])
+        pageSettings: { 
+          title: 'My Website', 
+          bgColor: '#ffffff', 
+          fontFamily: 'font-sans' 
+        }, // Simple object - Zod default(...)
         isFeatured: values.isFeatured,
         sortOrder: Number(values.sortOrder) || 0,
         status,
@@ -63,18 +65,21 @@ export function TemplateForm({
 
       setSubmitting(true);
       try {
-        const result =
-          mode === "create"
-            ? await createTemplateAction(payload)
-            : initialData
-              ? await updateTemplateAction({ ...payload, id: initialData.id })
-              : await createTemplateAction(payload);
+        const response = await fetch("/api/templates/create", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        });
 
-        if (!result.success) {
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
           toast.add({
             type: "error",
             title: "Error",
-            description: result.error,
+            description: result.error || "Failed to create template",
           });
           return;
         }
@@ -93,16 +98,17 @@ export function TemplateForm({
             : "/staff/templates";
         router.push(target);
         router.refresh();
+      } catch (err) {
+        toast.add({
+          type: "error",
+          title: "Error",
+          description: err instanceof Error ? err.message : "Failed to save",
+        });
       } finally {
         setSubmitting(false);
       }
     },
     [mode, initialData, router]
-  );
-
-  const onSaveDraft = handleSubmit((values) => persist(values, "draft"));
-  const onSavePublished = handleSubmit((values) =>
-    persist(values, "published")
   );
 
   const categoryOptions = categories.flatMap((cat) => [
@@ -115,7 +121,13 @@ export function TemplateForm({
   ]);
 
   return (
-    <form onSubmit={onSaveDraft} className="space-y-6">
+    <form onSubmit={(e) => {
+      e.preventDefault(); // Stop native submit first
+      
+      handleSubmit((values) => {
+        persist(values, "draft");
+      })(e);
+    }} className="space-y-6">
       <div className="bg-card grid gap-4 rounded-lg border p-4 md:grid-cols-2">
         <div className="space-y-2">
           <Label htmlFor="name">Name</Label>
@@ -192,7 +204,23 @@ export function TemplateForm({
           type="button"
           variant="outline"
           disabled={submitting}
-          onClick={() => onSavePublished()}
+          onClick={() => {
+            const form = document.querySelector('form') as HTMLFormElement;
+            if (!form) return;
+            const formData = new FormData(form);
+            const values = Object.fromEntries(formData.entries());
+            persist(
+              {
+                name: String(values.name || ""),
+                description: String(values.description || ""),
+                previewImageUrl: String(values.previewImageUrl || ""),
+                categoryId: String(values.categoryId || ""),
+                isFeatured: values.isFeatured === "on",
+                sortOrder: String(values.sortOrder || "0"),
+              },
+              "published"
+            );
+          }}
         >
           Save &amp; Publish
         </Button>

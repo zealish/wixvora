@@ -156,7 +156,22 @@ function generateMultiPageHTML(pages: Page[], navigationSettings?: NavigationSet
   const renderedPageContents: string[] = [];
 
   sortedPages.forEach(page => {
-    const sections = page.sections;
+    let sections = page.sections;
+    
+    // Handle case where sections is a string (from database)
+    if (typeof sections === 'string') {
+      try {
+        sections = JSON.parse(sections);
+      } catch (e) {
+        console.error('Failed to parse sections from string:', e);
+        sections = [];
+      }
+    }
+    
+    if (!Array.isArray(sections)) {
+      console.warn(`Invalid sections for page ${page.id}:`, typeof sections, sections);
+      sections = [];
+    }
 
     sections.forEach(sec => {
       const deskH = getSectionHeight(sec, 'desktop');

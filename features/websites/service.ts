@@ -3,7 +3,6 @@ import { db } from "@/lib/db";
 import { websites } from "@/lib/db/schema";
 import { getWebsiteById, generateUniqueWebsiteSlug } from "./queries";
 import { getTemplateById, incrementUsageCount } from "@/features/templates/queries";
-import type { Section, PageSettings } from "@/components/website-editor/lib/block-types";
 
 export async function createWebsiteFromTemplate(
   templateId: string,
@@ -14,8 +13,19 @@ export async function createWebsiteFromTemplate(
   if (!template) throw new Error("Template not found");
 
   const slug = await generateUniqueWebsiteSlug(name);
-  const sections = JSON.parse(JSON.stringify(template.sections)) as Section[];
-  const pageSettings = { ...template.pageSettings } as PageSettings;
+  
+  // Convert template sections to page structure for multi-page support
+  const pages = [
+    {
+      id: 'home',
+      title: name,
+      slug: slug,
+      sections: JSON.parse(JSON.stringify(template.sections)) as any[],
+      pageSettings: { ...template.pageSettings },
+      isHomePage: true,
+      sortOrder: 0,
+    }
+  ];
 
   const [created] = await db
     .insert(websites)
@@ -24,8 +34,7 @@ export async function createWebsiteFromTemplate(
       slug,
       ownerId: userId,
       templateId,
-      sections,
-      pageSettings,
+      pages, // Use pages instead of sections
       status: "draft",
     })
     .returning({ id: websites.id });
@@ -39,19 +48,18 @@ export async function createWebsiteFromTemplate(
 
 export async function updateWebsiteSections(
   id: string,
-  sections: Section[],
-  pageSettings: PageSettings,
-  userId: string
+  pages: any[], // Array of Page objects with full structure
+  _legacyPageSettings?: any, // Legacy parameter for backwards compatibility - not used anymore
+  userId?: string
 ): Promise<void> {
   const existing = await getWebsiteById(id);
   if (!existing) throw new Error("Website not found");
-  if (existing.ownerId !== userId) throw new Error("Forbidden");
+  if (userId && existing.ownerId !== userId) throw new Error("Forbidden");
 
   await db
     .update(websites)
     .set({
-      sections,
-      pageSettings,
+      pages, // Store full multi-page data
       updatedAt: new Date(),
     })
     .where(eq(websites.id, id));

@@ -1,12 +1,11 @@
 "use client";
 
 import { createContext, useContext, useState, useCallback, type ReactNode } from "react";
-import type { Element, Section, Viewport, LayoutSettings, PageSettings, Page } from "./lib/block-types";
+import type { Element, Section, Viewport, PageSettings, Page } from "./lib/block-types";
 import { SECTION_TEMPLATES } from "./lib/section-templates";
 import { ELEMENT_PRESETS } from "./lib/element-presets";
 import { getLayout, VIEWPORT_WIDTHS } from "./lib/viewport-utils";
 import { generateFullHTML } from "./lib/html-generator";
-import { migrateLegacyToPages } from "@/features/multipage/migration";
 
 interface EditorContextValue {
   sections: Section[];
@@ -48,7 +47,7 @@ interface EditorContextValue {
   addElement: (preset: typeof ELEMENT_PRESETS[number], sectionId?: string) => void;
   duplicateElement: (sectionId: string, elementId: string) => void;
   deleteElement: (sectionId: string, elementId: string) => void;
-  updateElementViewportLayout: (sectionId: string, elementId: string, vp: Viewport, layoutProps: Partial<ViewportLayout>) => void;
+  updateElementViewportLayout: (sectionId: string, elementId: string, vp: Viewport, layoutProps: Partial<any>) => void;
   updateElementProps: (sectionId: string, elementId: string, newProps: Partial<Element>) => void;
   updateSectionHeight: (sectionId: string, vp: Viewport, height: number) => void;
   undo: () => void;
@@ -114,9 +113,28 @@ export function EditorProvider({
   const [currentPageId, setCurrentPageId] = useState<string>(
     resolvedInitialPages.find(p => p.isHomePage)?.id || resolvedInitialPages[0]?.id || ''
   );
-  const initialHomeSections = resolvedInitialPages.find(p => p.isHomePage)?.sections || resolvedInitialPages[0]?.sections || [];
-  const [selectedSectionId, setSelectedSectionId] = useState<string | null>(initialHomeSections[0]?.id || null);
-  const [selectedElementId, setSelectedElementId] = useState<string | null>(initialHomeSections[0]?.elements[0]?.id || null);
+  
+  // Find first available section ID for selection
+  let initialSectionId: string | null = null;
+  const homepageSections = resolvedInitialPages.find(p => p.isHomePage)?.sections || [];
+  if (homepageSections.length > 0) {
+    initialSectionId = homepageSections[0]?.id || null;
+  }
+  
+  // Find first element from any section that has elements
+  let initialElementId: string | null = null;
+  for (const page of resolvedInitialPages) {
+    for (const section of page.sections) {
+      if (section.elements && section.elements.length > 0) {
+        initialElementId = section.elements[0]?.id || null;
+        break;
+      }
+    }
+    if (initialElementId) break;
+  }
+  
+  const [selectedSectionId, setSelectedSectionId] = useState<string | null>(initialSectionId);
+  const [selectedElementId, setSelectedElementId] = useState<string | null>(initialElementId);
   const [viewport, setViewport] = useState<Viewport>('desktop');
   const [inspectorTab, setInspectorTab] = useState<'position' | 'style'>('position');
   const [isPreviewMode, setIsPreviewMode] = useState(false);
@@ -308,7 +326,7 @@ export function EditorProvider({
     showToast("Elemen dihapus");
   }, [currentSections, updateCurrentPageSections, showToast]);
 
-  const updateElementViewportLayout = useCallback((sectionId: string, elementId: string, vp: Viewport, layoutProps: Partial<ViewportLayout>) => {
+  const updateElementViewportLayout = useCallback((sectionId: string, elementId: string, vp: Viewport, layoutProps: Partial<any>) => {
     setPages(prev => prev.map(p => {
       if (p.id !== currentPageId) return p;
       return {
