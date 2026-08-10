@@ -13,10 +13,7 @@ import {
 import { relations, sql } from "drizzle-orm";
 import { businessCategories } from "./business-categories";
 import { user } from "./auth";
-import type {
-  BlockConfig,
-  PageSettings,
-} from "@/features/templates/lib/block-types";
+import type { Section, PageSettings, Page } from "@/components/website-editor/lib/block-types";
 
 export const templateStatusEnum = pgEnum("template_status", [
   "draft",
@@ -34,12 +31,13 @@ export const templates = pgTable(
     categoryId: uuid("category_id").references(() => businessCategories.id, {
       onDelete: "set null",
     }),
-    blocksJson: jsonb("blocks_json").$type<BlockConfig[]>().notNull(),
+    sections: jsonb("sections").$type<Section[]>().notNull().default(sql`'[]'::jsonb`),
     pageSettings: jsonb("page_settings")
       .$type<PageSettings>()
       .notNull()
       .default(sql`'{}'::jsonb`),
-    htmlSnapshot: text("html_snapshot").notNull(),
+    pages: jsonb("pages").$type<Page[]>().default(sql`'[]'::jsonb`),
+    htmlSnapshot: text("html_snapshot").notNull().default(""),
     isFeatured: boolean("is_featured").notNull().default(false),
     sortOrder: integer("sort_order").notNull().default(0),
     status: templateStatusEnum("status").notNull().default("draft"),

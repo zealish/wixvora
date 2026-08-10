@@ -6,8 +6,10 @@ import {
   timestamp,
   boolean,
   pgEnum,
+  jsonb,
 } from "drizzle-orm/pg-core";
-import { relations } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
+import type { Section, PageSettings, Page } from "@/components/website-editor/lib/block-types";
 import { templates } from "./templates";
 
 // ============================================================================
@@ -80,9 +82,9 @@ export const websites = pgTable("websites", {
   // ==========================================================================
   // Content Data
   // ==========================================================================
-  htmlContent: text("html_content").notNull().default(""), // Full HTML structure
-  cssStyles: text("css_styles").notNull().default(""), // Custom CSS
-  jsScripts: text("js_scripts").notNull().default(""), // Custom JavaScript
+  sections: jsonb("sections").$type<Section[]>().notNull().default(sql`'[]'::jsonb`),
+  pageSettings: jsonb("page_settings").$type<PageSettings>().notNull().default(sql`'{}'::jsonb`),
+  pages: jsonb("pages").$type<Page[]>().default(sql`'[]'::jsonb`),
 
   // ==========================================================================
   // SEO Settings
