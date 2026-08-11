@@ -13,7 +13,7 @@ import { ButtonInspector } from "./inspector/ButtonInspector";
 import { BadgeInspector } from "./inspector/BadgeInspector";
 import { CardInspector } from "./inspector/CardInspector";
 import { VideoInspector } from "./inspector/VideoInspector";
-import { parseVideoUrl, buildEmbedUrl } from './lib/video-url-parser';
+import { parseVideoUrl, buildEmbedUrl, getAutoThumbnail } from './lib/video-url-parser';
 
 function RenderElementContent({ element, updateProps, isPreviewMode, isSelected }: { element: Element; updateProps: (p: Partial<Element>) => void; isPreviewMode: boolean; isSelected?: boolean }) {
   const sharedStyle: React.CSSProperties = {
@@ -174,15 +174,63 @@ function RenderElementContent({ element, updateProps, isPreviewMode, isSelected 
       );
     }
 
-    const embedUrl = buildEmbedUrl(parsed, {
-      ...(element.autoplay !== undefined && { autoplay: element.autoplay }),
-      ...(element.loop !== undefined && { loop: element.loop }),
-    });
+    const thumbnailSrc = element.thumbnailUrl || getAutoThumbnail(parsed);
+    const playStyle = element.playButtonStyle || 'circle';
+    const overlayColor = element.overlayColor || 'rgba(0,0,0,0.3)';
 
     const aspectRatioMap: Record<string, string> = {
       '16:9': '16/9',
       '4:3': '4/3',
       '1:1': '1/1',
+    };
+
+    // If autoplay is on, skip thumbnail and load iframe directly
+    if (element.autoplay) {
+      const embedUrl = buildEmbedUrl(parsed, { autoplay: true, ...(element.loop !== undefined && { loop: element.loop }) });
+      return (
+        <div
+          style={{
+            width: '100%',
+            aspectRatio: aspectRatioMap[element.aspectRatio || '16:9'] || '16/9',
+            borderRadius: element.borderRadius,
+            overflow: 'hidden',
+            backgroundColor: element.bgColor || '#000000',
+          }}
+          className="w-full h-full"
+        >
+          <iframe
+            src={embedUrl}
+            style={{ width: '100%', height: '100%', border: 'none' }}
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            title={element.name || 'Video Player'}
+          />
+        </div>
+      );
+    }
+
+    const playButtonSvg = {
+      circle: (
+        <div className="w-16 h-16 rounded-full bg-white/95 flex items-center justify-center shadow-lg transition-transform duration-200 group-hover:scale-110">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" className="text-slate-800 ml-1">
+            <polygon points="5 3 19 12 5 21 5 3" />
+          </svg>
+        </div>
+      ),
+      square: (
+        <div className="w-14 h-14 rounded-xl bg-white/95 flex items-center justify-center shadow-lg transition-transform duration-200 group-hover:scale-110">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" className="text-slate-800 ml-0.5">
+            <polygon points="5 3 19 12 5 21 5 3" />
+          </svg>
+        </div>
+      ),
+      minimal: (
+        <div className="transition-transform duration-200 group-hover:scale-110">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor" className="text-white drop-shadow-lg">
+            <polygon points="5 3 19 12 5 21 5 3" />
+          </svg>
+        </div>
+      ),
     };
 
     return (
@@ -194,15 +242,23 @@ function RenderElementContent({ element, updateProps, isPreviewMode, isSelected 
           overflow: 'hidden',
           backgroundColor: element.bgColor || '#000000',
         }}
-        className="w-full h-full"
+        className="w-full h-full relative group cursor-pointer"
       >
-        <iframe
-          src={embedUrl}
-          style={{ width: '100%', height: '100%', border: 'none' }}
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen
-          title={element.name || 'Video Player'}
+        <img
+          src={thumbnailSrc}
+          alt={element.name || 'Video thumbnail'}
+          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+          onError={(e) => {
+            (e.target as HTMLImageElement).style.display = 'none';
+          }}
         />
+        <div
+          className="absolute inset-0"
+          style={{ backgroundColor: overlayColor }}
+        />
+        <div className="absolute inset-0 flex items-center justify-center">
+          {playButtonSvg[playStyle]}
+        </div>
       </div>
     );
   }
