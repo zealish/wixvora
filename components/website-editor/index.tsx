@@ -6,6 +6,8 @@ import { Icon } from "./ui/icon-library";
 import { getLayout, getSectionHeight, VIEWPORT_WIDTHS } from "./lib/viewport-utils";
 import { ELEMENT_PRESETS } from "./lib/element-presets";
 import type { Element, Page, PageSettings, Viewport } from "./lib/block-types";
+import { ElementCatalogModal } from './modals/element-catalog-modal';
+import { t } from './lib/translations';
 
 function RenderElementContent({ element, updateProps, isPreviewMode }: { element: Element; updateProps: (p: Partial<Element>) => void; isPreviewMode: boolean }) {
   if (element.type === 'heading') {
@@ -187,7 +189,7 @@ function InlineText({
       }}
       className={`editable-text-field ${className}`}
       style={style}
-      title="Klik untuk edit teks"
+      title="Click to edit text"
     >
       {value}
     </Tag>
@@ -281,11 +283,11 @@ function PageTabBar() {
         <button
           onClick={() => {
             const count = pages.length + 1;
-            addPage(`Halaman ${count}`);
-            showToast(`Halaman ${count} ditambahkan`);
+            addPage(`Page ${count}`);
+            showToast(`Page ${count} added`);
           }}
           className="flex items-center justify-center h-7 w-7 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-white/60 transition"
-          title="Tambah Halaman Baru"
+          title="Add New Page"
         >
           <Icon name="plus" className="w-3.5 h-3.5" />
         </button>
@@ -309,7 +311,7 @@ function PageTabBar() {
             className="w-full flex items-center gap-2 px-3 py-2 hover:bg-slate-50 text-slate-700 text-left"
           >
             <Icon name="edit" className="w-3.5 h-3.5" />
-            <span>Ganti Nama</span>
+            <span>Rename</span>
           </button>
           <button
             onClick={() => {
@@ -319,7 +321,7 @@ function PageTabBar() {
             className="w-full flex items-center gap-2 px-3 py-2 hover:bg-slate-50 text-slate-700 text-left"
           >
             <Icon name="copy" className="w-3.5 h-3.5" />
-            <span>Duplikasi</span>
+            <span>Duplicate</span>
           </button>
           <button
             onClick={() => {
@@ -329,13 +331,13 @@ function PageTabBar() {
             className="w-full flex items-center gap-2 px-3 py-2 hover:bg-slate-50 text-slate-700 text-left"
           >
             <Icon name="star" className="w-3.5 h-3.5" />
-            <span>Jadikan Halaman Utama</span>
+            <span>Set as Home Page</span>
           </button>
           <div className="border-t border-slate-100 my-1" />
           <button
             onClick={() => {
               if (pages.length <= 1) {
-                showToast('Tidak bisa menghapus satu-satunya halaman');
+                showToast('Cannot delete the only page');
               } else {
                 removePage(contextMenu.pageId);
               }
@@ -344,7 +346,7 @@ function PageTabBar() {
             className="w-full flex items-center gap-2 px-3 py-2 hover:bg-red-50 text-red-600 text-left"
           >
             <Icon name="trash" className="w-3.5 h-3.5" />
-            <span>Hapus</span>
+            <span>Delete</span>
           </button>
         </div>
       )}
@@ -366,6 +368,8 @@ function EditorLayout({ backUrl, title }: { backUrl?: string | undefined; title?
     updateElementProps, updateSectionHeight, undo, redo,
     saveWebsite, addPage
   } = useEditor();
+
+  const [isElementModalOpen, setIsElementModalOpen] = useState(false);
 
   const canvasContainerRef = useRef<HTMLDivElement>(null);
   const addMenuRef = useRef<HTMLDivElement>(null);
@@ -495,7 +499,7 @@ function EditorLayout({ backUrl, title }: { backUrl?: string | undefined; title?
       <header className="h-14 border-b border-slate-200 bg-white/90 backdrop-blur-md px-4 flex items-center justify-between z-30 shrink-0 select-none shadow-sm">
         <div className="flex items-center space-x-3">
           {backUrl && (
-            <a href={backUrl} className="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 flex items-center justify-center transition" title="Kembali">
+            <a href={backUrl} className="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 flex items-center justify-center transition" title="Back">
               <Icon name="arrowLeft" className="w-4 h-4 text-slate-600" />
             </a>
           )}
@@ -515,7 +519,7 @@ function EditorLayout({ backUrl, title }: { backUrl?: string | undefined; title?
           {(['desktop', 'tablet', 'mobile'] as Viewport[]).map(vp => (
             <button key={vp} onClick={() => setViewport(vp)} className={`flex items-center space-x-1.5 px-3 py-1 rounded-lg text-xs font-bold transition ${viewport === vp ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-600 hover:text-slate-900'}`}>
               <Icon name={vp} className="w-3.5 h-3.5" />
-              <span className="hidden md:inline">{vp === 'desktop' ? 'Desktop' : vp === 'tablet' ? 'Tablet' : 'Mobile'}</span>
+              <span className="hidden md:inline">{vp === 'desktop' ? t('viewport.desktop') : vp === 'tablet' ? t('viewport.tablet') : t('viewport.mobile')}</span>
             </button>
           ))}
         </div>
@@ -528,13 +532,13 @@ function EditorLayout({ backUrl, title }: { backUrl?: string | undefined; title?
           </button>
 
           <div className="flex items-center bg-white rounded-lg border border-slate-200 p-0.5 shadow-sm">
-            <button onClick={undo} disabled={!canUndo} className="p-1.5 text-slate-600 hover:text-slate-900 disabled:opacity-30 transition" title="Undo"><Icon name="undo" className="w-3.5 h-3.5" /></button>
-            <button onClick={redo} disabled={!canRedo} className="p-1.5 text-slate-600 hover:text-slate-900 disabled:opacity-30 transition" title="Redo"><Icon name="redo" className="w-3.5 h-3.5" /></button>
+            <button onClick={undo} disabled={!canUndo} className="p-1.5 text-slate-600 hover:text-slate-900 disabled:opacity-30 transition" title={t('editor.undo')}><Icon name="undo" className="w-3.5 h-3.5" /></button>
+            <button onClick={redo} disabled={!canRedo} className="p-1.5 text-slate-600 hover:text-slate-900 disabled:opacity-30 transition" title={t('editor.redo')}><Icon name="redo" className="w-3.5 h-3.5" /></button>
           </div>
 
           <button onClick={() => setIsPreviewMode(!isPreviewMode)} className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border transition ${isPreviewMode ? 'bg-amber-100 text-amber-800 border-amber-300' : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'}`}>
             <Icon name={isPreviewMode ? 'eyeOff' : 'eye'} className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">{isPreviewMode ? 'Keluar Pratinjau' : 'Pratinjau'}</span>
+            <span className="hidden sm:inline">{isPreviewMode ? 'Exit Preview' : t('editor.preview')}</span>
           </button>
 
           <button
@@ -543,7 +547,7 @@ function EditorLayout({ backUrl, title }: { backUrl?: string | undefined; title?
             className="flex items-center space-x-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold bg-blue-600 hover:bg-blue-500 text-white shadow-md shadow-blue-600/20 transition disabled:opacity-50"
           >
             <Icon name="download" className="w-3.5 h-3.5" />
-            <span>{isSaving ? 'Menyimpan...' : 'Simpan'}</span>
+            <span>{isSaving ? 'Saving...' : t('editor.save')}</span>
           </button>
         </div>
       </header>
@@ -563,7 +567,7 @@ function EditorLayout({ backUrl, title }: { backUrl?: string | undefined; title?
               <a
                 href="/staff/templates"
                 className="w-11 h-11 rounded-xl flex items-center justify-center text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition border border-slate-200"
-                title="Kembali ke Daftar Template"
+                title="Back to Template List"
               >
                 <Icon name="arrowUp" className="w-4 h-4 rotate-[-90deg]" />
               </a>
@@ -573,7 +577,7 @@ function EditorLayout({ backUrl, title }: { backUrl?: string | undefined; title?
                 <button
                   onClick={() => setAddMenuOpen(!addMenuOpen)}
                   className={`w-11 h-11 rounded-2xl flex flex-col items-center justify-center transition-all shadow-md ${addMenuOpen ? 'bg-blue-600 text-white scale-105 ring-4 ring-blue-500/20' : 'bg-gradient-to-tr from-blue-600 to-indigo-600 text-white hover:scale-105 hover:shadow-blue-500/20'}`}
-                  title="Tambah Elemen, Seksi, Halaman"
+                  title="Add Element, Section, Page"
                 >
                   <Icon name="plus" className="w-6 h-6" />
                 </button>
@@ -581,11 +585,11 @@ function EditorLayout({ backUrl, title }: { backUrl?: string | undefined; title?
                 {addMenuOpen && (
                   <div className="absolute left-16 top-0 w-64 bg-white/98 backdrop-blur-xl border border-slate-200 rounded-2xl shadow-xl z-50 p-2 space-y-1 text-slate-700 text-xs">
                     <div className="px-3 py-2 border-b border-slate-100 text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                      Tambah Ke Website (Wix Style)
+                      Add to Website (Wix Style)
                     </div>
 
                     <button
-                      onClick={() => { setActiveFlyout('elements'); setAddMenuOpen(false); }}
+                      onClick={() => { setIsElementModalOpen(true); setAddMenuOpen(false); }}
                       className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-blue-50 hover:text-blue-600 text-left transition group"
                     >
                       <div className="flex items-center space-x-2.5">
@@ -593,8 +597,8 @@ function EditorLayout({ backUrl, title }: { backUrl?: string | undefined; title?
                           <Icon name="sparkles" className="w-4 h-4" />
                         </div>
                         <div>
-                          <div className="font-bold">Elemen Baru</div>
-                          <div className="text-[10px] text-slate-400">Teks, Tombol, Gambar, Card</div>
+                          <div className="font-bold">New Element</div>
+                          <div className="text-[10px] text-slate-400">Text, Button, Image, Card</div>
                         </div>
                       </div>
                       <Icon name="chevronRight" className="w-4 h-4 text-slate-400" />
@@ -609,8 +613,8 @@ function EditorLayout({ backUrl, title }: { backUrl?: string | undefined; title?
                           <Icon name="layout" className="w-4 h-4" />
                         </div>
                         <div>
-                          <div className="font-bold">Seksi Templat</div>
-                          <div className="text-[10px] text-slate-400">Pilih dari modal templat seksi</div>
+                          <div className="font-bold">Section Template</div>
+                          <div className="text-[10px] text-slate-400">Choose from section templates</div>
                         </div>
                       </div>
                       <Icon name="chevronRight" className="w-4 h-4 text-slate-400" />
@@ -625,8 +629,8 @@ function EditorLayout({ backUrl, title }: { backUrl?: string | undefined; title?
                           <Icon name="page" className="w-4 h-4" />
                         </div>
                         <div>
-                          <div className="font-bold">Kelola Halaman</div>
-                          <div className="text-[10px] text-slate-400">Beranda, Tentang, Kontak</div>
+                          <div className="font-bold">Manage Pages</div>
+                          <div className="text-[10px] text-slate-400">Home, About, Contact</div>
                         </div>
                       </div>
                       <Icon name="chevronRight" className="w-4 h-4 text-slate-400" />
@@ -638,30 +642,30 @@ function EditorLayout({ backUrl, title }: { backUrl?: string | undefined; title?
               {/* Navigation Buttons */}
               <div className="space-y-2 w-full pt-2 border-t border-slate-200">
                 <button
-                  onClick={() => setActiveFlyout(activeFlyout === 'elements' ? null : 'elements')}
-                  className={`w-full py-2.5 rounded-xl flex flex-col items-center justify-center transition text-[10px] font-semibold ${activeFlyout === 'elements' ? 'bg-blue-50 text-blue-600 border border-blue-200' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'}`}
-                  title="Katalog Elemen"
+                  onClick={() => setIsElementModalOpen(true)}
+                  className="w-full py-2.5 rounded-xl flex flex-col items-center justify-center transition text-[10px] font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-50"
+                  title={t('sidebar.elements')}
                 >
                   <Icon name="sparkles" className="w-4 h-4 mb-0.5" />
-                  <span>Elemen</span>
+                  <span>{t('sidebar.elements')}</span>
                 </button>
 
                 <button
                   onClick={() => setActiveFlyout(activeFlyout === 'sections_list' ? null : 'sections_list')}
                   className={`w-full py-2.5 rounded-xl flex flex-col items-center justify-center transition text-[10px] font-semibold ${activeFlyout === 'sections_list' ? 'bg-blue-50 text-blue-600 border border-blue-200' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'}`}
-                  title="Pengelola Seksi / Layer"
+                  title={t('sidebar.sections')}
                 >
                   <Icon name="layers" className="w-4 h-4 mb-0.5" />
-                  <span>Seksi</span>
+                  <span>{t('sidebar.sections')}</span>
                 </button>
 
                 <button
                   onClick={() => setActiveFlyout(activeFlyout === 'pages' ? null : 'pages')}
                   className={`w-full py-2.5 rounded-xl flex flex-col items-center justify-center transition text-[10px] font-semibold ${activeFlyout === 'pages' ? 'bg-blue-50 text-blue-600 border border-blue-200' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'}`}
-                  title="Pengelola Halaman Website"
+                  title={t('sidebar.pages')}
                 >
                   <Icon name="page" className="w-4 h-4 mb-0.5" />
-                  <span>Halaman</span>
+                  <span>{t('sidebar.pages')}</span>
                 </button>
               </div>
             </div>
@@ -677,33 +681,13 @@ function EditorLayout({ backUrl, title }: { backUrl?: string | undefined; title?
           <div className="w-72 bg-white border-r border-slate-200 flex flex-col z-20 shrink-0 select-none shadow-lg">
             <div className="p-3 border-b border-slate-200 flex items-center justify-between">
               <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-800 flex items-center gap-2">
-                {activeFlyout === 'elements' && <><Icon name="sparkles" className="w-4 h-4 text-blue-600" /><span>Katalog Elemen</span></>}
-                {activeFlyout === 'sections_list' && <><Icon name="layers" className="w-4 h-4 text-emerald-600" /><span>Struktur Seksi ({sections.length})</span></>}
-                {activeFlyout === 'pages' && <><Icon name="page" className="w-4 h-4 text-amber-600" /><span>Halaman Website</span></>}
+                {activeFlyout === 'sections_list' && <><Icon name="layers" className="w-4 h-4 text-emerald-600" /><span>{t('flyout.struktur_seksi')} ({sections.length})</span></>}
+                {activeFlyout === 'pages' && <><Icon name="page" className="w-4 h-4 text-amber-600" /><span>{t('flyout.halaman_website')}</span></>}
               </h3>
               <button onClick={() => setActiveFlyout(null)} className="text-slate-400 hover:text-slate-700"><Icon name="x" className="w-4 h-4" /></button>
             </div>
 
             <div className="flex-1 overflow-y-auto p-3 space-y-3">
-              {activeFlyout === 'elements' && (
-                <div className="space-y-2">
-                  <div className="p-2.5 bg-blue-50 border border-blue-200 rounded-xl text-[10px] text-blue-700 leading-relaxed">
-                    💡 Klik elemen untuk menyisipkan ke seksi aktif dalam mode <strong>{viewport.toUpperCase()}</strong>.
-                  </div>
-                  {ELEMENT_PRESETS.map((preset, idx) => (
-                    <button key={idx} onClick={() => addElement(preset)} className="w-full flex items-center space-x-3 p-2.5 rounded-xl bg-slate-50 border border-slate-200 hover:border-blue-500 hover:bg-blue-50/50 group transition text-left">
-                      <div className="w-8 h-8 rounded-lg bg-white border border-slate-200 group-hover:border-blue-500 text-slate-600 group-hover:text-blue-600 flex items-center justify-center shrink-0">
-                        <Icon name={preset.icon as any} className="w-4 h-4" />
-                      </div>
-                      <div>
-                        <div className="text-xs font-bold text-slate-800 group-hover:text-blue-600">{preset.label}</div>
-                        <div className="text-[10px] text-slate-500">Tambah ke seksi</div>
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              )}
-
               {activeFlyout === 'sections_list' && (
                 <div className="space-y-2">
                   <button
@@ -711,7 +695,7 @@ function EditorLayout({ backUrl, title }: { backUrl?: string | undefined; title?
                     className="w-full py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold transition flex items-center justify-center space-x-1.5 shadow-sm"
                   >
                     <Icon name="plus" className="w-4 h-4" />
-                    <span>Tambah Seksi Templat</span>
+                    <span>{t('misc.add_section_template')}</span>
                   </button>
 
                   <div className="space-y-2 pt-2">
@@ -723,14 +707,14 @@ function EditorLayout({ backUrl, title }: { backUrl?: string | undefined; title?
                             <span>{sec.title}</span>
                           </span>
                           <div className="flex items-center space-x-1">
-                            <button onClick={(e) => { e.stopPropagation(); moveSection(sec.id, 'up'); }} className="p-1 text-slate-400 hover:text-blue-600" title="Naikkan"><Icon name="arrowUp" className="w-3.5 h-3.5" /></button>
-                            <button onClick={(e) => { e.stopPropagation(); moveSection(sec.id, 'down'); }} className="p-1 text-slate-400 hover:text-blue-600" title="Turunkan"><Icon name="arrowDown" className="w-3.5 h-3.5" /></button>
-                            <button onClick={(e) => { e.stopPropagation(); deleteSection(sec.id); }} className="p-1 text-slate-400 hover:text-red-600" title="Hapus"><Icon name="trash" className="w-3.5 h-3.5" /></button>
+                            <button onClick={(e) => { e.stopPropagation(); moveSection(sec.id, 'up'); }} className="p-1 text-slate-400 hover:text-blue-600" title={t('misc.move_up')}><Icon name="arrowUp" className="w-3.5 h-3.5" /></button>
+                            <button onClick={(e) => { e.stopPropagation(); moveSection(sec.id, 'down'); }} className="p-1 text-slate-400 hover:text-blue-600" title={t('misc.move_down')}><Icon name="arrowDown" className="w-3.5 h-3.5" /></button>
+                            <button onClick={(e) => { e.stopPropagation(); deleteSection(sec.id); }} className="p-1 text-slate-400 hover:text-red-600" title={t('misc.delete')}><Icon name="trash" className="w-3.5 h-3.5" /></button>
                           </div>
                         </div>
                         <div className="text-[10px] text-slate-500 flex items-center justify-between">
-                          <span>{sec.elements.length} Elemen</span>
-                          <span>Tinggi: {getSectionHeight(sec, viewport)}px</span>
+                          <span>{sec.elements.length} {t('misc.element')}</span>
+                          <span>Height: {getSectionHeight(sec, viewport)}px</span>
                         </div>
                       </div>
                     ))}
@@ -740,19 +724,19 @@ function EditorLayout({ backUrl, title }: { backUrl?: string | undefined; title?
 
               {activeFlyout === 'pages' && (
                 <div className="space-y-3">
-                  <div className="text-[11px] text-slate-500">Struktur Halaman Situs Anda:</div>
+                  <div className="text-[11px] text-slate-500">Your Site Page Structure:</div>
                   {pages.map(page => (
                     <div key={page.id} className="p-3 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between text-xs font-bold text-slate-800">
                       <span className="flex items-center space-x-2">
                         <Icon name="page" className="w-4 h-4 text-amber-600" />
                         <span>{page.title}</span>
                       </span>
-                      {page.isHomePage && <span className="text-[9px] bg-amber-100 text-amber-800 border border-amber-200 px-1.5 py-0.5 rounded font-extrabold">UTAMA</span>}
+                      {page.isHomePage && <span className="text-[9px] bg-amber-100 text-amber-800 border border-amber-200 px-1.5 py-0.5 rounded font-extrabold">HOME</span>}
                     </div>
                   ))}
-                  <button onClick={() => { const count = pages.length + 1; addPage(`Halaman ${count}`); }} className="w-full py-2 border border-dashed border-slate-300 hover:border-slate-400 rounded-xl text-xs text-slate-600 flex items-center justify-center space-x-1">
+                  <button onClick={() => { const count = pages.length + 1; addPage(`Page ${count}`); }} className="w-full py-2 border border-dashed border-slate-300 hover:border-slate-400 rounded-xl text-xs text-slate-600 flex items-center justify-center space-x-1">
                     <Icon name="plus" className="w-3.5 h-3.5" />
-                    <span>+ Halaman Baru</span>
+                    <span>+ New Page</span>
                   </button>
                 </div>
               )}
@@ -850,8 +834,8 @@ function EditorLayout({ backUrl, title }: { backUrl?: string | undefined; title?
                               <div onMouseDown={(e) => handleResizeMouseDown(e, sec.id, el, 'b')} className="resize-handle resize-handle-b"></div>
 
                               <div className="absolute -bottom-8 right-0 bg-white border border-slate-200 text-slate-700 rounded-lg shadow-lg flex items-center space-x-1 px-1.5 py-0.5 z-50 text-[10px]">
-                                <button onClick={(e) => { e.stopPropagation(); duplicateElement(sec.id, el.id); }} className="p-1 hover:text-blue-600" title="Duplikasi"><Icon name="copy" className="w-3 h-3" /></button>
-                                <button onClick={(e) => { e.stopPropagation(); deleteElement(sec.id, el.id); }} className="p-1 hover:text-red-600" title="Hapus"><Icon name="trash" className="w-3 h-3" /></button>
+                                <button onClick={(e) => { e.stopPropagation(); duplicateElement(sec.id, el.id); }} className="p-1 hover:text-blue-600" title={t('inspector.duplicate')}><Icon name="copy" className="w-3 h-3" /></button>
+                                <button onClick={(e) => { e.stopPropagation(); deleteElement(sec.id, el.id); }} className="p-1 hover:text-red-600" title={t('inspector.delete')}><Icon name="trash" className="w-3 h-3" /></button>
                               </div>
                             </>
                           )}
@@ -864,11 +848,11 @@ function EditorLayout({ backUrl, title }: { backUrl?: string | undefined; title?
                     <div
                       onMouseDown={(e) => handleSectionHeightMouseDown(e, sec.id, currentSecHeight)}
                       className="absolute bottom-0 left-0 right-0 h-4 bg-blue-600 hover:bg-blue-500 text-white flex items-center justify-center cursor-s-resize z-30 transition shadow-sm"
-                      title="Tarik untuk merubah tinggi seksi"
+                      title="Drag to change section height"
                     >
                       <div className="text-[9px] font-extrabold uppercase tracking-widest flex items-center gap-1">
                         <Icon name="resize" className="w-3 h-3" />
-                        <span>Tinggi Seksi ({viewport.toUpperCase()}): {currentSecHeight}px</span>
+                        <span>Section Height ({viewport.toUpperCase()}): {currentSecHeight}px</span>
                       </div>
                     </div>
                   )}
@@ -884,26 +868,26 @@ function EditorLayout({ backUrl, title }: { backUrl?: string | undefined; title?
             <div className="p-3 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
               <h2 className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2">
                 <Icon name="edit" className="w-4 h-4 text-blue-600" />
-                <span>Inspector Elemen</span>
+                <span>{t('inspector.title')}</span>
               </h2>
               <span className="text-[10px] bg-blue-100 text-blue-700 font-mono px-2 py-0.5 rounded border border-blue-200 font-bold">{selectedElement.type}</span>
             </div>
 
             <div className="grid grid-cols-2 border-b border-slate-200 text-[11px] bg-slate-50">
-              <button onClick={() => setInspectorTab('position')} className={`py-2 font-semibold transition ${inspectorTab === 'position' ? 'bg-white text-blue-600 border-b-2 border-blue-600 shadow-sm' : 'text-slate-600 hover:text-slate-900'}`}>Posisi [{viewport.toUpperCase()}]</button>
-              <button onClick={() => setInspectorTab('style')} className={`py-2 font-semibold transition ${inspectorTab === 'style' ? 'bg-white text-blue-600 border-b-2 border-blue-600 shadow-sm' : 'text-slate-600 hover:text-slate-900'}`}>Style & Konten</button>
+              <button onClick={() => setInspectorTab('position')} className={`py-2 font-semibold transition ${inspectorTab === 'position' ? 'bg-white text-blue-600 border-b-2 border-blue-600 shadow-sm' : 'text-slate-600 hover:text-slate-900'}`}>{t('inspector.position')} [{viewport.toUpperCase()}]</button>
+              <button onClick={() => setInspectorTab('style')} className={`py-2 font-semibold transition ${inspectorTab === 'style' ? 'bg-white text-blue-600 border-b-2 border-blue-600 shadow-sm' : 'text-slate-600 hover:text-slate-900'}`}>{t('inspector.style')} & {t('inspector.content')}</button>
             </div>
 
             <div className="flex-1 overflow-y-auto p-4 space-y-4 text-xs text-slate-700">
               {inspectorTab === 'position' && (
                 <div className="space-y-4">
                   <div className="p-2.5 bg-blue-50 border border-blue-200 rounded-xl text-[10px] text-blue-700 leading-relaxed">
-                    📌 Perubahan posisi X, Y & ukuran <strong>hanya berlaku untuk mode {viewport.toUpperCase()}</strong>.
+                    📌 Position X, Y & size changes <strong>only apply to {viewport.toUpperCase()} mode</strong>.
                   </div>
 
                   <div className="grid grid-cols-2 gap-2">
                     <div className="space-y-1">
-                      <label className="text-[10px] font-bold text-slate-500">Posisi X (Kiri)</label>
+                      <label className="text-[10px] font-bold text-slate-500">Position X (Left)</label>
                       <input
                         type="number"
                         value={selectedElementVPLayout.x}
@@ -912,7 +896,7 @@ function EditorLayout({ backUrl, title }: { backUrl?: string | undefined; title?
                       />
                     </div>
                     <div className="space-y-1">
-                      <label className="text-[10px] font-bold text-slate-500">Posisi Y (Atas)</label>
+                      <label className="text-[10px] font-bold text-slate-500">Position Y (Top)</label>
                       <input
                         type="number"
                         value={selectedElementVPLayout.y}
@@ -924,7 +908,7 @@ function EditorLayout({ backUrl, title }: { backUrl?: string | undefined; title?
 
                   <div className="grid grid-cols-2 gap-2">
                     <div className="space-y-1">
-                      <label className="text-[10px] font-bold text-slate-500">Lebar (Width)</label>
+                      <label className="text-[10px] font-bold text-slate-500">Width</label>
                       <input
                         type="number"
                         value={selectedElementVPLayout.width}
@@ -933,7 +917,7 @@ function EditorLayout({ backUrl, title }: { backUrl?: string | undefined; title?
                       />
                     </div>
                     <div className="space-y-1">
-                      <label className="text-[10px] font-bold text-slate-500">Tinggi (Height)</label>
+                      <label className="text-[10px] font-bold text-slate-500">Height</label>
                       <input
                         type="number"
                         value={selectedElementVPLayout.height}
@@ -944,7 +928,7 @@ function EditorLayout({ backUrl, title }: { backUrl?: string | undefined; title?
                   </div>
 
                   <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
-                    <span className="text-[11px] font-semibold text-slate-600">Sembunyikan di {viewport.toUpperCase()}</span>
+                    <span className="text-[11px] font-semibold text-slate-600">Hide in {viewport.toUpperCase()}</span>
                     <input
                       type="checkbox"
                       checked={!!selectedElementVPLayout.hidden}
@@ -959,7 +943,7 @@ function EditorLayout({ backUrl, title }: { backUrl?: string | undefined; title?
                 <div className="space-y-4">
                   {(selectedElement.type === 'heading' || selectedElement.type === 'paragraph' || selectedElement.type === 'button' || selectedElement.type === 'badge') && (
                     <div className="space-y-1">
-                      <label className="text-[10px] font-bold text-slate-500">Teks Konten</label>
+                      <label className="text-[10px] font-bold text-slate-500">Text Content</label>
                       <textarea
                         rows={3}
                         value={selectedElement.text || ''}
@@ -972,7 +956,7 @@ function EditorLayout({ backUrl, title }: { backUrl?: string | undefined; title?
                   {selectedElement.type === 'card' && (
                     <div className="space-y-3">
                       <div className="space-y-1">
-                        <label className="text-[10px] font-bold text-slate-500">Judul Kartu</label>
+                        <label className="text-[10px] font-bold text-slate-500">Card Title</label>
                         <input
                           type="text"
                           value={selectedElement.title || ''}
@@ -981,7 +965,7 @@ function EditorLayout({ backUrl, title }: { backUrl?: string | undefined; title?
                         />
                       </div>
                       <div className="space-y-1">
-                        <label className="text-[10px] font-bold text-slate-500">Sub-deskripsi Kartu</label>
+                        <label className="text-[10px] font-bold text-slate-500">Card Description</label>
                         <textarea
                           rows={3}
                           value={selectedElement.subtitle || ''}
@@ -994,7 +978,7 @@ function EditorLayout({ backUrl, title }: { backUrl?: string | undefined; title?
 
                   {selectedElement.type === 'image' && (
                     <div className="space-y-1">
-                      <label className="text-[10px] font-bold text-slate-500">URL Gambar (URL)</label>
+                      <label className="text-[10px] font-bold text-slate-500">Image URL</label>
                       <input
                         type="text"
                         value={selectedElement.url || ''}
@@ -1006,7 +990,7 @@ function EditorLayout({ backUrl, title }: { backUrl?: string | undefined; title?
 
                   {selectedElement.textColor !== undefined && (
                     <div className="flex items-center justify-between">
-                      <label className="text-[10px] font-bold text-slate-500">Warna Teks</label>
+                      <label className="text-[10px] font-bold text-slate-500">Text Color</label>
                       <div className="flex items-center space-x-2">
                         <input
                           type="color"
@@ -1021,7 +1005,7 @@ function EditorLayout({ backUrl, title }: { backUrl?: string | undefined; title?
 
                   {selectedElement.bgColor !== undefined && (
                     <div className="flex items-center justify-between">
-                      <label className="text-[10px] font-bold text-slate-500">Warna Background</label>
+                      <label className="text-[10px] font-bold text-slate-500">Background Color</label>
                       <div className="flex items-center space-x-2">
                         <input
                           type="color"
@@ -1045,13 +1029,13 @@ function EditorLayout({ backUrl, title }: { backUrl?: string | undefined; title?
             <div className="p-3 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
               <h2 className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2">
                 <Icon name="settings" className="w-4 h-4 text-blue-600" />
-                <span>Pengaturan Halaman</span>
+                <span>Page Settings</span>
               </h2>
             </div>
 
             <div className="flex-1 overflow-y-auto p-4 space-y-4 text-xs text-slate-700">
               <div className="space-y-1">
-                <label className="text-[10px] font-bold text-slate-500">Judul Halaman</label>
+                <label className="text-[10px] font-bold text-slate-500">Page Title</label>
                 <input
                   type="text"
                   value={pageSettings.title}
@@ -1061,7 +1045,7 @@ function EditorLayout({ backUrl, title }: { backUrl?: string | undefined; title?
               </div>
 
               <div className="flex items-center justify-between">
-                <label className="text-[10px] font-bold text-slate-500">Warna Background</label>
+                <label className="text-[10px] font-bold text-slate-500">Background Color</label>
                 <div className="flex items-center space-x-2">
                   <input
                     type="color"
@@ -1096,8 +1080,8 @@ function EditorLayout({ backUrl, title }: { backUrl?: string | undefined; title?
           <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-3xl overflow-hidden flex flex-col max-h-[85vh]">
             <div className="p-4 border-b border-slate-100 flex items-center justify-between bg-slate-50">
               <div>
-                <h2 className="text-base font-extrabold text-slate-900">Pilih Templat Seksi (Wix Sections)</h2>
-                <p className="text-xs text-slate-500">Tambahkan seksi siap pakai ke halaman website Anda.</p>
+                <h2 className="text-base font-extrabold text-slate-900">{t('sections.modal.title')} (Wix Sections)</h2>
+                <p className="text-xs text-slate-500">{t('sections.modal.subtitle')}</p>
               </div>
               <button onClick={() => setIsSectionModalOpen(false)} className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-200 transition"><Icon name="x" className="w-5 h-5" /></button>
             </div>
@@ -1118,7 +1102,7 @@ function EditorLayout({ backUrl, title }: { backUrl?: string | undefined; title?
                         className="w-full py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold transition shadow-sm flex items-center justify-center gap-2 flex-shrink-0 mt-auto"
                       >
                         <span>+</span>
-                        <span>Tambahkan Seksi Ini</span>
+                        <span>Add This Section</span>
                       </button>
                     </div>
                   </div>
@@ -1128,6 +1112,12 @@ function EditorLayout({ backUrl, title }: { backUrl?: string | undefined; title?
           </div>
         </div>
       )}
+
+      <ElementCatalogModal
+        isOpen={isElementModalOpen}
+        onClose={() => setIsElementModalOpen(false)}
+        onSelectElement={(preset) => addElement(preset)}
+      />
 
       {/* TOAST NOTIFICATION */}
       {toast && (
