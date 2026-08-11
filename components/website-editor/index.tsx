@@ -12,6 +12,7 @@ import "./rich-text/rich-text-content.css";
 import { ButtonInspector } from "./inspector/ButtonInspector";
 import { BadgeInspector } from "./inspector/BadgeInspector";
 import { CardInspector } from "./inspector/CardInspector";
+import { VideoInspector } from "./inspector/VideoInspector";
 import { parseVideoUrl, buildEmbedUrl } from './lib/video-url-parser';
 
 function RenderElementContent({ element, updateProps, isPreviewMode, isSelected }: { element: Element; updateProps: (p: Partial<Element>) => void; isPreviewMode: boolean; isSelected?: boolean }) {
@@ -989,6 +990,14 @@ function EditorLayout({ backUrl, title }: { backUrl?: string | undefined; title?
 
                   {selectedElement.type === 'card' && (
                     <CardInspector
+                      element={selectedElement}
+                      sectionId={selectedSectionId!}
+                      onUpdate={updateElementProps}
+                    />
+                  )}
+
+                  {selectedElement.type === 'video' && (
+                    <VideoInspector
                       element={selectedElement}
                       sectionId={selectedSectionId!}
                       onUpdate={updateElementProps}

@@ -44,6 +44,8 @@ type TranslationKey =
   | 'element.badge.description'
   | 'element.image.label'
   | 'element.image.description'
+  | 'element.video.label'
+  | 'element.video.description'
   | 'element.card.label'
   | 'element.card.description'
   // Inspector
@@ -158,6 +160,8 @@ const EN: Record<TranslationKey, string> = {
   'element.badge.description': 'Label or tag element',
   'element.image.label': 'Image',
   'element.image.description': 'Image showcase',
+  'element.video.label': 'Video Player',
+  'element.video.description': 'Embed YouTube or Vimeo videos',
   'element.card.label': 'Card',
   'element.card.description': 'Content card container',
   // Inspector
