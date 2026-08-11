@@ -12,7 +12,7 @@ export function parseVideoUrl(url: string): ParsedVideo | null {
   const trimmed = url.trim();
 
   const youtubeWatchMatch = trimmed.match(/(?:youtube\.com\/watch\?.*v=|youtube\.com\/embed\/|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
-  if (youtubeWatchMatch?.[1]) {
+  if (youtubeWatchMatch && youtubeWatchMatch[1]) {
     const videoId = youtubeWatchMatch[1];
     return {
       provider: 'youtube',
@@ -22,7 +22,7 @@ export function parseVideoUrl(url: string): ParsedVideo | null {
   }
 
   const vimeoMatch = trimmed.match(/(?:vimeo\.com\/|player\.vimeo\.com\/video\/)(\d+)/);
-  if (vimeoMatch?.[1]) {
+  if (vimeoMatch && vimeoMatch[1]) {
     const videoId = vimeoMatch[1];
     return {
       provider: 'vimeo',
