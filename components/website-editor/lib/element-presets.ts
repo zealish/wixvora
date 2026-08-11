@@ -77,6 +77,10 @@ export const ELEMENT_PRESETS_BY_CATEGORY: Record<ElementCategory, ElementPreset[
         borderRadius: '12px',
         fontSize: '13px',
         fontWeight: '600',
+        variant: 'primary',
+        size: 'md',
+        padding: '12px 24px',
+        openInNewTab: false,
       },
       defaultLayouts: {
         desktop: { x: 60, y: 200, width: 180, height: 46, hidden: false },
@@ -99,6 +103,7 @@ export const ELEMENT_PRESETS_BY_CATEGORY: Record<ElementCategory, ElementPreset[
         borderColor: '#bfdbfe',
         borderRadius: '9999px',
         fontSize: '11px',
+        badgeVariant: 'solid',
       },
       defaultLayouts: {
         desktop: { x: 60, y: 15, width: 220, height: 32, hidden: false },
@@ -146,6 +151,12 @@ export const ELEMENT_PRESETS_BY_CATEGORY: Record<ElementCategory, ElementPreset[
         borderColor: '#e2e8f0',
         borderRadius: '16px',
         accentColor: '#2563eb',
+        titleFontSize: '18px',
+        titleFontWeight: '700',
+        titleColor: '#2563eb',
+        subtitleFontSize: '13px',
+        subtitleFontWeight: '400',
+        subtitleColor: '#64748b',
       },
       defaultLayouts: {
         desktop: { x: 60, y: 270, width: 300, height: 180, hidden: false },
