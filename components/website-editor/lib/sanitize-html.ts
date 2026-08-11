@@ -11,7 +11,7 @@ const ALLOWED_ATTRS: Record<string, string[]> = {
   span: ["style"],
 };
 
-const FONT_SIZE_REGEX = /font-size:\s*(\d+)px/;
+const FONT_SIZE_REGEX = /(?:^|;|\s)font-size:\s*(\d+)px(?:;|$|\s)/;
 const COLOR_REGEX = /(?:^|;|\s)color:\s*(#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}))(?:;|$|\s)/;
 const BACKGROUND_COLOR_REGEX = /background-color:\s*(#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}))(?:;|$|\s)/;
 
