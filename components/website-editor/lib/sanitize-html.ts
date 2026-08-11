@@ -12,8 +12,8 @@ const ALLOWED_ATTRS: Record<string, string[]> = {
 };
 
 const FONT_SIZE_REGEX = /font-size:\s*(\d+)px/;
-const COLOR_REGEX = /(?:^|;|\s)color:\s*(#[0-9a-fA-F]{3}(?:[0-9a-fA-F]{3})?)/;
-const BACKGROUND_COLOR_REGEX = /background-color:\s*(#[0-9a-fA-F]{3}(?:[0-9a-fA-F]{3})?)/;
+const COLOR_REGEX = /(?:^|;|\s)color:\s*(#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}))(?:;|$|\s)/;
+const BACKGROUND_COLOR_REGEX = /background-color:\s*(#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}))(?:;|$|\s)/;
 
 const MIN_FONT_SIZE = 8;
 const MAX_FONT_SIZE = 200;
