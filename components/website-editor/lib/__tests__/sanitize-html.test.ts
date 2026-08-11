@@ -5,12 +5,6 @@
 
 import { sanitizeHtml } from "../sanitize-html";
 
-function assert(condition: boolean, message: string): void {
-  if (!condition) {
-    throw new Error(`Assertion failed: ${message}`);
-  }
-}
-
 function assertContains(haystack: string, needle: string, message: string): void {
   if (!haystack.includes(needle)) {
     throw new Error(`${message}: expected to contain "${needle}", got "${haystack}"`);

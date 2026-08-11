@@ -6,6 +6,8 @@
  * malformed property names like "border-font-size" or "background-font-size"
  */
 
+export {};
+
 const FONT_SIZE_REGEX = /(?:^|;|\s)font-size:\s*(\d+)px(?:;|$|\s)/;
 
 function assert(condition: boolean, message: string): void {

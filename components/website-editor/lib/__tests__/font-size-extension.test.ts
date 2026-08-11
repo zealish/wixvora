@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * FontSize Extension Tests
  * Run with: pnpm tsx components/website-editor/lib/__tests__/font-size-extension.test.ts

@@ -3,6 +3,8 @@
  * Run with: pnpm tsx components/website-editor/rich-text/__tests__/FloatingToolbar.test.tsx
  */
 
+export {};
+
 function assert(condition: boolean, message: string): void {
   if (!condition) {
     throw new Error(`Assertion failed: ${message}`);
