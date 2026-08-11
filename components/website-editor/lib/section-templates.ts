@@ -1,4 +1,5 @@
 import type { Section } from './block-types';
+import { t } from './translations';
 
 function createId(prefix: string): string {
   return prefix + '_' + Math.random().toString(36).slice(2, 10);
@@ -17,8 +18,8 @@ export const SECTION_TEMPLATES: SectionTemplate[] = [
   {
     id: 'hero',
     title: 'Hero Strip Section',
-    category: 'Header / Banner',
-    desc: 'Tampilan utama memukau dengan judul besar, subteks, tombol CTA, dan gambar ilustrasi.',
+    category: t('sections.category.header'),
+    desc: 'Stunning hero section with large heading, subtitle, CTA button, and illustration image.',
     previewBg: 'bg-gradient-to-r from-blue-600 to-indigo-700',
     factory: () => ({
       id: createId('sec'),
@@ -112,9 +113,9 @@ export const SECTION_TEMPLATES: SectionTemplate[] = [
   },
   {
     id: 'features',
-    title: 'Fitur Utama (3 Kolom)',
-    category: 'Content / Features',
-    desc: 'Grid 3 kolom berisi kartu fitur serbaguna dengan judul dan warna aksen.',
+    title: 'Key Features (3 Columns)',
+    category: t('sections.category.content'),
+    desc: '3-column grid with versatile feature cards including title and accent color.',
     previewBg: 'bg-emerald-600',
     factory: () => ({
       id: createId('sec'),
@@ -198,9 +199,9 @@ export const SECTION_TEMPLATES: SectionTemplate[] = [
   },
   {
     id: 'testimonials',
-    title: 'Testimonial & Review',
-    category: 'Social Proof',
-    desc: 'Kutipan apresiasi dari pengguna lengkap dengan foto profil dan kartu desain elegan.',
+    title: 'Testimonials & Reviews',
+    category: t('sections.category.social_proof'),
+    desc: 'Customer appreciation quotes with profile photos and elegant card design.',
     previewBg: 'bg-amber-600',
     factory: () => ({
       id: createId('sec'),
@@ -266,9 +267,9 @@ export const SECTION_TEMPLATES: SectionTemplate[] = [
   },
   {
     id: 'cta_banner',
-    title: 'Banner Call to Action',
-    category: 'Promotional',
-    desc: 'Strip penutup yang mencolok untuk mendorong konversi dengan tombol aksi menonjol.',
+    title: 'Call to Action Banner',
+    category: t('sections.category.promotional'),
+    desc: 'Eye-catching closing strip to drive conversions with prominent action button.',
     previewBg: 'bg-indigo-600',
     factory: () => ({
       id: createId('sec'),
@@ -332,9 +333,9 @@ export const SECTION_TEMPLATES: SectionTemplate[] = [
   },
   {
     id: 'contact_info',
-    title: 'Kontak & Alamat',
-    category: 'Footer / Info',
-    desc: 'Layout informasi kontak, formulir sederhana, dan lokasi alamat bisnis.',
+    title: 'Contact & Address',
+    category: t('sections.category.footer'),
+    desc: 'Contact information layout, simple form, and business location address.',
     previewBg: 'bg-purple-600',
     factory: () => ({
       id: createId('sec'),
@@ -409,9 +410,9 @@ export const SECTION_TEMPLATES: SectionTemplate[] = [
   },
   {
     id: 'blank',
-    title: 'Seksi Kosong (Blank Strip)',
-    category: 'Basic',
-    desc: 'Seksi bersih tanpa elemen untuk membangun layout dari nol.',
+    title: 'Blank Section (Empty Strip)',
+    category: t('sections.category.basic'),
+    desc: 'Clean section with no elements to build layout from scratch.',
     previewBg: 'bg-slate-200',
     factory: () => ({
       id: createId('sec'),
@@ -425,8 +426,8 @@ export const SECTION_TEMPLATES: SectionTemplate[] = [
   {
     id: 'navigation',
     title: 'Navigation Bar',
-    category: 'Header / Banner',
-    desc: 'Navigasi responsif dengan logo, tautan menu, dan tombol CTA.',
+    category: t('sections.category.header'),
+    desc: 'Responsive navigation with logo, menu links, and CTA button.',
     previewBg: 'bg-sky-600',
     factory: () => ({
       id: createId('sec'),
