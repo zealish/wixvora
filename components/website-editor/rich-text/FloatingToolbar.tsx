@@ -49,7 +49,6 @@ export function FloatingToolbar({
 }) {
   if (!editor) return null;
 
-  const isInlineOnly = elementType === "button" || elementType === "badge";
   const supportsHeadings = elementType === "heading" || elementType === "card";
 
   return (
@@ -113,44 +112,38 @@ export function FloatingToolbar({
         <span className="line-through">S</span>
       </ToolbarButton>
 
-      {!isInlineOnly && (
-        <ToolbarButton
-          onClick={() => editor.chain().focus().toggleCode().run()}
-          active={editor.isActive("code")}
-          title="Inline Code"
-        >
-          {"</>"}
-        </ToolbarButton>
-      )}
+      <ToolbarButton
+        onClick={() => editor.chain().focus().toggleCode().run()}
+        active={editor.isActive("code")}
+        title="Inline Code"
+      >
+        {"</>"}
+      </ToolbarButton>
 
       <div className="w-px h-5 bg-slate-200 mx-0.5" />
 
-      {!isInlineOnly && (
-        <>
-          <ToolbarButton
-            onClick={() => editor.chain().focus().setTextAlign("left").run()}
-            active={editor.isActive({ textAlign: "left" })}
-            title="Align Left"
-          >
-            ≡
-          </ToolbarButton>
-          <ToolbarButton
-            onClick={() => editor.chain().focus().setTextAlign("center").run()}
-            active={editor.isActive({ textAlign: "center" })}
-            title="Align Center"
-          >
-            ≡
-          </ToolbarButton>
-          <ToolbarButton
-            onClick={() => editor.chain().focus().setTextAlign("right").run()}
-            active={editor.isActive({ textAlign: "right" })}
-            title="Align Right"
-          >
-            ≡
-          </ToolbarButton>
-          <div className="w-px h-5 bg-slate-200 mx-0.5" />
-        </>
-      )}
+      <ToolbarButton
+        onClick={() => editor.chain().focus().setTextAlign("left").run()}
+        active={editor.isActive({ textAlign: "left" })}
+        title="Align Left"
+      >
+        ≡
+      </ToolbarButton>
+      <ToolbarButton
+        onClick={() => editor.chain().focus().setTextAlign("center").run()}
+        active={editor.isActive({ textAlign: "center" })}
+        title="Align Center"
+      >
+        ≡
+      </ToolbarButton>
+      <ToolbarButton
+        onClick={() => editor.chain().focus().setTextAlign("right").run()}
+        active={editor.isActive({ textAlign: "right" })}
+        title="Align Right"
+      >
+        ≡
+      </ToolbarButton>
+      <div className="w-px h-5 bg-slate-200 mx-0.5" />
 
       <ToolbarButton
         onClick={() => {

@@ -24,8 +24,7 @@ export function RichTextEditor({
   className?: string;
   style?: React.CSSProperties;
 }) {
-  const isInlineOnly = elementType === "button" || elementType === "badge";
-  const tiptapMode = isInlineOnly ? "inline" : "block";
+  const tiptapMode = "block";
 
   const editor = useEditor({
     extensions: getExtensions(tiptapMode),
