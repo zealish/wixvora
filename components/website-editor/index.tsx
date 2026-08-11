@@ -12,9 +12,6 @@ import { RichTextEditor } from "./rich-text/RichTextEditor";
 import "./rich-text/rich-text-content.css";
 
 function RenderElementContent({ element, updateProps, isPreviewMode, isSelected }: { element: Element; updateProps: (p: Partial<Element>) => void; isPreviewMode: boolean; isSelected?: boolean }) {
-  const textProp = element.type === "card" ? undefined : "text";
-  const titleProp = element.type === "card" ? "title" : undefined;
-  const subtitleProp = element.type === "card" ? "subtitle" : undefined;
   const sharedStyle: React.CSSProperties = {
     color: element.textColor,
     fontSize: element.fontSize,
@@ -950,11 +947,12 @@ function EditorLayout({ backUrl, title }: { backUrl?: string | undefined; title?
                   {(selectedElement.type === 'heading' || selectedElement.type === 'paragraph' || selectedElement.type === 'button' || selectedElement.type === 'badge') && (
                     <div className="space-y-1">
                       <label className="text-[10px] font-bold text-slate-500">Text Content</label>
-                      <textarea
-                        rows={3}
-                        value={selectedElement.text || ''}
-                        onChange={(e) => updateElementProps(selectedSectionId!, selectedElement.id, { text: e.target.value })}
-                        className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-slate-800 outline-none focus:border-blue-500"
+                      <RichTextEditor
+                        content={selectedElement.text || ""}
+                        onUpdate={(html) => updateElementProps(selectedSectionId!, selectedElement.id, { text: html })}
+                        editable={true}
+                        mode="inspector"
+                        elementType={selectedElement.type}
                       />
                     </div>
                   )}
@@ -963,20 +961,22 @@ function EditorLayout({ backUrl, title }: { backUrl?: string | undefined; title?
                     <div className="space-y-3">
                       <div className="space-y-1">
                         <label className="text-[10px] font-bold text-slate-500">Card Title</label>
-                        <input
-                          type="text"
-                          value={selectedElement.title || ''}
-                          onChange={(e) => updateElementProps(selectedSectionId!, selectedElement.id, { title: e.target.value })}
-                          className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-800 outline-none focus:border-blue-500"
+                        <RichTextEditor
+                          content={selectedElement.title || ""}
+                          onUpdate={(html) => updateElementProps(selectedSectionId!, selectedElement.id, { title: html })}
+                          editable={true}
+                          mode="inspector"
+                          elementType="card"
                         />
                       </div>
                       <div className="space-y-1">
                         <label className="text-[10px] font-bold text-slate-500">Card Description</label>
-                        <textarea
-                          rows={3}
-                          value={selectedElement.subtitle || ''}
-                          onChange={(e) => updateElementProps(selectedSectionId!, selectedElement.id, { subtitle: e.target.value })}
-                          className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-slate-800 outline-none focus:border-blue-500"
+                        <RichTextEditor
+                          content={selectedElement.subtitle || ""}
+                          onUpdate={(html) => updateElementProps(selectedSectionId!, selectedElement.id, { subtitle: html })}
+                          editable={true}
+                          mode="inspector"
+                          elementType="paragraph"
                         />
                       </div>
                     </div>
