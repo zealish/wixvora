@@ -1,6 +1,7 @@
 import { getLayout, getSectionHeight } from './viewport-utils';
 import type { Section, Page, NavigationSettings } from './block-types';
 import { parseVideoUrl, buildEmbedUrl, getAutoThumbnail } from './video-url-parser';
+import { generateVideoExportJS } from './video-export-js';
 
 function generateFullHTML(sections: Section[]): string {
   let cssRules = `
@@ -63,24 +64,25 @@ function generateFullHTML(sections: Section[]): string {
           return `        <div ${idAttr} style="background-color: ${(el as any).bgColor || '#f1f5f9'}; border-radius: ${(el as any).borderRadius}; display: flex; align-items: center; justify-content: center; border: 2px dashed #cbd5e1;"><span style="color: #94a3b8; font-size: 11px;">Video URL not set</span></div>`;
         }
 
-        const embedUrl = buildEmbedUrl(parsed, { autoplay: (el as any).autoplay, loop: (el as any).loop });
         const thumbnailSrc = (el as any).thumbnailUrl || getAutoThumbnail(parsed);
         const playStyle = (el as any).playButtonStyle || 'circle';
         const overlayColor = (el as any).overlayColor || 'rgba(0,0,0,0.3)';
         const aspectRatio = (el as any).aspectRatio || '16:9';
         const ratioMap: Record<string, string> = { '16:9': '16/9', '4:3': '4/3', '1:1': '1/1' };
+        const theme = (el as any).controlBarTheme || 'dark';
 
         const playButtons: Record<string, string> = {
-          circle: '<div style="width:64px;height:64px;border-radius:50%;background:rgba(255,255,255,0.95);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(0,0,0,0.15);transition:transform 0.2s"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" style="color:#1e293b;margin-left:2px"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>',
-          square: '<div style="width:56px;height:56px;border-radius:12px;background:rgba(255,255,255,0.95);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(0,0,0,0.15);transition:transform 0.2s"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" style="color:#1e293b;margin-left:1px"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>',
-          minimal: '<svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor" style="color:white;filter:drop-shadow(0 2px 8px rgba(0,0,0,0.3))"><polygon points="5 3 19 12 5 21 5 3"/></svg>',
+          circle: '<div class="vp-play-btn-static" style="width:64px;height:64px;border-radius:50%;background:rgba(255,255,255,0.95);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(0,0,0,0.15);"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" style="color:#1e293b;margin-left:2px"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>',
+          square: '<div class="vp-play-btn-static" style="width:56px;height:56px;border-radius:12px;background:rgba(255,255,255,0.95);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(0,0,0,0.15);"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" style="color:#1e293b;margin-left:1px"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>',
+          minimal: '<div class="vp-play-btn-static"><svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor" style="color:white;filter:drop-shadow(0 2px 8px rgba(0,0,0,0.3))"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>',
         };
 
         if ((el as any).autoplay) {
-          return `        <div ${idAttr} style="width: 100%; aspect-ratio: ${ratioMap[aspectRatio] || '16/9'}; border-radius: ${(el as any).borderRadius}; overflow: hidden; background-color: ${(el as any).bgColor || '#000000'};"><iframe src="${embedUrl}" style="width: 100%; height: 100%; border: none;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>`;
+          const embedUrl = buildEmbedUrl(parsed, { autoplay: true, loop: (el as any).loop });
+          return `        <div ${idAttr} style="width: 100%; aspect-ratio: ${ratioMap[aspectRatio] || '16/9'}; border-radius: ${(el as any).borderRadius}; overflow: hidden; background-color: ${(el as any).bgColor || '#000000'};"><iframe src="${embedUrl}&controls=0" style="width: 100%; height: 100%; border: none;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>`;
         }
 
-        return `        <div ${idAttr} style="width: 100%; aspect-ratio: ${ratioMap[aspectRatio] || '16/9'}; border-radius: ${(el as any).borderRadius}; overflow: hidden; background-color: ${(el as any).bgColor || '#000000'}; cursor: pointer; position: relative;" onclick="this.innerHTML='<iframe src=&quot;${embedUrl}&quot; style=&quot;width:100%;height:100%;border:none&quot; allow=&quot;accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture&quot; allowfullscreen></iframe>'"><img src="${thumbnailSrc}" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none'"/><div style="position:absolute;inset:0;background:${overlayColor}"></div><div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)">${playButtons[playStyle]}</div></div>`;
+        return `        <div ${idAttr} data-video-player data-video-id="${parsed.videoId}" data-video-provider="${parsed.provider}" data-video-theme="${theme}" style="width: 100%; aspect-ratio: ${ratioMap[aspectRatio] || '16/9'}; border-radius: ${(el as any).borderRadius}; overflow: hidden; background-color: ${(el as any).bgColor || '#000000'}; cursor: pointer; position: relative;"><img class="vp-thumbnail" src="${thumbnailSrc}" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none'"/><div class="vp-overlay" style="position:absolute;inset:0;background:${overlayColor}"></div><div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)">${playButtons[playStyle]}</div></div>`;
       }
       if (el.type === 'card') {
         return `        <div ${idAttr} style="background-color: ${el.bgColor}; color: ${el.textColor}; border-radius: ${el.borderRadius}; border: 1px solid ${el.borderColor}; padding: 20px; box-sizing: border-box;" class="shadow-lg">
@@ -113,6 +115,7 @@ ${cssRules}
 </head>
 <body class="bg-slate-50 font-sans antialiased text-slate-800 m-0 p-0 overflow-x-hidden">
 ${renderedSections}
+${generateVideoExportJS()}
 </body>
 </html>`;
 }
@@ -253,24 +256,25 @@ function generateMultiPageHTML(pages: Page[], navigationSettings?: NavigationSet
               return `        <div ${idAttr} style="background-color: ${(el as any).bgColor || '#f1f5f9'}; border-radius: ${(el as any).borderRadius}; display: flex; align-items: center; justify-content: center; border: 2px dashed #cbd5e1;"><span style="color: #94a3b8; font-size: 11px;">Video URL not set</span></div>`;
             }
 
-            const embedUrl = buildEmbedUrl(parsed, { autoplay: (el as any).autoplay, loop: (el as any).loop });
             const thumbnailSrc = (el as any).thumbnailUrl || getAutoThumbnail(parsed);
             const playStyle = (el as any).playButtonStyle || 'circle';
             const overlayColor = (el as any).overlayColor || 'rgba(0,0,0,0.3)';
             const aspectRatio = (el as any).aspectRatio || '16:9';
             const ratioMap: Record<string, string> = { '16:9': '16/9', '4:3': '4/3', '1:1': '1/1' };
+            const theme = (el as any).controlBarTheme || 'dark';
 
             const playButtons: Record<string, string> = {
-              circle: '<div style="width:64px;height:64px;border-radius:50%;background:rgba(255,255,255,0.95);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(0,0,0,0.15);transition:transform 0.2s"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" style="color:#1e293b;margin-left:2px"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>',
-              square: '<div style="width:56px;height:56px;border-radius:12px;background:rgba(255,255,255,0.95);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(0,0,0,0.15);transition:transform 0.2s"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" style="color:#1e293b;margin-left:1px"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>',
-              minimal: '<svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor" style="color:white;filter:drop-shadow(0 2px 8px rgba(0,0,0,0.3))"><polygon points="5 3 19 12 5 21 5 3"/></svg>',
+              circle: '<div class="vp-play-btn-static" style="width:64px;height:64px;border-radius:50%;background:rgba(255,255,255,0.95);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(0,0,0,0.15);"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" style="color:#1e293b;margin-left:2px"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>',
+              square: '<div class="vp-play-btn-static" style="width:56px;height:56px;border-radius:12px;background:rgba(255,255,255,0.95);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(0,0,0,0.15);"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" style="color:#1e293b;margin-left:1px"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>',
+              minimal: '<div class="vp-play-btn-static"><svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor" style="color:white;filter:drop-shadow(0 2px 8px rgba(0,0,0,0.3))"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>',
             };
 
             if ((el as any).autoplay) {
-              return `        <div ${idAttr} style="width: 100%; aspect-ratio: ${ratioMap[aspectRatio] || '16/9'}; border-radius: ${(el as any).borderRadius}; overflow: hidden; background-color: ${(el as any).bgColor || '#000000'};"><iframe src="${embedUrl}" style="width: 100%; height: 100%; border: none;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>`;
+              const embedUrl = buildEmbedUrl(parsed, { autoplay: true, loop: (el as any).loop });
+              return `        <div ${idAttr} style="width: 100%; aspect-ratio: ${ratioMap[aspectRatio] || '16/9'}; border-radius: ${(el as any).borderRadius}; overflow: hidden; background-color: ${(el as any).bgColor || '#000000'};"><iframe src="${embedUrl}&controls=0" style="width: 100%; height: 100%; border: none;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>`;
             }
 
-            return `        <div ${idAttr} style="width: 100%; aspect-ratio: ${ratioMap[aspectRatio] || '16/9'}; border-radius: ${(el as any).borderRadius}; overflow: hidden; background-color: ${(el as any).bgColor || '#000000'}; cursor: pointer; position: relative;" onclick="this.innerHTML='<iframe src=&quot;${embedUrl}&quot; style=&quot;width:100%;height:100%;border:none&quot; allow=&quot;accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture&quot; allowfullscreen></iframe>'"><img src="${thumbnailSrc}" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none'"/><div style="position:absolute;inset:0;background:${overlayColor}"></div><div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)">${playButtons[playStyle]}</div></div>`;
+            return `        <div ${idAttr} data-video-player data-video-id="${parsed.videoId}" data-video-provider="${parsed.provider}" data-video-theme="${theme}" style="width: 100%; aspect-ratio: ${ratioMap[aspectRatio] || '16/9'}; border-radius: ${(el as any).borderRadius}; overflow: hidden; background-color: ${(el as any).bgColor || '#000000'}; cursor: pointer; position: relative;"><img class="vp-thumbnail" src="${thumbnailSrc}" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none'"/><div class="vp-overlay" style="position:absolute;inset:0;background:${overlayColor}"></div><div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)">${playButtons[playStyle]}</div></div>`;
           }
           if (el.type === 'card') {
           return `        <div ${idAttr} style="background-color: ${el.bgColor}; color: ${el.textColor}; border-radius: ${el.borderRadius}; border: 1px solid ${el.borderColor}; padding: 20px; box-sizing: border-box;" class="shadow-lg">
@@ -313,6 +317,7 @@ ${cssRules}
 ${navigation}
 
 ${renderedPageContents.join('\n\n')}
+${generateVideoExportJS()}
 </body>
 </html>`;
 }
