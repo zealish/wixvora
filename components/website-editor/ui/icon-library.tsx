@@ -45,7 +45,13 @@ export type IconName =
   | "move"
   | "resize"
   | "arrowLeft"
-  | "save";
+  | "save"
+  | "text"
+  | "cursor"
+  | "media"
+  | "layoutGrid"
+  | "navigation"
+  | "form";
 
 const icons: Record<IconName, React.ReactElement> = {
   plus: (
@@ -335,6 +341,48 @@ const icons: Record<IconName, React.ReactElement> = {
       <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
       <polyline points="17 21 17 13 7 13 7 21" />
       <polyline points="7 3 7 8 15 8" />
+    </>
+  ),
+  text: (
+    <>
+      <line x1="4" y1="6" x2="20" y2="6" />
+      <line x1="4" y1="12" x2="16" y2="12" />
+      <line x1="4" y1="18" x2="18" y2="18" />
+    </>
+  ),
+  cursor: (
+    <>
+      <path d="M4,4 L10,12 L13,9 L20,16" />
+      <path d="M15,14 L20,16 L22,21 L17,19 L14,22 L12,19 L4,4 Z" />
+    </>
+  ),
+  media: (
+    <>
+      <circle cx="12" cy="12" r="10" />
+      <polygon points="10,8 16,12 10,16" />
+    </>
+  ),
+  layoutGrid: (
+    <>
+      <rect x="3" y="3" width="8" height="8" rx="1" />
+      <rect x="13" y="3" width="8" height="8" rx="1" />
+      <rect x="3" y="13" width="8" height="8" rx="1" />
+      <rect x="13" y="13" width="8" height="8" rx="1" />
+    </>
+  ),
+  navigation: (
+    <>
+      <line x1="4" y1="6" x2="20" y2="6" />
+      <line x1="4" y1="12" x2="20" y2="12" />
+      <line x1="4" y1="18" x2="20" y2="18" />
+    </>
+  ),
+  form: (
+    <>
+      <rect x="3" y="3" width="18" height="18" rx="2" />
+      <line x1="7" y1="8" x2="17" y2="8" />
+      <line x1="7" y1="12" x2="13" y2="12" />
+      <polyline points="7,15 9,17 13,13" />
     </>
   ),
 };
