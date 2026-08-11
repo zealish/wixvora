@@ -150,6 +150,9 @@ export const ELEMENT_PRESETS_BY_CATEGORY: Record<ElementCategory, ElementPreset[
         borderRadius: '12px',
         playButtonStyle: 'circle',
         overlayColor: 'rgba(0,0,0,0.3)',
+        muted: false,
+        showControls: true,
+        controlBarTheme: 'dark',
       },
       defaultLayouts: {
         desktop: { x: 620, y: 30, width: 400, height: 250, hidden: false },

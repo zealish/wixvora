@@ -65,6 +65,9 @@ export interface Element {
   thumbnailUrl?: string;
   playButtonStyle?: 'circle' | 'square' | 'minimal';
   overlayColor?: string;
+  muted?: boolean;
+  showControls?: boolean;
+  controlBarTheme?: 'dark' | 'light';
 }
 
 export interface Section {
