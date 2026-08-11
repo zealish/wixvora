@@ -28,6 +28,7 @@ interface EditorContextValue {
   currentPageId: string;
   currentPage: Page | undefined;
   pageSettings: PageSettings;
+  clipboard: { type: 'element'; data: Element } | { type: 'section'; data: Section } | null;
 
   showToast: (msg: string) => void;
   setViewport: (v: Viewport) => void;
@@ -52,6 +53,10 @@ interface EditorContextValue {
   updateElementProps: (sectionId: string, elementId: string, newProps: Partial<Element>) => void;
   updateSectionProps: (sectionId: string, newProps: Partial<Section>) => void;
   updateSectionHeight: (sectionId: string, vp: Viewport, height: number) => void;
+  copyElement: (sectionId: string, elementId: string) => void;
+  copySection: (sectionId: string) => void;
+  pasteElement: (targetSectionId?: string) => void;
+  pasteSection: () => void;
   undo: () => void;
   redo: () => void;
   generateFullHTML: () => string;
@@ -149,6 +154,7 @@ export function EditorProvider({
   const [activeFlyout, setActiveFlyout] = useState<'elements' | 'sections_list' | 'pages' | null>(null);
   const [isSectionModalOpen, setIsSectionModalOpen] = useState(false);
   const [pageSettings, setPageSettings] = useState<PageSettings>(initialPageSettings || DEFAULT_PAGE_SETTINGS);
+  const [clipboard, setClipboard] = useState<{ type: 'element'; data: Element } | { type: 'section'; data: Section } | null>(null);
 
   const currentPage = pages.find(p => p.id === currentPageId);
   const currentSections = currentPage?.sections || [];
@@ -316,6 +322,24 @@ export function EditorProvider({
     updateCurrentPageSections(updated);
     showToast(t('toast.duplicated'));
   }, [currentSections, updateCurrentPageSections, showToast]);
+
+  const copyElement = useCallback((sectionId: string, elementId: string) => {
+    const section = currentSections.find(s => s.id === sectionId);
+    if (!section) return;
+    const element = section.elements.find(e => e.id === elementId);
+    if (!element) return;
+    const clone = JSON.parse(JSON.stringify(element));
+    setClipboard({ type: 'element', data: clone });
+    showToast(t('toast.element_copied'));
+  }, [currentSections, showToast]);
+
+  const copySection = useCallback((sectionId: string) => {
+    const section = currentSections.find(s => s.id === sectionId);
+    if (!section) return;
+    const clone = JSON.parse(JSON.stringify(section));
+    setClipboard({ type: 'section', data: clone });
+    showToast(t('toast.section_copied'));
+  }, [currentSections, showToast]);
 
   const deleteElement = useCallback((sectionId: string, elementId: string) => {
     const updated = currentSections.map(sec => {
@@ -536,6 +560,7 @@ export function EditorProvider({
     currentPageId,
     currentPage,
     pageSettings,
+    clipboard,
     showToast,
     setViewport,
     setInspectorTab,
@@ -553,6 +578,10 @@ export function EditorProvider({
     moveSection,
     addElement,
     duplicateElement,
+    copyElement,
+    copySection,
+    pasteElement: () => {},
+    pasteSection: () => {},
     deleteElement,
     updateElementViewportLayout,
     updateElementProps,
