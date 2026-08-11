@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, useCallback, type ReactNode } from "react";
+import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from "react";
 import type { Element, Section, Viewport, PageSettings, Page } from "./lib/block-types";
 import { SECTION_TEMPLATES } from "./lib/section-templates";
 import { ELEMENT_PRESETS } from "./lib/element-presets";
@@ -605,6 +605,37 @@ export function EditorProvider({
     setPages(updatedPages);
     showToast(t('toast.saved'));
   }, [pages, pushHistory, showToast]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (isPreviewMode) return;
+      const modifier = e.ctrlKey || e.metaKey;
+      if (!modifier) return;
+      if (e.key !== 'c' && e.key !== 'v') return;
+
+      e.preventDefault();
+
+      if (e.key === 'c') {
+        if (selectedElementId && selectedSectionId) {
+          copyElement(selectedSectionId, selectedElementId);
+        } else if (selectedSectionId) {
+          copySection(selectedSectionId);
+        }
+      }
+
+      if (e.key === 'v') {
+        if (!clipboard) return;
+        if (clipboard.type === 'element') {
+          pasteElement(selectedSectionId || undefined);
+        } else if (clipboard.type === 'section') {
+          pasteSection();
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isPreviewMode, selectedElementId, selectedSectionId, clipboard, copyElement, copySection, pasteElement, pasteSection]);
 
   const value: EditorContextValue = {
     sections: currentSections,
