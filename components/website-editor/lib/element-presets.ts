@@ -148,6 +148,8 @@ export const ELEMENT_PRESETS_BY_CATEGORY: Record<ElementCategory, ElementPreset[
         loop: false,
         aspectRatio: '16:9',
         borderRadius: '12px',
+        playButtonStyle: 'circle',
+        overlayColor: 'rgba(0,0,0,0.3)',
       },
       defaultLayouts: {
         desktop: { x: 620, y: 30, width: 400, height: 250, hidden: false },
