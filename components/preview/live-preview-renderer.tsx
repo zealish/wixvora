@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { useRouter } from "next/navigation";
 import { Monitor, Tablet, Smartphone } from "lucide-react";
 import type { Page } from "@/components/website-editor/lib/block-types";
 
@@ -27,6 +28,7 @@ export function LivePreviewRenderer({
 }: LivePreviewRendererProps): React.JSX.Element {
   const [viewport, setViewport] = useState<Viewport>("desktop");
   const [currentPageSlug, setCurrentPageSlug] = useState<string | null>(null);
+  const router = useRouter();
 
   const sortedPages = useMemo(
     () => [...pages].sort((a, b) => a.sortOrder - b.sortOrder),
@@ -37,7 +39,7 @@ export function LivePreviewRenderer({
     setCurrentPageSlug(slug);
     const url = new URL(window.location.href);
     url.searchParams.set("page", slug);
-    window.history.pushState({}, "", url.toString());
+    router.push(url.pathname + url.search);
   };
 
   return (

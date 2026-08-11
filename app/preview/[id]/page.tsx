@@ -28,7 +28,7 @@ export default async function PreviewPage({
   
   try {
     template = await getTemplateById(id);
-  } catch (error) {
+  } catch (error: unknown) {
     if (process.env.NODE_ENV === 'development') {
       console.warn('Failed to fetch template:', error);
     }
@@ -37,7 +37,7 @@ export default async function PreviewPage({
   if (!template) {
     try {
       website = await getWebsiteById(id);
-    } catch (error) {
+    } catch (error: unknown) {
       if (process.env.NODE_ENV === 'development') {
         console.warn('Failed to fetch website:', error);
       }
