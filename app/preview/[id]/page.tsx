@@ -1,9 +1,5 @@
 import { getTemplateById } from "@/features/templates/queries";
 import { getWebsiteById } from "@/features/websites/queries";
-import {
-  generateMultiPageHTML,
-  generateFullHTML,
-} from "@/components/website-editor/lib/html-generator";
 import { LivePreviewRenderer } from "@/components/preview/live-preview-renderer";
 import { Preview404 } from "@/components/preview/preview-404";
 import type { Page } from "@/components/website-editor/lib/block-types";
@@ -88,27 +84,12 @@ export default async function PreviewPage({
     targetPage = pages.find((p) => p.isHomePage) || pages[0];
   }
 
-  // Generate HTML
-  const hasMultiplePages = pages.length > 1;
-  let html: string;
-
-  if (hasMultiplePages && !pageSlug) {
-    // Render all pages with navigation
-    html = generateMultiPageHTML(pages, undefined);
-  } else {
-    // Render single page
-    const pageSections = targetPage?.sections || [];
-    html = generateFullHTML(
-      Array.isArray(pageSections) ? pageSections : []
-    );
-  }
-
   const name = template?.name || website?.name || "Preview";
   const source = template ? "template" : "website";
 
   return (
     <LivePreviewRenderer
-      html={html}
+      initialPageSlug={pageSlug}
       name={name}
       pages={pages}
       source={source}

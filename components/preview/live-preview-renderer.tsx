@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useMemo, useEffect } from "react";
 import { Monitor, Tablet, Smartphone } from "lucide-react";
+import { generateFullHTML } from "@/components/website-editor/lib/html-generator";
 import type { Page } from "@/components/website-editor/lib/block-types";
 
 type Viewport = "desktop" | "tablet" | "mobile";
@@ -14,32 +14,49 @@ const VIEWPORT_WIDTHS: Record<Viewport, string> = {
 };
 
 interface LivePreviewRendererProps {
-  html: string;
+  initialPageSlug?: string | undefined;
   name: string;
   pages: Page[];
   source: "template" | "website";
 }
 
 export function LivePreviewRenderer({
-  html,
+  initialPageSlug,
   name,
   pages,
   source,
 }: LivePreviewRendererProps): React.JSX.Element {
   const [viewport, setViewport] = useState<Viewport>("desktop");
-  const [currentPageSlug, setCurrentPageSlug] = useState<string | null>(null);
-  const router = useRouter();
+  const [currentPageSlug, setCurrentPageSlug] = useState<string | null>(
+    initialPageSlug || null
+  );
 
   const sortedPages = useMemo(
     () => [...pages].sort((a, b) => a.sortOrder - b.sortOrder),
     [pages]
   );
 
+  const currentPage = useMemo(() => {
+    if (currentPageSlug) {
+      const found = sortedPages.find((p) => p.slug === currentPageSlug);
+      if (found) return found;
+    }
+    return sortedPages.find((p) => p.isHomePage) || sortedPages[0];
+  }, [currentPageSlug, sortedPages]);
+
+  const html = useMemo(() => {
+    const sections = currentPage?.sections || [];
+    return generateFullHTML(Array.isArray(sections) ? sections : []);
+  }, [currentPage]);
+
+  useEffect(() => {
+    if (initialPageSlug && initialPageSlug !== currentPageSlug) {
+      setCurrentPageSlug(initialPageSlug);
+    }
+  }, [initialPageSlug]);
+
   const handlePageChange = (slug: string): void => {
     setCurrentPageSlug(slug);
-    const url = new URL(window.location.href);
-    url.searchParams.set("page", slug);
-    router.push(url.pathname + url.search);
   };
 
   return (
