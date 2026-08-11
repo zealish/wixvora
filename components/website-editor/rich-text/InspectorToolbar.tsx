@@ -2,6 +2,7 @@
 
 import type { Editor } from "@tiptap/react";
 import { ColorPicker } from "./ColorPicker";
+import { FontSizePicker } from "./FontSizePicker";
 
 function ToolbarButton({
   onClick,
@@ -106,6 +107,10 @@ export function InspectorToolbar({
           ))}
         </select>
       )}
+
+      <div className="w-px h-5 bg-slate-200 mx-0.5" />
+
+      <FontSizePicker editor={editor} />
 
       <div className="w-px h-5 bg-slate-200 mx-0.5" />
 
