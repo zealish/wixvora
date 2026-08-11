@@ -32,6 +32,7 @@
     "@radix-ui/react-toast": "^1.2.23",
     "@radix-ui/react-tooltip": "^1.2.16",
     "@tanstack/react-table": "^8.21.3",
+    "@tiptap/core": "^3.29.2",
     "@tiptap/extension-color": "^3.29.2",
     "@tiptap/extension-highlight": "^3.29.2",
     "@tiptap/extension-link": "^3.29.2",
