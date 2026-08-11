@@ -62,6 +62,9 @@ export interface Element {
   autoplay?: boolean;
   loop?: boolean;
   aspectRatio?: '16:9' | '4:3' | '1:1';
+  thumbnailUrl?: string;
+  playButtonStyle?: 'circle' | 'square' | 'minimal';
+  overlayColor?: string;
 }
 
 export interface Section {
