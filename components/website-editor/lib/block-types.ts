@@ -38,6 +38,23 @@ export interface Element {
   accentColor?: string;
   textAlign?: string;
   objectFit?: string;
+
+  // Button-specific
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
+  size?: 'sm' | 'md' | 'lg';
+  padding?: string;
+  openInNewTab?: boolean;
+
+  // Badge-specific
+  badgeVariant?: 'solid' | 'outline' | 'dot';
+
+  // Card-specific
+  titleFontSize?: string;
+  titleFontWeight?: string;
+  titleColor?: string;
+  subtitleFontSize?: string;
+  subtitleFontWeight?: string;
+  subtitleColor?: string;
 }
 
 export interface Section {
