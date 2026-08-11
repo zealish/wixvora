@@ -68,30 +68,21 @@ function RenderElementContent({ element, updateProps, isPreviewMode, isSelected 
   }
 
   if (element.type === "button") {
+    const buttonPadding = element.padding || '12px 24px';
     return (
       <div
         style={{
           backgroundColor: element.bgColor,
           color: element.textColor,
           borderRadius: element.borderRadius,
-          border: element.borderColor ? `1px solid ${element.borderColor}` : "none",
+          border: element.borderColor ? `1px solid ${element.borderColor}` : 'none',
           fontSize: element.fontSize,
           fontWeight: element.fontWeight,
+          padding: buttonPadding,
         }}
-        className="w-full h-full flex items-center justify-center shadow-md hover:opacity-90 transition px-4 cursor-pointer"
+        className="w-full h-full flex items-center justify-center shadow-md hover:opacity-90 transition cursor-pointer"
       >
-        {isPreviewMode ? (
-          <span dangerouslySetInnerHTML={{ __html: element.text || "" }} />
-        ) : (
-          <RichTextEditor
-            content={element.text || ""}
-            onUpdate={(html) => updateProps({ text: html })}
-            editable={!!isSelected}
-            mode="canvas"
-            elementType="button"
-            tagName="span"
-          />
-        )}
+        <span>{element.text || 'Button'}</span>
       </div>
     );
   }
@@ -108,18 +99,7 @@ function RenderElementContent({ element, updateProps, isPreviewMode, isSelected 
         }}
         className="w-full h-full flex items-center justify-center font-bold px-3"
       >
-        {isPreviewMode ? (
-          <span dangerouslySetInnerHTML={{ __html: element.text || "" }} />
-        ) : (
-          <RichTextEditor
-            content={element.text || ""}
-            onUpdate={(html) => updateProps({ text: html })}
-            editable={!!isSelected}
-            mode="canvas"
-            elementType="badge"
-            tagName="span"
-          />
-        )}
+        <span>{element.text || 'Badge'}</span>
       </div>
     );
   }
@@ -146,33 +126,25 @@ function RenderElementContent({ element, updateProps, isPreviewMode, isSelected 
         }}
         className="w-full h-full p-4 flex flex-col justify-between shadow-md box-border overflow-hidden"
       >
-        <h3 style={{ color: element.accentColor }} className="font-bold text-base m-0">
-          {isPreviewMode ? (
-            <span dangerouslySetInnerHTML={{ __html: element.title || "" }} />
-          ) : (
-            <RichTextEditor
-              content={element.title || ""}
-              onUpdate={(html) => updateProps({ title: html })}
-              editable={!!isSelected}
-              mode="canvas"
-              elementType="card"
-              tagName="span"
-            />
-          )}
+        <h3
+          style={{
+            color: element.titleColor || element.accentColor,
+            fontSize: element.titleFontSize || '18px',
+            fontWeight: element.titleFontWeight || '700',
+          }}
+          className="m-0"
+        >
+          {element.title || 'Card Title'}
         </h3>
-        <p className="text-xs opacity-80 m-0 leading-relaxed">
-          {isPreviewMode ? (
-            <span dangerouslySetInnerHTML={{ __html: element.subtitle || "" }} />
-          ) : (
-            <RichTextEditor
-              content={element.subtitle || ""}
-              onUpdate={(html) => updateProps({ subtitle: html })}
-              editable={!!isSelected}
-              mode="canvas"
-              elementType="paragraph"
-              tagName="span"
-            />
-          )}
+        <p
+          style={{
+            color: element.subtitleColor || '#64748b',
+            fontSize: element.subtitleFontSize || '13px',
+            fontWeight: element.subtitleFontWeight || '400',
+          }}
+          className="m-0 leading-relaxed"
+        >
+          {element.subtitle || 'Card subtitle'}
         </p>
       </div>
     );
