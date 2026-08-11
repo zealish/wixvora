@@ -22,6 +22,8 @@ const COLOR_MAP: Record<string, { bg: string; border: string; text: string; hove
   pink:    { bg: 'bg-pink-50',    border: 'border-pink-200',    text: 'text-pink-600',    hoverBg: 'hover:bg-pink-100' },
 };
 
+const DEFAULT_COLOR = { bg: 'bg-blue-50', border: 'border-blue-200', text: 'text-blue-600', hoverBg: 'hover:bg-blue-100' };
+
 export function ElementCatalogModal({ isOpen, onClose, onSelectElement }: ElementCatalogModalProps) {
   const [view, setView] = useState<'categories' | 'elements'>('categories');
   const [selectedCategory, setSelectedCategory] = useState<ElementCategory | null>(null);
@@ -76,7 +78,7 @@ export function ElementCatalogModal({ isOpen, onClose, onSelectElement }: Elemen
             )}
             <div>
               <h2 className="text-lg font-bold text-slate-900">
-                {view === 'categories' ? t('elements.modal.title') : getCategoryLabel(selectedCat!)}
+                {view === 'categories' ? t('elements.modal.title') : selectedCat ? getCategoryLabel(selectedCat) : ''}
               </h2>
               <p className="text-xs text-slate-500">
                 {view === 'categories' ? t('elements.modal.subtitle') : `${elements.length} ${elements.length === 1 ? 'element' : 'elements'}`}
@@ -91,9 +93,9 @@ export function ElementCatalogModal({ isOpen, onClose, onSelectElement }: Elemen
         {/* Content */}
         <div className="flex-1 overflow-y-auto p-6">
           {view === 'categories' ? (
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {ELEMENT_CATEGORIES.map(cat => {
-                const colors = COLOR_MAP[cat.color] ?? COLOR_MAP.blue;
+                const colors = (COLOR_MAP[cat.color] || DEFAULT_COLOR) as { bg: string; border: string; text: string; hoverBg: string };
                 const elemCount = ELEMENT_PRESETS_BY_CATEGORY[cat.id].length;
                 const isEmpty = elemCount === 0;
 
@@ -101,15 +103,15 @@ export function ElementCatalogModal({ isOpen, onClose, onSelectElement }: Elemen
                   <button
                     key={cat.id}
                     onClick={() => handleCategoryClick(cat.id)}
-                    disabled={isEmpty}
-                    className={`relative flex flex-col items-center p-6 rounded-xl border-2 transition-all ${
-                      isEmpty
-                        ? 'bg-slate-50 border-slate-200 opacity-50 cursor-not-allowed'
-                        : `${colors!.bg} ${colors!.border} ${colors!.hoverBg} cursor-pointer hover:scale-[1.02] hover:shadow-md`
-                    }`}
-                  >
-                    {!isEmpty && (
-                      <span className={`absolute top-3 right-3 px-2 py-0.5 rounded-full text-[10px] font-bold ${colors!.bg} ${colors!.text} border ${colors!.border}`}>
+                     disabled={isEmpty}
+                     className={`relative flex flex-col items-center p-6 rounded-xl border-2 transition-all ${
+                       isEmpty
+                         ? 'bg-slate-50 border-slate-200 opacity-50 cursor-not-allowed'
+                         : `${colors.bg} ${colors.border} ${colors.hoverBg} cursor-pointer hover:scale-[1.02] hover:shadow-md`
+                     }`}
+                   >
+                     {!isEmpty && (
+                       <span className={`absolute top-3 right-3 px-2 py-0.5 rounded-full text-[10px] font-bold ${colors.bg} ${colors.text} border ${colors.border}`}>
                         {elemCount} {elemCount === 1 ? 'element' : 'elements'}
                       </span>
                     )}
@@ -118,8 +120,8 @@ export function ElementCatalogModal({ isOpen, onClose, onSelectElement }: Elemen
                         {t('elements.modal.coming_soon')}
                       </span>
                     )}
-                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-3 ${colors!.bg}`}>
-                      <Icon name={cat.icon as IconName} className={`w-6 h-6 ${colors!.text}`} />
+                     <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-3 ${colors.bg}`}>
+                       <Icon name={cat.icon as IconName} className={`w-6 h-6 ${colors.text}`} />
                     </div>
                     <div className="text-sm font-bold text-slate-800">{getCategoryLabel(cat)}</div>
                     <div className="text-[11px] text-slate-500 text-center mt-1">{getCategoryDescription(cat)}</div>
@@ -131,7 +133,7 @@ export function ElementCatalogModal({ isOpen, onClose, onSelectElement }: Elemen
             <div className="space-y-3">
               {elements.length > 10 && (
                 <div className="relative">
-                  <Icon name="settings" className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                  <Icon name="search" className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                   <input
                     type="text"
                     value={searchQuery}
@@ -147,7 +149,7 @@ export function ElementCatalogModal({ isOpen, onClose, onSelectElement }: Elemen
                   {t('elements.modal.empty_category')}
                 </div>
               ) : (
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {filteredElements.map(preset => (
                     <button
                       key={preset.type}

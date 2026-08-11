@@ -51,7 +51,8 @@ export type IconName =
   | "media"
   | "layoutGrid"
   | "navigation"
-  | "form";
+  | "form"
+  | "search";
 
 const icons: Record<IconName, React.ReactElement> = {
   plus: (
@@ -383,6 +384,12 @@ const icons: Record<IconName, React.ReactElement> = {
       <line x1="7" y1="8" x2="17" y2="8" />
       <line x1="7" y1="12" x2="13" y2="12" />
       <polyline points="7,15 9,17 13,13" />
+    </>
+  ),
+  search: (
+    <>
+      <circle cx="11" cy="11" r="8" />
+      <line x1="21" y1="21" x2="16.65" y2="16.65" />
     </>
   ),
 };
