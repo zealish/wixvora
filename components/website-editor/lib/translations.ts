@@ -85,6 +85,10 @@ type TranslationKey =
   | 'toast.duplicated'
   | 'toast.undo_success'
   | 'toast.redo_success'
+  | 'toast.element_copied'
+  | 'toast.section_copied'
+  | 'toast.element_pasted'
+  | 'toast.section_pasted'
   // Error messages
   | 'error.min_sections'
   | 'error.min_pages'
@@ -195,6 +199,10 @@ const EN: Record<TranslationKey, string> = {
   'toast.duplicated': 'Duplicated',
   'toast.undo_success': 'Undo',
   'toast.redo_success': 'Redo',
+  'toast.element_copied': 'Element copied',
+  'toast.section_copied': 'Section copied',
+  'toast.element_pasted': 'Element pasted',
+  'toast.section_pasted': 'Section pasted',
   // Error messages
   'error.min_sections': 'Must have at least 1 section on page!',
   'error.min_pages': 'Must have at least 1 page!',
