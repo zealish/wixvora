@@ -6,6 +6,7 @@ import { SECTION_TEMPLATES } from "./lib/section-templates";
 import { ELEMENT_PRESETS } from "./lib/element-presets";
 import { getLayout, VIEWPORT_WIDTHS } from "./lib/viewport-utils";
 import { generateFullHTML } from "./lib/html-generator";
+import { t } from "./lib/translations";
 
 interface EditorContextValue {
   sections: Section[];
@@ -85,7 +86,7 @@ const DEFAULT_PAGE_SETTINGS: PageSettings = {
 
 const DEFAULT_HOME_PAGE: Page = {
   id: 'home',
-  title: 'Beranda (Home)',
+  title: 'Home',
   slug: '/',
   sections: [],
   pageSettings: DEFAULT_PAGE_SETTINGS,
@@ -196,7 +197,7 @@ export function EditorProvider({
       if (prevPages) {
         setHistoryIndex(historyIndex - 1);
         setPages(prevPages);
-        showToast("Undo berhasil dilakukan");
+        showToast("Undo");
       }
     }
   }, [historyIndex, history, showToast]);
@@ -207,7 +208,7 @@ export function EditorProvider({
       if (nextPages) {
         setHistoryIndex(historyIndex + 1);
         setPages(nextPages);
-        showToast("Redo berhasil dilakukan");
+        showToast("Redo");
       }
     }
   }, [historyIndex, history, showToast]);
@@ -230,12 +231,12 @@ export function EditorProvider({
     setSelectedSectionId(newSec.id);
     setIsSectionModalOpen(false);
     setAddMenuOpen(false);
-    showToast(`Seksi templat "${tmpl.title}" ditambahkan!`);
+    showToast(t('toast.section_added'));
   }, [currentSections, updateCurrentPageSections, showToast]);
 
   const deleteSection = useCallback((sectionId: string) => {
     if (currentSections.length <= 1) {
-      showToast("Harus ada minimal 1 Seksi di halaman!");
+      showToast("Must have at least 1 section on page!");
       return;
     }
     const updated = currentSections.filter(s => s.id !== sectionId);
@@ -243,7 +244,7 @@ export function EditorProvider({
     if (updated[0]) {
       setSelectedSectionId(updated[0].id);
     }
-    showToast("Seksi dihapus");
+    showToast(t('toast.deleted'));
   }, [currentSections, updateCurrentPageSections, showToast]);
 
   const moveSection = useCallback((sectionId: string, direction: 'up' | 'down') => {
@@ -285,7 +286,7 @@ export function EditorProvider({
     setSelectedSectionId(targetSecId);
     setSelectedElementId(newElement.id);
     setAddMenuOpen(false);
-    showToast(`Elemen "${preset.label}" ditambahkan`);
+    showToast(t('toast.element_added'));
   }, [currentSections, selectedSectionId, updateCurrentPageSections, showToast]);
 
   const duplicateElement = useCallback((sectionId: string, elementId: string) => {
@@ -296,7 +297,7 @@ export function EditorProvider({
 
         const copy = JSON.parse(JSON.stringify(target));
         copy.id = createUniqueId('el');
-        copy.name = (copy.name || 'Elemen') + ' (Salinan)';
+        copy.name = (copy.name || 'Element') + ' (Copy)';
 
         (['desktop', 'tablet', 'mobile'] as Viewport[]).forEach(vp => {
           const l = getLayout(copy, vp);
@@ -312,7 +313,7 @@ export function EditorProvider({
       return sec;
     });
     updateCurrentPageSections(updated);
-    showToast("Elemen diduplikasi!");
+    showToast(t('toast.duplicated'));
   }, [currentSections, updateCurrentPageSections, showToast]);
 
   const deleteElement = useCallback((sectionId: string, elementId: string) => {
@@ -324,7 +325,7 @@ export function EditorProvider({
     });
     updateCurrentPageSections(updated);
     setSelectedElementId(null);
-    showToast("Elemen dihapus");
+    showToast(t('toast.deleted'));
   }, [currentSections, updateCurrentPageSections, showToast]);
 
   const updateElementViewportLayout = useCallback((sectionId: string, elementId: string, vp: Viewport, layoutProps: Partial<any>) => {
@@ -410,17 +411,17 @@ export function EditorProvider({
     pushHistory(updatedPages);
     setPages(updatedPages);
     setCurrentPageId(newPage.id);
-    showToast(`Halaman "${title}" ditambahkan`);
+    showToast(t('toast.page_added'));
   }, [pages, pushHistory, showToast]);
 
   const removePage = useCallback((pageId: string) => {
     if (pages.length <= 1) {
-      showToast("Harus ada minimal 1 halaman!");
+      showToast("Must have at least 1 page!");
       return;
     }
     const target = pages.find(p => p.id === pageId);
     if (target?.isHomePage) {
-      showToast("Halaman utama tidak bisa dihapus!");
+      showToast("Cannot delete home page!");
       return;
     }
     const updatedPages = pages.filter(p => p.id !== pageId);
@@ -429,7 +430,7 @@ export function EditorProvider({
     if (currentPageId === pageId) {
       setCurrentPageId(updatedPages[0]?.id || '');
     }
-    showToast("Halaman dihapus");
+    showToast(t('toast.deleted'));
   }, [pages, currentPageId, pushHistory, showToast]);
 
   const updatePage = useCallback((pageId: string, updates: Partial<Pick<Page, 'title' | 'slug' | 'pageSettings' | 'navigationSettings'>>) => {
@@ -448,12 +449,12 @@ export function EditorProvider({
     
     pushHistory(updatedPages);
     setPages(updatedPages);
-    showToast("Halaman diperbarui");
+    showToast(t('toast.saved'));
   }, [pages, pushHistory, showToast]);
 
   const renamePage = useCallback((pageId: string, newTitle: string) => {
     updatePage(pageId, { title: newTitle });
-    showToast(`Halaman "${newTitle}" berhasil diubah namanya`);
+    showToast(t('toast.saved'));
   }, [updatePage, showToast]);
 
   const setCurrentPage = useCallback((pageId: string) => {
@@ -477,7 +478,7 @@ export function EditorProvider({
     const newPage: Page = {
       ...JSON.parse(JSON.stringify(source)),
       id: createUniqueId('page'),
-      title: source.title + ' (Salinan)',
+      title: source.title + ' (Copy)',
       slug: source.slug + '-copy',
       isHomePage: false,
       sortOrder: pages.length,
@@ -486,7 +487,7 @@ export function EditorProvider({
     pushHistory(updatedPages);
     setPages(updatedPages);
     setCurrentPageId(newPage.id);
-    showToast(`Halaman "${newPage.title}" diduplikasi`);
+    showToast(t('toast.duplicated'));
   }, [pages, pushHistory, showToast]);
 
   const setHomePage = useCallback((pageId: string) => {
@@ -496,7 +497,7 @@ export function EditorProvider({
     }));
     pushHistory(updatedPages);
     setPages(updatedPages);
-    showToast("Halaman utama diperbarui");
+    showToast(t('toast.saved'));
   }, [pages, pushHistory, showToast]);
 
   const value: EditorContextValue = {
