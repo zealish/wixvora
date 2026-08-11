@@ -41,13 +41,13 @@ export class YouTubePlayerAdapter implements VideoPlayerAPI {
     const playerId = `yt-player-${Date.now()}-${Math.random().toString(36).slice(2)}`;
     const div = document.createElement('div');
     div.id = playerId;
-    this.container.innerHTML = '';
+    div.style.cssText = 'position:absolute;top:-17%;left:0;width:100%;height:134%;';
     this.container.appendChild(div);
 
     return new Promise((resolve) => {
       this.player = new (window as any).YT.Player(playerId, {
         videoId: this.videoId,
-        playerVars: { controls: 0, modestbranding: 1, rel: 0, playsinline: 1 },
+        playerVars: { controls: 0, modestbranding: 1, rel: 0, playsinline: 1, iv_load_policy: 3, cc_load_policy: 0, showinfo: 0, disablekb: 1, fs: 0 },
         events: {
           onReady: () => {
             this._duration = this.player.getDuration() || 0;

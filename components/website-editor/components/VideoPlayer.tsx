@@ -203,7 +203,7 @@ export function VideoPlayer({ element }: VideoPlayerProps) {
         {started && element.showControls !== false && (
           <div
             className="absolute inset-0 flex flex-col justify-end pointer-events-none"
-            style={{ opacity: controlsVisible ? 1 : 0, transition: 'opacity 300ms ease' }}
+            style={{ zIndex: 1, opacity: controlsVisible ? 1 : 0, transition: 'opacity 300ms ease' }}
           >
             <div className="pointer-events-auto px-3 pb-1">
               <div

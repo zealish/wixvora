@@ -40,12 +40,10 @@ export class VimeoPlayerAdapter implements VideoPlayerAPI {
   async init(): Promise<void> {
     await loadVimeo();
     const Vimeo = (window as any).Vimeo;
-    this.container.innerHTML = '';
+
     const iframe = document.createElement('iframe');
+    iframe.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;border:none;';
     iframe.src = `https://player.vimeo.com/video/${this.videoId}?controls=0&title=0&byline=0&portrait=0`;
-    iframe.style.width = '100%';
-    iframe.style.height = '100%';
-    iframe.style.border = 'none';
     iframe.allow = 'autoplay; fullscreen; picture-in-picture';
     iframe.allowFullscreen = true;
     this.container.appendChild(iframe);

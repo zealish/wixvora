@@ -7,6 +7,7 @@ export interface PlayerOptions {
 }
 
 export interface VideoPlayerAPI {
+  init(): Promise<void>;
   play(): void;
   pause(): void;
   seekTo(seconds: number): void;
@@ -46,11 +47,15 @@ export async function createVideoPlayer(
 ): Promise<VideoPlayerAPI> {
   if (provider === 'youtube') {
     const { YouTubePlayerAdapter } = await import('./video-youtube-adapter');
-    return new YouTubePlayerAdapter(container, videoId, options);
+    const adapter = new YouTubePlayerAdapter(container, videoId, options);
+    await adapter.init();
+    return adapter;
   }
   if (provider === 'vimeo') {
     const { VimeoPlayerAdapter } = await import('./video-vimeo-adapter');
-    return new VimeoPlayerAdapter(container, videoId, options);
+    const adapter = new VimeoPlayerAdapter(container, videoId, options);
+    await adapter.init();
+    return adapter;
   }
   throw new Error(`Unknown provider: ${provider}`);
 }
