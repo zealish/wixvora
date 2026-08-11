@@ -1,5 +1,7 @@
 export type ElementType = 'heading' | 'paragraph' | 'button' | 'badge' | 'image' | 'card';
 
+export type ElementCategory = 'text' | 'interactive' | 'media' | 'layout' | 'navigation' | 'forms';
+
 export type Viewport = 'desktop' | 'tablet' | 'mobile';
 
 export interface ViewportLayout {
