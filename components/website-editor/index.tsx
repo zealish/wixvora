@@ -12,6 +12,7 @@ import "./rich-text/rich-text-content.css";
 import { ButtonInspector } from "./inspector/ButtonInspector";
 import { BadgeInspector } from "./inspector/BadgeInspector";
 import { CardInspector } from "./inspector/CardInspector";
+import { parseVideoUrl, buildEmbedUrl } from './lib/video-url-parser';
 
 function RenderElementContent({ element, updateProps, isPreviewMode, isSelected }: { element: Element; updateProps: (p: Partial<Element>) => void; isPreviewMode: boolean; isSelected?: boolean }) {
   const sharedStyle: React.CSSProperties = {
@@ -149,6 +150,58 @@ function RenderElementContent({ element, updateProps, isPreviewMode, isSelected 
         >
           {element.subtitle || 'Card subtitle'}
         </p>
+      </div>
+    );
+  }
+
+  if (element.type === "video") {
+    const parsed = parseVideoUrl(element.videoUrl || '');
+    if (!parsed) {
+      return (
+        <div
+          style={{
+            backgroundColor: element.bgColor || '#f1f5f9',
+            borderRadius: element.borderRadius,
+          }}
+          className="w-full h-full flex flex-col items-center justify-center gap-2 border-2 border-dashed border-slate-300"
+        >
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400">
+            <polygon points="5 3 19 12 5 21 5 3" />
+          </svg>
+          <span className="text-[11px] text-slate-400 font-medium">Paste a YouTube or Vimeo URL</span>
+        </div>
+      );
+    }
+
+    const embedUrl = buildEmbedUrl(parsed, {
+      ...(element.autoplay !== undefined && { autoplay: element.autoplay }),
+      ...(element.loop !== undefined && { loop: element.loop }),
+    });
+
+    const aspectRatioMap: Record<string, string> = {
+      '16:9': '16/9',
+      '4:3': '4/3',
+      '1:1': '1/1',
+    };
+
+    return (
+      <div
+        style={{
+          width: '100%',
+          aspectRatio: aspectRatioMap[element.aspectRatio || '16:9'] || '16/9',
+          borderRadius: element.borderRadius,
+          overflow: 'hidden',
+          backgroundColor: element.bgColor || '#000000',
+        }}
+        className="w-full h-full"
+      >
+        <iframe
+          src={embedUrl}
+          style={{ width: '100%', height: '100%', border: 'none' }}
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+          title={element.name || 'Video Player'}
+        />
       </div>
     );
   }
