@@ -1,6 +1,6 @@
 type VideoProvider = 'youtube' | 'vimeo';
 
-interface ParsedVideo {
+export interface ParsedVideo {
   provider: VideoProvider;
   videoId: string;
   embedUrl: string;
@@ -11,7 +11,6 @@ export function parseVideoUrl(url: string): ParsedVideo | null {
 
   const trimmed = url.trim();
 
-  // YouTube patterns
   const youtubeWatchMatch = trimmed.match(/(?:youtube\.com\/watch\?.*v=|youtube\.com\/embed\/|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
   if (youtubeWatchMatch?.[1]) {
     const videoId = youtubeWatchMatch[1];
@@ -22,7 +21,6 @@ export function parseVideoUrl(url: string): ParsedVideo | null {
     };
   }
 
-  // Vimeo patterns
   const vimeoMatch = trimmed.match(/(?:vimeo\.com\/|player\.vimeo\.com\/video\/)(\d+)/);
   if (vimeoMatch?.[1]) {
     const videoId = vimeoMatch[1];
