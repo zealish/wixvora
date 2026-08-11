@@ -11,17 +11,37 @@ const ALLOWED_ATTRS: Record<string, string[]> = {
   span: ["style"],
 };
 
-const FONT_SIZE_REGEX = /font-size:\s*\d+px/g;
+const FONT_SIZE_REGEX = /font-size:\s*(\d+)px/;
+const COLOR_REGEX = /(?:^|;|\s)color:\s*(#[0-9a-fA-F]{3}(?:[0-9a-fA-F]{3})?)/;
+const BACKGROUND_COLOR_REGEX = /background-color:\s*(#[0-9a-fA-F]{3}(?:[0-9a-fA-F]{3})?)/;
+
+const MIN_FONT_SIZE = 8;
+const MAX_FONT_SIZE = 200;
 
 function sanitizeStyleAttribute(style: string): string {
   if (!style) return "";
 
-  const matches = style.match(FONT_SIZE_REGEX);
-  if (matches) {
-    return matches.join("; ");
+  const sanitizedStyles: string[] = [];
+
+  const fontSizeMatch = style.match(FONT_SIZE_REGEX);
+  if (fontSizeMatch && fontSizeMatch[1]) {
+    const size = parseInt(fontSizeMatch[1], 10);
+    if (size >= MIN_FONT_SIZE && size <= MAX_FONT_SIZE) {
+      sanitizedStyles.push(`font-size: ${size}px`);
+    }
   }
 
-  return "";
+  const colorMatch = style.match(COLOR_REGEX);
+  if (colorMatch) {
+    sanitizedStyles.push(`color: ${colorMatch[1]}`);
+  }
+
+  const backgroundColorMatch = style.match(BACKGROUND_COLOR_REGEX);
+  if (backgroundColorMatch) {
+    sanitizedStyles.push(`background-color: ${backgroundColorMatch[1]}`);
+  }
+
+  return sanitizedStyles.join("; ");
 }
 
 export function sanitizeHtml(html: string): string {
