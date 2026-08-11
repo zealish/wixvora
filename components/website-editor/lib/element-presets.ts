@@ -133,6 +133,28 @@ export const ELEMENT_PRESETS_BY_CATEGORY: Record<ElementCategory, ElementPreset[
         mobile: { x: 20, y: 280, width: 335, height: 180, hidden: false },
       },
     },
+    {
+      type: 'video',
+      category: 'media',
+      label: 'Video Player',
+      icon: 'media',
+      labelKey: 'element.video.label',
+      descriptionKey: 'element.video.description',
+      defaultProps: {
+        name: 'Video Player',
+        videoUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+        videoProvider: 'youtube',
+        autoplay: false,
+        loop: false,
+        aspectRatio: '16:9',
+        borderRadius: '12px',
+      },
+      defaultLayouts: {
+        desktop: { x: 620, y: 30, width: 400, height: 250, hidden: false },
+        tablet: { x: 480, y: 30, width: 320, height: 200, hidden: false },
+        mobile: { x: 20, y: 280, width: 335, height: 210, hidden: false },
+      },
+    },
   ],
   layout: [
     {
