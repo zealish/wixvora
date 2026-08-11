@@ -13,7 +13,7 @@ import { ButtonInspector } from "./inspector/ButtonInspector";
 import { BadgeInspector } from "./inspector/BadgeInspector";
 import { CardInspector } from "./inspector/CardInspector";
 import { VideoInspector } from "./inspector/VideoInspector";
-import { parseVideoUrl, buildEmbedUrl, getAutoThumbnail } from './lib/video-url-parser';
+import { VideoPlayer } from './components/VideoPlayer';
 
 function RenderElementContent({ element, updateProps, isPreviewMode, isSelected }: { element: Element; updateProps: (p: Partial<Element>) => void; isPreviewMode: boolean; isSelected?: boolean }) {
   const sharedStyle: React.CSSProperties = {
@@ -156,109 +156,9 @@ function RenderElementContent({ element, updateProps, isPreviewMode, isSelected 
   }
 
   if (element.type === "video") {
-    const parsed = parseVideoUrl(element.videoUrl || '');
-    if (!parsed) {
-      return (
-        <div
-          style={{
-            backgroundColor: element.bgColor || '#f1f5f9',
-            borderRadius: element.borderRadius,
-          }}
-          className="w-full h-full flex flex-col items-center justify-center gap-2 border-2 border-dashed border-slate-300"
-        >
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400">
-            <polygon points="5 3 19 12 5 21 5 3" />
-          </svg>
-          <span className="text-[11px] text-slate-400 font-medium">Paste a YouTube or Vimeo URL</span>
-        </div>
-      );
-    }
-
-    const thumbnailSrc = element.thumbnailUrl || getAutoThumbnail(parsed);
-    const playStyle = element.playButtonStyle || 'circle';
-    const overlayColor = element.overlayColor || 'rgba(0,0,0,0.3)';
-
-    const aspectRatioMap: Record<string, string> = {
-      '16:9': '16/9',
-      '4:3': '4/3',
-      '1:1': '1/1',
-    };
-
-    // If autoplay is on, skip thumbnail and load iframe directly
-    if (element.autoplay) {
-      const embedUrl = buildEmbedUrl(parsed, { autoplay: true, ...(element.loop !== undefined && { loop: element.loop }) });
-      return (
-        <div
-          style={{
-            width: '100%',
-            aspectRatio: aspectRatioMap[element.aspectRatio || '16:9'] || '16/9',
-            borderRadius: element.borderRadius,
-            overflow: 'hidden',
-            backgroundColor: element.bgColor || '#000000',
-          }}
-          className="w-full h-full"
-        >
-          <iframe
-            src={embedUrl}
-            style={{ width: '100%', height: '100%', border: 'none' }}
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-            title={element.name || 'Video Player'}
-          />
-        </div>
-      );
-    }
-
-    const playButtonSvg = {
-      circle: (
-        <div className="w-16 h-16 rounded-full bg-white/95 flex items-center justify-center shadow-lg transition-transform duration-200 group-hover:scale-110">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" className="text-slate-800 ml-1">
-            <polygon points="5 3 19 12 5 21 5 3" />
-          </svg>
-        </div>
-      ),
-      square: (
-        <div className="w-14 h-14 rounded-xl bg-white/95 flex items-center justify-center shadow-lg transition-transform duration-200 group-hover:scale-110">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" className="text-slate-800 ml-0.5">
-            <polygon points="5 3 19 12 5 21 5 3" />
-          </svg>
-        </div>
-      ),
-      minimal: (
-        <div className="transition-transform duration-200 group-hover:scale-110">
-          <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor" className="text-white drop-shadow-lg">
-            <polygon points="5 3 19 12 5 21 5 3" />
-          </svg>
-        </div>
-      ),
-    };
-
     return (
-      <div
-        style={{
-          width: '100%',
-          aspectRatio: aspectRatioMap[element.aspectRatio || '16:9'] || '16/9',
-          borderRadius: element.borderRadius,
-          overflow: 'hidden',
-          backgroundColor: element.bgColor || '#000000',
-        }}
-        className="w-full h-full relative group cursor-pointer"
-      >
-        <img
-          src={thumbnailSrc}
-          alt={element.name || 'Video thumbnail'}
-          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-          onError={(e) => {
-            (e.target as HTMLImageElement).style.display = 'none';
-          }}
-        />
-        <div
-          className="absolute inset-0"
-          style={{ backgroundColor: overlayColor }}
-        />
-        <div className="absolute inset-0 flex items-center justify-center">
-          {playButtonSvg[playStyle]}
-        </div>
+      <div style={{ width: '100%', height: '100%' }}>
+        <VideoPlayer element={element} />
       </div>
     );
   }
