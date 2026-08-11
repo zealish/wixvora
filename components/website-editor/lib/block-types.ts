@@ -51,6 +51,25 @@ export interface Section {
   };
   bgColor: string;
   bgGradient?: string;
+  bgImage?: string;
+  bgImageSize?: 'cover' | 'contain' | 'auto';
+  bgImagePosition?: string;
+  bgImageRepeat?: 'no-repeat' | 'repeat' | 'repeat-x' | 'repeat-y';
+  bgImageOpacity?: number;
+  padding?: {
+    top: number;
+    right: number;
+    bottom: number;
+    left: number;
+  };
+  borderTop?: string;
+  borderBottom?: string;
+  boxShadow?: string;
+  overlay?: {
+    enabled: boolean;
+    color: string;
+    opacity: number;
+  };
 }
 
 export interface PageSettings {

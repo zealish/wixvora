@@ -365,7 +365,7 @@ function EditorLayout({ backUrl, title }: { backUrl?: string | undefined; title?
     setPageSettings,
     selectSection, selectElement, addSectionFromTemplate, deleteSection, moveSection,
     addElement, duplicateElement, deleteElement, updateElementViewportLayout,
-    updateElementProps, updateSectionHeight, undo, redo,
+    updateElementProps, updateSectionProps, updateSectionHeight, undo, redo,
     saveWebsite, addPage
   } = useEditor();
 
@@ -769,8 +769,24 @@ function EditorLayout({ backUrl, title }: { backUrl?: string | undefined; title?
                       selectSection(sec.id);
                     }
                   }}
-                  style={{ height: `${currentSecHeight}px`, backgroundColor: sec.bgColor }}
-                  className={`wix-section-container w-full ${sec.bgGradient || ''} ${isSectionSelected ? 'ring-2 ring-blue-500 ring-offset-2 ring-offset-slate-100' : ''}`}
+                  style={{ 
+                    height: `${currentSecHeight}px`, 
+                    backgroundColor: sec.bgColor,
+                    backgroundImage: sec.bgImage 
+                      ? `${sec.overlay?.enabled ? `linear-gradient(rgba(${parseInt(sec.overlay.color.slice(1,3), 16)}, ${parseInt(sec.overlay.color.slice(3,5), 16)}, ${parseInt(sec.overlay.color.slice(5,7), 16)}, ${(sec.overlay.opacity || 50) / 100}), rgba(${parseInt(sec.overlay.color.slice(1,3), 16)}, ${parseInt(sec.overlay.color.slice(3,5), 16)}, ${parseInt(sec.overlay.color.slice(5,7), 16)}, ${(sec.overlay.opacity || 50) / 100})), ` : ''}url(${sec.bgImage})`
+                      : sec.bgGradient || undefined,
+                    backgroundSize: sec.bgImageSize || 'cover',
+                    backgroundPosition: sec.bgImagePosition || 'center',
+                    backgroundRepeat: sec.bgImageRepeat || 'no-repeat',
+                    paddingTop: sec.padding?.top ? `${sec.padding.top}px` : undefined,
+                    paddingRight: sec.padding?.right ? `${sec.padding.right}px` : undefined,
+                    paddingBottom: sec.padding?.bottom ? `${sec.padding.bottom}px` : undefined,
+                    paddingLeft: sec.padding?.left ? `${sec.padding.left}px` : undefined,
+                    borderTop: sec.borderTop || undefined,
+                    borderBottom: sec.borderBottom || undefined,
+                    boxShadow: sec.boxShadow || undefined,
+                  }}
+                  className={`wix-section-container w-full ${isSectionSelected ? 'ring-2 ring-blue-500 ring-offset-2 ring-offset-slate-100' : ''}`}
                 >
                   {!isPreviewMode && (
                     <div className={`absolute top-2 left-2 z-30 flex items-center space-x-2 transition ${isSectionSelected ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
@@ -1023,8 +1039,280 @@ function EditorLayout({ backUrl, title }: { backUrl?: string | undefined; title?
           </aside>
         )}
 
-        {/* PAGE SETTINGS INSPECTOR (when no element selected) */}
-        {!isPreviewMode && !selectedElement && (
+        {/* SECTION SETTINGS INSPECTOR (when section selected but no element) */}
+        {!isPreviewMode && !selectedElement && selectedSection && (
+          <aside className="w-80 border-l border-slate-200 bg-white flex flex-col z-20 shrink-0 select-none shadow-lg">
+            <div className="p-3 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
+              <h2 className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2">
+                <Icon name="layout" className="w-4 h-4 text-blue-600" />
+                <span>Section Settings</span>
+              </h2>
+            </div>
+
+            <div className="grid grid-cols-2 border-b border-slate-200 text-[11px] bg-slate-50">
+              <button onClick={() => setInspectorTab('position')} className={`py-2 font-semibold transition ${inspectorTab === 'position' ? 'bg-white text-blue-600 border-b-2 border-blue-600 shadow-sm' : 'text-slate-600 hover:text-slate-900'}`}>Layout</button>
+              <button onClick={() => setInspectorTab('style')} className={`py-2 font-semibold transition ${inspectorTab === 'style' ? 'bg-white text-blue-600 border-b-2 border-blue-600 shadow-sm' : 'text-slate-600 hover:text-slate-900'}`}>Background</button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto p-4 space-y-4 text-xs text-slate-700">
+              {inspectorTab === 'position' && (
+                <div className="space-y-4">
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-bold text-slate-500">Section Title</label>
+                    <input
+                      type="text"
+                      value={selectedSection.title}
+                      onChange={(e) => updateSectionProps(selectedSection.id, { title: e.target.value })}
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-800 outline-none focus:border-blue-500"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-bold text-slate-500 flex items-center justify-between">
+                      <span>Padding (px)</span>
+                      <button
+                        onClick={() => updateSectionProps(selectedSection.id, { padding: { top: 0, right: 0, bottom: 0, left: 0 } })}
+                        className="text-[9px] text-blue-600 hover:text-blue-700"
+                      >
+                        Reset
+                      </button>
+                    </label>
+                    <div className="grid grid-cols-2 gap-2">
+                      <div className="space-y-1">
+                        <label className="text-[9px] text-slate-400">Top</label>
+                        <input
+                          type="number"
+                          value={selectedSection.padding?.top || 0}
+                          onChange={(e) => updateSectionProps(selectedSection.id, { 
+                            padding: { ...selectedSection.padding, top: parseInt(e.target.value) || 0 } as any
+                          })}
+                          className="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 text-slate-800 outline-none focus:border-blue-500 font-mono text-[11px]"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-[9px] text-slate-400">Bottom</label>
+                        <input
+                          type="number"
+                          value={selectedSection.padding?.bottom || 0}
+                          onChange={(e) => updateSectionProps(selectedSection.id, { 
+                            padding: { ...selectedSection.padding, bottom: parseInt(e.target.value) || 0 } as any
+                          })}
+                          className="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 text-slate-800 outline-none focus:border-blue-500 font-mono text-[11px]"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-[9px] text-slate-400">Left</label>
+                        <input
+                          type="number"
+                          value={selectedSection.padding?.left || 0}
+                          onChange={(e) => updateSectionProps(selectedSection.id, { 
+                            padding: { ...selectedSection.padding, left: parseInt(e.target.value) || 0 } as any
+                          })}
+                          className="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 text-slate-800 outline-none focus:border-blue-500 font-mono text-[11px]"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-[9px] text-slate-400">Right</label>
+                        <input
+                          type="number"
+                          value={selectedSection.padding?.right || 0}
+                          onChange={(e) => updateSectionProps(selectedSection.id, { 
+                            padding: { ...selectedSection.padding, right: parseInt(e.target.value) || 0 } as any
+                          })}
+                          className="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 text-slate-800 outline-none focus:border-blue-500 font-mono text-[11px]"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="pt-3 border-t border-slate-100 space-y-2">
+                    <label className="text-[10px] font-bold text-slate-500">Border Top (CSS)</label>
+                    <input
+                      type="text"
+                      value={selectedSection.borderTop || ''}
+                      onChange={(e) => updateSectionProps(selectedSection.id, { borderTop: e.target.value })}
+                      placeholder="e.g., 2px solid #e2e8f0"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1.5 text-slate-800 outline-none focus:border-blue-500 font-mono text-[10px]"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-bold text-slate-500">Border Bottom (CSS)</label>
+                    <input
+                      type="text"
+                      value={selectedSection.borderBottom || ''}
+                      onChange={(e) => updateSectionProps(selectedSection.id, { borderBottom: e.target.value })}
+                      placeholder="e.g., 1px dashed #cbd5e1"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1.5 text-slate-800 outline-none focus:border-blue-500 font-mono text-[10px]"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-bold text-slate-500">Box Shadow (CSS)</label>
+                    <input
+                      type="text"
+                      value={selectedSection.boxShadow || ''}
+                      onChange={(e) => updateSectionProps(selectedSection.id, { boxShadow: e.target.value })}
+                      placeholder="e.g., 0 10px 30px rgba(0,0,0,0.1)"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1.5 text-slate-800 outline-none focus:border-blue-500 font-mono text-[10px]"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {inspectorTab === 'style' && (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <label className="text-[10px] font-bold text-slate-500">Background Color</label>
+                    <div className="flex items-center space-x-2">
+                      <input
+                        type="color"
+                        value={selectedSection.bgColor}
+                        onChange={(e) => updateSectionProps(selectedSection.id, { bgColor: e.target.value })}
+                        className="w-8 h-8 rounded-lg border border-slate-200 cursor-pointer bg-transparent"
+                      />
+                      <span className="font-mono text-[11px] text-slate-600">{selectedSection.bgColor}</span>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-bold text-slate-500">Background Gradient (CSS)</label>
+                    <textarea
+                      rows={2}
+                      value={selectedSection.bgGradient || ''}
+                      onChange={(e) => updateSectionProps(selectedSection.id, { bgGradient: e.target.value })}
+                      placeholder="linear-gradient(to right, #667eea, #764ba2)"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-slate-800 outline-none focus:border-blue-500 font-mono text-[10px]"
+                    />
+                  </div>
+
+                  <div className="pt-3 border-t border-slate-100 space-y-2">
+                    <label className="text-[10px] font-bold text-slate-500">Background Image URL</label>
+                    <input
+                      type="text"
+                      value={selectedSection.bgImage || ''}
+                      onChange={(e) => updateSectionProps(selectedSection.id, { bgImage: e.target.value })}
+                      placeholder="https://example.com/image.jpg"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-800 outline-none focus:border-blue-500 font-mono text-[10px]"
+                    />
+                  </div>
+
+                  {selectedSection.bgImage && (
+                    <>
+                      <div className="grid grid-cols-2 gap-2">
+                        <div className="space-y-1">
+                          <label className="text-[10px] font-bold text-slate-500">Image Size</label>
+                          <select
+                            value={selectedSection.bgImageSize || 'cover'}
+                            onChange={(e) => updateSectionProps(selectedSection.id, { bgImageSize: e.target.value as any })}
+                            className="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1.5 text-slate-800 outline-none focus:border-blue-500 text-[11px]"
+                          >
+                            <option value="cover">Cover</option>
+                            <option value="contain">Contain</option>
+                            <option value="auto">Auto</option>
+                          </select>
+                        </div>
+                        <div className="space-y-1">
+                          <label className="text-[10px] font-bold text-slate-500">Image Repeat</label>
+                          <select
+                            value={selectedSection.bgImageRepeat || 'no-repeat'}
+                            onChange={(e) => updateSectionProps(selectedSection.id, { bgImageRepeat: e.target.value as any })}
+                            className="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1.5 text-slate-800 outline-none focus:border-blue-500 text-[11px]"
+                          >
+                            <option value="no-repeat">No Repeat</option>
+                            <option value="repeat">Repeat</option>
+                            <option value="repeat-x">Repeat X</option>
+                            <option value="repeat-y">Repeat Y</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-bold text-slate-500">Image Position</label>
+                        <select
+                          value={selectedSection.bgImagePosition || 'center'}
+                          onChange={(e) => updateSectionProps(selectedSection.id, { bgImagePosition: e.target.value })}
+                          className="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1.5 text-slate-800 outline-none focus:border-blue-500 text-[11px]"
+                        >
+                          <option value="center">Center</option>
+                          <option value="top">Top</option>
+                          <option value="bottom">Bottom</option>
+                          <option value="left">Left</option>
+                          <option value="right">Right</option>
+                          <option value="top left">Top Left</option>
+                          <option value="top right">Top Right</option>
+                          <option value="bottom left">Bottom Left</option>
+                          <option value="bottom right">Bottom Right</option>
+                        </select>
+                      </div>
+                    </>
+                  )}
+
+                  <div className="pt-3 border-t border-slate-100 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <label className="text-[10px] font-bold text-slate-500">Color Overlay</label>
+                      <input
+                        type="checkbox"
+                        checked={!!selectedSection.overlay?.enabled}
+                        onChange={(e) => updateSectionProps(selectedSection.id, { 
+                          overlay: { 
+                            enabled: e.target.checked, 
+                            color: selectedSection.overlay?.color || '#000000', 
+                            opacity: selectedSection.overlay?.opacity || 50 
+                          } 
+                        })}
+                        className="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500"
+                      />
+                    </div>
+
+                    {selectedSection.overlay?.enabled && (
+                      <>
+                        <div className="flex items-center justify-between">
+                          <label className="text-[10px] font-bold text-slate-500">Overlay Color</label>
+                          <div className="flex items-center space-x-2">
+                            <input
+                              type="color"
+                              value={selectedSection.overlay?.color || '#000000'}
+                              onChange={(e) => updateSectionProps(selectedSection.id, { 
+                                overlay: { ...selectedSection.overlay!, color: e.target.value } 
+                              })}
+                              className="w-8 h-8 rounded-lg border border-slate-200 cursor-pointer bg-transparent"
+                            />
+                            <span className="font-mono text-[11px] text-slate-600">{selectedSection.overlay?.color}</span>
+                          </div>
+                        </div>
+
+                        <div className="space-y-2">
+                          <label className="text-[10px] font-bold text-slate-500 flex items-center justify-between">
+                            <span>Overlay Opacity</span>
+                            <span className="font-mono text-blue-600">{selectedSection.overlay?.opacity || 50}%</span>
+                          </label>
+                          <input
+                            type="range"
+                            min="0"
+                            max="100"
+                            value={selectedSection.overlay?.opacity || 50}
+                            onChange={(e) => updateSectionProps(selectedSection.id, { 
+                              overlay: { ...selectedSection.overlay!, opacity: parseInt(e.target.value) } 
+                            })}
+                            className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer"
+                          />
+                        </div>
+                      </>
+                    )}
+                  </div>
+
+                  <div className="p-2.5 bg-blue-50 border border-blue-200 rounded-xl text-[10px] text-blue-700 leading-relaxed">
+                    💡 Gradient and image work together. Use overlay to darken/lighten background images.
+                  </div>
+                </div>
+              )}
+            </div>
+          </aside>
+        )}
+
+        {/* PAGE SETTINGS INSPECTOR (when no section and no element selected) */}
+        {!isPreviewMode && !selectedElement && !selectedSection && (
           <aside className="w-80 border-l border-slate-200 bg-white flex flex-col z-20 shrink-0 select-none shadow-lg">
             <div className="p-3 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
               <h2 className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2">

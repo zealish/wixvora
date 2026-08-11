@@ -50,6 +50,7 @@ interface EditorContextValue {
   deleteElement: (sectionId: string, elementId: string) => void;
   updateElementViewportLayout: (sectionId: string, elementId: string, vp: Viewport, layoutProps: Partial<any>) => void;
   updateElementProps: (sectionId: string, elementId: string, newProps: Partial<Element>) => void;
+  updateSectionProps: (sectionId: string, newProps: Partial<Section>) => void;
   updateSectionHeight: (sectionId: string, vp: Viewport, height: number) => void;
   undo: () => void;
   redo: () => void;
@@ -379,6 +380,21 @@ export function EditorProvider({
     }));
   }, [currentPageId]);
 
+  const updateSectionProps = useCallback((sectionId: string, newProps: Partial<Section>) => {
+    setPages(prev => prev.map(p => {
+      if (p.id !== currentPageId) return p;
+      return {
+        ...p,
+        sections: p.sections.map(sec => {
+          if (sec.id === sectionId) {
+            return { ...sec, ...newProps };
+          }
+          return sec;
+        })
+      };
+    }));
+  }, [currentPageId]);
+
   const updateSectionHeight = useCallback((sectionId: string, vp: Viewport, height: number) => {
     setPages(prev => prev.map(p => {
       if (p.id !== currentPageId) return p;
@@ -540,6 +556,7 @@ export function EditorProvider({
     deleteElement,
     updateElementViewportLayout,
     updateElementProps,
+    updateSectionProps,
     updateSectionHeight,
     undo,
     redo,
