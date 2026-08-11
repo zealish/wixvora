@@ -1,9 +1,7 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
-import { Monitor, Tablet, Smartphone, ArrowLeft } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
+import { Monitor, Tablet, Smartphone } from "lucide-react";
 import { generateFullHTML } from "@/components/website-editor/lib/html-generator";
 import type { Page } from "@/components/website-editor/lib/block-types";
 
@@ -28,7 +26,6 @@ export function LivePreviewRenderer({
   pages,
   source,
 }: LivePreviewRendererProps): React.JSX.Element {
-  const router = useRouter();
   const [viewport, setViewport] = useState<Viewport>("desktop");
   const [currentPageSlug, setCurrentPageSlug] = useState<string | null>(
     initialPageSlug || null
@@ -62,24 +59,12 @@ export function LivePreviewRenderer({
     setCurrentPageSlug(slug);
   };
 
-  const handleBack = (): void => {
-    router.back();
-  };
-
   return (
     <div className="min-h-screen bg-slate-100">
       {/* Header */}
       <div className="bg-white border-b border-slate-200 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Button
-              variant="ghost"
-              size="icon-sm"
-              onClick={handleBack}
-              className="mr-1"
-            >
-              <ArrowLeft className="h-4 w-4" />
-            </Button>
             <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
               <span className="text-white text-xs font-bold">P</span>
             </div>
