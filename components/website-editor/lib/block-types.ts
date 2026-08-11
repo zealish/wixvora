@@ -1,4 +1,4 @@
-export type ElementType = 'heading' | 'paragraph' | 'button' | 'badge' | 'image' | 'card';
+export type ElementType = 'heading' | 'paragraph' | 'button' | 'badge' | 'image' | 'card' | 'video';
 
 export type ElementCategory = 'text' | 'interactive' | 'media' | 'layout' | 'navigation' | 'forms';
 
@@ -55,6 +55,13 @@ export interface Element {
   subtitleFontSize?: string;
   subtitleFontWeight?: string;
   subtitleColor?: string;
+
+  // Video-specific
+  videoUrl?: string;
+  videoProvider?: 'youtube' | 'vimeo' | null;
+  autoplay?: boolean;
+  loop?: boolean;
+  aspectRatio?: '16:9' | '4:3' | '1:1';
 }
 
 export interface Section {
