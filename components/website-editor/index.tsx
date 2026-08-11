@@ -8,68 +8,96 @@ import { ELEMENT_PRESETS } from "./lib/element-presets";
 import type { Element, Page, PageSettings, Viewport } from "./lib/block-types";
 import { ElementCatalogModal } from './modals/element-catalog-modal';
 import { t } from './lib/translations';
+import { RichTextEditor } from "./rich-text/RichTextEditor";
+import "./rich-text/rich-text-content.css";
 
-function RenderElementContent({ element, updateProps, isPreviewMode }: { element: Element; updateProps: (p: Partial<Element>) => void; isPreviewMode: boolean }) {
-  if (element.type === 'heading') {
+function RenderElementContent({ element, updateProps, isPreviewMode, isSelected }: { element: Element; updateProps: (p: Partial<Element>) => void; isPreviewMode: boolean; isSelected?: boolean }) {
+  const sharedStyle: React.CSSProperties = {
+    color: element.textColor,
+    fontSize: element.fontSize,
+    fontWeight: element.fontWeight,
+    textAlign: (element.textAlign as any) || "left",
+    wordBreak: "break-word",
+  };
+
+  if (element.type === "heading") {
+    if (isPreviewMode) {
+      return (
+        <h2
+          className="w-full h-full flex items-center"
+          style={sharedStyle}
+          dangerouslySetInnerHTML={{ __html: element.text || "" }}
+        />
+      );
+    }
     return (
-      <InlineText
-        value={element.text || ''}
-        onChange={(newText) => updateProps({ text: newText })}
+      <RichTextEditor
+        content={element.text || ""}
+        onUpdate={(html) => updateProps({ text: html })}
+        editable={!!isSelected}
+        mode="canvas"
+        elementType="heading"
         tagName="h2"
         className="w-full h-full flex items-center"
-        style={{
-          color: element.textColor,
-          fontSize: element.fontSize,
-          fontWeight: element.fontWeight,
-          textAlign: (element.textAlign as any) || 'left',
-          wordBreak: 'break-word'
-        }}
-        isPreviewMode={isPreviewMode}
+        style={sharedStyle}
       />
     );
   }
-  if (element.type === 'paragraph') {
+
+  if (element.type === "paragraph") {
+    if (isPreviewMode) {
+      return (
+        <p
+          className="w-full h-full flex items-center"
+          style={sharedStyle}
+          dangerouslySetInnerHTML={{ __html: element.text || "" }}
+        />
+      );
+    }
     return (
-      <InlineText
-        value={element.text || ''}
-        onChange={(newText) => updateProps({ text: newText })}
+      <RichTextEditor
+        content={element.text || ""}
+        onUpdate={(html) => updateProps({ text: html })}
+        editable={!!isSelected}
+        mode="canvas"
+        elementType="paragraph"
         tagName="p"
         className="w-full h-full flex items-center"
-        style={{
-          color: element.textColor,
-          fontSize: element.fontSize,
-          fontWeight: element.fontWeight,
-          textAlign: (element.textAlign as any) || 'left',
-          wordBreak: 'break-word'
-        }}
-        isPreviewMode={isPreviewMode}
-        multiline={true}
+        style={sharedStyle}
       />
     );
   }
-  if (element.type === 'button') {
+
+  if (element.type === "button") {
     return (
       <div
         style={{
           backgroundColor: element.bgColor,
           color: element.textColor,
           borderRadius: element.borderRadius,
-          border: element.borderColor ? `1px solid ${element.borderColor}` : 'none',
+          border: element.borderColor ? `1px solid ${element.borderColor}` : "none",
           fontSize: element.fontSize,
-          fontWeight: element.fontWeight
+          fontWeight: element.fontWeight,
         }}
         className="w-full h-full flex items-center justify-center shadow-md hover:opacity-90 transition px-4 cursor-pointer"
       >
-        <InlineText
-          value={element.text || ''}
-          onChange={(newText) => updateProps({ text: newText })}
-          tagName="span"
-          isPreviewMode={isPreviewMode}
-        />
+        {isPreviewMode ? (
+          <span dangerouslySetInnerHTML={{ __html: element.text || "" }} />
+        ) : (
+          <RichTextEditor
+            content={element.text || ""}
+            onUpdate={(html) => updateProps({ text: html })}
+            editable={!!isSelected}
+            mode="canvas"
+            elementType="button"
+            tagName="span"
+          />
+        )}
       </div>
     );
   }
-  if (element.type === 'badge') {
+
+  if (element.type === "badge") {
     return (
       <div
         style={{
@@ -77,123 +105,81 @@ function RenderElementContent({ element, updateProps, isPreviewMode }: { element
           color: element.textColor,
           borderRadius: element.borderRadius,
           border: `1px solid ${element.borderColor}`,
-          fontSize: element.fontSize
+          fontSize: element.fontSize,
         }}
         className="w-full h-full flex items-center justify-center font-bold px-3"
       >
-        <InlineText
-          value={element.text || ''}
-          onChange={(newText) => updateProps({ text: newText })}
-          tagName="span"
-          isPreviewMode={isPreviewMode}
-        />
+        {isPreviewMode ? (
+          <span dangerouslySetInnerHTML={{ __html: element.text || "" }} />
+        ) : (
+          <RichTextEditor
+            content={element.text || ""}
+            onUpdate={(html) => updateProps({ text: html })}
+            editable={!!isSelected}
+            mode="canvas"
+            elementType="badge"
+            tagName="span"
+          />
+        )}
       </div>
     );
   }
-  if (element.type === 'image') {
+
+  if (element.type === "image") {
     return (
       <img
         src={element.url}
-        alt={element.alt || 'Visual'}
-        style={{ borderRadius: element.borderRadius, objectFit: (element.objectFit as any) || 'cover' }}
+        alt={element.alt || "Visual"}
+        style={{ borderRadius: element.borderRadius, objectFit: (element.objectFit as any) || "cover" }}
         className="w-full h-full shadow-md"
       />
     );
   }
-  if (element.type === 'card') {
+
+  if (element.type === "card") {
     return (
       <div
         style={{
           backgroundColor: element.bgColor,
           color: element.textColor,
           borderRadius: element.borderRadius,
-          border: `1px solid ${element.borderColor}`
+          border: `1px solid ${element.borderColor}`,
         }}
         className="w-full h-full p-4 flex flex-col justify-between shadow-md box-border overflow-hidden"
       >
         <h3 style={{ color: element.accentColor }} className="font-bold text-base m-0">
-          <InlineText
-            value={element.title || ''}
-            onChange={(newText) => updateProps({ title: newText })}
-            tagName="span"
-            isPreviewMode={isPreviewMode}
-          />
+          {isPreviewMode ? (
+            <span dangerouslySetInnerHTML={{ __html: element.title || "" }} />
+          ) : (
+            <RichTextEditor
+              content={element.title || ""}
+              onUpdate={(html) => updateProps({ title: html })}
+              editable={!!isSelected}
+              mode="canvas"
+              elementType="card"
+              tagName="span"
+            />
+          )}
         </h3>
         <p className="text-xs opacity-80 m-0 leading-relaxed">
-          <InlineText
-            value={element.subtitle || ''}
-            onChange={(newText) => updateProps({ subtitle: newText })}
-            tagName="span"
-            isPreviewMode={isPreviewMode}
-            multiline={true}
-          />
+          {isPreviewMode ? (
+            <span dangerouslySetInnerHTML={{ __html: element.subtitle || "" }} />
+          ) : (
+            <RichTextEditor
+              content={element.subtitle || ""}
+              onUpdate={(html) => updateProps({ subtitle: html })}
+              editable={!!isSelected}
+              mode="canvas"
+              elementType="paragraph"
+              tagName="span"
+            />
+          )}
         </p>
       </div>
     );
   }
+
   return null;
-}
-
-function InlineText({
-  value,
-  onChange,
-  tagName = 'span',
-  className = '',
-  style = {},
-  isPreviewMode = false,
-  multiline = false,
-  onFocusState
-}: {
-  value: string;
-  onChange: (v: string) => void;
-  tagName?: string;
-  className?: string;
-  style?: React.CSSProperties;
-  isPreviewMode?: boolean;
-  multiline?: boolean;
-  onFocusState?: (v: boolean) => void;
-}) {
-  const contentRef = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    if (contentRef.current && contentRef.current.innerText !== (value || '')) {
-      contentRef.current.innerText = value || '';
-    }
-  }, [value]);
-
-  if (isPreviewMode) {
-    const Tag = tagName as any;
-    return <Tag className={className} style={style}>{value}</Tag>;
-  }
-
-  const Tag = tagName as any;
-
-  return (
-    <Tag
-      ref={contentRef}
-      contentEditable={!isPreviewMode}
-      suppressContentEditableWarning={true}
-      onFocus={() => onFocusState && onFocusState(true)}
-      onBlur={(e: any) => {
-        if (onFocusState) onFocusState(false);
-        const newText = e.target.innerText;
-        if (newText !== value) {
-          onChange(newText);
-        }
-      }}
-      onKeyDown={(e: any) => {
-        if (!multiline && e.key === 'Enter') {
-          e.preventDefault();
-          e.target.blur();
-        }
-      }}
-      className={`editable-text-field ${className}`}
-      style={style}
-      title="Click to edit text"
-    >
-      {value}
-    </Tag>
-  );
 }
 
 function PageTabBar() {
@@ -841,6 +827,7 @@ function EditorLayout({ backUrl, title }: { backUrl?: string | undefined; title?
                             element={el}
                             updateProps={(newProps) => updateElementProps(sec.id, el.id, newProps)}
                             isPreviewMode={isPreviewMode}
+                            isSelected={isElementSelected}
                           />
 
                           {!isPreviewMode && isElementSelected && (
