@@ -4,7 +4,6 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { EditorProvider, useEditor } from "./editor-provider";
 import { Icon } from "./ui/icon-library";
 import { getLayout, getSectionHeight, VIEWPORT_WIDTHS } from "./lib/viewport-utils";
-import { ELEMENT_PRESETS } from "./lib/element-presets";
 import type { Element, Page, PageSettings, Viewport } from "./lib/block-types";
 import { ElementCatalogModal } from './modals/element-catalog-modal';
 import { t } from './lib/translations';
@@ -780,7 +779,7 @@ function EditorLayout({ backUrl, title }: { backUrl?: string | undefined; title?
                         <Icon name="layout" className="w-3 h-3 text-blue-600" />
                         <span>SEKSI: {sec.title} ({currentSecHeight}px)</span>
                       </span>
-                      <button onClick={() => { const p = ELEMENT_PRESETS[0]; if (p) addElement(p, sec.id); }} className="px-2 py-1 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-[10px] font-semibold shadow-sm transition flex items-center space-x-1">
+                      <button onClick={() => setIsElementModalOpen(true)} className="px-2 py-1 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-[10px] font-semibold shadow-sm transition flex items-center space-x-1">
                         <Icon name="plus" className="w-3 h-3" />
                         <span>Elemen</span>
                       </button>
