@@ -341,6 +341,72 @@ export function EditorProvider({
     showToast(t('toast.section_copied'));
   }, [currentSections, showToast]);
 
+  const pasteElement = useCallback((targetSectionId?: string) => {
+    if (!clipboard || clipboard.type !== 'element') return;
+    const destId = targetSectionId || selectedSectionId;
+    if (!destId) {
+      if (currentSections.length > 0 && currentSections[0]) {
+        pasteElement(currentSections[0].id);
+      }
+      return;
+    }
+
+    const copy = JSON.parse(JSON.stringify(clipboard.data));
+    copy.id = createUniqueId('el');
+    copy.name = (copy.name || 'Element') + ' (Copy)';
+
+    (['desktop', 'tablet', 'mobile'] as Viewport[]).forEach(vp => {
+      const l = getLayout(copy, vp);
+      const vpWidth = VIEWPORT_WIDTHS[vp];
+      let newX = l.x + 20;
+      let newY = l.y + 20;
+      if (newX + l.width > vpWidth - 10) {
+        newX = Math.max(10, vpWidth - l.width - 10);
+      }
+      copy.layouts[vp] = { ...l, x: newX, y: newY };
+    });
+
+    const updated = currentSections.map(sec => {
+      if (sec.id === destId) {
+        return { ...sec, elements: [...sec.elements, copy] };
+      }
+      return sec;
+    });
+
+    updateCurrentPageSections(updated);
+    setSelectedSectionId(destId);
+    setSelectedElementId(copy.id);
+    showToast(t('toast.element_pasted'));
+  }, [clipboard, selectedSectionId, currentSections, updateCurrentPageSections, setSelectedSectionId, setSelectedElementId, showToast]);
+
+  const pasteSection = useCallback(() => {
+    if (!clipboard || clipboard.type !== 'section') return;
+
+    const copy = JSON.parse(JSON.stringify(clipboard.data));
+    copy.id = createUniqueId('sec');
+    copy.title = (copy.title || 'Section') + ' (Copy)';
+
+    copy.elements = copy.elements.map((el: Element) => ({
+      ...el,
+      id: createUniqueId('el'),
+    }));
+
+    let insertIndex = currentSections.length;
+    if (selectedSectionId) {
+      const idx = currentSections.findIndex(s => s.id === selectedSectionId);
+      if (idx !== -1) {
+        insertIndex = idx + 1;
+      }
+    }
+
+    const updated = [...currentSections];
+    updated.splice(insertIndex, 0, copy);
+    updateCurrentPageSections(updated);
+    setSelectedSectionId(copy.id);
+    setSelectedElementId(null);
+    showToast(t('toast.section_pasted'));
+  }, [clipboard, selectedSectionId, currentSections, updateCurrentPageSections, setSelectedSectionId, setSelectedElementId, showToast]);
+
   const deleteElement = useCallback((sectionId: string, elementId: string) => {
     const updated = currentSections.map(sec => {
       if (sec.id === sectionId) {
@@ -580,8 +646,8 @@ export function EditorProvider({
     duplicateElement,
     copyElement,
     copySection,
-    pasteElement: () => {},
-    pasteSection: () => {},
+    pasteElement,
+    pasteSection,
     deleteElement,
     updateElementViewportLayout,
     updateElementProps,
