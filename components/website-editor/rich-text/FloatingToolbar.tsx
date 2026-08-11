@@ -2,6 +2,7 @@
 
 import type { Editor } from "@tiptap/react";
 import { ColorPicker } from "./ColorPicker";
+import { FontSizePicker } from "./FontSizePicker";
 
 const HEADING_LEVELS = [
   { label: "H1", level: 1 },
@@ -78,6 +79,10 @@ export function FloatingToolbar({
           <div className="w-px h-5 bg-slate-200 mx-0.5" />
         </>
       )}
+
+      <FontSizePicker editor={editor} compact={true} />
+
+      <div className="w-px h-5 bg-slate-200 mx-0.5" />
 
       <ToolbarButton
         onClick={() => editor.chain().focus().toggleBold().run()}
