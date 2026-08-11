@@ -1,5 +1,6 @@
 import { getLayout, getSectionHeight } from './viewport-utils';
 import type { Section, Page, NavigationSettings } from './block-types';
+import { parseVideoUrl, buildEmbedUrl } from './video-url-parser';
 
 function generateFullHTML(sections: Section[]): string {
   let cssRules = `
@@ -55,6 +56,16 @@ function generateFullHTML(sections: Section[]): string {
       }
       if (el.type === 'image') {
         return `        <img ${idAttr} src="${el.url}" alt="${el.alt || ''}" style="border-radius: ${el.borderRadius}; object-fit: ${el.objectFit || 'cover'};" class="shadow-lg" />`;
+      }
+      if (el.type === 'video') {
+        const parsed = parseVideoUrl((el as any).videoUrl || '');
+        if (!parsed) {
+          return `        <div ${idAttr} style="background-color: ${(el as any).bgColor || '#f1f5f9'}; border-radius: ${(el as any).borderRadius}; display: flex; align-items: center; justify-content: center; border: 2px dashed #cbd5e1;"><span style="color: #94a3b8; font-size: 11px;">Video URL not set</span></div>`;
+        }
+        const embedUrl = buildEmbedUrl(parsed, { autoplay: (el as any).autoplay, loop: (el as any).loop });
+        const aspectRatio = (el as any).aspectRatio || '16:9';
+        const ratioMap: Record<string, string> = { '16:9': '16/9', '4:3': '4/3', '1:1': '1/1' };
+        return `        <div ${idAttr} style="width: 100%; aspect-ratio: ${ratioMap[aspectRatio] || '16/9'}; border-radius: ${(el as any).borderRadius}; overflow: hidden; background-color: ${(el as any).bgColor || '#000000'};"><iframe src="${embedUrl}" style="width: 100%; height: 100%; border: none;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>`;
       }
       if (el.type === 'card') {
         return `        <div ${idAttr} style="background-color: ${el.bgColor}; color: ${el.textColor}; border-radius: ${el.borderRadius}; border: 1px solid ${el.borderColor}; padding: 20px; box-sizing: border-box;" class="shadow-lg">
@@ -220,6 +231,16 @@ function generateMultiPageHTML(pages: Page[], navigationSettings?: NavigationSet
         }
         if (el.type === 'image') {
           return `        <img ${idAttr} src="${el.url}" alt="${el.alt || ''}" style="border-radius: ${el.borderRadius}; object-fit: ${el.objectFit || 'cover'};" class="shadow-lg" />`;
+        }
+        if (el.type === 'video') {
+          const parsed = parseVideoUrl((el as any).videoUrl || '');
+          if (!parsed) {
+            return `        <div ${idAttr} style="background-color: ${(el as any).bgColor || '#f1f5f9'}; border-radius: ${(el as any).borderRadius}; display: flex; align-items: center; justify-content: center; border: 2px dashed #cbd5e1;"><span style="color: #94a3b8; font-size: 11px;">Video URL not set</span></div>`;
+          }
+          const embedUrl = buildEmbedUrl(parsed, { autoplay: (el as any).autoplay, loop: (el as any).loop });
+          const aspectRatio = (el as any).aspectRatio || '16:9';
+          const ratioMap: Record<string, string> = { '16:9': '16/9', '4:3': '4/3', '1:1': '1/1' };
+          return `        <div ${idAttr} style="width: 100%; aspect-ratio: ${ratioMap[aspectRatio] || '16/9'}; border-radius: ${(el as any).borderRadius}; overflow: hidden; background-color: ${(el as any).bgColor || '#000000'};"><iframe src="${embedUrl}" style="width: 100%; height: 100%; border: none;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>`;
         }
         if (el.type === 'card') {
           return `        <div ${idAttr} style="background-color: ${el.bgColor}; color: ${el.textColor}; border-radius: ${el.borderRadius}; border: 1px solid ${el.borderColor}; padding: 20px; box-sizing: border-box;" class="shadow-lg">
