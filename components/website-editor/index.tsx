@@ -9,6 +9,9 @@ import { ElementCatalogModal } from './modals/element-catalog-modal';
 import { t } from './lib/translations';
 import { RichTextEditor } from "./rich-text/RichTextEditor";
 import "./rich-text/rich-text-content.css";
+import { ButtonInspector } from "./inspector/ButtonInspector";
+import { BadgeInspector } from "./inspector/BadgeInspector";
+import { CardInspector } from "./inspector/CardInspector";
 
 function RenderElementContent({ element, updateProps, isPreviewMode, isSelected }: { element: Element; updateProps: (p: Partial<Element>) => void; isPreviewMode: boolean; isSelected?: boolean }) {
   const sharedStyle: React.CSSProperties = {
@@ -915,7 +918,31 @@ function EditorLayout({ backUrl, title }: { backUrl?: string | undefined; title?
 
               {inspectorTab === 'style' && (
                 <div className="space-y-4">
-                  {(selectedElement.type === 'heading' || selectedElement.type === 'paragraph' || selectedElement.type === 'button' || selectedElement.type === 'badge') && (
+                  {selectedElement.type === 'button' && (
+                    <ButtonInspector
+                      element={selectedElement}
+                      sectionId={selectedSectionId!}
+                      onUpdate={updateElementProps}
+                    />
+                  )}
+
+                  {selectedElement.type === 'badge' && (
+                    <BadgeInspector
+                      element={selectedElement}
+                      sectionId={selectedSectionId!}
+                      onUpdate={updateElementProps}
+                    />
+                  )}
+
+                  {selectedElement.type === 'card' && (
+                    <CardInspector
+                      element={selectedElement}
+                      sectionId={selectedSectionId!}
+                      onUpdate={updateElementProps}
+                    />
+                  )}
+
+                  {(selectedElement.type === 'heading' || selectedElement.type === 'paragraph') && (
                     <div className="space-y-1">
                       <label className="text-[10px] font-bold text-slate-500">Text Content</label>
                       <RichTextEditor
@@ -925,31 +952,6 @@ function EditorLayout({ backUrl, title }: { backUrl?: string | undefined; title?
                         mode="inspector"
                         elementType={selectedElement.type}
                       />
-                    </div>
-                  )}
-
-                  {selectedElement.type === 'card' && (
-                    <div className="space-y-3">
-                      <div className="space-y-1">
-                        <label className="text-[10px] font-bold text-slate-500">Card Title</label>
-                        <RichTextEditor
-                          content={selectedElement.title || ""}
-                          onUpdate={(html) => updateElementProps(selectedSectionId!, selectedElement.id, { title: html })}
-                          editable={true}
-                          mode="inspector"
-                          elementType="card"
-                        />
-                      </div>
-                      <div className="space-y-1">
-                        <label className="text-[10px] font-bold text-slate-500">Card Description</label>
-                        <RichTextEditor
-                          content={selectedElement.subtitle || ""}
-                          onUpdate={(html) => updateElementProps(selectedSectionId!, selectedElement.id, { subtitle: html })}
-                          editable={true}
-                          mode="inspector"
-                          elementType="paragraph"
-                        />
-                      </div>
                     </div>
                   )}
 
@@ -965,7 +967,7 @@ function EditorLayout({ backUrl, title }: { backUrl?: string | undefined; title?
                     </div>
                   )}
 
-                  {selectedElement.textColor !== undefined && (
+                  {selectedElement.textColor !== undefined && (selectedElement.type === 'heading' || selectedElement.type === 'paragraph') && (
                     <div className="flex items-center justify-between">
                       <label className="text-[10px] font-bold text-slate-500">Text Color</label>
                       <div className="flex items-center space-x-2">
@@ -980,7 +982,7 @@ function EditorLayout({ backUrl, title }: { backUrl?: string | undefined; title?
                     </div>
                   )}
 
-                  {selectedElement.bgColor !== undefined && (
+                  {selectedElement.bgColor !== undefined && (selectedElement.type === 'heading' || selectedElement.type === 'paragraph') && (
                     <div className="flex items-center justify-between">
                       <label className="text-[10px] font-bold text-slate-500">Background Color</label>
                       <div className="flex items-center space-x-2">
