@@ -27,6 +27,7 @@ export function RichTextEditor({
   const tiptapMode = "block";
 
   const editor = useEditor({
+    immediatelyRender: typeof window !== "undefined",
     extensions: getExtensions(tiptapMode),
     content: content || "",
     editable,

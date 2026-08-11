@@ -39,6 +39,8 @@ export function getExtensions(mode: "inline" | "block" = "block") {
     extensions.push(
       StarterKit.configure({
         heading: { levels: [1, 2, 3, 4, 5, 6] },
+        link: false,
+        underline: false,
       }),
       TextAlign.configure({
         types: ["heading", "paragraph"],
@@ -53,6 +55,8 @@ export function getExtensions(mode: "inline" | "block" = "block") {
         blockquote: false,
         codeBlock: false,
         horizontalRule: false,
+        link: false,
+        underline: false,
       })
     );
   }
