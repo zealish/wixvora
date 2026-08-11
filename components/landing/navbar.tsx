@@ -4,10 +4,12 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ChevronDown } from "lucide-react";
+import { useSession } from "@/lib/auth/auth-client";
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
+  const { data: session } = useSession();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -113,18 +115,35 @@ export function Navbar() {
         </nav>
 
         <div className="flex items-center space-x-6">
-          <Link
-            href="/login"
-            className="text-[15px] font-semibold text-slate-800 transition-colors hover:text-indigo-600"
-          >
-            Log in
-          </Link>
-          <Link
-            href="/login?mode=signup"
-            className="rounded-full bg-gradient-to-r from-blue-600 via-indigo-600 to-indigo-700 px-6 py-3 text-sm font-semibold text-white shadow-md shadow-indigo-500/20 transition-all hover:scale-[1.02] hover:shadow-lg hover:shadow-indigo-500/35 active:scale-[0.98]"
-          >
-            Get Started Free
-          </Link>
+          {session ? (
+            // Show "Go to Dashboard" button for authenticated users
+            <Link
+              href={
+                (session as any)?.user?.accountType === "STAFF"
+                  ? "/staff"
+                  : "/client"
+              }
+              className="rounded-full bg-gradient-to-r from-blue-600 via-indigo-600 to-indigo-700 px-6 py-3 text-sm font-semibold text-white shadow-md shadow-indigo-500/20 transition-all hover:scale-[1.02] hover:shadow-lg hover:shadow-indigo-500/35 active:scale-[0.98]"
+            >
+              Go to Dashboard
+            </Link>
+          ) : (
+            <>
+              {/* Show login/signup buttons for unauthenticated users */}
+              <Link
+                href="/login"
+                className="text-[15px] font-semibold text-slate-800 transition-colors hover:text-indigo-600"
+              >
+                Log in
+              </Link>
+              <Link
+                href="/login?mode=signup"
+                className="rounded-full bg-gradient-to-r from-blue-600 via-indigo-600 to-indigo-700 px-6 py-3 text-sm font-semibold text-white shadow-md shadow-indigo-500/20 transition-all hover:scale-[1.02] hover:shadow-lg hover:shadow-indigo-500/35 active:scale-[0.98]"
+              >
+                Get Started Free
+              </Link>
+            </>
+          )}
         </div>
       </div>
     </header>
