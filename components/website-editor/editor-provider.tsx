@@ -7,6 +7,7 @@ import { ELEMENT_PRESETS } from "./lib/element-presets";
 import { getLayout, VIEWPORT_WIDTHS } from "./lib/viewport-utils";
 import { generateFullHTML } from "./lib/html-generator";
 import { t } from "./lib/translations";
+import { sanitizeHtml } from "./lib/sanitize-html";
 
 interface EditorContextValue {
   sections: Section[];
@@ -189,7 +190,20 @@ export function EditorProvider({
     }
     setIsSaving(true);
     try {
-      await onSave(pages, pageSettings);
+      const sanitizedPages = pages.map(page => ({
+        ...page,
+        sections: page.sections.map(section => ({
+          ...section,
+          elements: section.elements.map(element => {
+            const sanitized: Element = { ...element };
+            if (element.text) sanitized.text = sanitizeHtml(element.text);
+            if (element.title) sanitized.title = sanitizeHtml(element.title);
+            if (element.subtitle) sanitized.subtitle = sanitizeHtml(element.subtitle);
+            return sanitized;
+          })
+        }))
+      }));
+      await onSave(sanitizedPages, pageSettings);
       showToast("Website saved successfully!");
     } catch (err) {
       showToast("Failed to save: " + (err instanceof Error ? err.message : "Unknown error"));
