@@ -12,6 +12,9 @@ import { RichTextEditor } from "./rich-text/RichTextEditor";
 import "./rich-text/rich-text-content.css";
 
 function RenderElementContent({ element, updateProps, isPreviewMode, isSelected }: { element: Element; updateProps: (p: Partial<Element>) => void; isPreviewMode: boolean; isSelected?: boolean }) {
+  const textProp = element.type === "card" ? undefined : "text";
+  const titleProp = element.type === "card" ? "title" : undefined;
+  const subtitleProp = element.type === "card" ? "subtitle" : undefined;
   const sharedStyle: React.CSSProperties = {
     color: element.textColor,
     fontSize: element.fontSize,
