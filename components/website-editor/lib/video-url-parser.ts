@@ -51,3 +51,13 @@ export function buildEmbedUrl(parsed: ParsedVideo, options: { autoplay?: boolean
 
   return url;
 }
+
+export function getAutoThumbnail(parsed: ParsedVideo): string {
+  if (parsed.provider === 'youtube') {
+    return `https://img.youtube.com/vi/${parsed.videoId}/maxresdefault.jpg`;
+  }
+  if (parsed.provider === 'vimeo') {
+    return `https://vumbnail.com/${parsed.videoId}.jpg`;
+  }
+  return '';
+}
