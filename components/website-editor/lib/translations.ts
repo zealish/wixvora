@@ -83,6 +83,12 @@ type TranslationKey =
   | 'toast.error'
   | 'toast.deleted'
   | 'toast.duplicated'
+  | 'toast.undo_success'
+  | 'toast.redo_success'
+  // Error messages
+  | 'error.min_sections'
+  | 'error.min_pages'
+  | 'error.cannot_delete_home'
   // Flyout headers
   | 'flyout.katalog_elemen'
   | 'flyout.struktur_seksi'
@@ -187,6 +193,12 @@ const EN: Record<TranslationKey, string> = {
   'toast.error': 'Something went wrong',
   'toast.deleted': 'Deleted',
   'toast.duplicated': 'Duplicated',
+  'toast.undo_success': 'Undo',
+  'toast.redo_success': 'Redo',
+  // Error messages
+  'error.min_sections': 'Must have at least 1 section on page!',
+  'error.min_pages': 'Must have at least 1 page!',
+  'error.cannot_delete_home': 'Cannot delete home page!',
   // Flyout headers
   'flyout.katalog_elemen': 'Element Catalog',
   'flyout.struktur_seksi': 'Section Structure',

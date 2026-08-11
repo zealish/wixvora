@@ -86,7 +86,7 @@ const DEFAULT_PAGE_SETTINGS: PageSettings = {
 
 const DEFAULT_HOME_PAGE: Page = {
   id: 'home',
-  title: 'Home',
+  title: 'Beranda (Home)',
   slug: '/',
   sections: [],
   pageSettings: DEFAULT_PAGE_SETTINGS,
@@ -197,7 +197,7 @@ export function EditorProvider({
       if (prevPages) {
         setHistoryIndex(historyIndex - 1);
         setPages(prevPages);
-        showToast("Undo");
+        showToast(t('toast.undo_success'));
       }
     }
   }, [historyIndex, history, showToast]);
@@ -208,7 +208,7 @@ export function EditorProvider({
       if (nextPages) {
         setHistoryIndex(historyIndex + 1);
         setPages(nextPages);
-        showToast("Redo");
+        showToast(t('toast.redo_success'));
       }
     }
   }, [historyIndex, history, showToast]);
@@ -236,7 +236,7 @@ export function EditorProvider({
 
   const deleteSection = useCallback((sectionId: string) => {
     if (currentSections.length <= 1) {
-      showToast("Must have at least 1 section on page!");
+      showToast(t('error.min_sections'));
       return;
     }
     const updated = currentSections.filter(s => s.id !== sectionId);
@@ -416,12 +416,12 @@ export function EditorProvider({
 
   const removePage = useCallback((pageId: string) => {
     if (pages.length <= 1) {
-      showToast("Must have at least 1 page!");
+      showToast(t('error.min_pages'));
       return;
     }
     const target = pages.find(p => p.id === pageId);
     if (target?.isHomePage) {
-      showToast("Cannot delete home page!");
+      showToast(t('error.cannot_delete_home'));
       return;
     }
     const updatedPages = pages.filter(p => p.id !== pageId);
