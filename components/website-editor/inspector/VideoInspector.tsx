@@ -161,6 +161,51 @@ export function VideoInspector({
         />
       </div>
 
+      {/* Muted */}
+      <div className="flex items-center justify-between">
+        <label className="text-[10px] font-bold text-slate-500">Muted</label>
+        <input
+          type="checkbox"
+          checked={element.muted ?? false}
+          onChange={(e) => update({ muted: e.target.checked })}
+          className="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500"
+        />
+      </div>
+
+      {/* Show Controls */}
+      <div className="flex items-center justify-between">
+        <label className="text-[10px] font-bold text-slate-500">Show Controls</label>
+        <input
+          type="checkbox"
+          checked={element.showControls !== false}
+          onChange={(e) => update({ showControls: e.target.checked })}
+          className="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500"
+        />
+      </div>
+
+      {/* Control Bar Theme */}
+      <div className="space-y-1">
+        <label className="text-[10px] font-bold text-slate-500">Control Bar Theme</label>
+        <div className="grid grid-cols-2 gap-1.5">
+          {([
+            { value: 'dark' as const, label: 'Dark' },
+            { value: 'light' as const, label: 'Light' },
+          ]).map((t) => (
+            <button
+              key={t.value}
+              onClick={() => update({ controlBarTheme: t.value })}
+              className={`px-2.5 py-1.5 rounded-lg text-[10px] font-semibold border transition ${
+                (element.controlBarTheme || 'dark') === t.value
+                  ? 'bg-blue-50 text-blue-700 border-blue-300'
+                  : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
+              }`}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
       {/* Border Radius */}
       <div className="space-y-1">
         <label className="text-[10px] font-bold text-slate-500">Border Radius</label>
