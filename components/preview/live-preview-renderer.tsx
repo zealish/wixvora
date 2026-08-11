@@ -24,7 +24,7 @@ export function LivePreviewRenderer({
   name,
   pages,
   source,
-}: LivePreviewRendererProps) {
+}: LivePreviewRendererProps): React.JSX.Element {
   const [viewport, setViewport] = useState<Viewport>("desktop");
   const [currentPageSlug, setCurrentPageSlug] = useState<string | null>(null);
 
@@ -33,7 +33,7 @@ export function LivePreviewRenderer({
     [pages]
   );
 
-  const handlePageChange = (slug: string) => {
+  const handlePageChange = (slug: string): void => {
     setCurrentPageSlug(slug);
     const url = new URL(window.location.href);
     url.searchParams.set("page", slug);

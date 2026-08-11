@@ -1,5 +1,6 @@
-// components/preview/preview-404.tsx
-export function Preview404() {
+import Link from "next/link";
+
+export function Preview404(): React.JSX.Element {
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-50">
       <div className="text-center space-y-4">
@@ -10,12 +11,12 @@ export function Preview404() {
         </div>
         <h1 className="text-2xl font-bold text-slate-800">Preview Not Found</h1>
         <p className="text-slate-500">This preview is not available or has been removed.</p>
-        <a
+        <Link
           href="/"
           className="inline-block px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-500 transition"
         >
           Go Home
-        </a>
+        </Link>
       </div>
     </div>
   );

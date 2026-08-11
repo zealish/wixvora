@@ -23,8 +23,26 @@ export default async function PreviewPage({
   const { page: pageSlug } = await searchParams;
 
   // Auto-detect: try template first, then website
-  const template = await getTemplateById(id);
-  const website = template ? null : await getWebsiteById(id);
+  let template = null;
+  let website = null;
+  
+  try {
+    template = await getTemplateById(id);
+  } catch (error) {
+    if (process.env.NODE_ENV === 'development') {
+      console.warn('Failed to fetch template:', error);
+    }
+  }
+  
+  if (!template) {
+    try {
+      website = await getWebsiteById(id);
+    } catch (error) {
+      if (process.env.NODE_ENV === 'development') {
+        console.warn('Failed to fetch website:', error);
+      }
+    }
+  }
 
   if (!template && !website) {
     return <Preview404 />;
@@ -33,7 +51,6 @@ export default async function PreviewPage({
   // Extract pages and settings
   let pages: Page[] = [];
   let pageSettings = { title: "", bgColor: "#ffffff", fontFamily: "font-sans" };
-  const navigationSettings = undefined;
 
   if (template) {
     pages = (template.pages as Page[]) || [];
@@ -77,7 +94,7 @@ export default async function PreviewPage({
 
   if (hasMultiplePages && !pageSlug) {
     // Render all pages with navigation
-    html = generateMultiPageHTML(pages, navigationSettings);
+    html = generateMultiPageHTML(pages, undefined);
   } else {
     // Render single page
     const pageSections = targetPage?.sections || [];
