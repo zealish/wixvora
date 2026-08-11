@@ -21,6 +21,7 @@ import {
   StarOff,
   ImageIcon,
   Pencil,
+  Eye,
 } from "lucide-react";
 import type { TemplateListItem } from "../types";
 
@@ -275,6 +276,12 @@ export function createTemplateColumns(
               >
                 <Pencil className="mr-2 size-4" />
                 Edit
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                render={<Link href={`/preview/${t.id}`} target="_blank" />}
+              >
+                <Eye className="mr-2 size-4" />
+                Preview
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => onToggleFeatured(t)}>
                 {t.isFeatured ? (
