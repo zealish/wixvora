@@ -383,7 +383,7 @@ function RenderElementWrapper({
         height: isContainer && element.children?.length ? 'auto' : `${vpLayout.height}px`,
         zIndex: element.zIndex || 10,
         opacity: vpLayout.hidden ? 0.35 : 1,
-        ...styleProps,
+        ...(isContainer ? {} : styleProps),
         boxSizing: 'border-box',
         minHeight: isContainer ? '80px' : undefined,
       }}
