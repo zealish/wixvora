@@ -110,13 +110,66 @@ function RenderElementContent({ element, updateProps, isPreviewMode, isSelected 
   }
 
   if (element.type === "image") {
-    return (
+    const brightness = element.filterBrightness ?? 100;
+    const contrast = element.filterContrast ?? 100;
+    const saturation = element.filterSaturation ?? 100;
+    const blur = element.filterBlur ?? 0;
+    const filterStyle = `brightness(${brightness}%) contrast(${contrast}%) saturate(${saturation}%) blur(${blur}px)`;
+    const hasBrokenImage = !element.url;
+
+    const imgElement = hasBrokenImage ? (
+      <div className="w-full h-full flex flex-col items-center justify-center bg-slate-100 rounded-xl border-2 border-dashed border-slate-300">
+        <Icon name="image" className="w-8 h-8 text-slate-400" />
+        <span className="text-[10px] text-slate-400 mt-1 font-semibold">No image</span>
+      </div>
+    ) : (
       <img
         src={element.url}
         alt={element.alt || "Visual"}
-        style={{ borderRadius: element.borderRadius, objectFit: (element.objectFit as any) || "cover" }}
-        className="w-full h-full shadow-md"
+        onError={(e) => {
+          const target = e.currentTarget;
+          target.style.display = 'none';
+          const parent = target.parentElement;
+          if (parent) {
+            parent.innerHTML = '<div class="w-full h-full flex flex-col items-center justify-center bg-slate-100 rounded-xl border-2 border-dashed border-slate-300"><svg class="w-8 h-8 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21,15 16,10 5,21"/></svg><span class="text-[10px] text-slate-400 mt-1 font-bold">No image</span></div>';
+          }
+        }}
+        style={{
+          borderRadius: element.borderRadius,
+          objectFit: (element.objectFit as any) || "cover",
+          opacity: element.opacity ?? 1,
+          filter: filterStyle,
+        }}
+        className="w-full h-full"
       />
+    );
+
+    const linkedContent = element.linkUrl ? (
+      <a
+        href={element.linkUrl}
+        target={element.openInNewTab ? "_blank" : undefined}
+        rel={element.openInNewTab ? "noopener noreferrer" : undefined}
+        className="block w-full h-full"
+      >
+        {imgElement}
+      </a>
+    ) : (
+      imgElement
+    );
+
+    const ratioStyle: React.CSSProperties = element.aspectRatio
+      ? { aspectRatio: element.aspectRatio }
+      : {};
+
+    return (
+      <div className="flex flex-col w-full h-full">
+        <div className="relative w-full flex-1 overflow-hidden" style={ratioStyle}>
+          {linkedContent}
+        </div>
+        {element.caption ? (
+          <div className="text-center text-[11px] text-slate-600 mt-1 px-1 leading-tight">{element.caption}</div>
+        ) : null}
+      </div>
     );
   }
 
