@@ -328,7 +328,6 @@ function RenderElementWrapper({
 }) {
   const { updateElementProps, updateChildElementProps, selectedElementId, selectElement, selectSection, duplicateElement, deleteElement } = useEditor();
   const isContainer = isContainerElement(element);
-  const containerStyles = isContainer ? buildContainerStyles(element.containerLayout) : {};
   const styleProps: React.CSSProperties = {
     backgroundColor: element.bgColor || 'transparent',
     borderRadius: element.borderRadius || undefined,
@@ -384,7 +383,7 @@ function RenderElementWrapper({
         height: isContainer && element.children?.length ? 'auto' : `${vpLayout.height}px`,
         zIndex: element.zIndex || 10,
         opacity: vpLayout.hidden ? 0.35 : 1,
-        ...containerStyles, ...styleProps,
+        ...styleProps,
         boxSizing: 'border-box',
         minHeight: isContainer ? '80px' : undefined,
       }}
@@ -409,16 +408,23 @@ function RenderElementWrapper({
         </div>
       )}
 
-      <RenderElementContent
-        element={element}
-        updateProps={(newProps) => updateElementProps(sectionId, element.id, newProps)}
-        isPreviewMode={isPreviewMode}
-        isSelected={isSelected}
-      />
-
-      {isContainer && element.children && element.children.length > 0 && (
-        <div style={{ marginTop: element.containerLayout?.type === 'flex' ? undefined : '8px' }}>
-          {element.children.map(child => (
+      {isContainer ? (
+        <div style={{
+          ...buildContainerStyles(element.containerLayout),
+          minHeight: element.children?.length ? undefined : '80px',
+          padding: element.padding || '16px',
+          backgroundColor: element.bgColor || 'transparent',
+          borderRadius: element.borderRadius || '4px',
+          border: element.borderColor ? `1px solid ${element.borderColor}` : '1px dashed #d1d5db',
+          width: '100%',
+          height: '100%',
+          boxSizing: 'border-box',
+          alignItems: element.children?.length ? undefined : 'center',
+          justifyContent: element.children?.length ? undefined : 'center',
+        }}>
+          {(!element.children || element.children.length === 0) ? (
+            <span className="text-[11px] text-slate-400">Drop elements here</span>
+          ) : element.children.map(child => (
             <RenderElementWrapper
               key={child.id}
               element={child}
@@ -434,6 +440,13 @@ function RenderElementWrapper({
             />
           ))}
         </div>
+      ) : (
+        <RenderElementContent
+          element={element}
+          updateProps={(newProps) => updateElementProps(sectionId, element.id, newProps)}
+          isPreviewMode={isPreviewMode}
+          isSelected={isSelected}
+        />
       )}
 
       {!isPreviewMode && isSelected && (
