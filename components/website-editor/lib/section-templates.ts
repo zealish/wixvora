@@ -115,7 +115,7 @@ export const SECTION_TEMPLATES: SectionTemplate[] = [
     id: 'features',
     title: 'Key Features (3 Columns)',
     category: t('sections.category.content'),
-    desc: '3-column grid with versatile feature cards including title and accent color.',
+    desc: '3-column grid with icon+text feature cards showing nested layout capabilities.',
     previewBg: 'bg-emerald-600',
     factory: () => ({
       id: createId('sec'),
@@ -142,57 +142,84 @@ export const SECTION_TEMPLATES: SectionTemplate[] = [
         },
         {
           id: createId('el'),
-          type: 'card',
-          name: 'Feature Card 1',
+          type: 'grid',
+          name: 'Features Grid Container',
           layouts: {
-            desktop: { x: 60, y: 120, width: 280, height: 220, hidden: false },
-            tablet: { x: 40, y: 110, width: 220, height: 220, hidden: false },
-            mobile: { x: 20, y: 90, width: 335, height: 220, hidden: false }
+            desktop: { x: 60, y: 120, width: 880, height: 260, hidden: false },
+            tablet: { x: 40, y: 110, width: 688, height: 260, hidden: false },
+            mobile: { x: 20, y: 90, width: 335, height: 700, hidden: false }
           },
           zIndex: 5,
-          title: 'Desktop Persistence',
-          subtitle: 'Set ideal layout for wide screens with pixel-precise positioning freedom.',
-          bgColor: '#ffffff',
-          textColor: '#1e293b',
-          borderColor: '#e2e8f0',
-          borderRadius: '16px',
-          accentColor: '#2563eb'
-        },
-        {
-          id: createId('el'),
-          type: 'card',
-          name: 'Feature Card 2',
-          layouts: {
-            desktop: { x: 360, y: 120, width: 280, height: 220, hidden: false },
-            tablet: { x: 274, y: 110, width: 220, height: 220, hidden: false },
-            mobile: { x: 20, y: 330, width: 335, height: 220, hidden: false }
+          containerLayout: {
+            type: 'grid',
+            columns: 3,
+            gap: 24,
+            alignItems: 'start'
           },
-          zIndex: 5,
-          title: 'Tablet Adaption',
-          subtitle: 'Adjust coordinates to be proportional on tablets or medium screens.',
-          bgColor: '#ffffff',
-          textColor: '#1e293b',
-          borderColor: '#e2e8f0',
-          borderRadius: '16px',
-          accentColor: '#10b981'
-        },
-        {
-          id: createId('el'),
-          type: 'card',
-          name: 'Feature Card 3',
-          layouts: {
-            desktop: { x: 660, y: 120, width: 280, height: 220, hidden: false },
-            tablet: { x: 508, y: 110, width: 220, height: 220, hidden: false },
-            mobile: { x: 20, y: 570, width: 335, height: 220, hidden: false }
-          },
-          zIndex: 5,
-          title: 'Mobile Optimization',
-          subtitle: 'Rearrange vertically for smartphones without affecting the desktop version.',
-          bgColor: '#ffffff',
-          textColor: '#1e293b',
-          borderColor: '#e2e8f0',
-          borderRadius: '16px',
-          accentColor: '#f59e0b'
+          bgColor: 'transparent',
+          padding: '0px',
+          children: [
+            {
+              id: createId('el'),
+              type: 'icon-text',
+              name: 'Feature 1',
+              layouts: {
+                desktop: { x: 0, y: 0, width: 100, height: 100, hidden: false },
+                tablet: { x: 0, y: 0, width: 100, height: 100, hidden: false },
+                mobile: { x: 0, y: 0, width: 100, height: 100, hidden: false }
+              },
+              zIndex: 1,
+              iconName: 'monitor',
+              iconColor: '#2563eb',
+              iconSize: '40',
+              iconTextLayout: 'vertical',
+              title: 'Desktop Persistence',
+              subtitle: 'Set ideal layout for wide screens with pixel-precise positioning freedom.',
+              textColor: '#0f172a',
+              fontSize: '18px',
+              fontWeight: '600'
+            },
+            {
+              id: createId('el'),
+              type: 'icon-text',
+              name: 'Feature 2',
+              layouts: {
+                desktop: { x: 0, y: 0, width: 100, height: 100, hidden: false },
+                tablet: { x: 0, y: 0, width: 100, height: 100, hidden: false },
+                mobile: { x: 0, y: 0, width: 100, height: 100, hidden: false }
+              },
+              zIndex: 1,
+              iconName: 'tablet',
+              iconColor: '#10b981',
+              iconSize: '40',
+              iconTextLayout: 'vertical',
+              title: 'Tablet Adaption',
+              subtitle: 'Adjust coordinates to be proportional on tablets or medium screens.',
+              textColor: '#0f172a',
+              fontSize: '18px',
+              fontWeight: '600'
+            },
+            {
+              id: createId('el'),
+              type: 'icon-text',
+              name: 'Feature 3',
+              layouts: {
+                desktop: { x: 0, y: 0, width: 100, height: 100, hidden: false },
+                tablet: { x: 0, y: 0, width: 100, height: 100, hidden: false },
+                mobile: { x: 0, y: 0, width: 100, height: 100, hidden: false }
+              },
+              zIndex: 1,
+              iconName: 'smartphone',
+              iconColor: '#f59e0b',
+              iconSize: '40',
+              iconTextLayout: 'vertical',
+              title: 'Mobile Optimization',
+              subtitle: 'Rearrange vertically for smartphones without affecting the desktop version.',
+              textColor: '#0f172a',
+              fontSize: '18px',
+              fontWeight: '600'
+            }
+          ]
         }
       ]
     })
