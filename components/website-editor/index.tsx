@@ -708,19 +708,20 @@ function EditorLayout({ backUrl, title }: { backUrl?: string | undefined; title?
           const canvasEl = canvasRef.current;
           if (canvasEl) {
             const canvasRect = canvasEl.getBoundingClientRect();
-            const sectionEls = canvasEl.querySelectorAll('.wix-section-container');
-            let secOffsetTop = 0;
-            sectionEls.forEach((s, i) => {
-              const secId = currentSection?.id;
-              if (sections[i]?.id === secId) {
-                secOffsetTop = s.getBoundingClientRect().top - canvasRect.top;
-              }
-            });
             for (const ct of containers) {
-              const cv = getLayout(ct, viewport);
+              const containerEl = document.getElementById(`el-${ct.id}`);
+              if (!containerEl) continue;
+              const containerRect = containerEl.getBoundingClientRect();
+              const containerRelativeRect = {
+                left: containerRect.left - canvasRect.left,
+                right: containerRect.right - canvasRect.left,
+                top: containerRect.top - canvasRect.top + canvasEl.scrollTop,
+                bottom: containerRect.bottom - canvasRect.top + canvasEl.scrollTop,
+              };
               const relX = moveEvent.clientX - canvasRect.left;
               const relY = moveEvent.clientY - canvasRect.top - canvasEl.scrollTop;
-              if (relX >= cv.x && relX <= cv.x + cv.width && relY >= cv.y + secOffsetTop && relY <= cv.y + secOffsetTop + (cv.height || 100)) {
+              if (relX >= containerRelativeRect.left && relX <= containerRelativeRect.right && 
+                  relY >= containerRelativeRect.top && relY <= containerRelativeRect.bottom) {
                 foundContainer = ct.id;
                 break;
               }
