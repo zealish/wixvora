@@ -39,6 +39,16 @@ export interface Element {
   textAlign?: string;
   objectFit?: string;
 
+  // Image-specific
+  linkUrl?: string;
+  opacity?: number;
+  filterBrightness?: number;
+  filterContrast?: number;
+  filterSaturation?: number;
+  filterBlur?: number;
+  hoverEffect?: 'none' | 'zoom' | 'grayscale-to-color';
+  caption?: string;
+
   // Button-specific
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
   size?: 'sm' | 'md' | 'lg';
