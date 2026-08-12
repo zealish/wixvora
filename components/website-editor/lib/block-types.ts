@@ -71,7 +71,7 @@ export interface Element {
   videoProvider?: 'youtube' | 'vimeo' | null;
   autoplay?: boolean;
   loop?: boolean;
-  aspectRatio?: '16:9' | '4:3' | '1:1';
+  aspectRatio?: '16:9' | '4:3' | '1:1' | undefined;
   thumbnailUrl?: string;
   playButtonStyle?: 'circle' | 'square' | 'minimal';
   overlayColor?: string;

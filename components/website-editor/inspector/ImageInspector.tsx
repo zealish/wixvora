@@ -111,7 +111,7 @@ export function ImageInspector({
             {ASPECT_RATIOS.map((ar) => (
               <button
                 key={ar.value}
-                onClick={() => update(ar.value ? { aspectRatio: ar.value } : {})}
+                onClick={() => update({ aspectRatio: ar.value || undefined })}
                 className={`px-2 py-1.5 rounded-lg text-[10px] font-semibold border transition ${
                   (element.aspectRatio || '') === ar.value
                     ? 'bg-blue-50 text-blue-700 border-blue-300'
