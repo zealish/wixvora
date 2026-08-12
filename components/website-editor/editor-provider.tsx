@@ -47,7 +47,13 @@ interface EditorContextValue {
   addSectionFromTemplate: (templateId: string) => void;
   deleteSection: (sectionId: string) => void;
   moveSection: (sectionId: string, direction: 'up' | 'down') => void;
-  addElement: (preset: typeof ELEMENT_PRESETS[number], sectionId?: string) => void;
+  addElement: (preset: typeof ELEMENT_PRESETS[number], sectionId?: string, parentElementId?: string) => void;
+  moveElementIntoContainer: (elementId: string, sectionId: string, containerId: string) => void;
+  moveElementOutOfContainer: (elementId: string, containerId: string, sectionId: string) => void;
+  addChildElement: (preset: typeof ELEMENT_PRESETS[number], containerId: string) => void;
+  removeChildFromContainer: (elementId: string, containerId: string, sectionId: string) => void;
+  reorderChildren: (containerId: string, sectionId: string, fromIndex: number, toIndex: number) => void;
+  updateChildElementProps: (sectionId: string, containerId: string, elementId: string, props: Partial<Element>) => void;
   duplicateElement: (sectionId: string, elementId: string) => void;
   deleteElement: (sectionId: string, elementId: string) => void;
   updateElementViewportLayout: (sectionId: string, elementId: string, vp: Viewport, layoutProps: Partial<any>) => void;
@@ -281,7 +287,7 @@ export function EditorProvider({
     updateCurrentPageSections(reordered);
   }, [currentSections, updateCurrentPageSections]);
 
-  const addElement = useCallback((preset: typeof ELEMENT_PRESETS[number], sectionId?: string) => {
+  const addElement = useCallback((preset: typeof ELEMENT_PRESETS[number], sectionId?: string, parentElementId?: string) => {
     const targetSecId = sectionId || selectedSectionId;
     if (!targetSecId) return;
     const targetSec = currentSections.find(s => s.id === targetSecId);
@@ -295,6 +301,30 @@ export function EditorProvider({
       layouts: baseLayouts,
       zIndex: 10
     };
+
+    if (parentElementId) {
+      const updated = currentSections.map(sec => {
+        if (sec.id === targetSecId) {
+          return {
+            ...sec,
+            elements: sec.elements.map(el => {
+              if (el.id === parentElementId) {
+                const child = { ...newElement, parentId: parentElementId };
+                return { ...el, children: [...(el.children || []), child as Element] };
+              }
+              return el;
+            })
+          };
+        }
+        return sec;
+      });
+      updateCurrentPageSections(updated);
+      setSelectedSectionId(targetSecId);
+      setSelectedElementId(newElement.id);
+      setAddMenuOpen(false);
+      showToast(t('toast.child_added'));
+      return;
+    }
 
     const updated = currentSections.map(sec => {
       if (sec.id === targetSecId) {
@@ -310,31 +340,211 @@ export function EditorProvider({
     showToast(t('toast.element_added'));
   }, [currentSections, selectedSectionId, updateCurrentPageSections, showToast]);
 
-  const duplicateElement = useCallback((sectionId: string, elementId: string) => {
-    const updated = currentSections.map(sec => {
-      if (sec.id === sectionId) {
-        const target = sec.elements.find(e => e.id === elementId);
-        if (!target) return sec;
+  const moveElementIntoContainer = useCallback((elementId: string, sourceSectionId: string, targetContainerId: string) => {
+    setPages(prev => prev.map(p => {
+      if (p.id !== currentPageId) return p;
+      return {
+        ...p,
+        sections: p.sections.map(sec => {
+          if (sec.id === sourceSectionId) {
+            const el = sec.elements.find(e => e.id === elementId);
+            if (!el) return sec;
+            return {
+              ...sec,
+              elements: sec.elements.map(e => {
+                if (e.id === targetContainerId) {
+                  return {
+                    ...e,
+                    children: [...(e.children || []), { ...el, parentId: targetContainerId } as Element],
+                  };
+                }
+                return e;
+              }).filter(e => e.id !== elementId),
+            };
+          }
+          return sec;
+        }),
+      };
+    }));
+    showToast(t('toast.element_moved_to_container'));
+  }, [currentPageId, showToast]);
 
-        const copy = JSON.parse(JSON.stringify(target));
+  const moveElementOutOfContainer = useCallback((elementId: string, containerElementId: string, sectionId: string) => {
+    let movedChild: Element | null = null;
+
+    setPages(prev => prev.map(p => {
+      if (p.id !== currentPageId) return p;
+      return {
+        ...p,
+        sections: p.sections.map(sec => {
+          if (sec.id === sectionId) {
+            return {
+              ...sec,
+              elements: sec.elements.map(el => {
+                if (el.id === containerElementId) {
+                  const child = el.children?.find(c => c.id === elementId);
+                  if (child) movedChild = child;
+                  return {
+                    ...el,
+                    children: el.children?.filter(c => c.id !== elementId) || [],
+                  };
+                }
+                return el;
+              }),
+            };
+          }
+          return sec;
+        }),
+      };
+    }));
+
+    if (movedChild) {
+      setPages(prev => prev.map(p => {
+        if (p.id !== currentPageId) return p;
+        return {
+          ...p,
+          sections: p.sections.map(sec => {
+            if (sec.id === sectionId) {
+              const { parentId, children, ...rest } = movedChild!;
+              const topLevel: Element = rest as Element;
+              return { ...sec, elements: [...sec.elements, topLevel] };
+            }
+            return sec;
+          }),
+        };
+      }));
+      showToast(t('toast.element_moved_out'));
+    }
+  }, [currentPageId, showToast]);
+
+  const reorderChildren = useCallback((containerElementId: string, sectionId: string, fromIndex: number, toIndex: number) => {
+    setPages(prev => prev.map(p => {
+      if (p.id !== currentPageId) return p;
+      return {
+        ...p,
+        sections: p.sections.map(sec => {
+          if (sec.id === sectionId) {
+            return {
+              ...sec,
+              elements: sec.elements.map(el => {
+                if (el.id === containerElementId && el.children) {
+                  const reordered = [...el.children];
+                  const [moved] = reordered.splice(fromIndex, 1);
+                  if (moved) reordered.splice(toIndex, 0, moved);
+                  return { ...el, children: reordered };
+                }
+                return el;
+              }),
+            };
+          }
+          return sec;
+        }),
+      };
+    }));
+  }, [currentPageId]);
+
+  const removeChildFromContainer = useCallback((elementId: string, containerElementId: string, sectionId: string) => {
+    setPages(prev => prev.map(p => {
+      if (p.id !== currentPageId) return p;
+      return {
+        ...p,
+        sections: p.sections.map(sec => {
+          if (sec.id === sectionId) {
+            return {
+              ...sec,
+              elements: sec.elements.map(el => {
+                if (el.id === containerElementId) {
+                  return { ...el, children: el.children?.filter(c => c.id !== elementId) || [] };
+                }
+                return el;
+              }),
+            };
+          }
+          return sec;
+        }),
+      };
+    }));
+    showToast(t('toast.deleted'));
+  }, [currentPageId, showToast]);
+
+  const updateChildElementProps = useCallback((sectionId: string, containerElementId: string, childElementId: string, newProps: Partial<Element>) => {
+    setPages(prev => prev.map(p => {
+      if (p.id !== currentPageId) return p;
+      return {
+        ...p,
+        sections: p.sections.map(sec => {
+          if (sec.id === sectionId) {
+            return {
+              ...sec,
+              elements: sec.elements.map(el => {
+                if (el.id === containerElementId) {
+                  return {
+                    ...el,
+                    children: el.children?.map(child =>
+                      child.id === childElementId ? { ...child, ...newProps } : child
+                    ) || [],
+                  };
+                }
+                return el;
+              }),
+            };
+          }
+          return sec;
+        }),
+      };
+    }));
+  }, [currentPageId]);
+
+  const duplicateElement = useCallback((sectionId: string, elementId: string) => {
+    const section = currentSections.find(s => s.id === sectionId);
+    if (!section) return;
+
+    const topEl = section.elements.find(e => e.id === elementId);
+    if (topEl) {
+      const updated = currentSections.map(sec => {
+        if (sec.id === sectionId) {
+          const copy = JSON.parse(JSON.stringify(topEl));
+          copy.id = createUniqueId('el');
+          copy.name = (copy.name || 'Element') + ' (Copy)';
+          if (copy.children) {
+            copy.children = copy.children.map((c: any) => ({ ...c, id: createUniqueId('el'), parentId: copy.id }));
+          }
+          (['desktop', 'tablet', 'mobile'] as Viewport[]).forEach(vp => {
+            const l = getLayout(copy, vp);
+            copy.layouts[vp] = { ...l, x: Math.min(l.x + 20, VIEWPORT_WIDTHS[vp] - l.width - 10), y: l.y + 20 };
+          });
+          return { ...sec, elements: [...sec.elements, copy] };
+        }
+        return sec;
+      });
+      updateCurrentPageSections(updated);
+      showToast(t('toast.duplicated'));
+      return;
+    }
+
+    for (const el of section.elements) {
+      const child = el.children?.find(c => c.id === elementId);
+      if (child) {
+        const copy = JSON.parse(JSON.stringify(child));
         copy.id = createUniqueId('el');
         copy.name = (copy.name || 'Element') + ' (Copy)';
-
-        (['desktop', 'tablet', 'mobile'] as Viewport[]).forEach(vp => {
-          const l = getLayout(copy, vp);
-          copy.layouts[vp] = {
-            ...l,
-            x: Math.min(l.x + 20, VIEWPORT_WIDTHS[vp] - l.width - 10),
-            y: l.y + 20
-          };
+        const updated = currentSections.map(sec => {
+          if (sec.id === sectionId) {
+            return {
+              ...sec,
+              elements: sec.elements.map(e => {
+                if (e.id === el.id) return { ...e, children: [...(e.children || []), copy] };
+                return e;
+              }),
+            };
+          }
+          return sec;
         });
-
-        return { ...sec, elements: [...sec.elements, copy] };
+        updateCurrentPageSections(updated);
+        showToast(t('toast.duplicated'));
+        return;
       }
-      return sec;
-    });
-    updateCurrentPageSections(updated);
-    showToast(t('toast.duplicated'));
+    }
   }, [currentSections, updateCurrentPageSections, showToast]);
 
   const copyElement = useCallback((sectionId: string, elementId: string) => {
@@ -368,6 +578,9 @@ export function EditorProvider({
     const copy = JSON.parse(JSON.stringify(clipboard.data));
     copy.id = createUniqueId('el');
     copy.name = (copy.name || 'Element') + ' (Copy)';
+    if (copy.children) {
+      copy.children = copy.children.map((c: any) => ({ ...c, id: createUniqueId('el') }));
+    }
 
     (['desktop', 'tablet', 'mobile'] as Viewport[]).forEach(vp => {
       const l = getLayout(copy, vp);
@@ -422,16 +635,31 @@ export function EditorProvider({
   }, [clipboard, selectedSectionId, currentSections, updateCurrentPageSections, setSelectedSectionId, setSelectedElementId, showToast]);
 
   const deleteElement = useCallback((sectionId: string, elementId: string) => {
-    const updated = currentSections.map(sec => {
-      if (sec.id === sectionId) {
-        return { ...sec, elements: sec.elements.filter(e => e.id !== elementId) };
-      }
-      return sec;
-    });
-    updateCurrentPageSections(updated);
+    setPages(prev => prev.map(p => {
+      if (p.id !== currentPageId) return p;
+      return {
+        ...p,
+        sections: p.sections.map(sec => {
+          if (sec.id !== sectionId) return sec;
+          const topLevelEl = sec.elements.find(e => e.id === elementId);
+          if (topLevelEl) {
+            return { ...sec, elements: sec.elements.filter(e => e.id !== elementId) };
+          }
+          return {
+            ...sec,
+            elements: sec.elements.map(el => {
+              if (el.children?.some(c => c.id === elementId)) {
+                return { ...el, children: el.children.filter(c => c.id !== elementId) };
+              }
+              return el;
+            }),
+          };
+        }),
+      };
+    }));
     setSelectedElementId(null);
     showToast(t('toast.deleted'));
-  }, [currentSections, updateCurrentPageSections, showToast]);
+  }, [currentPageId, showToast]);
 
   const updateElementViewportLayout = useCallback((sectionId: string, elementId: string, vp: Viewport, layoutProps: Partial<any>) => {
     setPages(prev => prev.map(p => {
@@ -688,6 +916,12 @@ export function EditorProvider({
     deleteSection,
     moveSection,
     addElement,
+    moveElementIntoContainer,
+    moveElementOutOfContainer,
+    addChildElement: (preset: typeof ELEMENT_PRESETS[number], containerId: string) => addElement(preset, selectedSectionId ?? undefined, containerId),
+    removeChildFromContainer,
+    reorderChildren,
+    updateChildElementProps,
     duplicateElement,
     copyElement,
     copySection,
