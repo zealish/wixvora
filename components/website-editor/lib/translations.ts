@@ -112,7 +112,45 @@ type TranslationKey =
   | 'misc.move_down'
   | 'misc.delete'
   | 'misc.drag_to_move'
-  | 'misc.add_section_template';
+  | 'misc.add_section_template'
+  | 'element.container.label'
+  | 'element.container.description'
+  | 'element.flex_row.label'
+  | 'element.flex_row.description'
+  | 'element.grid.label'
+  | 'element.grid.description'
+  | 'element.divider.label'
+  | 'element.divider.description'
+  | 'element.spacer.label'
+  | 'element.spacer.description'
+  | 'element.icon_text.label'
+  | 'element.icon_text.description'
+  | 'inspector.children'
+  | 'inspector.children.add'
+  | 'inspector.children.move_out'
+  | 'inspector.children.empty'
+  | 'inspector.container.layout'
+  | 'inspector.container.style'
+  | 'inspector.container.layout_type'
+  | 'inspector.container.direction'
+  | 'inspector.container.align_items'
+  | 'inspector.container.justify_content'
+  | 'inspector.container.columns'
+  | 'inspector.container.gap'
+  | 'inspector.container.min_height'
+  | 'inspector.divider.color'
+  | 'inspector.divider.height'
+  | 'inspector.divider.width'
+  | 'inspector.spacer.height'
+  | 'inspector.icon_text.icon'
+  | 'inspector.icon_text.icon_color'
+  | 'inspector.icon_text.icon_size'
+  | 'inspector.icon_text.layout'
+  | 'inspector.icon_text.description_color'
+  | 'inspector.icon_text.description_font_size'
+  | 'toast.element_moved_to_container'
+  | 'toast.element_moved_out'
+  | 'toast.child_added';
 
 const EN: Record<TranslationKey, string> = {
   // Editor toolbar
@@ -229,6 +267,44 @@ const EN: Record<TranslationKey, string> = {
   'misc.delete': 'Delete',
   'misc.drag_to_move': 'Drag to move',
   'misc.add_section_template': 'Add Section Template',
+  'element.container.label': 'Container',
+  'element.container.description': 'Flexible wrapper for grouping elements',
+  'element.flex_row.label': 'Flex Row',
+  'element.flex_row.description': 'Arrange elements side by side in a row',
+  'element.grid.label': 'Grid',
+  'element.grid.description': 'Multi-column grid for galleries and features',
+  'element.divider.label': 'Divider',
+  'element.divider.description': 'Horizontal separator line',
+  'element.spacer.label': 'Spacer',
+  'element.spacer.description': 'Add vertical space between elements',
+  'element.icon_text.label': 'Icon + Text',
+  'element.icon_text.description': 'Icon with heading and description text',
+  'inspector.children': 'Children',
+  'inspector.children.add': 'Add Child',
+  'inspector.children.move_out': 'Move Out',
+  'inspector.children.empty': 'No children yet. Drag elements here or click "Add Child".',
+  'inspector.container.layout': 'Layout',
+  'inspector.container.style': 'Style',
+  'inspector.container.layout_type': 'Layout Type',
+  'inspector.container.direction': 'Direction',
+  'inspector.container.align_items': 'Align Items',
+  'inspector.container.justify_content': 'Justify Content',
+  'inspector.container.columns': 'Columns',
+  'inspector.container.gap': 'Gap',
+  'inspector.container.min_height': 'Min Height',
+  'inspector.divider.color': 'Color',
+  'inspector.divider.height': 'Height',
+  'inspector.divider.width': 'Width',
+  'inspector.spacer.height': 'Height',
+  'inspector.icon_text.icon': 'Icon',
+  'inspector.icon_text.icon_color': 'Icon Color',
+  'inspector.icon_text.icon_size': 'Icon Size',
+  'inspector.icon_text.layout': 'Layout',
+  'inspector.icon_text.description_color': 'Description Color',
+  'inspector.icon_text.description_font_size': 'Description Font Size',
+  'toast.element_moved_to_container': 'Element moved into container',
+  'toast.element_moved_out': 'Element moved out of container',
+  'toast.child_added': 'Child element added',
 };
 
 export const t = (key: TranslationKey): string => {
