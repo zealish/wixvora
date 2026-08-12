@@ -311,6 +311,17 @@ function isContainerElement(el: import('./lib/block-types').Element): boolean {
   return el.type === 'container' || el.type === 'flex-row' || el.type === 'grid';
 }
 
+function findElementById(elements: import('./lib/block-types').Element[], elementId: string): import('./lib/block-types').Element | undefined {
+  for (const el of elements) {
+    if (el.id === elementId) return el;
+    if (el.children && el.children.length > 0) {
+      const found = findElementById(el.children, elementId);
+      if (found) return found;
+    }
+  }
+  return undefined;
+}
+
 function RenderElementWrapper({
   element, sectionId, isPreviewMode, isSelected, onMouseDown, onResizeMouseDown,
   vpLayout, viewport, isChild, dragOverContainerId,
@@ -651,7 +662,7 @@ function EditorLayout({ backUrl, title }: { backUrl?: string | undefined; title?
 
   const currentCanvasWidth = VIEWPORT_WIDTHS[viewport];
   const selectedSection = sections.find(s => s.id === selectedSectionId);
-  const selectedElement = selectedSection?.elements.find(e => e.id === selectedElementId);
+  const selectedElement = selectedSection ? findElementById(selectedSection.elements, selectedElementId || '') : undefined;
   const selectedElementVPLayout = selectedElement ? getLayout(selectedElement, viewport) : null;
 
   useEffect(() => {
