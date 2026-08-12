@@ -13,6 +13,7 @@ import { ButtonInspector } from "./inspector/ButtonInspector";
 import { BadgeInspector } from "./inspector/BadgeInspector";
 import { CardInspector } from "./inspector/CardInspector";
 import { VideoInspector } from "./inspector/VideoInspector";
+import { ImageInspector } from "./inspector/ImageInspector";
 import { VideoPlayer } from './components/VideoPlayer';
 
 function RenderElementContent({ element, updateProps, isPreviewMode, isSelected }: { element: Element; updateProps: (p: Partial<Element>) => void; isPreviewMode: boolean; isSelected?: boolean }) {
@@ -1027,15 +1028,11 @@ function EditorLayout({ backUrl, title }: { backUrl?: string | undefined; title?
                   )}
 
                   {selectedElement.type === 'image' && (
-                    <div className="space-y-1">
-                      <label className="text-[10px] font-bold text-slate-500">Image URL</label>
-                      <input
-                        type="text"
-                        value={selectedElement.url || ''}
-                        onChange={(e) => updateElementProps(selectedSectionId!, selectedElement.id, { url: e.target.value })}
-                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-800 outline-none focus:border-blue-500 font-mono text-[11px]"
-                      />
-                    </div>
+                    <ImageInspector
+                      element={selectedElement}
+                      sectionId={selectedSectionId!}
+                      onUpdate={updateElementProps}
+                    />
                   )}
 
                   {selectedElement.textColor !== undefined && (selectedElement.type === 'heading' || selectedElement.type === 'paragraph') && (
