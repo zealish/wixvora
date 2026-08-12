@@ -103,6 +103,7 @@ export interface Element {
   iconColor?: string;
   iconSize?: string;
   iconTextLayout?: 'horizontal' | 'vertical';
+  descriptionColor?: string;
 }
 
 export interface Section {

@@ -323,7 +323,8 @@ export const ELEMENT_PRESETS_BY_CATEGORY: Record<ElementCategory, ElementPreset[
         iconColor: '#3b82f6',
         iconSize: '32',
         title: 'Feature Title',
-        description: 'Short description about this feature or benefit.',
+        subtitle: 'Short description about this feature or benefit.',
+        descriptionColor: '#6b7280',
         iconTextLayout: 'horizontal',
       },
       defaultLayouts: {

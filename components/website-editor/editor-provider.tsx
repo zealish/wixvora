@@ -341,6 +341,12 @@ export function EditorProvider({
   }, [currentSections, selectedSectionId, updateCurrentPageSections, showToast]);
 
   const moveElementIntoContainer = useCallback((elementId: string, sourceSectionId: string, targetContainerId: string) => {
+    const sourceSection = pages.find(p => p.id === currentPageId)?.sections.find(s => s.id === sourceSectionId);
+    const element = sourceSection?.elements.find(e => e.id === elementId);
+    if (element && (element.type === 'container' || element.type === 'flex-row' || element.type === 'grid')) {
+      showToast('Cannot nest containers');
+      return;
+    }
     setPages(prev => prev.map(p => {
       if (p.id !== currentPageId) return p;
       return {
@@ -367,7 +373,7 @@ export function EditorProvider({
       };
     }));
     showToast(t('toast.element_moved_to_container'));
-  }, [currentPageId, showToast]);
+  }, [currentPageId, pages, showToast]);
 
   const moveElementOutOfContainer = useCallback((elementId: string, containerElementId: string, sectionId: string) => {
     let movedChild: Element | null = null;

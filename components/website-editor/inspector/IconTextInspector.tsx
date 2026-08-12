@@ -108,11 +108,11 @@ export function IconTextInspector({
           <div className="flex items-center space-x-2">
             <input
               type="color"
-              value="#6b7280"
-              onChange={(e) => update({ accentColor: e.target.value })}
+              value={element.descriptionColor || '#6b7280'}
+              onChange={(e) => update({ descriptionColor: e.target.value })}
               className="w-6 h-6 rounded border border-slate-200 cursor-pointer bg-transparent"
             />
-            <span className="font-mono text-[10px] text-slate-600">#6b7280</span>
+            <span className="font-mono text-[10px] text-slate-600">{element.descriptionColor || '#6b7280'}</span>
           </div>
         </div>
       </div>

@@ -256,7 +256,7 @@ function RenderElementContent({ element, updateProps, isPreviewMode, isSelected 
             {element.title || 'Feature'}
           </div>
           {element.subtitle && (
-            <div style={{ fontSize: '14px', color: '#6b7280', marginTop: '4px' }}>
+            <div style={{ fontSize: '14px', color: element.descriptionColor || '#6b7280', marginTop: '4px' }}>
               {element.subtitle}
             </div>
           )}
