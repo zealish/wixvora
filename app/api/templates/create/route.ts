@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
         { 
           success: false, 
           error: "Validation failed",
-          details: (error as any).issues
+          details: (error as { issues: unknown }).issues
         },
         { status: 400 }
       );
@@ -53,8 +53,8 @@ export async function POST(request: NextRequest) {
           { 
             success: false, 
             error: "Database error",
-            sqlCode: (error as any).code,
-            detail: (error as any).detail || undefined,
+            sqlCode: (error as Error & { code: string }).code,
+            detail: (error as Error & { detail?: string }).detail || undefined,
           },
           { status: 400 }
         );

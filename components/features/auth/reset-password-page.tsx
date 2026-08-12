@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
+import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { resetPassword } from "@/features/auth/actions";
 import { Button } from "@/components/ui/button";
@@ -20,43 +20,38 @@ import Link from "next/link";
 function ResetPasswordContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [token, setToken] = useState<string | null>(null);
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [formError, setFormError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const tokenParam = searchParams.get("token");
+  const token = searchParams.get("token") || null;
+
+  const paramError = (() => {
     const errorParam = searchParams.get("error");
-
-    if (errorParam === "INVALID_TOKEN") {
-      setError("Invalid or expired reset link");
-    } else if (tokenParam) {
-      setToken(tokenParam);
-    } else {
-      setError("No reset token provided");
-    }
-  }, [searchParams]);
+    if (errorParam === "INVALID_TOKEN") return "Invalid or expired reset link";
+    if (!searchParams.get("token")) return "No reset token provided";
+    return null;
+  })();
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setError(null);
+    setFormError(null);
 
     if (newPassword !== confirmPassword) {
-      setError("Passwords do not match");
+      setFormError("Passwords do not match");
       return;
     }
 
     if (newPassword.length < 8) {
-      setError("Password must be at least 8 characters");
+      setFormError("Password must be at least 8 characters");
       return;
     }
 
     if (!token) {
-      setError("No reset token found");
+      setFormError("No reset token found");
       return;
     }
 
@@ -68,10 +63,10 @@ function ResetPasswordContent() {
       if (result.success) {
         router.push("/login?reset=success");
       } else {
-        setError(result.error || "Failed to reset password");
+        setFormError(result.error || "Failed to reset password");
       }
-    } catch (err) {
-      setError("An unexpected error occurred");
+    } catch (_err) {
+      setFormError("An unexpected error occurred");
     } finally {
       setLoading(false);
     }
@@ -89,7 +84,7 @@ function ResetPasswordContent() {
 
   const strength = getPasswordStrength();
 
-  if (error && !token) {
+  if (paramError) {
     return (
       <>
         <AuthHeader />
@@ -115,7 +110,7 @@ function ResetPasswordContent() {
               </div>
 
               <div className="mb-6 rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm font-medium text-rose-800">
-                {error}
+                {paramError}
               </div>
 
               <Link href="/forgot-password">
@@ -163,14 +158,14 @@ function ResetPasswordContent() {
               </p>
             </div>
 
-            {error && (
+            {formError && (
               <div className="mb-6 flex items-center gap-3 rounded-2xl border border-rose-200 bg-rose-50 p-4 text-xs font-medium text-rose-800">
                 <div className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-rose-500 text-white">
                   ✕
                 </div>
                 <div>
                   <p className="font-bold">Error</p>
-                  <p className="text-slate-600">{error}</p>
+                  <p className="text-slate-600">{formError}</p>
                 </div>
               </div>
             )}

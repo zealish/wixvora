@@ -7,6 +7,7 @@ import { PERMISSIONS } from "@/lib/auth/permissions";
 import { generateMultiPageHTML, generateFullHTML } from "@/components/website-editor/lib/html-generator";
 import { generateUniqueSlug, getTemplateById } from "./queries";
 import type { CreateTemplateInput } from "./validation";
+import type { Section, Page } from "@/components/website-editor/lib/block-types";
 
 type TemplateStatus = "draft" | "published";
 
@@ -16,18 +17,15 @@ export async function createTemplate(
 ): Promise<{ id: string }> {
   const pageSettings = data.pageSettings ?? { title: "My Website", bgColor: "#ffffff", fontFamily: "font-sans" };
   
-  // Generate minimal HTML snapshot for empty sections
   let htmlSnapshot = '<!DOCTYPE html><html><head><title>' + data.name + '</title></head><body></body></html>';
   if (data.sections && data.sections.length > 0) {
-    htmlSnapshot = generateFullHTML(data.sections as any);
+    htmlSnapshot = generateFullHTML(data.sections as Section[]);
   }
   
-  // Truncate to prevent TEXT field overflow
   if (htmlSnapshot.length > 10000) {
     htmlSnapshot = htmlSnapshot.substring(0, 10000) + '\n\n<!-- HTML truncated for storage -->';
   }
 
-  // Generate unique slug with counter if duplicate
   let slug = await generateUniqueSlug(data.name);
   let counter = 1;
   
@@ -48,10 +46,8 @@ export async function createTemplate(
       description: data.description ?? null,
       previewImageUrl: data.previewImageUrl ?? null,
       categoryId: data.categoryId ?? null,
-      // Stringify JSON columns for Postgres jsonb type (auto-parsed by Postgres)
-      sections: JSON.stringify(data.sections) as any,
-      pageSettings: JSON.stringify(pageSettings) as any,
-      // Provide empty pages array (required field)
+      sections: JSON.stringify(data.sections) as unknown as Section[],
+      pageSettings: JSON.stringify(pageSettings) as unknown as typeof pageSettings,
       pages: JSON.stringify([{ 
         id: 'home',
         title: data.name,
@@ -60,7 +56,7 @@ export async function createTemplate(
         pageSettings: pageSettings,
         isHomePage: true,
         sortOrder: 0,
-      }]) as any,
+      }]) as unknown as Page[],
       htmlSnapshot,
       isFeatured: data.isFeatured ?? false,
       sortOrder: data.sortOrder ?? 0,
@@ -82,7 +78,6 @@ export async function createTemplate(
   return { id: created.id };
 }
 
-// Helper function to check if slug is taken
 async function isSlugTaken(slug: string): Promise<boolean> {
   const [existing] = await db
     .select({ slug: templates.slug })
@@ -94,7 +89,7 @@ async function isSlugTaken(slug: string): Promise<boolean> {
 
 export async function updateTemplate(
   id: string,
-  data: any, // UpdateTemplateInput but using any for flexibility with JSON strings
+  data: Record<string, unknown>,
   userId: string
 ): Promise<void> {
   const existing = await getTemplateById(id);
@@ -102,10 +97,9 @@ export async function updateTemplate(
 
   let slug = existing.slug;
   if (data.name && data.name !== existing.name) {
-    slug = await generateUniqueSlug(data.name, id);
+    slug = await generateUniqueSlug(String(data.name), id);
   }
 
-  // Parse JSON strings if needed
   let pageSettings = existing.pageSettings;
   if (data.pageSettings) {
     try {
@@ -113,31 +107,29 @@ export async function updateTemplate(
         ? JSON.parse(data.pageSettings) 
         : data.pageSettings;
     } catch (e) {
+      // eslint-disable-next-line no-console
       console.error("Failed to parse pageSettings:", e);
     }
   }
 
   let htmlSnapshot = existing.htmlSnapshot;
   
-  // Handle pages - can be object array or JSON string
-  let pagesData = [];
+  let pagesData: Page[] = [];
   if (data.pages) {
     try {
-      pagesData = Array.isArray(data.pages) 
-        ? data.pages
-        : JSON.parse(data.pages);
+      const rawPages: unknown = typeof data.pages === 'string' ? JSON.parse(data.pages) : data.pages;
+      pagesData = Array.isArray(rawPages) ? rawPages as Page[] : [];
       
-      // Generate HTML from pages structure
       htmlSnapshot = generateMultiPageHTML(pagesData);
     } catch (e) {
+      // eslint-disable-next-line no-console
       console.error("Failed to parse pages:", e);
-      // Fallback to sections if pages parsing fails
       if (data.sections) {
-        htmlSnapshot = generateFullHTML(data.sections as any[]);
+        htmlSnapshot = generateFullHTML(data.sections as Section[]);
       }
     }
   } else if (data.sections) {
-    htmlSnapshot = generateFullHTML(data.sections as any[]);
+    htmlSnapshot = generateFullHTML(data.sections as Section[]);
   }
 
   const patch: Record<string, unknown> = { 
@@ -151,15 +143,11 @@ export async function updateTemplate(
     patch.previewImageUrl = data.previewImageUrl;
   if (data.categoryId !== undefined) patch.categoryId = data.categoryId;
   
-  // Save both pages (multi-page) and sections (legacy compatibility)
   if (pagesData && pagesData.length > 0) {
-    // Stringify pages array for database storage
     patch.pages = JSON.stringify(pagesData);
-    // Also flatten to sections for backward compatibility
-    const flattenedSections = pagesData.flatMap((p: any) => p.sections);
+    const flattenedSections = pagesData.flatMap((p: Page) => p.sections);
     patch.sections = JSON.stringify(flattenedSections);
   } else if (data.sections !== undefined) {
-    // Stringify sections for database storage  
     patch.sections = JSON.stringify(data.sections);
   }
   
@@ -220,7 +208,7 @@ export async function duplicateTemplate(
       description: existing.description,
       previewImageUrl: existing.previewImageUrl,
       categoryId: existing.categoryId,
-      sections: existing.sections as any,
+      sections: existing.sections as unknown as Section[],
       pageSettings: existing.pageSettings,
       htmlSnapshot: existing.htmlSnapshot,
       isFeatured: false,

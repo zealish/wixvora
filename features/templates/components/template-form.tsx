@@ -108,7 +108,7 @@ export function TemplateForm({
         setSubmitting(false);
       }
     },
-    [mode, initialData, router]
+    [mode, router]
   );
 
   const categoryOptions = categories.flatMap((cat) => [

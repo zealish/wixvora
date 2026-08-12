@@ -1,4 +1,5 @@
 import type { BlockCatalogItem } from "./block-types";
+import type { BlockConfig } from "./block-types";
 
 export const BLOCK_CATALOG: { category: string; items: BlockCatalogItem[] }[] = [
   {
@@ -7,7 +8,7 @@ export const BLOCK_CATALOG: { category: string; items: BlockCatalogItem[] }[] = 
       {
         type: 'container',
         label: 'Seksi Layer (Container)',
-        icon: 'box' as any,
+        icon: 'box',
         defaultProps: {
           layerName: 'Seksi Utama Kustom',
           paddingY: 'py-12',
@@ -24,7 +25,7 @@ export const BLOCK_CATALOG: { category: string; items: BlockCatalogItem[] }[] = 
       {
         type: 'navbar',
         label: 'Bar Navigasi (Header)',
-        icon: 'layout' as any,
+        icon: 'layout',
         defaultProps: {
           layerName: 'Header Navigasi',
           logoText: 'WebCraft Studio',
@@ -54,6 +55,6 @@ export function createBlockFromCatalog(item: BlockCatalogItem) {
   };
 }
 
-export const PRESET_TEMPLATES: Record<string, any[]> = {
+export const PRESET_TEMPLATES: Record<string, BlockConfig[]> = {
   saas: [],
 };

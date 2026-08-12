@@ -54,14 +54,16 @@ export function useTablePersistence(tableId: string) {
       try {
         localStorage.setItem(storageKey, JSON.stringify(state));
       } catch (error) {
+        // eslint-disable-next-line no-console
         console.warn("Failed to persist table state:", error);
       }
     }, 500)
   );
 
   useEffect(() => {
+    const save = debouncedSave.current;
     return () => {
-      debouncedSave.current.cancel();
+      save.cancel();
     };
   }, []);
 

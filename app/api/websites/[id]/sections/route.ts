@@ -38,6 +38,7 @@ export async function POST(
 
     return NextResponse.json({ success: true });
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error("Failed to save website sections:", error);
     return NextResponse.json(
       { error: "Internal server error" },

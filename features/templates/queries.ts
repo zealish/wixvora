@@ -4,19 +4,19 @@ import { db } from "@/lib/db";
 import { templates, businessCategories, user } from "@/lib/db/schema";
 import { eq, and, isNull, inArray } from "drizzle-orm";
 import type { Template, TemplateListItem, TemplateStatus } from "./types";
+import type { Section, Page, PageSettings } from "@/components/website-editor/lib/block-types";
 
-// Helper function to deep parse sections array with elements
-function parseNestedSections(rawSections: any): any[] {
+function parseNestedSections(rawSections: unknown): Section[] {
   if (!Array.isArray(rawSections)) return [];
   
-  return rawSections.map((section: any) => {
-    let parsedSection = { ...section };
+  return rawSections.map((section: Record<string, unknown>) => {
+    const parsedSection = { ...section };
     
     // Parse elements if it's a string
     if (typeof section.elements === 'string') {
       try {
         parsedSection.elements = JSON.parse(section.elements);
-      } catch (e) {
+      } catch (_e) {
         parsedSection.elements = [];
       }
     } else if (!Array.isArray(section.elements)) {
@@ -27,14 +27,14 @@ function parseNestedSections(rawSections: any): any[] {
     if (typeof section.sections === 'string') {
       try {
         parsedSection.sections = parseNestedSections(JSON.parse(section.sections));
-      } catch (e) {
+      } catch (_e) {
         parsedSection.sections = [];
       }
     } else if (!Array.isArray(section.sections)) {
       parsedSection.sections = [];
     }
     
-    return parsedSection as any;
+    return parsedSection as unknown as Section;
   });
 }
 
@@ -123,63 +123,70 @@ export async function getTemplateById(id: string): Promise<Template | null> {
 
   if (!row) return null;
 
-  // Cast row to any to access all fields including new ones
-  const anyRow = row as any;
-  
-  // Parse JSON strings back to arrays with deep nesting
-  let parsedPages: any[] = [];
-  
-  if (typeof anyRow.pages === 'string') {
+  const rowPages: unknown = row.pages;
+  const rowPageSettings: unknown = row.pageSettings;
+
+  let parsedPages: Page[] = [];
+
+  if (typeof rowPages === 'string') {
     try {
-      const rawParsed = JSON.parse(anyRow.pages);
-      // Deep parse all nested sections and pageSettings
-      parsedPages = Array.isArray(rawParsed) ? rawParsed.map((page: any) => ({
-        ...page,
-        sections: parseNestedSections(page.sections),
-        pageSettings: typeof page.pageSettings === 'string' 
-          ? JSON.parse(page.pageSettings) 
-          : page.pageSettings || {},
-      })) : [];
-    } catch (e) {
+      const rawParsed: unknown = JSON.parse(rowPages);
+      parsedPages = Array.isArray(rawParsed)
+        ? rawParsed.map((page: Record<string, unknown>) => ({
+            id: String(page.id ?? ''),
+            title: String(page.title ?? ''),
+            slug: String(page.slug ?? ''),
+            sections: parseNestedSections(page.sections),
+            pageSettings: typeof page.pageSettings === 'string'
+              ? JSON.parse(page.pageSettings) as PageSettings
+              : (page.pageSettings as PageSettings) || { title: '', bgColor: '#ffffff', fontFamily: 'font-sans' },
+            isHomePage: Boolean(page.isHomePage),
+            sortOrder: Number(page.sortOrder ?? 0),
+          })) as Page[]
+        : [];
+    } catch (_e) {
       parsedPages = [];
     }
-  } else if (Array.isArray(anyRow.pages)) {
-    parsedPages = anyRow.pages;
+  } else if (Array.isArray(rowPages)) {
+    parsedPages = rowPages as Page[];
   }
 
-  let parsedPageSettings: any = {};
-  if (typeof anyRow.pageSettings === 'string') {
+  let parsedPageSettings: PageSettings = { title: row.name, bgColor: '#ffffff', fontFamily: 'font-sans' };
+  if (typeof rowPageSettings === 'string') {
     try {
-      parsedPageSettings = JSON.parse(anyRow.pageSettings);
-    } catch (e) {
+      parsedPageSettings = JSON.parse(rowPageSettings) as PageSettings;
+    } catch (_e) {
       // Ignore parse errors
     }
+  } else if (rowPageSettings && typeof rowPageSettings === 'object') {
+    parsedPageSettings = rowPageSettings as PageSettings;
   }
 
-  // Flatten pages to sections for backward compatibility
-  const flattenedSections = parsedPages.flatMap((p: any) => (Array.isArray(p.sections) ? p.sections : []));
+  const flattenedSections = parsedPages.flatMap((p: Page) =>
+    Array.isArray(p.sections) ? p.sections : []
+  );
 
   return {
-    id: anyRow.id,
-    name: anyRow.name,
-    slug: anyRow.slug,
-    description: anyRow.description,
-    previewImageUrl: anyRow.previewImageUrl,
-    categoryId: anyRow.categoryId,
-    sections: Array.isArray(flattenedSections) ? flattenedSections : [],
-    pageSettings: parsedPageSettings || { title: anyRow.name, bgColor: '#ffffff', fontFamily: 'font-sans' },
-    pages: Array.isArray(parsedPages) ? parsedPages : [],
-    htmlSnapshot: anyRow.htmlSnapshot,
-    isFeatured: anyRow.isFeatured,
-    sortOrder: anyRow.sortOrder,
-    status: anyRow.status as TemplateStatus,
-    usageCount: anyRow.usageCount,
-    lastUsedAt: anyRow.lastUsedAt,
-    createdBy: anyRow.createdBy,
-    createdAt: anyRow.createdAt,
-    updatedAt: anyRow.updatedAt,
-    deletedAt: anyRow.deletedAt,
-  } as Template;
+    id: row.id,
+    name: row.name,
+    slug: row.slug,
+    description: row.description,
+    previewImageUrl: row.previewImageUrl,
+    categoryId: row.categoryId,
+    sections: flattenedSections,
+    pageSettings: parsedPageSettings,
+    pages: parsedPages,
+    htmlSnapshot: row.htmlSnapshot,
+    isFeatured: row.isFeatured,
+    sortOrder: row.sortOrder,
+    status: row.status as TemplateStatus,
+    usageCount: row.usageCount,
+    lastUsedAt: row.lastUsedAt,
+    createdBy: row.createdBy,
+    createdAt: row.createdAt,
+    updatedAt: row.updatedAt,
+    deletedAt: row.deletedAt,
+  };
 }
 
 export async function generateUniqueSlug(

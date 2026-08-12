@@ -1,6 +1,7 @@
 import { eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { websites } from "@/lib/db/schema";
+import type { Section, Page, PageSettings } from "@/components/website-editor/lib/block-types";
 import { getWebsiteById, generateUniqueWebsiteSlug } from "./queries";
 import { getTemplateById, incrementUsageCount } from "@/features/templates/queries";
 
@@ -15,12 +16,12 @@ export async function createWebsiteFromTemplate(
   const slug = await generateUniqueWebsiteSlug(name);
   
   // Convert template sections to page structure for multi-page support
-  const pages = [
+  const pages: Page[] = [
     {
       id: 'home',
       title: name,
       slug: slug,
-      sections: JSON.parse(JSON.stringify(template.sections)) as any[],
+      sections: JSON.parse(JSON.stringify(template.sections)) as Section[],
       pageSettings: { ...template.pageSettings },
       isHomePage: true,
       sortOrder: 0,
@@ -48,8 +49,8 @@ export async function createWebsiteFromTemplate(
 
 export async function updateWebsiteSections(
   id: string,
-  pages: any[], // Array of Page objects with full structure
-  _legacyPageSettings?: any, // Legacy parameter for backwards compatibility - not used anymore
+  pages: Page[],
+  _legacyPageSettings?: PageSettings,
   userId?: string
 ): Promise<void> {
   const existing = await getWebsiteById(id);

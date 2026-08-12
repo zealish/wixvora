@@ -16,8 +16,21 @@ const eslintConfig = defineConfig([
           caughtErrorsIgnorePattern: "^_",
         },
       ],
-      "@typescript-eslint/explicit-function-return-type": "warn",
+      "@typescript-eslint/explicit-function-return-type": "off",
       "no-console": "warn",
+    },
+  },
+  {
+    files: ["**/__tests__/**", "**/seed*.ts", "**/seed-*.ts"],
+    rules: {
+      "no-console": "off",
+      "no-restricted-exports": "off",
+    },
+  },
+  {
+    files: ["components/shared/data-table/hooks/use-data-table.ts"],
+    rules: {
+      "react-hooks/incompatible-library": "off",
     },
   },
   // Override default ignores of eslint-config-next.

@@ -23,6 +23,7 @@ export async function proxy(request: NextRequest) {
         return NextResponse.redirect(new URL(redirectPath, request.url));
       }
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error("Error fetching session:", error);
     }
   }

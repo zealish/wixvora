@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -35,7 +35,7 @@ export function CategoryForm({
   const form = useForm<CreateCategoryInput | UpdateCategoryInput>({
     resolver: zodResolver(
       mode === "create" ? createCategorySchema : updateCategorySchema
-    ) as any,
+    ) as Resolver<CreateCategoryInput | UpdateCategoryInput>,
     defaultValues: {
       name: initialData?.name ?? "",
       slug: initialData?.slug ?? "",
@@ -46,8 +46,10 @@ export function CategoryForm({
     },
   });
 
-  const watchName = form.watch("name");
-  const watchSlug = form.watch("slug");
+  const watchName = useWatch({ control: form.control, name: "name" });
+  const watchSlug = useWatch({ control: form.control, name: "slug" });
+  const iconValue = useWatch({ control: form.control, name: "icon" });
+  const statusValue = useWatch({ control: form.control, name: "status" });
 
   useEffect(() => {
     if (mode === "create" && watchName) {
@@ -62,7 +64,7 @@ export function CategoryForm({
     }
   }, [watchName, mode, form]);
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: CreateCategoryInput | UpdateCategoryInput) => {
     setLoading(true);
     try {
       const action =
@@ -135,7 +137,7 @@ export function CategoryForm({
       <div className="space-y-2">
         <Label>Icon</Label>
         <CategoryIconPicker
-          value={form.watch("icon") ?? null}
+          value={iconValue ?? null}
           onChange={(icon) => form.setValue("icon", icon)}
         />
       </div>
@@ -158,7 +160,7 @@ export function CategoryForm({
       <div className="space-y-2">
         <Label>Status</Label>
         <RadioGroup
-          value={form.watch("status")}
+          value={statusValue}
           onValueChange={(value: "active" | "inactive") =>
             form.setValue("status", value)
           }

@@ -1,7 +1,9 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import { Icon } from "../ui/icon-library";
+import type { IconName } from "../ui/icon-library";
 import type { Element, ContainerLayout } from "../lib/block-types";
 import { RichTextEditor } from "../rich-text/RichTextEditor";
 import { VideoPlayer } from "./VideoPlayer";
@@ -43,7 +45,7 @@ export function RenderElementContent({ element, updateProps, isPreviewMode, isSe
     color: element.textColor,
     fontSize: element.fontSize,
     fontWeight: element.fontWeight,
-    textAlign: (element.textAlign as any) || "left",
+    textAlign: (element.textAlign as React.CSSProperties['textAlign']) || "left",
     wordBreak: "break-word",
   };
 
@@ -146,24 +148,18 @@ export function RenderElementContent({ element, updateProps, isPreviewMode, isSe
         <span className="text-[10px] text-slate-400 mt-1 font-semibold">No image</span>
       </div>
     ) : (
-      <img
-        src={element.url}
+      <Image
+        src={element.url!}
         alt={element.alt || "Visual"}
-        onError={(e) => {
-          const target = e.currentTarget;
-          target.style.display = 'none';
-          const parent = target.parentElement;
-          if (parent) {
-            parent.innerHTML = '<div class="w-full h-full flex flex-col items-center justify-center bg-slate-100 rounded-xl border-2 border-dashed border-slate-300"><svg class="w-8 h-8 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21,15 16,10 5,21"/></svg><span class="text-[10px] text-slate-400 mt-1 font-bold">No image</span></div>';
-          }
-        }}
+        fill
         style={{
           borderRadius: element.borderRadius,
-          objectFit: (element.objectFit as any) || "cover",
+          objectFit: (element.objectFit as React.CSSProperties['objectFit']) || "cover",
           opacity: element.opacity ?? 1,
           filter: filterStyle,
         }}
         className="w-full h-full"
+        unoptimized
       />
     );
 
@@ -268,7 +264,7 @@ export function RenderElementContent({ element, updateProps, isPreviewMode, isSe
         height: '100%',
         padding: '8px',
       }}>
-        <Icon name={(element.iconName as any) || 'star'} size={parseInt(element.iconSize || '32')} style={{ color: element.iconColor || '#3b82f6', flexShrink: 0 }} />
+        <Icon name={(element.iconName as IconName) || 'star'} size={parseInt(element.iconSize || '32')} style={{ color: element.iconColor || '#3b82f6', flexShrink: 0 }} />
         <div>
           <div style={{ fontSize: element.fontSize || '16px', fontWeight: element.fontWeight || '600', color: element.textColor || '#0f172a' }}>
             {element.title || 'Feature'}

@@ -60,7 +60,7 @@ try {
   ];
   
   for (const col of requiredColumns) {
-    const column = (websites as any)[col];
+    const column = (websites as unknown as Record<string, unknown>)[col];
     assert(column !== undefined, `${col} column should exist`);
     passedTests++;
   }

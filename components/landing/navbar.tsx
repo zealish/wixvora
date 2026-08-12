@@ -119,7 +119,7 @@ export function Navbar() {
             // Show "Go to Dashboard" button for authenticated users
             <Link
               href={
-                (session as any)?.user?.accountType === "STAFF"
+                (session as { user?: { accountType?: string } })?.user?.accountType === "STAFF"
                   ? "/staff"
                   : "/client"
               }

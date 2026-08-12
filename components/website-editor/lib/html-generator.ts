@@ -1,5 +1,5 @@
 import { getLayout, getSectionHeight } from './viewport-utils';
-import type { Section, Page, NavigationSettings, ContainerLayout } from './block-types';
+import type { Element, Section, Page, NavigationSettings, ContainerLayout } from './block-types';
 import { parseVideoUrl, buildEmbedUrl, getAutoThumbnail } from './video-url-parser';
 import { generateVideoExportJS } from './video-export-js';
 
@@ -24,13 +24,13 @@ function escapeHtml(str: string): string {
   return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
-function collectAllElements(elements: any[]): any[] {
-  const result: any[] = [];
+function collectAllElements(elements: Element[]): Element[] {
+  const result: Element[] = [];
   for (const el of elements) { result.push(el); if (el.children?.length) result.push(...collectAllElements(el.children)); }
   return result;
 }
 
-function renderElementTree(el: any, isChild: boolean): string {
+function renderElementTree(el: Element, isChild: boolean): string {
   const hasChildren = el.children && el.children.length > 0;
   const isContainer = isContainerType(el.type);
 
@@ -44,7 +44,7 @@ function renderElementTree(el: any, isChild: boolean): string {
       el.padding ? `padding:${el.padding}` : '',
       'box-sizing:border-box',
     ].filter(Boolean).join(';');
-    const childrenHtml = el.children.map((c: any) => renderElementTree(c, true)).join('');
+    const childrenHtml = el.children!.map((c) => renderElementTree(c, true)).join('');
     return `<div id="el-${el.id}" class="container-el" style="${styleParts}">${childrenHtml}</div>`;
   }
 
@@ -78,9 +78,9 @@ function renderElementTree(el: any, isChild: boolean): string {
   }
   if (el.type === 'image') {
     const filterVal = imageFilterCSS(el);
-    const linkTarget = (el as any).linkUrl;
-    const openNewTab = !!(el as any).openInNewTab;
-    const opaque = (el as any).opacity ?? 1;
+    const linkTarget = el.linkUrl;
+    const openNewTab = !!el.openInNewTab;
+    const opaque = el.opacity ?? 1;
     const hasFilter = filterVal !== 'brightness(100%) contrast(100%) saturate(100%) blur(0px)';
 
     const imgTag = `<img src="${el.url}" alt="${el.alt || ''}" style="border-radius: ${el.borderRadius || '16px'}; object-fit: ${el.objectFit || 'cover'}; opacity: ${opaque}; filter: ${filterVal}; width: 100%; height: 100%;" onerror="this.parentElement.innerHTML='<div style=\\'width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#f1f5f9;border:2px dashed #cbd5e1;border-radius:12px\\'><span style=\\'color:#94a3b8;font-size:11px;font-weight:600\\'>No image</span></div>'" />`;
@@ -89,23 +89,23 @@ function renderElementTree(el: any, isChild: boolean): string {
       ? `<a href="${linkTarget}" ${openNewTab ? 'target="_blank" rel="noopener noreferrer"' : ''} style="display:block;width:100%;height:100%">${imgTag}</a>`
       : imgTag;
 
-    const aspectRatioStyle = (el as any).aspectRatio ? ` aspect-ratio: ${(el as any).aspectRatio};` : '';
-    const captionHtml = (el as any).caption ? ` <div style="text-align:center;font-size:12px;color:#475569;margin-top:4px;line-height:1.4">${(el as any).caption}</div>` : '';
+    const aspectRatioStyle = el.aspectRatio ? ` aspect-ratio: ${el.aspectRatio};` : '';
+    const captionHtml = el.caption ? ` <div style="text-align:center;font-size:12px;color:#475569;margin-top:4px;line-height:1.4">${el.caption}</div>` : '';
 
     return `<div ${idAttr} style="border-radius: ${el.borderRadius || '16px'}; overflow: hidden;${aspectRatioStyle}" class="${hasFilter ? '' : ''}">${innerHtml}</div>${captionHtml}`;
   }
   if (el.type === 'video') {
-    const parsed = parseVideoUrl((el as any).videoUrl || '');
+    const parsed = parseVideoUrl(el.videoUrl || '');
     if (!parsed) {
-      return `<div ${idAttr} style="background-color: ${(el as any).bgColor || '#f1f5f9'}; border-radius: ${(el as any).borderRadius}; display: flex; align-items: center; justify-content: center; border: 2px dashed #cbd5e1;"><span style="color: #94a3b8; font-size: 11px;">Video URL not set</span></div>`;
+      return `<div ${idAttr} style="background-color: ${el.bgColor || '#f1f5f9'}; border-radius: ${el.borderRadius}; display: flex; align-items: center; justify-content: center; border: 2px dashed #cbd5e1;"><span style="color: #94a3b8; font-size: 11px;">Video URL not set</span></div>`;
     }
 
-    const thumbnailSrc = (el as any).thumbnailUrl || getAutoThumbnail(parsed);
-    const playStyle = (el as any).playButtonStyle || 'circle';
-    const overlayColor = (el as any).overlayColor || 'rgba(0,0,0,0.3)';
-    const aspectRatio = (el as any).aspectRatio || '16:9';
+    const thumbnailSrc = el.thumbnailUrl || getAutoThumbnail(parsed);
+    const playStyle = el.playButtonStyle || 'circle';
+    const overlayColor = el.overlayColor || 'rgba(0,0,0,0.3)';
+    const videoAspectRatio = el.aspectRatio || '16:9';
     const ratioMap: Record<string, string> = { '16:9': '16/9', '4:3': '4/3', '1:1': '1/1' };
-    const theme = (el as any).controlBarTheme || 'dark';
+    const theme = el.controlBarTheme || 'dark';
 
     const playButtons: Record<string, string> = {
       circle: '<div class="vp-play-btn-static" style="width:64px;height:64px;border-radius:50%;background:rgba(255,255,255,0.95);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(0,0,0,0.15);"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" style="color:#1e293b;margin-left:2px"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>',
@@ -113,17 +113,17 @@ function renderElementTree(el: any, isChild: boolean): string {
       minimal: '<div class="vp-play-btn-static"><svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor" style="color:white;filter:drop-shadow(0 2px 8px rgba(0,0,0,0.3))"><polygon points="5 3 19 12 5 21 5 3"/></svg></div>',
     };
 
-    if ((el as any).autoplay) {
-      const embedUrl = buildEmbedUrl(parsed, { autoplay: true, loop: (el as any).loop });
-      return `<div ${idAttr} style="width: 100%; aspect-ratio: ${ratioMap[aspectRatio] || '16/9'}; border-radius: ${(el as any).borderRadius}; overflow: hidden; background-color: ${(el as any).bgColor || '#000000'};"><iframe src="${embedUrl}&controls=0" style="width: 100%; height: 100%; border: none;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>`;
+    if (el.autoplay) {
+      const embedUrl = buildEmbedUrl(parsed, { autoplay: true, ...(el.loop !== undefined ? { loop: el.loop } : {}) });
+      return `<div ${idAttr} style="width: 100%; aspect-ratio: ${ratioMap[videoAspectRatio] || '16/9'}; border-radius: ${el.borderRadius}; overflow: hidden; background-color: ${el.bgColor || '#000000'};"><iframe src="${embedUrl}&controls=0" style="width: 100%; height: 100%; border: none;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>`;
     }
 
-    return `<div ${idAttr} data-video-player data-video-id="${parsed.videoId}" data-video-provider="${parsed.provider}" data-video-theme="${theme}" style="width: 100%; aspect-ratio: ${ratioMap[aspectRatio] || '16/9'}; border-radius: ${(el as any).borderRadius}; overflow: hidden; background-color: ${(el as any).bgColor || '#000000'}; cursor: pointer; position: relative;"><img class="vp-thumbnail" src="${thumbnailSrc}" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none'"/><div class="vp-overlay" style="position:absolute;inset:0;background:${overlayColor}"></div><div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)">${playButtons[playStyle]}</div></div>`;
+    return `<div ${idAttr} data-video-player data-video-id="${parsed.videoId}" data-video-provider="${parsed.provider}" data-video-theme="${theme}" style="width: 100%; aspect-ratio: ${ratioMap[videoAspectRatio] || '16/9'}; border-radius: ${el.borderRadius}; overflow: hidden; background-color: ${el.bgColor || '#000000'}; cursor: pointer; position: relative;"><img class="vp-thumbnail" src="${thumbnailSrc}" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none'"/><div class="vp-overlay" style="position:absolute;inset:0;background:${overlayColor}"></div><div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)">${playButtons[playStyle]}</div></div>`;
   }
   return '';
 }
 
-function imageFilterCSS(el: any): string {
+function imageFilterCSS(el: Element): string {
   const b = el.filterBrightness ?? 100;
   const c = el.filterContrast ?? 100;
   const s = el.filterSaturation ?? 100;
@@ -131,7 +131,7 @@ function imageFilterCSS(el: any): string {
   return `brightness(${b}%) contrast(${c}%) saturate(${s}%) blur(${bl}px)`;
 }
 
-function imageHoverCSS(el: any): string {
+function imageHoverCSS(el: Element): string {
   const hover = el.hoverEffect;
   if (!hover || hover === 'none') return '';
   if (hover === 'zoom') return `#el-${el.id}:hover { transform: scale(1.05); }`;
@@ -292,12 +292,14 @@ function generateMultiPageHTML(pages: Page[], navigationSettings?: NavigationSet
       try {
         sections = JSON.parse(sections);
       } catch (e) {
+        // eslint-disable-next-line no-console
         console.error('Failed to parse sections from string:', e);
         sections = [];
       }
     }
     
     if (!Array.isArray(sections)) {
+      // eslint-disable-next-line no-console
       console.warn(`Invalid sections for page ${page.id}:`, typeof sections, sections);
       sections = [];
     }

@@ -118,6 +118,7 @@ export function exportToCSV(data: ExportRow[], filename?: string): void {
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     saveAs(blob, filename || generateFilename("csv"));
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error("CSV export failed:", error);
     throw error;
   }
@@ -182,6 +183,7 @@ export function exportToExcel(data: ExportRow[], filename?: string): void {
     });
     saveAs(blob, filename || generateFilename("xlsx"));
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error("Excel export failed:", error);
     throw error;
   }
@@ -199,6 +201,7 @@ export function exportToJSON(data: ExportRow[], filename?: string): void {
     });
     saveAs(blob, filename || generateFilename("json"));
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error("JSON export failed:", error);
     throw error;
   }

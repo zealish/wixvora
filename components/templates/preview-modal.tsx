@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
 import { X } from "lucide-react";
 
 interface PreviewModalProps {
@@ -44,10 +45,12 @@ export function PreviewModal({ isOpen, onClose, template }: PreviewModalProps) {
             </button>
 
             <div className="relative aspect-video w-full overflow-hidden rounded-2xl bg-slate-100">
-              <img
+              <Image
                 src={template.image}
-                className="h-full w-full object-cover"
+                fill
+                className="object-cover"
                 alt={template.name}
+                unoptimized
               />
               {template.badge && (
                 <span className="absolute top-3 right-3 rounded-full bg-slate-900 px-2.5 py-1 text-xs font-bold text-white">

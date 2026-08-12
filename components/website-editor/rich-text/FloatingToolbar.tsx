@@ -61,7 +61,7 @@ export function FloatingToolbar({
           {HEADING_LEVELS.map(({ label, level }) => (
             <ToolbarButton
               key={level}
-              onClick={() => editor.chain().focus().toggleHeading({ level: level as any }).run()}
+              onClick={() => editor.chain().focus().toggleHeading({ level: level as 1 | 2 | 3 }).run()}
               active={editor.isActive("heading", { level })}
               title={`Heading ${level}`}
             >

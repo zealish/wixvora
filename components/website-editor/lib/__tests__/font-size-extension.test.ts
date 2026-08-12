@@ -1,4 +1,3 @@
-// @ts-nocheck
 /**
  * FontSize Extension Tests
  * Run with: pnpm tsx components/website-editor/lib/__tests__/font-size-extension.test.ts
@@ -97,7 +96,7 @@ try {
   // ============================================================================
   console.log("Testing Extension Options...");
 
-  const options = FontSize.config.addOptions();
+  const options = FontSize.config?.addOptions?.();
 
   assert(
     options !== undefined,
@@ -106,13 +105,13 @@ try {
   passedTests++;
 
   assert(
-    Array.isArray(options.types),
+    Array.isArray(options?.types),
     "Options should have types array"
   );
   passedTests++;
 
   assert(
-    options.types.includes("textStyle"),
+    options?.types?.includes("textStyle"),
     "Options types should include 'textStyle'"
   );
   passedTests++;
@@ -124,9 +123,9 @@ try {
   // ============================================================================
   console.log("Testing Global Attributes...");
 
-  const globalAttributes = FontSize.config.addGlobalAttributes.call({
+  const globalAttributes = FontSize.config?.addGlobalAttributes?.call({
     options: options,
-  });
+  } as never);
 
   assert(
     Array.isArray(globalAttributes),
@@ -135,39 +134,39 @@ try {
   passedTests++;
 
   assert(
-    globalAttributes.length > 0,
+    globalAttributes && globalAttributes.length > 0,
     "Global attributes should not be empty"
   );
   passedTests++;
 
-  const fontSizeAttr = globalAttributes[0];
+  const fontSizeAttr = globalAttributes?.[0];
 
   assert(
-    Array.isArray(fontSizeAttr.types),
+    fontSizeAttr && Array.isArray(fontSizeAttr.types),
     "Global attribute should have types array"
   );
   passedTests++;
 
   assert(
-    fontSizeAttr.types.includes("textStyle"),
+    fontSizeAttr?.types?.includes("textStyle"),
     "Global attribute types should include 'textStyle'"
   );
   passedTests++;
 
   assert(
-    fontSizeAttr.attributes !== undefined,
+    fontSizeAttr?.attributes !== undefined,
     "Global attribute should have attributes object"
   );
   passedTests++;
 
   assert(
-    fontSizeAttr.attributes.fontSize !== undefined,
+    fontSizeAttr?.attributes?.fontSize !== undefined,
     "Attributes should include fontSize"
   );
   passedTests++;
 
   assertEqual(
-    fontSizeAttr.attributes.fontSize.default,
+    fontSizeAttr?.attributes?.fontSize?.default,
     null,
     "fontSize default should be null"
   );
@@ -180,7 +179,7 @@ try {
   // ============================================================================
   console.log("Testing parseHTML...");
 
-  const parseHTML = fontSizeAttr.attributes.fontSize.parseHTML;
+  const parseHTML = fontSizeAttr?.attributes?.fontSize?.parseHTML;
 
   assert(
     typeof parseHTML === "function",
@@ -190,10 +189,10 @@ try {
 
   const mockElement1 = {
     style: { fontSize: "16px" },
-  } as any;
+  } as HTMLElement;
 
   assertEqual(
-    parseHTML(mockElement1),
+    parseHTML?.(mockElement1),
     "16px",
     "parseHTML should extract fontSize from style"
   );
@@ -201,10 +200,10 @@ try {
 
   const mockElement2 = {
     style: { fontSize: '"16px"' },
-  } as any;
+  } as unknown as HTMLElement;
 
   assertEqual(
-    parseHTML(mockElement2),
+    parseHTML?.(mockElement2),
     "16px",
     "parseHTML should remove quotes from fontSize"
   );
@@ -212,10 +211,10 @@ try {
 
   const mockElement3 = {
     style: {},
-  } as any;
+  } as unknown as HTMLElement;
 
   assertEqual(
-    parseHTML(mockElement3),
+    parseHTML?.(mockElement3),
     undefined,
     "parseHTML should return undefined when fontSize is missing"
   );
@@ -228,7 +227,7 @@ try {
   // ============================================================================
   console.log("Testing renderHTML...");
 
-  const renderHTML = fontSizeAttr.attributes.fontSize.renderHTML;
+  const renderHTML = fontSizeAttr?.attributes?.fontSize?.renderHTML;
 
   assert(
     typeof renderHTML === "function",
@@ -236,34 +235,34 @@ try {
   );
   passedTests++;
 
-  const rendered1 = renderHTML({ fontSize: "16px" });
+  const rendered1 = renderHTML?.({ fontSize: "16px" });
 
   assert(
-    rendered1.style !== undefined,
+    rendered1?.style !== undefined,
     "renderHTML should return style property when fontSize is set"
   );
   passedTests++;
 
   assertEqual(
-    rendered1.style,
+    rendered1?.style,
     "font-size: 16px",
     "renderHTML should format style correctly"
   );
   passedTests++;
 
-  const rendered2 = renderHTML({ fontSize: null });
+  const rendered2 = renderHTML?.({ fontSize: null });
 
   assertEqual(
-    Object.keys(rendered2).length,
+    rendered2 && Object.keys(rendered2).length,
     0,
     "renderHTML should return empty object when fontSize is null"
   );
   passedTests++;
 
-  const rendered3 = renderHTML({});
+  const rendered3 = renderHTML?.({});
 
   assertEqual(
-    Object.keys(rendered3).length,
+    rendered3 && Object.keys(rendered3).length,
     0,
     "renderHTML should return empty object when fontSize is undefined"
   );
@@ -276,7 +275,7 @@ try {
   // ============================================================================
   console.log("Testing Commands...");
 
-  const commands = FontSize.config.addCommands();
+  const commands = FontSize.config?.addCommands?.();
 
   assert(
     commands !== undefined,
@@ -285,19 +284,19 @@ try {
   passedTests++;
 
   assert(
-    typeof commands.setFontSize === "function",
+    typeof commands?.setFontSize === "function",
     "Commands should include setFontSize"
   );
   passedTests++;
 
   assert(
-    typeof commands.unsetFontSize === "function",
+    typeof commands?.unsetFontSize === "function",
     "Commands should include unsetFontSize"
   );
   passedTests++;
 
   // Test that setFontSize returns a function
-  const setFontSizeCmd = commands.setFontSize("16px");
+  const setFontSizeCmd = commands?.setFontSize?.("16px");
   assert(
     typeof setFontSizeCmd === "function",
     "setFontSize should return a command function"
@@ -305,7 +304,7 @@ try {
   passedTests++;
 
   // Test that unsetFontSize returns a function
-  const unsetFontSizeCmd = commands.unsetFontSize();
+  const unsetFontSizeCmd = commands?.unsetFontSize?.();
   assert(
     typeof unsetFontSizeCmd === "function",
     "unsetFontSize should return a command function"

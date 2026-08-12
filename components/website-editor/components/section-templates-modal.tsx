@@ -3,6 +3,7 @@
 import { Icon } from "../ui/icon-library";
 import { t } from "../lib/translations";
 import { useEditor } from "../editor-provider";
+import { SECTION_TEMPLATES } from "../lib/section-templates";
 
 interface SectionTemplatesModalProps {
   isOpen: boolean;
@@ -13,8 +14,6 @@ export function SectionTemplatesModal({ isOpen, onClose }: SectionTemplatesModal
   const { addSectionFromTemplate } = useEditor();
 
   if (!isOpen) return null;
-
-  const { SECTION_TEMPLATES } = require('../lib/section-templates');
 
   return (
     <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -28,7 +27,7 @@ export function SectionTemplatesModal({ isOpen, onClose }: SectionTemplatesModal
         </div>
 
         <div className="flex-1 overflow-y-auto p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-          {SECTION_TEMPLATES.map((tmpl: any) => (
+          {SECTION_TEMPLATES.map((tmpl) => (
             <div key={tmpl.id} className="border border-slate-200 rounded-2xl overflow-hidden hover:border-blue-500 hover:shadow-lg transition bg-white group" style={{ minHeight: '200px' }}>
               <div className="p-4 flex flex-col">
                 <div className="mb-3">

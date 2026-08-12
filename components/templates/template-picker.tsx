@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { createWebsiteFromTemplateAction } from "@/features/websites/actions";
 import type { TemplateListItem } from "@/features/templates/types";
 
@@ -60,10 +61,12 @@ export default function TemplatePicker({ templates }: TemplatePickerProps) {
           >
             {template.previewImageUrl && (
               <div className="mb-3 aspect-video overflow-hidden rounded-md bg-slate-100">
-                <img
+                <Image
                   src={template.previewImageUrl}
                   alt={template.name}
-                  className="h-full w-full object-cover"
+                  fill
+                  className="object-cover"
+                  unoptimized
                 />
               </div>
             )}

@@ -173,6 +173,7 @@ export const clientColumns: ColumnDef<UserWithProfile, unknown>[] = [
             <DropdownMenuItem
               variant="destructive"
               onSelect={() => {
+                // eslint-disable-next-line no-console
                 console.log("Delete client:", u.id);
               }}
             >

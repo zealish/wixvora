@@ -34,7 +34,7 @@ export function VerifyEmailForm() {
       } else {
         setError(result.error || "Failed to resend verification email");
       }
-    } catch (err) {
+    } catch (_err) {
       setError("An unexpected error occurred");
     } finally {
       setLoading(false);

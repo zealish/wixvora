@@ -1,10 +1,10 @@
 import type { ElementCategory } from './block-types';
-import { t } from './translations';
+import { t, type TranslationKey } from './translations';
 
 export interface CategoryDefinition {
   id: ElementCategory;
-  labelKey: string;
-  descriptionKey: string;
+  labelKey: TranslationKey;
+  descriptionKey: TranslationKey;
   icon: string;
   color: string;
 }
@@ -54,5 +54,5 @@ export const ELEMENT_CATEGORIES: CategoryDefinition[] = [
   },
 ];
 
-export const getCategoryLabel = (cat: CategoryDefinition) => t(cat.labelKey as any);
-export const getCategoryDescription = (cat: CategoryDefinition) => t(cat.descriptionKey as any);
+export const getCategoryLabel = (cat: CategoryDefinition): string => t(cat.labelKey);
+export const getCategoryDescription = (cat: CategoryDefinition): string => t(cat.descriptionKey);

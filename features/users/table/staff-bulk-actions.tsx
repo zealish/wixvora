@@ -11,6 +11,7 @@ export const staffBulkActions: DataTableBulkAction<UserWithProfile>[] = [
     icon: Trash2,
     variant: "destructive",
     onAction: async ({ rows }) => {
+      // eslint-disable-next-line no-console
       console.log(
         "Delete users:",
         rows.map((r) => r.id)

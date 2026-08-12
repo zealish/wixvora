@@ -161,7 +161,7 @@ export function ElementCatalogModal({ isOpen, onClose, onSelectElement }: Elemen
                       </div>
                       <div className="min-w-0">
                         <div className="text-sm font-bold text-slate-800 group-hover:text-blue-600">{preset.label}</div>
-                        <div className="text-[11px] text-slate-500">{t(preset.descriptionKey as any)}</div>
+                        <div className="text-[11px] text-slate-500">{t(preset.descriptionKey)}</div>
                       </div>
                     </button>
                   ))}

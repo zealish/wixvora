@@ -174,6 +174,7 @@ export const createStaffColumns = (
             <DropdownMenuItem
               variant="destructive"
               onClick={() => {
+                // eslint-disable-next-line no-console
                 console.log("Delete user:", u.id);
               }}
             >

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { motion } from "framer-motion";
 
 export function TemplateMockups() {
@@ -67,10 +68,12 @@ export function TemplateMockups() {
               </span>
             </div>
             <div className="h-24 w-28 flex-shrink-0 overflow-hidden rounded-lg bg-slate-100">
-              <img
+              <Image
                 src="https://images.unsplash.com/photo-1545241047-6083a3684587?auto=format&fit=crop&w=400&q=80"
                 alt="Plant"
-                className="h-full w-full object-cover"
+                fill
+                className="object-cover"
+                unoptimized
               />
             </div>
           </div>

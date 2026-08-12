@@ -3,15 +3,31 @@
 import { db } from "@/lib/db";
 import { websites } from "@/lib/db/schema";
 import { eq, and, isNull } from "drizzle-orm";
+import type { Section, Page, PageSettings } from "@/components/website-editor/lib/block-types";
 import type { Website, WebsiteListItem, WebsiteStatus } from "./types";
 
-// Helper function to parse sections with elements
-function parseSectionsArray(rawSections: any): any[] {
+type LegacyRow = typeof websites.$inferSelect & { sections?: unknown; pageSettings?: unknown };
+
+function parseSectionsArray(rawSections: unknown): Section[] {
   if (!Array.isArray(rawSections)) return [];
-  return rawSections.map((section: any) => ({
+  return rawSections.map((section: Record<string, unknown>) => ({
     ...section,
     elements: Array.isArray(section.elements) ? section.elements : [],
-  })) as any[];
+  })) as Section[];
+}
+
+function parsePageSettings(rawSettings: unknown): PageSettings {
+  if (typeof rawSettings === 'string') {
+    try {
+      return JSON.parse(rawSettings) as PageSettings;
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error("Failed to parse pageSettings:", e);
+    }
+  } else if (rawSettings && typeof rawSettings === 'object') {
+    return rawSettings as PageSettings;
+  }
+  return { title: '', bgColor: '#ffffff', fontFamily: 'font-sans' };
 }
 
 export async function getWebsitesByUserId(userId: string): Promise<WebsiteListItem[]> {
@@ -55,105 +71,85 @@ export async function getWebsiteById(id: string): Promise<Website | null> {
 
   if (!row) return null;
 
-  // Cast row to any to access all fields
-  const anyRow = row as any;
-  
-  // Parse JSON strings back to arrays with deep nesting
-  let parsedPages: any[] = [];
-  
-  if (typeof anyRow.pages === 'string') {
+  const legacyRow = row as LegacyRow;
+
+  let parsedPages: Page[] = [];
+
+  if (typeof legacyRow.pages === 'string') {
     try {
-      const rawParsed = JSON.parse(anyRow.pages);
-      // Deep parse all nested sections and pageSettings
-      parsedPages = Array.isArray(rawParsed) ? rawParsed.map((page: any) => ({
+      const rawParsed: unknown = JSON.parse(legacyRow.pages);
+      parsedPages = Array.isArray(rawParsed) ? rawParsed.map((page: Record<string, unknown>) => ({
         ...page,
         sections: parseSectionsArray(page.sections),
-        pageSettings: typeof page.pageSettings === 'string' 
-          ? JSON.parse(page.pageSettings) 
-          : page.pageSettings || {},
-      })) : [];
+        pageSettings: parsePageSettings(page.pageSettings),
+      })) as Page[] : [];
     } catch (e) {
+      // eslint-disable-next-line no-console
       console.error("Failed to parse pages:", e);
       parsedPages = [];
     }
-  } else if (Array.isArray(anyRow.pages)) {
-    parsedPages = anyRow.pages;
+  } else if (Array.isArray(legacyRow.pages)) {
+    parsedPages = legacyRow.pages as Page[];
   }
-  
-  // Ensure we have an array
+
   let allPages = Array.isArray(parsedPages) ? parsedPages : [];
-  
-  // If no pages exist but have homepage sections (legacy website), convert to multi-page format
+
   if (!Array.isArray(allPages) || allPages.length === 0) {
-    // Parse sections if needed
-    let homepageSections: any[] = [];
-    if (typeof anyRow.sections === 'string') {
+    let homepageSections: Section[] = [];
+    if (typeof legacyRow.sections === 'string') {
       try {
-        const parsed = JSON.parse(anyRow.sections);
+        const parsed: unknown = JSON.parse(legacyRow.sections);
         homepageSections = parseSectionsArray(parsed);
       } catch (e) {
+        // eslint-disable-next-line no-console
         console.error("Failed to parse sections:", e);
       }
     } else {
-      homepageSections = Array.isArray(anyRow.sections) ? anyRow.sections : [];
+      homepageSections = Array.isArray(legacyRow.sections) ? legacyRow.sections as Section[] : [];
     }
-    
+
     allPages = [{
       id: 'home',
-      title: anyRow.name,
-      slug: anyRow.slug,
+      title: legacyRow.name,
+      slug: legacyRow.slug,
       sections: homepageSections,
-      pageSettings: typeof anyRow.pageSettings === 'string' 
-        ? JSON.parse(anyRow.pageSettings)
-        : anyRow.pageSettings || {
-            title: anyRow.name,
-            bgColor: '#ffffff',
-            fontFamily: 'font-sans',
-          },
+      pageSettings: parsePageSettings(legacyRow.pageSettings),
       isHomePage: true,
       sortOrder: 0,
-    }];
+    }] as Page[];
   }
-  
-  
-  const homepage = allPages.find((p: any) => p.isHomePage) || allPages[0];
-  
+
+  const homepage = allPages.find((p: Page) => p.isHomePage) || allPages[0];
+
   const homepageSections = homepage?.sections || [];
   const homepagePageSettings = homepage?.pageSettings;
-  
-  const homepageSettings = homepagePageSettings || typeof anyRow.pageSettings === 'string'
-    ? JSON.parse(anyRow.pageSettings)
-    : anyRow.pageSettings || {
-        title: anyRow.name,
-        bgColor: '#ffffff',
-        fontFamily: 'font-sans',
-      };
 
-  // For backwards compatibility with old components that expect flat sections
-  // But also provide full pages array for multi-page editor
+  const homepageSettings = homepagePageSettings
+    || parsePageSettings(legacyRow.pageSettings);
+
   return {
-    id: anyRow.id,
-    name: anyRow.name,
-    slug: anyRow.slug,
-    description: anyRow.description,
-    ownerId: anyRow.ownerId,
-    templateId: anyRow.templateId,
-    status: anyRow.status as WebsiteStatus,
-    isPublished: anyRow.isPublished,
-    publishedAt: anyRow.publishedAt,
+    id: legacyRow.id,
+    name: legacyRow.name,
+    slug: legacyRow.slug,
+    description: legacyRow.description,
+    ownerId: legacyRow.ownerId,
+    templateId: legacyRow.templateId,
+    status: legacyRow.status as WebsiteStatus,
+    isPublished: legacyRow.isPublished,
+    publishedAt: legacyRow.publishedAt,
     sections: homepageSections,
     pageSettings: homepageSettings,
-    pages: allPages.length > 0 ? allPages : [{ // Include all pages data too
+    pages: allPages.length > 0 ? allPages : [{
       id: 'home',
-      title: anyRow.name,
-      slug: anyRow.slug,
+      title: legacyRow.name,
+      slug: legacyRow.slug,
       sections: Array.isArray(homepageSections) ? homepageSections : [],
       pageSettings: homepageSettings,
       isHomePage: true,
       sortOrder: 0,
     }],
-    createdAt: anyRow.createdAt,
-    updatedAt: anyRow.updatedAt,
+    createdAt: legacyRow.createdAt,
+    updatedAt: legacyRow.updatedAt,
   };
 }
 

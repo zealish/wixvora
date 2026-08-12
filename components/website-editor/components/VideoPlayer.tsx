@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { Element } from '../lib/block-types';
 import { parseVideoUrl, getAutoThumbnail } from '../lib/video-url-parser';
@@ -183,11 +184,12 @@ export function VideoPlayer({ element }: VideoPlayerProps) {
       >
         {!started && (
           <>
-            <img
+            <Image
               src={thumbnailSrc}
               alt={element.name || 'Video thumbnail'}
-              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-              onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+              fill
+              style={{ objectFit: 'cover' }}
+              unoptimized
             />
             <div className="absolute inset-0" style={{ backgroundColor: overlayColor }} />
             <button

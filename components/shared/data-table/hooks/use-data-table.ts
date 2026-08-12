@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
 import {
   useReactTable,
   getCoreRowModel,
@@ -36,19 +36,15 @@ export function useDataTable<TData>(props: DataTableProps<TData>) {
     exportOptions,
   } = props;
 
-  // Detect controlled (server-side) mode
   const isControlledPagination =
     controlledPagination !== undefined && onPaginationChange !== undefined;
   const isControlledSorting = onSortingChange !== undefined;
   const isControlledFiltering = onColumnFiltersChange !== undefined;
 
-  // Persistence
   const { savedState, saveState } = useTablePersistence(tableId);
 
-  // Global search via TanStack's filter system
   const globalFilterFn = useSearch<TData>(search);
 
-  // Internal pagination state for client-side mode
   const [internalPagination, setInternalPagination] = useState<PaginationState>(
     {
       pageIndex: 0,
@@ -73,31 +69,6 @@ export function useDataTable<TData>(props: DataTableProps<TData>) {
       }
     : setInternalPagination;
 
-  // Wrap controlled sorting handler
-  const handleSortingChange = isControlledSorting
-    ? (updaterOrValue: unknown) => {
-        const currentSorting = table?.getState().sorting ?? [];
-        const newValue =
-          typeof updaterOrValue === "function"
-            ? (updaterOrValue as (old: unknown) => unknown)(currentSorting)
-            : updaterOrValue;
-        onSortingChange!(newValue as typeof currentSorting);
-      }
-    : undefined;
-
-  // Wrap controlled filters handler
-  const handleColumnFiltersChange = isControlledFiltering
-    ? (updaterOrValue: unknown) => {
-        const currentFilters = table?.getState().columnFilters ?? [];
-        const newValue =
-          typeof updaterOrValue === "function"
-            ? (updaterOrValue as (old: unknown) => unknown)(currentFilters)
-            : updaterOrValue;
-        onColumnFiltersChange!(newValue as typeof currentFilters);
-      }
-    : undefined;
-
-  // Merge initial state
   const mergedInitialState = useMemo(
     () => ({
       ...savedState,
@@ -106,13 +77,11 @@ export function useDataTable<TData>(props: DataTableProps<TData>) {
     [savedState, initialStateProp]
   );
 
-  // Row ID function
   const getRowId = rowId
     ? (row: TData, _index: number, parent?: { id: string }) =>
         parent ? `${parent.id}-${rowId(row)}` : rowId(row)
     : undefined;
 
-  // Initialize TanStack Table
   const table = useReactTable({
     data,
     columns,
@@ -124,10 +93,6 @@ export function useDataTable<TData>(props: DataTableProps<TData>) {
     },
     initialState: mergedInitialState,
     onPaginationChange: handlePaginationChange,
-    ...(handleSortingChange && { onSortingChange: handleSortingChange }),
-    ...(handleColumnFiltersChange && {
-      onColumnFiltersChange: handleColumnFiltersChange,
-    }),
     ...(onGlobalFilterChange && { onGlobalFilterChange }),
     ...(globalFilterFn && { globalFilterFn }),
     ...(getRowId && { getRowId }),
@@ -146,7 +111,58 @@ export function useDataTable<TData>(props: DataTableProps<TData>) {
     enableRowSelection: enabledFeatures?.rowSelection ?? false,
   });
 
-  // Watch specific state slices for persistence (exclude columnVisibility to avoid hydration issues)
+  const tableRef = useRef(table);
+  tableRef.current = table;
+
+  const handleSortingChange = useMemo(
+    () =>
+      isControlledSorting
+        ? (updaterOrValue: unknown) => {
+            const currentSorting = tableRef.current?.getState().sorting ?? [];
+            const newValue =
+              typeof updaterOrValue === "function"
+                ? (updaterOrValue as (old: unknown) => unknown)(currentSorting)
+                : updaterOrValue;
+            onSortingChange!(newValue as typeof currentSorting);
+          }
+        : undefined,
+    [isControlledSorting, onSortingChange]
+  );
+
+  const handleColumnFiltersChange = useMemo(
+    () =>
+      isControlledFiltering
+        ? (updaterOrValue: unknown) => {
+            const currentFilters =
+              tableRef.current?.getState().columnFilters ?? [];
+            const newValue =
+              typeof updaterOrValue === "function"
+                ? (updaterOrValue as (old: unknown) => unknown)(currentFilters)
+                : updaterOrValue;
+            onColumnFiltersChange!(newValue as typeof currentFilters);
+          }
+        : undefined,
+    [isControlledFiltering, onColumnFiltersChange]
+  );
+
+  useEffect(() => {
+    if (handleSortingChange) {
+      table.setOptions((prev) => ({
+        ...prev,
+        onSortingChange: handleSortingChange,
+      }));
+    }
+  }, [table, handleSortingChange]);
+
+  useEffect(() => {
+    if (handleColumnFiltersChange) {
+      table.setOptions((prev) => ({
+        ...prev,
+        onColumnFiltersChange: handleColumnFiltersChange,
+      }));
+    }
+  }, [table, handleColumnFiltersChange]);
+
   const { sorting } = table.getState();
 
   useEffect(() => {
@@ -156,7 +172,6 @@ export function useDataTable<TData>(props: DataTableProps<TData>) {
     });
   }, [sorting, pagination.pageSize, saveState]);
 
-  // Expose minimal instance
   const instance: DataTableInstance<TData> = useMemo(
     () => ({
       getSelectedRows: () =>
@@ -166,7 +181,6 @@ export function useDataTable<TData>(props: DataTableProps<TData>) {
     [table]
   );
 
-  // Export
   const { exportCSV, exportExcel, prepareExportData } = useExport<TData>({
     exportOptions: exportOptions ?? { csv: false, excel: false },
     columns,

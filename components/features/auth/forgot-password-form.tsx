@@ -36,7 +36,7 @@ export function ForgotPasswordForm() {
           description: result.error || "Failed to send reset email",
         });
       }
-    } catch (error) {
+    } catch (_error) {
       toast.add({
         type: "error",
         title: "Error",

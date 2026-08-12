@@ -1,13 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import {
   Monitor,
   Smartphone,
   Plus,
   FileText,
   Wand2,
-  Image,
+  ImageIcon,
   Sparkles,
   Settings,
 } from "lucide-react";
@@ -104,7 +105,7 @@ export function BuilderPreview({}: BuilderPreviewProps) {
             { icon: Plus, label: "Add", iconClass: "text-slate-500" },
             { icon: FileText, label: "Pages", iconClass: "text-slate-500" },
             { icon: Wand2, label: "Design", iconClass: "text-slate-500" },
-            { icon: Image, label: "Media", iconClass: "text-slate-500" },
+            { icon: ImageIcon, label: "Media", iconClass: "text-slate-500" },
             {
               icon: Sparkles,
               label: "AI Tools",
@@ -167,15 +168,12 @@ export function BuilderPreview({}: BuilderPreviewProps) {
             {/* Image Card */}
             <div className="md:col-span-5">
               <div className="group relative h-44 w-full overflow-hidden rounded-2xl shadow-lg sm:h-52">
-                <img
+                <Image
                   src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80"
                   alt="Mountain Visual"
-                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.src =
-                      "https://placehold.co/400x500/4f46e5/ffffff?text=AI+Generated+Visual";
-                  }}
+                  fill
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  unoptimized
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-indigo-950/80 via-indigo-900/30 to-transparent" />
                 <div className="absolute right-3 bottom-3 left-3 text-white">

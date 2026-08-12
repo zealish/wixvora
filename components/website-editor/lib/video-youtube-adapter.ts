@@ -5,12 +5,12 @@ let ytApiReady: Promise<void> | null = null;
 
 function loadYT(): Promise<void> {
   if (ytApiReady) return ytApiReady;
-  if ((window as any).YT?.Player) {
+  if (window.YT?.Player) {
     ytApiReady = Promise.resolve();
     return ytApiReady;
   }
   ytApiReady = new Promise((resolve) => {
-    (window as any).onYouTubeIframeAPIReady = () => resolve();
+    window.onYouTubeIframeAPIReady = () => resolve();
     const script = document.createElement('script');
     script.src = YT_API_SRC;
     document.head.appendChild(script);
@@ -19,7 +19,7 @@ function loadYT(): Promise<void> {
 }
 
 export class YouTubePlayerAdapter implements VideoPlayerAPI {
-  private player: any = null;
+  private player: YouTubePlayer | null = null;
   private container: HTMLElement;
   private videoId: string;
   private options: PlayerOptions;
@@ -45,20 +45,20 @@ export class YouTubePlayerAdapter implements VideoPlayerAPI {
     this.container.appendChild(div);
 
     return new Promise((resolve) => {
-      this.player = new (window as any).YT.Player(playerId, {
+      this.player = new window.YT.Player(playerId, {
         videoId: this.videoId,
         playerVars: { controls: 0, modestbranding: 1, rel: 0, playsinline: 1, iv_load_policy: 3, cc_load_policy: 0, showinfo: 0, disablekb: 1, fs: 0 },
         events: {
           onReady: () => {
-            this._duration = this.player.getDuration() || 0;
+            const p = this.player!;
+            this._duration = p.getDuration() || 0;
             this.ready = true;
-            if (this.options.muted) this.player.mute();
+            if (this.options.muted) p.mute();
             if (this.options.autoplay) this.play();
             this.startPolling();
             resolve();
           },
-          onStateChange: (e: any) => {
-            const YT = (window as any).YT;
+          onStateChange: (e: YouTubePlayerEvent) => {
             const stateMap: Record<number, 'playing' | 'paused' | 'ended' | 'buffering'> = {
               [YT.PlayerState.PLAYING]: 'playing',
               [YT.PlayerState.PAUSED]: 'paused',

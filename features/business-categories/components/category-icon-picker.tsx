@@ -51,8 +51,9 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import type { LucideIcon } from "lucide-react";
 
-const POPULAR_ICONS = [
+const ICON_MAP: Record<string, LucideIcon> = {
   Store,
   ShoppingCart,
   Package,
@@ -88,9 +89,49 @@ const POPULAR_ICONS = [
   MapPin,
   Calendar,
   Clock,
+  Check,
+  XIcon,
+};
+
+const POPULAR_ICON_NAMES = [
+  "Store",
+  "ShoppingCart",
+  "Package",
+  "Utensils",
+  "Coffee",
+  "Briefcase",
+  "Wrench",
+  "Car",
+  "Home",
+  "Heart",
+  "BookOpen",
+  "Laptop",
+  "Palette",
+  "Music",
+  "Camera",
+  "Star",
+  "Zap",
+  "Globe",
+  "Shield",
+  "Users",
+  "FileText",
+  "Settings",
+  "LayoutDashboard",
+  "FolderTree",
+  "Tag",
+  "Gift",
+  "Truck",
+  "CreditCard",
+  "BarChart3",
+  "MessageSquare",
+  "Phone",
+  "Mail",
+  "MapPin",
+  "Calendar",
+  "Clock",
 ];
 
-const ALL_ICONS = [...POPULAR_ICONS, Check, XIcon];
+const ALL_ICON_NAMES = Object.keys(ICON_MAP);
 
 interface CategoryIconPickerProps {
   value: string | null;
@@ -104,15 +145,13 @@ export function CategoryIconPicker({
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
 
-  const SelectedIcon = value
-    ? ALL_ICONS.find((icon) => icon.displayName === value)
-    : null;
-
-  const filteredIcons = search
-    ? ALL_ICONS.filter((icon) =>
-        icon.displayName?.toLowerCase().includes(search.toLowerCase())
+  const filteredIconNames = search
+    ? ALL_ICON_NAMES.filter((name) =>
+        name.toLowerCase().includes(search.toLowerCase())
       )
-    : POPULAR_ICONS;
+    : POPULAR_ICON_NAMES;
+
+  const SelectedIcon = value ? ICON_MAP[value] : null;
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -149,22 +188,26 @@ export function CategoryIconPicker({
             />
           </div>
           <div className="grid max-h-80 grid-cols-8 gap-2 overflow-y-auto">
-            {filteredIcons.map((Icon) => (
-              <Button
-                key={Icon.displayName}
-                variant={value === Icon.displayName ? "default" : "outline"}
-                size="icon"
-                className="h-10 w-10"
-                type="button"
-                onClick={() => {
-                  onChange(Icon.displayName ?? null);
-                  setOpen(false);
-                  setSearch("");
-                }}
-              >
-                <Icon className="h-4 w-4" />
-              </Button>
-            ))}
+            {filteredIconNames.map((iconName) => {
+              const Icon = ICON_MAP[iconName];
+              if (!Icon) return null;
+              return (
+                <Button
+                  key={iconName}
+                  variant={value === iconName ? "default" : "outline"}
+                  size="icon"
+                  className="h-10 w-10"
+                  type="button"
+                  onClick={() => {
+                    onChange(iconName);
+                    setOpen(false);
+                    setSearch("");
+                  }}
+                >
+                  <Icon className="h-4 w-4" />
+                </Button>
+              );
+            })}
           </div>
           {value && (
             <Button

@@ -22,9 +22,11 @@ export async function sendEmail({ to, subject, html, text }: SendEmailOptions) {
 
   try {
     const info = await transporter.sendMail(mailOptions);
+    // eslint-disable-next-line no-console
     console.log("Email sent:", info.messageId);
     return { success: true, messageId: info.messageId };
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error("Error sending email:", error);
     return { success: false, error };
   }

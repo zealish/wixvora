@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import type { Element } from "../lib/block-types";
 import { parseVideoUrl } from "../lib/video-url-parser";
 
@@ -69,11 +70,14 @@ export function VideoInspector({
         />
         {element.thumbnailUrl && (
           <div className="mt-1 rounded-lg overflow-hidden border border-slate-200">
-            <img
+            <Image
               src={element.thumbnailUrl}
               alt="Thumbnail preview"
+              width={200}
+              height={60}
               className="w-full h-auto object-cover"
               style={{ maxHeight: '60px' }}
+              unoptimized
             />
           </div>
         )}

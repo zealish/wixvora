@@ -1,12 +1,13 @@
 import type { ElementType, ViewportLayout, ElementCategory } from './block-types';
+import type { TranslationKey } from './translations';
 
 export interface ElementPreset {
   type: ElementType;
   category: ElementCategory;
   label: string;
   icon: string;
-  labelKey: string;
-  descriptionKey: string;
+  labelKey: TranslationKey;
+  descriptionKey: TranslationKey;
   defaultProps: Record<string, unknown>;
   defaultLayouts: {
     desktop: ViewportLayout;

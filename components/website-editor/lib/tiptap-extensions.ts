@@ -1,3 +1,4 @@
+import type { AnyExtension } from "@tiptap/core";
 import StarterKit from "@tiptap/starter-kit";
 import Underline from "@tiptap/extension-underline";
 import Link from "@tiptap/extension-link";
@@ -23,7 +24,7 @@ export const FONT_SIZES = [
 ];
 
 export function getExtensions(mode: "inline" | "block" = "block") {
-  const extensions: any[] = [
+  const extensions: AnyExtension[] = [
     TextStyle,
     Color,
     Highlight.configure({ multicolor: true }),

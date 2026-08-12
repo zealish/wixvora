@@ -78,7 +78,7 @@ export function InspectorToolbar({
     } else if (value === "codeBlock") {
       chain.toggleCodeBlock().run();
     } else {
-      chain.toggleHeading({ level: parseInt(value.replace("h", "")) as any }).run();
+      chain.toggleHeading({ level: parseInt(value.replace("h", "")) as 1 | 2 | 3 | 4 | 5 | 6 }).run();
     }
   };
 

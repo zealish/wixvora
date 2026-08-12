@@ -58,6 +58,7 @@ export function CategoryExportMenu({
         } exported as ${format.toUpperCase()}.`,
       });
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error("Export failed:", error);
       toast.add({
         type: "error",

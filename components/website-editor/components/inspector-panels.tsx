@@ -5,6 +5,7 @@ import { t } from "../lib/translations";
 import { useEditor } from "../editor-provider";
 import { getLayout } from "../lib/viewport-utils";
 import { findElementById } from "./element-renderer";
+import type { Section } from "../lib/block-types";
 import { RichTextEditor } from "../rich-text/RichTextEditor";
 import { ButtonInspector } from "../inspector/ButtonInspector";
 import { BadgeInspector } from "../inspector/BadgeInspector";
@@ -262,7 +263,7 @@ export function InspectorPanels() {
                       type="number"
                       value={selectedSection.padding?.top || 0}
                       onChange={(e) => updateSectionProps(selectedSection.id, {
-                        padding: { ...selectedSection.padding, top: parseInt(e.target.value) || 0 } as any
+                        padding: { ...selectedSection.padding, top: parseInt(e.target.value) || 0 } as NonNullable<Section['padding']>
                       })}
                       className="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 text-slate-800 outline-none focus:border-blue-500 font-mono text-[11px]"
                     />
@@ -273,7 +274,7 @@ export function InspectorPanels() {
                       type="number"
                       value={selectedSection.padding?.bottom || 0}
                       onChange={(e) => updateSectionProps(selectedSection.id, {
-                        padding: { ...selectedSection.padding, bottom: parseInt(e.target.value) || 0 } as any
+                        padding: { ...selectedSection.padding, bottom: parseInt(e.target.value) || 0 } as NonNullable<Section['padding']>
                       })}
                       className="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 text-slate-800 outline-none focus:border-blue-500 font-mono text-[11px]"
                     />
@@ -284,7 +285,7 @@ export function InspectorPanels() {
                       type="number"
                       value={selectedSection.padding?.left || 0}
                       onChange={(e) => updateSectionProps(selectedSection.id, {
-                        padding: { ...selectedSection.padding, left: parseInt(e.target.value) || 0 } as any
+                        padding: { ...selectedSection.padding, left: parseInt(e.target.value) || 0 } as NonNullable<Section['padding']>
                       })}
                       className="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 text-slate-800 outline-none focus:border-blue-500 font-mono text-[11px]"
                     />
@@ -295,7 +296,7 @@ export function InspectorPanels() {
                       type="number"
                       value={selectedSection.padding?.right || 0}
                       onChange={(e) => updateSectionProps(selectedSection.id, {
-                        padding: { ...selectedSection.padding, right: parseInt(e.target.value) || 0 } as any
+                        padding: { ...selectedSection.padding, right: parseInt(e.target.value) || 0 } as NonNullable<Section['padding']>
                       })}
                       className="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 text-slate-800 outline-none focus:border-blue-500 font-mono text-[11px]"
                     />
@@ -382,7 +383,7 @@ export function InspectorPanels() {
                       <label className="text-[10px] font-bold text-slate-500">Image Size</label>
                       <select
                         value={selectedSection.bgImageSize || 'cover'}
-                        onChange={(e) => updateSectionProps(selectedSection.id, { bgImageSize: e.target.value as any })}
+                        onChange={(e) => updateSectionProps(selectedSection.id, { bgImageSize: e.target.value as NonNullable<Section['bgImageSize']> })}
                         className="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1.5 text-slate-800 outline-none focus:border-blue-500 text-[11px]"
                       >
                         <option value="cover">Cover</option>
@@ -394,7 +395,7 @@ export function InspectorPanels() {
                       <label className="text-[10px] font-bold text-slate-500">Image Repeat</label>
                       <select
                         value={selectedSection.bgImageRepeat || 'no-repeat'}
-                        onChange={(e) => updateSectionProps(selectedSection.id, { bgImageRepeat: e.target.value as any })}
+                        onChange={(e) => updateSectionProps(selectedSection.id, { bgImageRepeat: e.target.value as NonNullable<Section['bgImageRepeat']> })}
                         className="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1.5 text-slate-800 outline-none focus:border-blue-500 text-[11px]"
                       >
                         <option value="no-repeat">No Repeat</option>

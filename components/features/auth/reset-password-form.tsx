@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { resetPassword } from "@/features/auth/actions";
 import { toast } from "@/components/ui/toast";
@@ -14,41 +14,36 @@ import { Lock, AlertCircle } from "lucide-react";
 export function ResetPasswordForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [token, setToken] = useState<string | null>(null);
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [formError, setFormError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const tokenParam = searchParams.get("token");
+  const token = searchParams.get("token") || null;
+
+  const paramError = (() => {
     const errorParam = searchParams.get("error");
-
-    if (errorParam === "INVALID_TOKEN") {
-      setError("Invalid or expired reset link");
-    } else if (tokenParam) {
-      setToken(tokenParam);
-    } else {
-      setError("No reset token provided");
-    }
-  }, [searchParams]);
+    if (errorParam === "INVALID_TOKEN") return "Invalid or expired reset link";
+    if (!searchParams.get("token")) return "No reset token provided";
+    return null;
+  })();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setError(null);
+    setFormError(null);
 
     if (newPassword !== confirmPassword) {
-      setError("Passwords do not match");
+      setFormError("Passwords do not match");
       return;
     }
 
     if (newPassword.length < 8) {
-      setError("Password must be at least 8 characters");
+      setFormError("Password must be at least 8 characters");
       return;
     }
 
     if (!token) {
-      setError("No reset token found");
+      setFormError("No reset token found");
       return;
     }
 
@@ -65,16 +60,16 @@ export function ResetPasswordForm() {
         });
         router.push("/login");
       } else {
-        setError(result.error || "Failed to reset password");
+        setFormError(result.error || "Failed to reset password");
       }
-    } catch (err) {
-      setError("An unexpected error occurred");
+    } catch (_err) {
+      setFormError("An unexpected error occurred");
     } finally {
       setIsLoading(false);
     }
   };
 
-  if (error && !token) {
+  if (paramError) {
     return (
       <div className="w-full space-y-6">
         <div className="space-y-2 text-center">
@@ -92,7 +87,7 @@ export function ResetPasswordForm() {
         <Card className="border-slate-200/60 bg-white/90 shadow-xl backdrop-blur-sm">
           <CardContent className="space-y-5 pt-8">
             <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm font-medium text-red-600">
-              {error}
+              {paramError}
             </div>
             <div className="flex flex-col space-y-3">
               <Link href="/forgot-password">
@@ -133,9 +128,9 @@ export function ResetPasswordForm() {
       <Card className="border-slate-200/60 bg-white/90 shadow-xl backdrop-blur-sm">
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-5 pt-8">
-            {error && (
+            {formError && (
               <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm font-medium text-red-600">
-                {error}
+                {formError}
               </div>
             )}
             <div className="space-y-2.5">

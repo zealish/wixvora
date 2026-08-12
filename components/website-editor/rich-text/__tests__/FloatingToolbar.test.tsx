@@ -5,6 +5,9 @@
 
 export {};
 
+import * as toolbarModule from "../FloatingToolbar";
+import * as fontSizePickerModule from "../FontSizePicker";
+
 function assert(condition: boolean, message: string): void {
   if (!condition) {
     throw new Error(`Assertion failed: ${message}`);
@@ -17,8 +20,6 @@ console.log("Running FloatingToolbar Integration Tests...\n");
 
 try {
   console.log("Testing FloatingToolbar structure...");
-
-  const toolbarModule = require("../FloatingToolbar");
   
   assert(
     toolbarModule.FloatingToolbar !== undefined,
@@ -35,8 +36,6 @@ try {
   console.log("✓ FloatingToolbar structure tests passed\n");
 
   console.log("Testing FontSizePicker import...");
-
-  const fontSizePickerModule = require("../FontSizePicker");
   
   assert(
     fontSizePickerModule.FontSizePicker !== undefined,

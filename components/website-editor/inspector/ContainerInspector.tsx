@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import type { Element } from "../lib/block-types";
+import type { Element, ContainerLayout } from "../lib/block-types";
 import { useEditor } from "../editor-provider";
 import { Icon } from "../ui/icon-library";
 import { t } from "../lib/translations";
@@ -22,8 +22,8 @@ export function ContainerInspector({
   const [addChildOpen, setAddChildOpen] = useState(false);
   const cl = element.containerLayout;
 
-  const updateContainerLayout = (layoutProps: Partial<typeof cl>) => {
-    update({ containerLayout: { ...cl, ...layoutProps } as any });
+  const updateContainerLayout = (layoutProps: Partial<ContainerLayout>) => {
+    update({ containerLayout: { ...cl, ...layoutProps } as ContainerLayout });
   };
 
   const nonContainerPresets = ELEMENT_PRESETS.filter(
@@ -82,7 +82,7 @@ export function ContainerInspector({
                 <label className="text-[9px] text-slate-400">{t('inspector.container.align_items')}</label>
                 <select
                   value={cl?.alignItems || 'start'}
-                  onChange={(e) => updateContainerLayout({ alignItems: e.target.value as any })}
+                  onChange={(e) => updateContainerLayout({ alignItems: e.target.value as 'start' | 'center' | 'end' | 'stretch' })}
                   className="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1.5 text-slate-800 outline-none focus:border-blue-500 text-[11px]"
                 >
                   {['start', 'center', 'end', 'stretch'].map(v => (
@@ -95,7 +95,7 @@ export function ContainerInspector({
                 <label className="text-[9px] text-slate-400">{t('inspector.container.justify_content')}</label>
                 <select
                   value={cl?.justifyContent || 'start'}
-                  onChange={(e) => updateContainerLayout({ justifyContent: e.target.value as any })}
+                  onChange={(e) => updateContainerLayout({ justifyContent: e.target.value as 'start' | 'center' | 'end' | 'space-between' | 'space-around' })}
                   className="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1.5 text-slate-800 outline-none focus:border-blue-500 text-[11px]"
                 >
                   {['start', 'center', 'end', 'space-between', 'space-around'].map(v => (

@@ -26,6 +26,7 @@ export default async function PreviewPage({
     template = await getTemplateById(id);
   } catch (error: unknown) {
     if (process.env.NODE_ENV === 'development') {
+      // eslint-disable-next-line no-console
       console.warn('Failed to fetch template:', error);
     }
   }
@@ -35,6 +36,7 @@ export default async function PreviewPage({
       website = await getWebsiteById(id);
     } catch (error: unknown) {
       if (process.env.NODE_ENV === 'development') {
+        // eslint-disable-next-line no-console
         console.warn('Failed to fetch website:', error);
       }
     }

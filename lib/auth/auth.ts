@@ -66,13 +66,13 @@ export const auth = betterAuth({
     hooks: {
       after: [
         {
-          matcher: (context: any) =>
+          matcher: (context: { path?: string }) =>
             context.path === "/sign-in/email" ||
             context.path === "/verify-email",
-          handler: async (context: any) => {
-            if (context.body && "user" in context.body) {
-              const userData = context.body.user as { accountType?: string };
-              const sessionData = context.body.session as {
+          handler: async (context: { body?: unknown; request?: Request }) => {
+            if (context.body && typeof context.body === "object" && context.body !== null && "user" in context.body && "session" in context.body) {
+              const userData = (context.body as { user?: unknown }).user as { accountType?: string };
+              const sessionData = (context.body as { session?: unknown }).session as {
                 token: string;
                 expiresAt: Date;
               };
@@ -88,7 +88,7 @@ export const auth = betterAuth({
                     ? await context.request
                         .clone()
                         .json()
-                        .then((body: any) => body.rememberMe !== false)
+                        .then((body: { rememberMe?: boolean }) => body.rememberMe !== false)
                         .catch(() => true)
                     : true;
 

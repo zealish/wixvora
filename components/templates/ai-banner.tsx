@@ -19,7 +19,7 @@ export function AiBanner() {
             </div>
             <div>
               <h3 className="text-lg font-bold text-slate-900 sm:text-xl">
-                Can't find the perfect template?
+                Can&apos;t find the perfect template?
               </h3>
               <p className="mt-1 text-sm text-slate-600">
                 Let AI help you create a custom template that fits your needs

@@ -1,8 +1,8 @@
 export interface BlockCatalogItem {
   type: BlockType;
   label: string;
-  icon: any;
-  defaultProps: any;
+  icon: string;
+  defaultProps: Record<string, unknown>;
 }
 
 export interface NavLink {

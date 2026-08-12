@@ -6,6 +6,7 @@ import { authorize } from "@/lib/auth/authorize";
 import { PERMISSIONS } from "@/lib/auth/permissions";
 import { updateTemplateSchema } from "./validation";
 import type { TemplateActionResult, TemplateStatus } from "./types";
+import type { Section, PageSettings, Page } from "@/components/website-editor/lib/block-types";
 import {
   updateTemplate,
   softDeleteTemplate,
@@ -128,7 +129,7 @@ export async function setTemplateFeaturedAction(
 
 export async function updateTemplateSectionsAction(
   id: string,
-  data: { sections?: any[]; pageSettings?: any; pages?: any[] }
+  data: { sections?: Section[]; pageSettings?: PageSettings; pages?: Page[] }
 ): Promise<TemplateActionResult> {
   try {
     const session = await getSession();
@@ -139,7 +140,7 @@ export async function updateTemplateSectionsAction(
     await assertCanModifyTemplate(id, session.user.id, "update");
 
     const { sections, pageSettings, pages } = data;
-    const updateData: any = {};
+    const updateData: Record<string, unknown> = {};
     
     // Handle both pages format and legacy sections format
     if (pages && pages.length > 0) {

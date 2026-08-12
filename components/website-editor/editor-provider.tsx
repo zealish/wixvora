@@ -1,7 +1,7 @@
 "use client";
 
-import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from "react";
-import type { Element, Section, Viewport, PageSettings, Page } from "./lib/block-types";
+import { createContext, useContext, useState, useCallback, useEffect, useMemo, type ReactNode } from "react";
+import type { Element, Section, Viewport, PageSettings, Page, ViewportLayout } from "./lib/block-types";
 import { SECTION_TEMPLATES } from "./lib/section-templates";
 import { ELEMENT_PRESETS } from "./lib/element-presets";
 import { getLayout, VIEWPORT_WIDTHS } from "./lib/viewport-utils";
@@ -56,7 +56,7 @@ interface EditorContextValue {
   updateChildElementProps: (sectionId: string, containerId: string, elementId: string, props: Partial<Element>) => void;
   duplicateElement: (sectionId: string, elementId: string) => void;
   deleteElement: (sectionId: string, elementId: string) => void;
-  updateElementViewportLayout: (sectionId: string, elementId: string, vp: Viewport, layoutProps: Partial<any>) => void;
+  updateElementViewportLayout: (sectionId: string, elementId: string, vp: Viewport, layoutProps: Partial<ViewportLayout>) => void;
   updateElementProps: (sectionId: string, elementId: string, newProps: Partial<Element>) => void;
   updateSectionProps: (sectionId: string, newProps: Partial<Section>) => void;
   updateSectionHeight: (sectionId: string, vp: Viewport, height: number) => void;
@@ -163,8 +163,8 @@ export function EditorProvider({
   const [pageSettings, setPageSettings] = useState<PageSettings>(initialPageSettings || DEFAULT_PAGE_SETTINGS);
   const [clipboard, setClipboard] = useState<{ type: 'element'; data: Element } | { type: 'section'; data: Section } | null>(null);
 
-  const currentPage = pages.find(p => p.id === currentPageId);
-  const currentSections = currentPage?.sections || [];
+  const currentPage = useMemo(() => pages.find(p => p.id === currentPageId), [pages, currentPageId]);
+  const currentSections = useMemo(() => currentPage?.sections ?? [], [currentPage?.sections]);
 
   const [history, setHistory] = useState<Page[][]>([resolvedInitialPages]);
   const [historyIndex, setHistoryIndex] = useState(0);
@@ -411,7 +411,7 @@ export function EditorProvider({
           ...p,
           sections: p.sections.map(sec => {
             if (sec.id === sectionId) {
-              const { parentId, children, ...rest } = movedChild!;
+              const { parentId: _parentId, children: _children, ...rest } = movedChild!;
               const topLevel: Element = rest as Element;
               return { ...sec, elements: [...sec.elements, topLevel] };
             }
@@ -513,7 +513,7 @@ export function EditorProvider({
           copy.id = createUniqueId('el');
           copy.name = (copy.name || 'Element') + ' (Copy)';
           if (copy.children) {
-            copy.children = copy.children.map((c: any) => ({ ...c, id: createUniqueId('el'), parentId: copy.id }));
+            copy.children = copy.children.map((c: Element) => ({ ...c, id: createUniqueId('el'), parentId: copy.id }));
           }
           (['desktop', 'tablet', 'mobile'] as Viewport[]).forEach(vp => {
             const l = getLayout(copy, vp);
@@ -573,26 +573,21 @@ export function EditorProvider({
 
   const pasteElement = useCallback((targetSectionId?: string) => {
     if (!clipboard || clipboard.type !== 'element') return;
-    const destId = targetSectionId || selectedSectionId;
-    if (!destId) {
-      if (currentSections.length > 0 && currentSections[0]) {
-        pasteElement(currentSections[0].id);
-      }
-      return;
-    }
+    const destId = targetSectionId || selectedSectionId || (currentSections.length > 0 ? currentSections[0]?.id : null);
+    if (!destId) return;
 
     const copy = JSON.parse(JSON.stringify(clipboard.data));
     copy.id = createUniqueId('el');
     copy.name = (copy.name || 'Element') + ' (Copy)';
     if (copy.children) {
-      copy.children = copy.children.map((c: any) => ({ ...c, id: createUniqueId('el') }));
+      copy.children = copy.children.map((c: Element) => ({ ...c, id: createUniqueId('el') }));
     }
 
     (['desktop', 'tablet', 'mobile'] as Viewport[]).forEach(vp => {
       const l = getLayout(copy, vp);
       const vpWidth = VIEWPORT_WIDTHS[vp];
       let newX = l.x + 20;
-      let newY = l.y + 20;
+      const newY = l.y + 20;
       if (newX + l.width > vpWidth - 10) {
         newX = Math.max(10, vpWidth - l.width - 10);
       }
@@ -610,7 +605,7 @@ export function EditorProvider({
     setSelectedSectionId(destId);
     setSelectedElementId(copy.id);
     showToast(t('toast.element_pasted'));
-  }, [clipboard, selectedSectionId, currentSections, updateCurrentPageSections, setSelectedSectionId, setSelectedElementId, showToast]);
+  }, [clipboard, selectedSectionId, currentSections, updateCurrentPageSections, showToast]);
 
   const pasteSection = useCallback(() => {
     if (!clipboard || clipboard.type !== 'section') return;
@@ -667,7 +662,7 @@ export function EditorProvider({
     showToast(t('toast.deleted'));
   }, [currentPageId, showToast]);
 
-  const updateElementViewportLayout = useCallback((sectionId: string, elementId: string, vp: Viewport, layoutProps: Partial<any>) => {
+  const updateElementViewportLayout = useCallback((sectionId: string, elementId: string, vp: Viewport, layoutProps: Partial<ViewportLayout>) => {
     setPages(prev => prev.map(p => {
       if (p.id !== currentPageId) return p;
       return {
@@ -791,7 +786,7 @@ export function EditorProvider({
     const updatedPages = pages.map(p => {
       if (p.id !== pageId) return p;
       
-      const newUpdates: any = { ...updates };
+      const newUpdates: typeof updates = { ...updates };
       
       // Auto-generate slug from title if title is being updated and slug wasn't provided
       if (updates.title && !updates.slug) {

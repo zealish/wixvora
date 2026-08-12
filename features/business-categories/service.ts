@@ -105,7 +105,7 @@ export async function updateCategory(
     slug = await generateUniqueSlug(data.name, id);
   }
 
-  const updateData: Record<string, any> = {
+  const updateData: Record<string, string | number | null | Date> = {
     updatedAt: new Date(),
   };
 

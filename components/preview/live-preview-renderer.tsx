@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { Monitor, Tablet, Smartphone } from "lucide-react";
 import { generateFullHTML } from "@/components/website-editor/lib/html-generator";
 import type { Page } from "@/components/website-editor/lib/block-types";
@@ -30,7 +30,6 @@ export function LivePreviewRenderer({
   const [currentPageSlug, setCurrentPageSlug] = useState<string | null>(
     initialPageSlug || null
   );
-
   const sortedPages = useMemo(
     () => [...pages].sort((a, b) => a.sortOrder - b.sortOrder),
     [pages]
@@ -48,12 +47,6 @@ export function LivePreviewRenderer({
     const sections = currentPage?.sections || [];
     return generateFullHTML(Array.isArray(sections) ? sections : []);
   }, [currentPage]);
-
-  useEffect(() => {
-    if (initialPageSlug && initialPageSlug !== currentPageSlug) {
-      setCurrentPageSlug(initialPageSlug);
-    }
-  }, [initialPageSlug]);
 
   const handlePageChange = (slug: string): void => {
     setCurrentPageSlug(slug);

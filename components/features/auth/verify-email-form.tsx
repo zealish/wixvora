@@ -42,7 +42,7 @@ export function VerifyEmailForm() {
           description: result.error || "Failed to resend verification email",
         });
       }
-    } catch (error) {
+    } catch (_error) {
       toast.add({
         type: "error",
         title: "Error",

@@ -5,7 +5,7 @@ let vimeoApiReady: Promise<void> | null = null;
 
 function loadVimeo(): Promise<void> {
   if (vimeoApiReady) return vimeoApiReady;
-  if ((window as any).Vimeo?.Player) {
+  if (window.Vimeo?.Player) {
     vimeoApiReady = Promise.resolve();
     return vimeoApiReady;
   }
@@ -20,7 +20,7 @@ function loadVimeo(): Promise<void> {
 }
 
 export class VimeoPlayerAdapter implements VideoPlayerAPI {
-  private player: any = null;
+  private player: VimeoPlayer | null = null;
   private container: HTMLElement;
   private videoId: string;
   private options: PlayerOptions;
@@ -39,7 +39,7 @@ export class VimeoPlayerAdapter implements VideoPlayerAPI {
 
   async init(): Promise<void> {
     await loadVimeo();
-    const Vimeo = (window as any).Vimeo;
+    const Vimeo = window.Vimeo;
 
     const iframe = document.createElement('iframe');
     iframe.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;border:none;';
@@ -50,21 +50,24 @@ export class VimeoPlayerAdapter implements VideoPlayerAPI {
 
     return new Promise((resolve) => {
       this.player = new Vimeo.Player(iframe);
-      this.player.ready().then(() => {
-        this.player.getDuration().then((d: number) => { this._duration = d; });
-        if (this.options.muted) this.player.setMuted(true);
+      const p = this.player;
+      p.ready().then(() => {
+        p.getDuration().then((d: number) => { this._duration = d; });
+        if (this.options.muted) p.setMuted(true);
         if (this.options.autoplay) this.play();
 
-        this.player.on('play', () => { this._paused = false; this.emit('statechange', 'playing'); });
-        this.player.on('pause', () => { this._paused = true; this.emit('statechange', 'paused'); });
-        this.player.on('ended', () => { this._paused = true; this.emit('statechange', 'ended'); });
-        this.player.on('bufferstart', () => { this.emit('statechange', 'buffering'); });
-        this.player.on('bufferend', () => { this.emit('statechange', this._paused ? 'paused' : 'playing'); });
-        this.player.on('timeupdate', (d: { seconds: number }) => {
-          this._currentTime = d.seconds;
-          this.emit('timeupdate', d.seconds);
+        p.on('play', () => { this._paused = false; this.emit('statechange', 'playing'); });
+        p.on('pause', () => { this._paused = true; this.emit('statechange', 'paused'); });
+        p.on('ended', () => { this._paused = true; this.emit('statechange', 'ended'); });
+        p.on('bufferstart', () => { this.emit('statechange', 'buffering'); });
+        p.on('bufferend', () => { this.emit('statechange', this._paused ? 'paused' : 'playing'); });
+        p.on('timeupdate', (d?: { seconds: number }) => {
+          if (d) {
+            this._currentTime = d.seconds;
+            this.emit('timeupdate', d.seconds);
+          }
         });
-        this.player.getQualities().then((q: string[]) => { this._qualities = q; }).catch(() => {});
+        p.getQualities().then((q: string[]) => { this._qualities = q; }).catch(() => {});
         resolve();
       });
     });
