@@ -680,6 +680,7 @@ function EditorLayout({ backUrl, title }: { backUrl?: string | undefined; title?
     const secHeight = targetSec ? getSectionHeight(targetSec, viewport) : 400;
     const currentSection = sections.find(s => s.id === sectionId);
     const containers = currentSection ? currentSection.elements.filter(el => isContainerElement(el)) : [];
+    let currentDragOverContainer: string | null = null;
 
     const handleMouseMove = (moveEvent: MouseEvent) => {
       const deltaX = moveEvent.clientX - startMouseX;
@@ -728,6 +729,7 @@ function EditorLayout({ backUrl, title }: { backUrl?: string | undefined; title?
             }
           }
         }
+        currentDragOverContainer = foundContainer;
         setDragOverContainerId(foundContainer);
       }
     };
@@ -735,8 +737,8 @@ function EditorLayout({ backUrl, title }: { backUrl?: string | undefined; title?
     const handleMouseUp = () => {
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('mouseup', handleMouseUp);
-      if (dragOverContainerId && sectionId) {
-        moveElementIntoContainer(element.id, sectionId, dragOverContainerId);
+      if (currentDragOverContainer && sectionId) {
+        moveElementIntoContainer(element.id, sectionId, currentDragOverContainer);
       }
       setSnapGuideX(null);
       setDragOverContainerId(null);
