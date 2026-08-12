@@ -52,7 +52,12 @@ export type IconName =
   | "layoutGrid"
   | "navigation"
   | "form"
-  | "search";
+  | "search"
+  | "layoutColumns"
+  | "gripVertical"
+  | "arrowUpDown"
+  | "rectangle"
+  | "container";
 
 const icons: Record<IconName, React.ReactElement> = {
   plus: (
@@ -390,6 +395,40 @@ const icons: Record<IconName, React.ReactElement> = {
     <>
       <circle cx="11" cy="11" r="8" />
       <line x1="21" y1="21" x2="16.65" y2="16.65" />
+    </>
+  ),
+  layoutColumns: (
+    <>
+      <rect x="3" y="3" width="8" height="18" rx="1" />
+      <rect x="13" y="3" width="8" height="18" rx="1" />
+    </>
+  ),
+  gripVertical: (
+    <>
+      <circle cx="9" cy="5" r="1" />
+      <circle cx="15" cy="5" r="1" />
+      <circle cx="9" cy="12" r="1" />
+      <circle cx="15" cy="12" r="1" />
+      <circle cx="9" cy="19" r="1" />
+      <circle cx="15" cy="19" r="1" />
+    </>
+  ),
+  arrowUpDown: (
+    <>
+      <line x1="12" y1="3" x2="12" y2="21" />
+      <polyline points="8,7 12,3 16,7" />
+      <polyline points="8,17 12,21 16,17" />
+    </>
+  ),
+  rectangle: (
+    <>
+      <rect x="3" y="3" width="18" height="18" rx="2" />
+    </>
+  ),
+  container: (
+    <>
+      <rect x="2" y="6" width="20" height="12" rx="2" />
+      <path d="M12,18v4M8,22h8" />
     </>
   ),
 };
