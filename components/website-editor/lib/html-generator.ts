@@ -3,6 +3,22 @@ import type { Section, Page, NavigationSettings } from './block-types';
 import { parseVideoUrl, buildEmbedUrl, getAutoThumbnail } from './video-url-parser';
 import { generateVideoExportJS } from './video-export-js';
 
+function imageFilterCSS(el: any): string {
+  const b = el.filterBrightness ?? 100;
+  const c = el.filterContrast ?? 100;
+  const s = el.filterSaturation ?? 100;
+  const bl = el.filterBlur ?? 0;
+  return `brightness(${b}%) contrast(${c}%) saturate(${s}%) blur(${bl}px)`;
+}
+
+function imageHoverCSS(el: any): string {
+  const hover = el.hoverEffect;
+  if (!hover || hover === 'none') return '';
+  if (hover === 'zoom') return `#el-${el.id}:hover { transform: scale(1.05); }`;
+  if (hover === 'grayscale-to-color') return `#el-${el.id} { filter: grayscale(100%); } #el-${el.id}:hover { filter: grayscale(0%); }`;
+  return '';
+}
+
 function generateFullHTML(sections: Section[]): string {
   let cssRules = `
     .sec-wrapper { position: relative; width: 100%; overflow: hidden; }
@@ -56,7 +72,27 @@ function generateFullHTML(sections: Section[]): string {
         return `        <span ${idAttr} style="background-color: ${el.bgColor}; color: ${el.textColor}; border-radius: ${el.borderRadius}; border: 1px solid ${el.borderColor}; font-size: ${el.fontSize}; display: flex; align-items: center; justify-content: center; font-weight: 700;">${el.text}</span>`;
       }
       if (el.type === 'image') {
-        return `        <img ${idAttr} src="${el.url}" alt="${el.alt || ''}" style="border-radius: ${el.borderRadius}; object-fit: ${el.objectFit || 'cover'};" class="shadow-lg" />`;
+        const filterVal = imageFilterCSS(el);
+        const linkTarget = (el as any).linkUrl;
+        const openNewTab = !!(el as any).openInNewTab;
+        const opaque = (el as any).opacity ?? 1;
+        const hasFilter = filterVal !== 'brightness(100%) contrast(100%) saturate(100%) blur(0px)';
+
+        const imgTag = `<img src="${el.url}" alt="${el.alt || ''}" style="border-radius: ${el.borderRadius || '16px'}; object-fit: ${el.objectFit || 'cover'}; opacity: ${opaque}; filter: ${filterVal}; width: 100%; height: 100%;" onerror="this.parentElement.innerHTML='<div style=\\'width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#f1f5f9;border:2px dashed #cbd5e1;border-radius:12px\\'><span style=\\'color:#94a3b8;font-size:11px;font-weight:600\\'>No image</span></div>'" />`;
+
+        const innerHtml = linkTarget
+          ? `<a href="${linkTarget}" ${openNewTab ? 'target="_blank" rel="noopener noreferrer"' : ''} style="display:block;width:100%;height:100%">${imgTag}</a>`
+          : imgTag;
+
+        const aspectRatioStyle = (el as any).aspectRatio ? ` aspect-ratio: ${(el as any).aspectRatio};` : '';
+        const captionHtml = (el as any).caption ? ` <div style="text-align:center;font-size:12px;color:#475569;margin-top:4px;line-height:1.4">${(el as any).caption}</div>` : '';
+
+        const hoverCss = imageHoverCSS(el);
+        if (hoverCss) {
+          cssRules += `    ${hoverCss}\n`;
+        }
+
+        return `        <div ${idAttr} style="border-radius: ${el.borderRadius || '16px'}; overflow: hidden;${aspectRatioStyle}" class="${hasFilter ? '' : ''}">${innerHtml}</div>${captionHtml}`;
       }
       if (el.type === 'video') {
         const parsed = parseVideoUrl((el as any).videoUrl || '');
@@ -248,8 +284,28 @@ function generateMultiPageHTML(pages: Page[], navigationSettings?: NavigationSet
           return `        <span ${idAttr} style="background-color: ${el.bgColor}; color: ${el.textColor}; border-radius: ${el.borderRadius}; border: 1px solid ${el.borderColor}; font-size: ${el.fontSize}; display: flex; align-items: center; justify-content: center; font-weight: 700;">${el.text}</span>`;
         }
         if (el.type === 'image') {
-          return `        <img ${idAttr} src="${el.url}" alt="${el.alt || ''}" style="border-radius: ${el.borderRadius}; object-fit: ${el.objectFit || 'cover'};" class="shadow-lg" />`;
-        }
+            const filterVal = imageFilterCSS(el);
+            const linkTarget = (el as any).linkUrl;
+            const openNewTab = !!(el as any).openInNewTab;
+            const opaque = (el as any).opacity ?? 1;
+            const hasFilter = filterVal !== 'brightness(100%) contrast(100%) saturate(100%) blur(0px)';
+
+            const imgTag = `<img src="${el.url}" alt="${el.alt || ''}" style="border-radius: ${el.borderRadius || '16px'}; object-fit: ${el.objectFit || 'cover'}; opacity: ${opaque}; filter: ${filterVal}; width: 100%; height: 100%;" onerror="this.parentElement.innerHTML='<div style=\\'width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#f1f5f9;border:2px dashed #cbd5e1;border-radius:12px\\'><span style=\\'color:#94a3b8;font-size:11px;font-weight:600\\'>No image</span></div>'" />`;
+
+            const innerHtml = linkTarget
+              ? `<a href="${linkTarget}" ${openNewTab ? 'target="_blank" rel="noopener noreferrer"' : ''} style="display:block;width:100%;height:100%">${imgTag}</a>`
+              : imgTag;
+
+            const aspectRatioStyle = (el as any).aspectRatio ? ` aspect-ratio: ${(el as any).aspectRatio};` : '';
+            const captionHtml = (el as any).caption ? ` <div style="text-align:center;font-size:12px;color:#475569;margin-top:4px;line-height:1.4">${(el as any).caption}</div>` : '';
+
+            const hoverCss = imageHoverCSS(el);
+            if (hoverCss) {
+              cssRules += `    ${hoverCss}\n`;
+            }
+
+            return `        <div ${idAttr} style="border-radius: ${el.borderRadius || '16px'}; overflow: hidden;${aspectRatioStyle}" class="${hasFilter ? '' : ''}">${innerHtml}</div>${captionHtml}`;
+          }
           if (el.type === 'video') {
             const parsed = parseVideoUrl((el as any).videoUrl || '');
             if (!parsed) {
