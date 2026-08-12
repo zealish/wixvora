@@ -1,4 +1,4 @@
-export type ElementType = 'heading' | 'paragraph' | 'button' | 'badge' | 'image' | 'card' | 'video';
+export type ElementType = 'heading' | 'paragraph' | 'button' | 'badge' | 'image' | 'card' | 'video' | 'container' | 'flex-row' | 'grid' | 'divider' | 'spacer' | 'icon-text';
 
 export type ElementCategory = 'text' | 'interactive' | 'media' | 'layout' | 'navigation' | 'forms';
 
@@ -10,6 +10,15 @@ export interface ViewportLayout {
   width: number;
   height: number;
   hidden: boolean;
+}
+
+export interface ContainerLayout {
+  type: 'flex' | 'grid';
+  direction?: 'row' | 'column';
+  alignItems?: 'start' | 'center' | 'end' | 'stretch';
+  justifyContent?: 'start' | 'center' | 'end' | 'space-between' | 'space-around';
+  columns?: number;
+  gap?: number;
 }
 
 export interface Element {
@@ -78,6 +87,22 @@ export interface Element {
   muted?: boolean;
   showControls?: boolean;
   controlBarTheme?: 'dark' | 'light';
+
+  // Nesting
+  parentId?: string;
+  children?: Element[];
+  containerLayout?: ContainerLayout;
+
+  // Divider-specific
+  dividerColor?: string;
+  dividerHeight?: string;
+  dividerWidth?: string;
+
+  // Icon+Text-specific
+  iconName?: string;
+  iconColor?: string;
+  iconSize?: string;
+  iconTextLayout?: 'horizontal' | 'vertical';
 }
 
 export interface Section {
